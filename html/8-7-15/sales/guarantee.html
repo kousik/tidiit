@@ -1,0 +1,271 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="UTF-8">
+    <title>Blank Page</title>
+
+    <!--IE Compatibility modes-->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!--Mobile first-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+
+    <!-- Metis core stylesheet -->
+    <link rel="stylesheet" href="assets/css/main.min.css">
+
+   
+    <!--[if lt IE 9]>
+      <script src="assets/lib/html5shiv/html5shiv.js"></script>
+      <script src="assets/lib/respond/respond.min.js"></script>
+      <![endif]-->
+
+  
+  </head>
+  <body class="  ">
+    <div class="bg-dark dk" id="wrap">
+      <div id="top">
+
+        <!-- .navbar -->
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+          <div class="container-fluid">
+
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <header class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span> 
+                <span class="icon-bar"></span> 
+                <span class="icon-bar"></span> 
+                <span class="icon-bar"></span> 
+              </button>
+              <a href="index.html" class="navbar-brand">
+                <img src="assets/images/logo.png" alt="">
+              </a> 
+            </header>
+            <div class="topnav">              
+              <div class="btn-group">
+                <a href="login.html" data-toggle="tooltip" data-original-title="Logout" data-placement="bottom" class="btn btn-metis-1 btn-sm">
+                  <i class="fa fa-power-off"></i>
+                </a> 
+              </div>
+              <div class="btn-group">
+                <a data-placement="bottom" data-original-title="Show / Hide Left" data-toggle="tooltip" class="btn btn-primary btn-sm toggle-left" id="menu-toggle">
+                  <i class="fa fa-bars"></i>
+                </a>                
+              </div>
+            </div>
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+
+              <!-- .nav -->
+              <ul class="nav navbar-nav">
+                <li class="active">
+                  <a href="index.html">Dashboard</a> 
+                </li>
+                <li class='dropdown '> 
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Inventory <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li> <a href="inventory.html">Manage Inventory</a>  </li>
+                        <li> <a href="add-product.html">Add a Product</a>  </li>
+                      </ul>                
+                </li>
+                
+                <li class='dropdown '> 
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Orders <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li> <a href="orders.html">Manage Orders</a>  </li>
+                        <li> <a href="returns.html">Manage Return</a>  </li>
+                      </ul>                
+                </li>
+                
+                <li class='dropdown '> 
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Reports <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li> <a href="payment.html">Payments</a>  </li>
+                        <li> <a href="tax-doc.html">Tax Document Library</a>  </li>
+                      </ul>                
+                </li>
+                
+                <li class='dropdown '> 
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Performance<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li> <a href="satisfaction.html">Customer Satisfaction</a>  </li>
+                        <li> <a href="feedback.html">Feedback</a>  </li>
+                         <li> <a href="guarantee.html">A-to-z Guarantee Claims</a>  </li>
+                        <li> <a href="chargback.html">Chargeback Claims</a>  </li>
+                        <li> <a href="performance.html">Performance Notifications</a>  </li>
+                      </ul>                
+                </li>
+                
+               
+              </ul><!-- /.nav -->
+            </div>
+          </div><!-- /.container-fluid -->
+        </nav><!-- /.navbar -->
+        <header class="head">
+          <!-- /.search-bar -->
+          <div class="main-bar">
+            <h3>
+              <i class="fa fa-dashboard"></i>&nbsp; Dashboard</h3>
+          </div><!-- /.main-bar -->
+        </header><!-- /.head -->
+      </div><!-- /#top -->
+      <div id="left">
+        <div class="media user-media bg-dark dker">
+          <div class="user-media-toggleHover">
+            <span class="fa fa-user"></span> 
+          </div>
+          <div class="user-wrapper bg-dark">
+            <a class="user-link" href="">
+              <img class="media-object img-thumbnail user-img" alt="User Picture" src="assets/images/user.gif">
+              <span class="label label-danger user-label">16</span> 
+            </a> 
+            <div class="media-body">
+              <h5 class="media-heading">Archie</h5>
+              <ul class="list-unstyled user-info">
+                <li> <a href="">Administrator</a>  </li>
+                <li>Last Access :
+                  <br>
+                  <small>
+                    <i class="fa fa-calendar"></i>&nbsp;16 Mar 16:32</small> 
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- #menu -->
+        <ul id="menu" class="bg-blue dker">
+          <li class="nav-header">Menu</li>
+          <li class="nav-divider"></li>
+          <li class="active">
+            <a href="index.html">
+              <i class="fa fa-dashboard"></i><span class="link-title">&nbsp;Dashboard</span> 
+            </a> 
+          </li>           
+          <li>
+            <a href="orders.html">
+              <i class="fa fa-table"></i>
+              <span class="link-title">Orders</span> 
+            </a> 
+          </li>
+          <li>
+            <a href="reports.html">
+              <i class="fa fa-file"></i>
+              <span class="link-title">Reports</span> 
+            </a> 
+          </li>
+          <li>
+            <a href="performance.html">
+              <i class="fa fa-font"></i>
+              <span class="link-title">Performance</span>  </a> 
+          </li>
+          
+          <li class="nav-divider"></li>
+          <li>
+            <a href="login.html">
+              <i class="fa fa-sign-in"></i>
+              <span class="link-title">Login Page</span> 
+            </a> 
+          </li>
+          <li>
+            <a href="javascript:;">
+              <i class="fa fa-code"></i>
+              <span class="link-title">Unlimited Level Menu </span> 
+              <span class="fa arrow"></span> 
+            </a> 
+            <ul>
+              <li>
+                <a href="javascript:;">Level 1  <span class="fa arrow"></span>  </a> 
+                <ul>
+                  <li> <a href="javascript:;">Level 2</a>  </li>
+                  <li> <a href="javascript:;">Level 2</a>  </li>
+                  <li>
+                    <a href="javascript:;">Level 2  <span class="fa arrow"></span>  </a> 
+                    <ul>
+                      <li> <a href="javascript:;">Level 3</a>  </li>
+                      <li> <a href="javascript:;">Level 3</a>  </li>
+                      <li>
+                        <a href="javascript:;">Level 3  <span class="fa arrow"></span>  </a> 
+                        <ul>
+                          <li> <a href="javascript:;">Level 4</a>  </li>
+                          <li> <a href="javascript:;">Level 4</a>  </li>
+                          <li>
+                            <a href="javascript:;">Level 4  <span class="fa arrow"></span>  </a> 
+                            <ul>
+                              <li> <a href="javascript:;">Level 5</a>  </li>
+                              <li> <a href="javascript:;">Level 5</a>  </li>
+                              <li> <a href="javascript:;">Level 5</a>  </li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </li>
+                      <li> <a href="javascript:;">Level 4</a>  </li>
+                    </ul>
+                  </li>
+                  <li> <a href="javascript:;">Level 2</a>  </li>
+                </ul>
+              </li>
+              <li> <a href="javascript:;">Level 1</a>  </li>
+              <li>
+                <a href="javascript:;">Level 1  <span class="fa arrow"></span>  </a> 
+                <ul>
+                  <li> <a href="javascript:;">Level 2</a>  </li>
+                  <li> <a href="javascript:;">Level 2</a>  </li>
+                  <li> <a href="javascript:;">Level 2</a>  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul><!-- /#menu -->
+      </div><!-- /#left -->
+      <div id="content">
+        <div class="outer">
+          <div class="inner bg-light lter">
+            &nbsp;
+          </div><!-- /.inner -->
+        </div><!-- /.outer -->
+      </div><!-- /#content -->
+    </div><!-- /#wrap -->
+    <footer class="Footer bg-dark dker">
+      <p>&copy;</p>
+    </footer><!-- /#footer -->
+
+    <!-- #helpModal -->
+    <div id="helpModal" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Modal title</h4>
+          </div>
+          <div class="modal-body">
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+              in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal --><!-- /#helpModal -->
+
+    <!--jQuery --> 
+<script src="assets/js/jquery.min.js"></script> 
+<script src="assets/js/jquery-ui.min.js"></script> 
+<!--Bootstrap --> 
+<script src="assets/js/bootstrap.min.js"></script> 
+
+<!-- MetisMenu --> 
+<script src="assets/js/metisMenu.min.js"></script>
+<script src="assets/js/core.min.js"></script> 
+
+
+  </body>
+  </html>

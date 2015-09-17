@@ -1,0 +1,8 @@
+[27-Jul-2015 19:51:17 UTC] PHP Fatal error:  Call to undefined method User_model::get_user_page_type() in /home/judhisahoo/public_html/seller/application/controllers/product.php on line 100
+[27-Jul-2015 19:51:21 UTC] PHP Fatal error:  Call to undefined method User_model::get_user_page_type() in /home/judhisahoo/public_html/seller/application/controllers/product.php on line 100
+[27-Jul-2015 19:52:10 UTC] PHP Fatal error:  Call to undefined method User_model::get_user_page_type() in /home/judhisahoo/public_html/seller/application/controllers/product.php on line 100
+[27-Jul-2015 19:52:12 UTC] PHP Fatal error:  Call to undefined method User_model::get_user_page_type() in /home/judhisahoo/public_html/seller/application/controllers/product.php on line 100
+[27-Jul-2015 19:52:13 UTC] PHP Fatal error:  Call to undefined method User_model::get_user_page_type() in /home/judhisahoo/public_html/seller/application/controllers/product.php on line 100
+[27-Jul-2015 19:52:13 UTC] PHP Fatal error:  Call to undefined method User_model::get_user_page_type() in /home/judhisahoo/public_html/seller/application/controllers/product.php on line 100
+[27-Jul-2015 19:52:13 UTC] PHP Fatal error:  Call to undefined method User_model::get_user_page_type() in /home/judhisahoo/public_html/seller/application/controllers/product.php on line 100
+[27-Jul-2015 19:52:13 UTC] PHP Fatal error:  Call to undefined method User_model::get_user_page_type() in /home/judhisahoo/public_html/seller/application/controllers/product.php on line 100

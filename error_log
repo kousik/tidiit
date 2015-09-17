@@ -1,0 +1,6 @@
+[18-Aug-2015 06:26:16 UTC] PHP Fatal error:  Call to undefined method Product_model::get_recent() in /home/judhisahoo/public_html/application/controllers/index.php on line 22
+[18-Aug-2015 06:26:34 UTC] PHP Fatal error:  Call to undefined method Product_model::get_recent() in /home/judhisahoo/public_html/application/controllers/index.php on line 22
+[18-Aug-2015 06:26:36 UTC] PHP Fatal error:  Call to undefined method Product_model::get_recent() in /home/judhisahoo/public_html/application/controllers/index.php on line 22
+[18-Aug-2015 12:28:19 UTC] PHP Fatal error:  Call to undefined method Product_model::get_recent() in /home/judhisahoo/public_html/application/controllers/index.php on line 22
+[18-Aug-2015 12:38:10 UTC] PHP Fatal error:  Call to undefined method Product_model::get_recent() in /home/judhisahoo/public_html/application/controllers/index.php on line 22
+[18-Aug-2015 15:13:06 UTC] PHP Fatal error:  Call to undefined method Product_model::get_recent() in /home/judhisahoo/public_html/application/controllers/index.php on line 22

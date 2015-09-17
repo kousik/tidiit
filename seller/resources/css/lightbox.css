@@ -1,0 +1,40 @@
+@charset "utf-8";
+/* CSS Document */
+
+.lightbox_background{
+	display: none;
+	position: fixed;
+	top: 0%;
+	left: 0%;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	z-index:100001;
+	-moz-opacity: 0.8;
+	opacity:.80;
+	filter: alpha(opacity=80);
+}
+ 
+.lightbox_fourground {
+	background-color: white;
+	border: 8px solid #FFCC00;
+	border-radius: 10px 10px 10px 10px;
+	color: #000000;
+	display: none;
+	left: 30%;
+	padding: 10px;
+	position: fixed;
+	top: 5%;
+	width: 44%;
+	z-index: 100002;
+	-moz-border-radius-topleft:10px;
+	-moz-border-radius-topright:10px;
+	-moz-border-radius-bottomleft:10px;
+	-moz-border-radius-bottomright:10px;
+	-webkit-border-top-left-radius:10px;
+	-webkit-border-top-right-radius:10px;
+	-webkit-border-bottom-left-radius:10px;
+	-webkit-border-bottom-right-radius:10px;
+}
+
+

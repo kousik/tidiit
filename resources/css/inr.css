@@ -1,0 +1,33 @@
+/*@font-face {
+    font-family: 'Rupee_Foradian';
+    src: url('../fonts/Rupee_Foradian.eot');
+    src: url('../fonts/Rupee_Foradian.eot') format('embedded-opentype'),
+         url('../fonts/Rupee_Foradian.woff2') format('woff2'),
+         url('../fonts/Rupee_Foradian.woff') format('woff'),
+         url('../fonts/Rupee_Foradian.ttf') format('truetype'),
+         url('../fonts/Rupee_Foradian.svg#Rupee_Foradian') format('svg');
+}*/
+
+@font-face{
+    font-family: "Rupee Foradian";
+    src: url("../fonts/Rupee_Foradian.eot");
+    src: local("Rupee Foradian"), url("../fonts/Rupee_Foradian.ttf") format("truetype"), url("../fonts/Rupee_Foradian.woff") format("woff"), url("../fonts/Rupee_Foradian.svg") format("svg");
+    font-weight: bold; 
+    font-style: normal;
+    font-size:16px;
+}
+.localCurrency{ font-family:"Rupee Foradian";}
+
+label.error{background: url(../images/error.png) left center no-repeat;color: #FF0000;float: left;font-size: 12px;padding-bottom: 0;padding-left: 20px;padding-top: 0;} 
+.commmon-btn{background-color: #1a7c1a;border: medium none;border-radius: 4px;color: #fff;cursor: pointer;font: 15px Arial,Helvetica,sans-serif !important;padding: 5px 20px !important;text-align: center;text-transform: uppercase;}
+
+/***FAQ ***/
+#accordion h3 { font-weight:bold;}	
+#accordion {font: normal 12px/18px Verdana, Arial, Helvetica, sans-serif;color: #333;}
+.ui-accordion-content p { line-height:20px;}
+
+
+.bottom-box-tag { background-color:#e3e3e3; }
+.bottom-box-tag p {color: #2d2d2d;font: 12px/16px Verdana,Arial,Helvetica,sans-serif;margin: 0;padding:7px 0;}
+.bottom-box-tag a{color: #000;}
+.bottom-box-tag a:hover{color: #000;text-decoration: underline;}
