@@ -6,7 +6,7 @@
 *.swp
 Thumbs.db
 .idea
-
+.gitignore
 .buildpath
 .project
 .settings
