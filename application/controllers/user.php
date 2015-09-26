@@ -3,6 +3,7 @@ class User extends MY_Controller{
     public function __construct(){
         parent::__construct();
         $this->load->model('User_model');
+        $this->db->cache_off();
     }
     
     function my_account(){

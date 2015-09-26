@@ -24,6 +24,10 @@ class Product extends MY_Controller{
             $this->config->load('product');
             $data=$this->_get_logedin_template();
             $this->load->model('User_model');
+            //$this->load->library('My_Services');
+            //$ServiceData=My_Services::request_services('User_model','get_user_page_type',array(4));
+            //$ServiceData=My_Services::request_services('User_model','change_user_status',array(4,1));
+            //pre($ServiceData);die;
             $pageTypeData=$this->User_model->get_user_page_type($this->session->userdata('FE_SESSION_VAR'));
             //pre($pageTypeData);die;
             if(empty($pageTypeData)){
