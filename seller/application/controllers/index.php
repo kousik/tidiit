@@ -17,7 +17,6 @@ class Index extends MY_Controller{
     }
     
     function home(){
-        echo '';die;
         $data=$this->_get_logedin_template();
         $this->load->view('home',$data);
     }
