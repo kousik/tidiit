@@ -32,8 +32,12 @@ class Category extends MY_Controller{
 		$shortDescription=$this->input->post('shortDescription',TRUE);
 		$parrentCategoryId=$this->input->post('parrentCategoryId',TRUE);
 		$userCategoryView=$this->input->post('userCategoryView',TRUE);
+		$metaTitle=$this->input->post('metaTitle',TRUE);
+		$metaKeyWord=$this->input->post('metaKeyWord',TRUE);
+		$metaDescription=$this->input->post('metaDescription',TRUE);
 		$view=$this->input->post('view',TRUE);
 		$status=$this->input->post('status',TRUE);
+		
 		if($_FILES['categoryImage']['name']==""){
                     $this->session->set_flashdata('Message','Please Browse Category Image.');
                 }else{
@@ -41,8 +45,6 @@ class Category extends MY_Controller{
                     $image=time().'.'.end(explode('.',$file['name']));
                     //move_uploaded_file($file['tmp_name'],$imagePath.$image);
                     $this->category_image_resize($file,$image);
-                    $status=$this->input->post('status',TRUE);
-                    $pageId=$this->input->post('pageId',TRUE);
                     $dataArr=array(
                         'categoryName'=>$categoryName,
                         'parrentCategoryId'=>$parrentCategoryId,
@@ -50,7 +52,10 @@ class Category extends MY_Controller{
                         'view'=>$view,
                         'shortDescription'=>$shortDescription,
                         'userCategoryView'=>$userCategoryView,
-                        'image'=>$image
+                        'image'=>$image,
+                        'metaTitle'=>$metaTitle,
+                        'metaKeyWord'=>$metaKeyWord,
+                        'metaDescription'=>metaDescription
                     );
 
                     //print_r($dataArr);die;
@@ -62,23 +67,46 @@ class Category extends MY_Controller{
 	
 	public function edit(){
             $categoryName=$this->input->post('EditcategoryName',TRUE);
-            $note=$this->input->post('Editnote',TRUE);
+            $shortDescription=$this->input->post('EditshortDescription',TRUE);
             $status=$this->input->post('Editstatus',TRUE);
-            $CategoryID=$this->input->post('CategoryID',TRUE);
+            $CategoryID=$this->input->post('categoryId',TRUE);
             $parrentCategoryId=$this->input->post('parrentCategoryId',TRUE);
+            
+            $userCategoryView=$this->input->post('EdituserCategoryView',TRUE);
+            $metaTitle=$this->input->post('EditmetaTitle',TRUE);
+            $metaKeyWord=$this->input->post('EditmetaKeyWord',TRUE);
+            $metaDescription=$this->input->post('EditmetaDescription',TRUE);
+            $view=$this->input->post('Editview',TRUE);
 
             if($parrentCategoryId==""){
-                    $parrentCategoryId=0;
+                $parrentCategoryId=0;
+            }
+            $image='';
+            if($_FILES['EditcategoryImage']['name']!=""){
+                $categoryDetails=$this->Category_model->get_details_by_id($CategoryID);
+                $file=$_FILES['EditcategoryImage'];
+                $image=time().'.'.end(explode('.',$file['name']));
+                //move_uploaded_file($file['tmp_name'],$imagePath.$image);
+                $this->category_image_resize($file,$image);
+                 $this->delete_img($categoryDetails[0]->image);
             }
 
             $dataArr=array(
-            'categoryName'=>$categoryName,
-            'status'=>$status,
-            'note'=>$note
-            );
-
+                        'categoryName'=>$categoryName,
+                        'parrentCategoryId'=>$parrentCategoryId,
+                        'status'=>$status,
+                        'view'=>$view,
+                        'shortDescription'=>$shortDescription,
+                        'userCategoryView'=>$userCategoryView,
+                        'metaTitle'=>$metaTitle,
+                        'metaKeyWord'=>$metaKeyWord,
+                        'metaDescription'=>$metaDescription
+                    );
+            if($image!=""){
+                $dataArr['image']=$image;
+            }
             //print_r($dataArr);die;
-
+            
             $this->Category_model->edit($dataArr,$CategoryID);
 
             $this->session->set_flashdata('Message','Category updated successfully.');
@@ -96,81 +124,23 @@ class Category extends MY_Controller{
 	}
 	
 	public function delete($CategoryID){
-		$this->Category_model->delete($CategoryID);
-		
-		$this->session->set_flashdata('Message','Category deleted successfully.');
-		redirect(base_url().'webadmin/category/viewlist');
+            $Data=$this->Category_model->get_parrent_by_category_id($CategoryID);
+            $parrentCategoryId=$Data[0]->parrentCategoryId;
+            //pre($parrentCategoryId);die;
+            $categoryDetails=$this->Category_model->get_details_by_id($CategoryID);
+            $this->Category_model->delete($CategoryID);
+            $this->delete_img($categoryDetails[0]->image);
+            $this->session->set_flashdata('Message','Category deleted successfully.');
+            redirect(base_url().'webadmin/category/viewlist/'.$parrentCategoryId);
 	}
         
-        public function manage_category_link($CategoryID,$Linktype){
-            $this->Category_model->manage_category_link($CategoryID,$Linktype);
-            $Data=$this->Category_model->get_parrent_by_category_id($CategoryID);
-            //echo '<pre>';print_r($Data);die;
-            $parrentCategoryId=$Data[0]->parrentCategoryId;
-		
-            $this->session->set_flashdata('Message','Category link updated success successfully.');
-            redirect(base_url().'webadmin/category/viewlist/'.$parrentCategoryId);
+        private function delete_img($fileName){
+            $BannerResourcesPath=$this->config->item('ResourcesPath').'category/';
+            @unlink($BannerResourcesPath.'admin/'.$fileName);
+            @unlink($BannerResourcesPath.'350X350/'.$fileName);
+            @unlink($BannerResourcesPath.'original/'.$fileName);
         }
         
-        
-        public function manage_category_add_to_cart_link($CategoryID,$Linktype){
-            $this->Category_model->manage_category_add_to_cart_link($CategoryID,$Linktype);
-            $Data=$this->Category_model->get_parrent_by_category_id($CategoryID);
-            //echo '<pre>';print_r($Data);die;
-            $parrentCategoryId=$Data[0]->parrentCategoryId;
-		
-            $this->session->set_flashdata('Message','Category add to cart link updated success successfully.');
-            redirect(base_url().'webadmin/category/viewlist/'.$parrentCategoryId);
-        }
-
-
-        public function update_terms($CategoryID,$RegionID=0){
-            $data=$this->_show_admin_logedin_layout();
-            $Arr=array();
-            if($RegionID>0){
-                $InitArr=array('Terms'=>'');
-                $ckeditor = array(
-                            //ID of the textarea that will be replaced
-                            'id' 	=> 	'Terms',
-                            'path'	=>	$this->config->item('SiteJSURL').'ckeditor',
-                            'judhipath'	=>	$this->config->item('SiteJSURL'),
-                            //Optionnal values
-                            'config' => array(
-                                    'toolbar' 	=> 	"Full", 	//Using the Full toolbar
-                                    'width' 	=> 	"90%",	//Setting a custom width
-                                    'height' 	=> 	'250px',	//Setting a custom height
-                            )
-                    );
-                $Arr=$this->Category_model->get_seo_data($CategoryID,$RegionID);
-                //echo '<pre>';print_r($Arr);die;
-                $data['val']=$Arr;
-                $data['ckeditor']=$ckeditor;
-                $data['RegionID']=$RegionID;
-                $data['CategoryID']=$CategoryID;
-                $this->load->view('webadmin/terms_data1',$data);
-            }else{
-                $data['val']=$Arr;
-                $data['RegionID']=$RegionID;
-                $data['CategoryID']=$CategoryID;
-                $this->load->view('webadmin/terms_data',$data);
-            }
-        }
-        
-        public function save_update_terms(){
-            $RegionID=$this->input->post('CategoryTermsRegionID',TRUE);
-            $CategoryID=$this->input->post('CategoryID',TRUE);
-            $Terms=$this->input->post('Terms',TRUE);
-            
-            if($RegionID!="" && $CategoryID!=""){
-                $this->Category_model->manage_seo_data(array('Terms'=>$Terms),$RegionID,$CategoryID);
-                $parrent=$this->Category_model->getProductCategoryParrentCategoryInfo($CategoryID);
-                redirect(base_url().'webadmin/category/viewlist/'.$parrent[0]->ParrentID);
-            }else{
-                redirect(base_url().'webadmin/category/viewlist');
-            }
-            
-        }
-                
 	function batchaction(){
 		//print_r($_POST);die;
 		$batchaction_fun=$this->input->post('batchaction_fun',TRUE);
@@ -208,93 +178,56 @@ class Category extends MY_Controller{
 		redirect(base_url().'webadmin/product/viewlist');
 	}*/
 	
-	public function batchpopularstore($CategoryIDs){
-		$this->Category_model->popularstore($CategoryIDs);
-		
-		$this->session->set_flashdata('Message','Product/s popular stores successfully.');
-		redirect(base_url().'webadmin/category/viewlist');
-	}
-        
-        public function manage_seo_data(){
-            //echo '<pre>';
-            //print_r($_POST);
-            $RegionID=$this->input->post('CategorySEORegionID');
-            $parrentCategoryId=$this->input->post('parrentCategoryId');
-            $CategoryID=$this->input->post('SEODataCategoryID');
-            $Title=$this->input->post('Title');
-            $Keywords=$this->input->post('Keywords');
-            $Description=$this->input->post('Description');
-            $abstract=$this->input->post('abstract');
-            $dc_relation=$this->input->post('dc_relation');
-            $dc_title=$this->input->post('dc_title');
-            $dc_keywords=$this->input->post('dc_keywords');
-            $dc_subject=$this->input->post('dc_subject');
-            $dc_description=$this->input->post('dc_description');
-            $geo_placename=$this->input->post('geo_placename');
-            $geo_position=$this->input->post('geo_position');
-            $geo_region=$this->input->post('geo_region');
-            $ICBM=$this->input->post('ICBM');
-            $classification=$this->input->post('classification');
-            $resource_type=$this->input->post('resource_type');
-            $dataArr=array('Title'=>$Title,'Keywords'=>$Keywords,'Description'=>$Description,'abstract'=>$abstract,'dc_relation'=>$dc_relation,
-                'dc_title'=>$dc_title,'dc_keywords'=>$dc_keywords,'dc_subject'=>$dc_subject,'dc_description'=>$dc_description,
-                'geo_placename'=>$geo_placename,'geo_position'=>$geo_position,'geo_region'=>$geo_region,'ICBM'=>$ICBM,'classification'=>$classification,
-                'resource_type'=>$resource_type);
-            $this->Category_model->manage_seo_data($dataArr,$RegionID,$CategoryID);
-            //print_r($dataArr);die;
-            redirect(base_url().'webadmin/category/viewlist/'.$parrentCategoryId);
-        }
-        
-        public function category_image_resize($file,$fileName){
-		/// process the image for all size. and water mark
-		$PHOTOPATH=$this->config->item('ResourcesPath').'category/';
-		$OriginalPath=$PHOTOPATH.'original/';
-		//echo '$OriginalPath :- '.$OriginalPath.'<br>';
-		$OriginalFilePath=$OriginalPath.$fileName;
-		//echo '$OriginalFilePath :- '.$OriginalFilePath.'<br>';
-		//echo '<pre>';print_r($file);
-		if(!@move_uploaded_file($file["tmp_name"],$OriginalFilePath)){
-			die('not moveing the file');
-		}
-		
-		//echo 'move uploaed done for original image ====<br>';
-		/// ************admin***************
-		$config['image_library'] = 'gd2';
-		$config['source_image'] = $OriginalFilePath;
-		$config['new_image'] = $PHOTOPATH. 'admin/';
-		$config['width'] = 350;
-		$config['height'] = 100;
-		$config['maintain_ratio'] = true;
-		$config['master_dim'] = 'auto';
-		$config['create_thumb'] = FALSE;
-		$this->image_lib->initialize($config);
-		$this->load->library('image_lib', $config);
-		if($this->image_lib->resize()){
-			//echo '<br>thumb done for 140X100.';
-		}else{
-			$this->image_lib->display_errors();
-		}
-		
-		$this->image_lib->clear();
-		
-		/// ************350X350*************** at first level category
-		$config['image_library'] = 'gd2';
-		$config['source_image'] = $OriginalFilePath;
-		$config['new_image'] = $PHOTOPATH. '350X350/';
-		$config['width'] = 350;
-		$config['height'] = 350;
-		$config['maintain_ratio'] = true;
-		$config['master_dim'] = 'auto';
-		$config['create_thumb'] = FALSE;
-		$this->image_lib->initialize($config);
-		$this->load->library('image_lib', $config);
-		if($this->image_lib->resize()){
-			//echo '<br>thumb done for 95X82.';
-		}else{
-			$this->image_lib->display_errors();
-		}
-		
-		$this->image_lib->clear();
+	private function category_image_resize($file,$fileName){
+            /// process the image for all size. and water mark
+            $PHOTOPATH=$this->config->item('ResourcesPath').'category/';
+            $OriginalPath=$PHOTOPATH.'original/';
+            //echo '$OriginalPath :- '.$OriginalPath.'<br>';
+            $OriginalFilePath=$OriginalPath.$fileName;
+            //echo '$OriginalFilePath :- '.$OriginalFilePath.'<br>';
+            //echo '<pre>';print_r($file);
+            if(!@move_uploaded_file($file["tmp_name"],$OriginalFilePath)){
+                    die('not moveing the file');
+            }
+
+            //echo 'move uploaed done for original image ====<br>';
+            /// ************admin***************
+            $config['image_library'] = 'gd2';
+            $config['source_image'] = $OriginalFilePath;
+            $config['new_image'] = $PHOTOPATH. 'admin/';
+            $config['width'] = 350;
+            $config['height'] = 100;
+            $config['maintain_ratio'] = true;
+            $config['master_dim'] = 'auto';
+            $config['create_thumb'] = FALSE;
+            $this->image_lib->initialize($config);
+            $this->load->library('image_lib', $config);
+            if($this->image_lib->resize()){
+                    //echo '<br>thumb done for 140X100.';
+            }else{
+                    $this->image_lib->display_errors();
+            }
+
+            $this->image_lib->clear();
+
+            /// ************350X350*************** at first level category
+            $config['image_library'] = 'gd2';
+            $config['source_image'] = $OriginalFilePath;
+            $config['new_image'] = $PHOTOPATH. '350X350/';
+            $config['width'] = 350;
+            $config['height'] = 350;
+            $config['maintain_ratio'] = true;
+            $config['master_dim'] = 'auto';
+            $config['create_thumb'] = FALSE;
+            $this->image_lib->initialize($config);
+            $this->load->library('image_lib', $config);
+            if($this->image_lib->resize()){
+                    //echo '<br>thumb done for 95X82.';
+            }else{
+                    $this->image_lib->display_errors();
+            }
+
+            $this->image_lib->clear();
 	}
 }
 ?>

@@ -2,6 +2,7 @@
 $productPageTypeArr=$this->config->item('productPageTypeArr');
 $categoryTemplateArr=$this->config->item('categoryTemplateArr');
 $categoryImagePath=ResourcesPath.'category/admin/';
+$categoryImageURL=SiteResourcesURL.'category/admin/';
 //print_r($parrentData);die;?>
 <table cellspacing=5 cellpadding=5 width=90% border=0 >
   
@@ -40,7 +41,7 @@ function ShowAddAdminBox(){
 	$('#ListBox').fadeOut(400);
 	
 	$('#EditBox').fadeIn(2500);
-	$('#EditUserFullName').text(DataArr[id]['categoryName']+' '+DataArr[id]['categoryName']);
+	$('#EditBoxTitle').text('"'+DataArr[id]['categoryName']+'"');
 	$('#EditcategoryName').val(DataArr[id]['categoryName']);
 	$('#EditshortDescription').val(DataArr[id]['shortDescription']);
 	$('#EditmetaTitle').val(DataArr[id]['metaTitle']);
@@ -48,7 +49,8 @@ function ShowAddAdminBox(){
 	$('#EditmetaDescription').val(DataArr[id]['metaDescription']);
         $("input[type='radio'][name='Editview'][value='"+DataArr[id]['view']+"']").prop("checked",true);
         $("input[type='radio'][name='EdituserCategoryView'][value='"+DataArr[id]['userCategoryView']+"']").prop("checked",true);
-	
+        var srcData='<?php echo $categoryImageURL;?>'+DataArr[id]['image'];
+        $('#EditEditcategoryImageImg').attr('height','100').attr('width','100').attr('src',srcData);	
 	$('#categoryId').val(DataArr[id]['categoryId']);
 	
  }
@@ -109,7 +111,7 @@ function AskDelete(id){
 	<a href="#" id="CheckAll" style="text-decoration: underline;">CheckAll</a>
 	<a href="#" id="UnCheckAll" style="display: none;text-decoration: underline;">UnCheckAll</a></td>
     <td width="25%">Category Name </td>
-    <td width="10%">Category ID </td>
+    <td width="10%">Image </td>
     <td width="10%">status</td>
     <td width="8%">Category Page Template</td>
     <td width="10%">Product Page Template</td>
@@ -124,14 +126,18 @@ function AskDelete(id){
   <tr class="ListTestLable <?php if($val%2 == 0){ echo 'oddtbl'; } else { echo 'eventbl'; } ?>" height="20px;">
     <td><?php echo $val+1;?><input  type="checkbox" name="categoryId[]" value="<?php echo $InerArr->categoryId;?>"/></td>
     <td>
-	<?php //if($InerArr->Type==0 && $InerArr->parrentCategoryId==0){
-			//if(){?>
 	<a href='<?php echo base_url().'webadmin/category/viewlist/'.$InerArr->categoryId;?>' style="text-decoration: underline;"> <?php echo $InerArr->categoryName;?></a>
-	<?php //}else{?>
-	<?php //echo $InerArr->categoryName;?>
-	<?php //}?>
 	</td>
-        <td><?php echo $InerArr->categoryId;?></td>
+        <td><?php if($InerArr->image==""){?>
+            <img src="<?php echo SiteImagesURL.'no-image.png'?>" height="100" width="100">    
+        <?php }else{
+            if(!file_exists($categoryImagePath.$InerArr->image)){
+            ?>
+            <img src="<?php echo SiteImagesURL.'no-image.png'?>" height="100" width="100">
+        <?php }else{?>
+            <img src="<?php echo $categoryImageURL.$InerArr->image;?>" height="100" width="100">
+        <?php }
+        }?></td>
 	<?php /*<td><?php echo ($InerArr->PopularStore=='1')?'Yes':'No';?></td>*/?>
     <td><?php echo ($InerArr->status=='1')?'Active':'Inactive';?></td>
     <td><?php if($InerArr->userCategoryView!='' && $InerArr->userCategoryView>0){echo $productPageTypeArr[$InerArr->userCategoryView];}?></td>
@@ -151,10 +157,11 @@ function AskDelete(id){
   DataArr[<?php echo $InerArr->categoryId?>]['categoryId']='<?php echo $InerArr->categoryId?>';
   DataArr[<?php echo $InerArr->categoryId?>]['categoryName']='<?php echo str_replace(array("\r\n","\n\r","\r", "\n"), '', stripslashes($InerArr->categoryName));?>';
   DataArr[<?php echo $InerArr->categoryId?>]['shortDescription']='<?php echo $InerArr->shortDescription?>';
-  DataArr[<?php echo $InerArr->categoryId?>]['metaTitle']='<?php echo $InerArr->note?>';
+  DataArr[<?php echo $InerArr->categoryId?>]['metaTitle']='<?php echo $InerArr->metaTitle?>';
   DataArr[<?php echo $InerArr->categoryId?>]['metaKeyWord']='<?php echo $InerArr->metaKeyWord?>';
   DataArr[<?php echo $InerArr->categoryId?>]['metaDescription']='<?php echo $InerArr->metaDescription?>';
   DataArr[<?php echo $InerArr->categoryId?>]['view']='<?php echo $InerArr->view?>';
+  DataArr[<?php echo $InerArr->categoryId?>]['image']='<?php echo $InerArr->image?>';
   DataArr[<?php echo $InerArr->categoryId?>]['userCategoryView']='<?php echo $InerArr->userCategoryView?>';
   DataArr[<?php echo $InerArr->categoryId?>]['status']='<?php echo $InerArr->status?>';
   </script>
@@ -276,7 +283,21 @@ function AskDelete(id){
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
   </tr>
-  
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable">Browse image</td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top">
+        <img src="" height="1" width="1" id="EditEditcategoryImageImg" title="Click here to change this image" alt="Click here to change this image">
+        <input type="file" name="EditcategoryImage" id="EditcategoryImage" style="display:none;">
+    </td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
   
   <tr>
     <td align="left" valign="top">&nbsp;</td>
@@ -391,7 +412,7 @@ function AskDelete(id){
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top" class="ListHeadingLable"> Meta Descriptions </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"><textarea name="metaDescrition" type="text" id="metaDescrition"  class="required"></textarea></td>
+    <td align="left" valign="top"><textarea name="metaDescription" type="text" id="metaDescription"  class="required"></textarea></td>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
@@ -493,13 +514,16 @@ function AskDelete(id){
 
 </table>
 <?php echo $AdminHomeRest;?>
-<script>
+<script type="text/javascript">
 $(document).ready(function(){
 	$("#AdminAdd").validate();	
 	$("#AdminAdd1").validate();	
 	
-        
-	/*$('#categoryName').live('blur',function(){
+        $('#EditEditcategoryImageImg').on('click',function(){
+            $('#EditcategoryImage').fadeIn('slow');
+            $(this).fadeOut();
+        });
+	/*$('#categoryName').on('blur',function(){
 		var CheckUserNameAjaxURL='<?php //echo ADMIN_BASE_URL.'ajax/check_category_name/'?>';
 		var CheckUserNameAjaxData='categoryName='+$(this).val();
 		$.ajax({
@@ -520,7 +544,7 @@ $(document).ready(function(){
 	
 	
 	
-	/*$('#EditcategoryName').live('blur',function(){
+	/*$('#EditcategoryName').on('blur',function(){
 		var CheckEditUserNameAjaxURL='<?php echo ADMIN_BASE_URL.'ajax/check_edit_category_name/'?>';
 		var CheckEditUserNameAjaxData='categoryName='+$(this).val()+'&categoryId='+$('#categoryId').val();
 		$.ajax({
@@ -540,7 +564,7 @@ $(document).ready(function(){
 	}); */
 	
 	
-	$('#CheckAll').live('click',function(){
+	$('#CheckAll').on('click',function(){
 		$('input[name="categoryId[]"]').each(function(){
                 jQuery(this).prop( "checked", true );
         });	
@@ -548,7 +572,7 @@ $(document).ready(function(){
 		$(this).hide();
 	});
 	
-	$('#UnCheckAll').live('click',function(){
+	$('#UnCheckAll').on('click',function(){
 		$('input[name="categoryId[]"]:checked').each(function(){
                 jQuery(this).prop( "checked", false );
         });	
@@ -556,7 +580,7 @@ $(document).ready(function(){
 		$(this).hide();
 	});
 	
-	$('#BatchActive').live('click',function(){
+	$('#BatchActive').on('click',function(){
 		var itemChecked=false;
 		var categoryIds= new Array();
 		$('input[name="categoryId[]"]').each(function(){
@@ -575,7 +599,7 @@ $(document).ready(function(){
 		}
 	});
 	
-	$('#BatchInActive').live('click',function(){
+	$('#BatchInActive').on('click',function(){
 		var itemChecked=false;
 		var categoryIds= new Array();
 		$('input[name="categoryId[]"]').each(function(){
@@ -594,7 +618,7 @@ $(document).ready(function(){
 		}
 	});
 	
-	$('#BatchDelete').live('click',function(){
+	$('#BatchDelete').on('click',function(){
 		var itemChecked=false;
 		var categoryIds= new Array();
 		$('input[name="categoryId[]"]').each(function(){
@@ -615,22 +639,22 @@ $(document).ready(function(){
 	
 	
         
-        $('#Export').live('click',function(){
+        $('#Export').on('click',function(){
             location.href='<?php echo ADMIN_BASE_URL.'ajax/export_cartegory';?>';
         });
         
-        $('#SampleFormateDownload').live('click',function(){
+        $('#SampleFormateDownload').on('click',function(){
             location.href='<?php echo ADMIN_BASE_URL.'ajax/csv_sample_format/category';?>';
         });
         
-        $('.ActiveCategoryLinkClass').live('click',function(){
+        $('.ActiveCategoryLinkClass').on('click',function(){
             //alert('rr');
             var cat_id=$(this).attr('alt');
             var ActiveCategoryLink=$(this).attr('ActiveCategoryLink');
             location.href='<?php echo base_url().'webadmin/category/manage_category_link/'?>'+cat_id+'/'+ActiveCategoryLink;
         });
         
-        $('.ActiveAddTOCartLinkClass').live('click',function(){
+        $('.ActiveAddTOCartLinkClass').on('click',function(){
             //alert('rr');
             var cat_id=$(this).attr('alt');
             var ActiveAddTOCartLink=$(this).attr('ActiveAddTOCartLink');
