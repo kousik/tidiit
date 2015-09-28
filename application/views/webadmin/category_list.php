@@ -1,5 +1,7 @@
 <?php echo $AdminHomeLeftPanel;
-
+$productPageTypeArr=$this->config->item('productPageTypeArr');
+$categoryTemplateArr=$this->config->item('categoryTemplateArr');
+$categoryImagePath=ResourcesPath.'category/admin/';
 //print_r($parrentData);die;?>
 <table cellspacing=5 cellpadding=5 width=90% border=0 >
   
@@ -40,17 +42,13 @@ function ShowAddAdminBox(){
 	$('#EditBox').fadeIn(2500);
 	$('#EditUserFullName').text(DataArr[id]['categoryName']+' '+DataArr[id]['categoryName']);
 	$('#EditcategoryName').val(DataArr[id]['categoryName']);
-	$('#Editnote').val(DataArr[id]['note']);
+	$('#EditshortDescription').val(DataArr[id]['shortDescription']);
 	$('#EditmetaTitle').val(DataArr[id]['metaTitle']);
 	$('#EditmetaKeyWord').val(DataArr[id]['metaKeyWord']);
 	$('#EditmetaDescription').val(DataArr[id]['metaDescription']);
-        
-	//$('#EditDescription').val(UserDataArr[id]['Description']);
-	if(document.AdminEdit.Editstatus[0].value==DataArr[id]['status']){
-		document.AdminEdit.Editstatus[0].checked=true;
-	}else{
-		document.AdminEdit.Editstatus[1].checked=true;
-	}
+        $("input[type='radio'][name='Editview'][value='"+DataArr[id]['view']+"']").prop("checked",true);
+        $("input[type='radio'][name='EdituserCategoryView'][value='"+DataArr[id]['userCategoryView']+"']").prop("checked",true);
+	
 	$('#categoryId').val(DataArr[id]['categoryId']);
 	
  }
@@ -112,10 +110,9 @@ function AskDelete(id){
 	<a href="#" id="UnCheckAll" style="display: none;text-decoration: underline;">UnCheckAll</a></td>
     <td width="25%">Category Name </td>
     <td width="10%">Category ID </td>
-    <!--<td width="10%">Popular</td> -->
     <td width="10%">status</td>
-    <td width="8%">Link status</td>
-    <td width="10%">Add Cart status</td>
+    <td width="8%">Category Page Template</td>
+    <td width="10%">Product Page Template</td>
     <td width="35%">Action</td>
   </tr>
   <script language="javascript">
@@ -123,7 +120,7 @@ function AskDelete(id){
   </script>
   <?php $val=0; 
   if(count($DataArr)>0){
-  foreach($DataArr as $InerArr){?>
+  foreach($DataArr as $InerArr){ ?>
   <tr class="ListTestLable <?php if($val%2 == 0){ echo 'oddtbl'; } else { echo 'eventbl'; } ?>" height="20px;">
     <td><?php echo $val+1;?><input  type="checkbox" name="categoryId[]" value="<?php echo $InerArr->categoryId;?>"/></td>
     <td>
@@ -137,8 +134,8 @@ function AskDelete(id){
         <td><?php echo $InerArr->categoryId;?></td>
 	<?php /*<td><?php echo ($InerArr->PopularStore=='1')?'Yes':'No';?></td>*/?>
     <td><?php echo ($InerArr->status=='1')?'Active':'Inactive';?></td>
-    <td><?php echo ($InerArr->showProduct=='1')?'Active Link':'Inactive Link';?></td>
-    <td><?php echo ($InerArr->isAddToCart=='1')?'Yes':'No';?></td>
+    <td><?php if($InerArr->userCategoryView!='' && $InerArr->userCategoryView>0){echo $productPageTypeArr[$InerArr->userCategoryView];}?></td>
+    <td><?php if($InerArr->view!='' && $InerArr->view>0){echo $productPageTypeArr[$InerArr->view];}?></td>
     <td>
 	<?php if($InerArr->status=='1'){$action=0;}else{$action=1;}?>
 	<a href="<?php echo base_url().'webadmin/category/change_status/'.$InerArr->categoryId.'/'.$action;?>" class="AdminDashBoardLinkText"><?php if($InerArr->status=='1'){?><img src="<?php echo $SiteImagesURL.'webadmin/';?>active1.png" alt="Inactive" title="Active" /><?php }else{?><img src="<?php echo $SiteImagesURL.'webadmin/';?>inactive1.png" alt="Inactive" title="Inactive" /><?php }?></a>
@@ -147,30 +144,18 @@ function AskDelete(id){
 	&nbsp;&nbsp;
 	<a href="javascript:void(0);" onclick="AskDelete('<?php echo $InerArr->categoryId;?>');" class="AdminDashBoardLinkText">
             <img src="<?php echo $SiteImagesURL.'webadmin/';?>delete.png" width="15" height="15" title="Delete"/></a>
-        <?php if($InerArr->parrentCategoryId>0){?>
-        &nbsp;&nbsp;&nbsp;
-        <?php if($InerArr->showProduct==0){$ActiveCategoryLink=1;}else{$ActiveCategoryLink=0;}?>
-        <a href="javascript:void(0);" class="ActiveCategoryLinkClass" alt="<?php echo $InerArr->categoryId;?>" title="<?php echo $InerArr->categoryName;?>" ActiveCategoryLink="<?php echo $ActiveCategoryLink;?>">
-            <img src="<?php echo $SiteImagesURL.'webadmin/';?>manage-link.png" width="20" height="20" title="Change Link State"/></a>&nbsp;
-        <?php /*&nbsp;&nbsp;
-        <a href="javascript:void(0);" class="categoryIdForTermsClass" alt="<?php echo $InerArr->categoryId;?>" title="<?php echo $InerArr->categoryName;?>">
-            <img src="<?php echo $SiteImagesURL.'webadmin/';?>update-terms.png" width="20" height="20" title="Update Terms"/></a>*/?>&nbsp;&nbsp;&nbsp;
-        <?php if($InerArr->isAddToCart==0){$ActiveAddTOCartLink=1;}else{$ActiveAddTOCartLink=0;}?>
-        <a href="javascript:void(0);" class="ActiveAddTOCartLinkClass" alt="<?php echo $InerArr->categoryId;?>" title="<?php echo $InerArr->categoryName;?>" ActiveAddTOCartLink="<?php echo $ActiveAddTOCartLink;?>">
-          <img src="<?php echo $SiteImagesURL.'webadmin/';?>manage-add-to-cart.png" width="20" height="20" title="Change Add to Cart State"/></a>
-        &nbsp;&nbsp;
-        <?php }?>
-        
     </td> 
   </tr>
   <script language="javascript">
   DataArr[<?php echo $InerArr->categoryId?>]=new Array();
   DataArr[<?php echo $InerArr->categoryId?>]['categoryId']='<?php echo $InerArr->categoryId?>';
   DataArr[<?php echo $InerArr->categoryId?>]['categoryName']='<?php echo str_replace(array("\r\n","\n\r","\r", "\n"), '', stripslashes($InerArr->categoryName));?>';
-  DataArr[<?php echo $InerArr->categoryId?>]['note']='<?php echo $InerArr->note?>';
+  DataArr[<?php echo $InerArr->categoryId?>]['shortDescription']='<?php echo $InerArr->shortDescription?>';
   DataArr[<?php echo $InerArr->categoryId?>]['metaTitle']='<?php echo $InerArr->note?>';
   DataArr[<?php echo $InerArr->categoryId?>]['metaKeyWord']='<?php echo $InerArr->metaKeyWord?>';
   DataArr[<?php echo $InerArr->categoryId?>]['metaDescription']='<?php echo $InerArr->metaDescription?>';
+  DataArr[<?php echo $InerArr->categoryId?>]['view']='<?php echo $InerArr->view?>';
+  DataArr[<?php echo $InerArr->categoryId?>]['userCategoryView']='<?php echo $InerArr->userCategoryView?>';
   DataArr[<?php echo $InerArr->categoryId?>]['status']='<?php echo $InerArr->status?>';
   </script>
   <?php $val++;}
@@ -188,7 +173,7 @@ function AskDelete(id){
   </tr>
  
   <tr>
-    <td><form name="AdminEdit" id="AdminEdit" method="post" action="<?php echo base_url()?>webadmin/category/edit/">
+    <td><form name="AdminEdit" id="AdminEdit" method="post" action="<?php echo base_url()?>webadmin/category/edit/"  enctype="multipart/form-data">
 <table width="70%" border="0" align="center" cellpadding="0" cellspacing="0" id="EditBox" style="display:none;">
   <tr>
     <th colspan="4"><span class="PageHeading">Category Edit of <span id="EditBoxTitle"></span></span></th>
@@ -201,7 +186,7 @@ function AskDelete(id){
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable"> categoryName </td>
+    <td align="left" valign="top" class="ListHeadingLable"> Category Name </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top"><input name="EditcategoryName" type="text" id="EditcategoryName"  class="required" /></td>
   </tr>
@@ -213,9 +198,9 @@ function AskDelete(id){
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable"> note </td>
+    <td align="left" valign="top" class="ListHeadingLable"> Short Description </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"><textarea name="Editnote" type="text" id="Editnote"  class="required"></textarea> </td>
+    <td align="left" valign="top"><textarea name="EditshortDescription" type="text" id="EditshortDescription"  class="required"></textarea> </td>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
@@ -249,7 +234,7 @@ function AskDelete(id){
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable"> Meta Descrition </td>
+    <td align="left" valign="top" class="ListHeadingLable"> Meta Description </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top"><textarea name="EditmetaDescription" type="text" id="EditmetaDescription"  class="required"></textarea> </td>
   </tr>
@@ -259,6 +244,40 @@ function AskDelete(id){
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
   </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable"> Select Category Page Template </td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top">
+        <?php foreach($categoryTemplateArr as $k => $v){?>
+        <label><input type="radio" name="EdituserCategoryView" value="<?php echo $k;?>" /> <?php echo $v;?> </label>
+        <?php }?>
+    </td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable"> Select Seller and Buyer Product Product Page Template </td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top">
+        <?php foreach($productPageTypeArr as $k => $v){?>
+        <label><input type="radio" name="Editview" value="<?php echo $k;?>" class="required"/> <?php echo $v;?> </label>
+        <?php }?>
+    </td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  
+  
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
@@ -305,13 +324,13 @@ function AskDelete(id){
 </form></td>
   </tr>
   <tr>
-    <td><form name="AdminAdd" id="AdminAdd" method="post" action="<?php echo base_url()?>webadmin/category/add" >
-<table width="70%" border="0" align="center" cellpadding="0" cellspacing="0" id="AddBox" style="display:none;">
+    <td><form name="AdminAdd" id="AdminAdd" method="post" action="<?php echo base_url()?>webadmin/category/add"  enctype="multipart/form-data">
+<table width="95%" border="0" align="center" cellpadding="0" cellspacing="0" id="AddBox" style="display:none;">
   <tr>
     <th width="13%" align="left" valign="top" scope="col">&nbsp;</th>
-    <th width="18%" align="left" valign="top" scope="col">&nbsp;</th>
+    <th width="28%" align="left" valign="top" scope="col">&nbsp;</th>
     <th width="3%" align="left" valign="top" scope="col" class="PageHeading">&nbsp;</th>
-    <th width="66%" align="left" valign="top" scope="col"><span class="PageHeading">Category Add</span></th>
+    <th width="56%" align="left" valign="top" scope="col"><span class="PageHeading">Category Add</span></th>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
@@ -331,30 +350,11 @@ function AskDelete(id){
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
   </tr>
-  <?php if($parrentData[0]->categoryId==0){?>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable"> Category Is Top</td>
+    <td align="left" valign="top" class="ListHeadingLable"> Short Description </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top">
-	<select name="IsTop" id="IsTop">
-		<option value="0" selected>Top</option>
-		<option value="1">Not Top</option>
-	</select>
-    </td>
-  </tr>
-  <tr>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-  </tr>
-  <?php }?>
-  <tr>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable"> note </td>
-    <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"><textarea name="note" type="text" id="note"  class="required"></textarea></td>
+    <td align="left" valign="top"><textarea name="shortDescription" type="text" id="shortDescription"  class="required"></textarea></td>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
@@ -389,7 +389,7 @@ function AskDelete(id){
   
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable"> Meta Descritions </td>
+    <td align="left" valign="top" class="ListHeadingLable"> Meta Descriptions </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top"><textarea name="metaDescrition" type="text" id="metaDescrition"  class="required"></textarea></td>
   </tr>
@@ -399,9 +399,53 @@ function AskDelete(id){
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
   </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable"> Select Category Image</td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top"><input type="file" name="categoryImage" id="categoryImage"></td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable"> Select Category Page Template</td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top">
+        <?php foreach($categoryTemplateArr as $k => $v){?>
+        <label><input type="radio" name="userCategoryView" value="<?php echo $k;?>" class="required"/> <?php echo $v;?> </label>
+        <?php }?>
+    </td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable"> Select Seller and Buyer Product Product Page Template</td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top">
+        <?php foreach($productPageTypeArr as $k => $v){?>
+        <label><input type="radio" name="view" value="<?php echo $k;?>" class="required"/> <?php echo $v;?> </label>
+        <?php }?></td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  
   <tr class="ListHeadingLable">
     <td align="left" valign="top"><input  type="hidden" name="parrentCategoryId" value="<?php echo $parrentData[0]->categoryId;?>"/></td>
-    <td align="left" valign="top">status</td>
+    <td align="left" valign="top" class="ListHeadingLable">status</td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top">Active
       <input name="status" type="radio" value="1"  class="required" checked=""/>
@@ -439,82 +483,6 @@ function AskDelete(id){
   <tr>
       <td>&nbsp;</td>
   </tr>
-  <tr>
-      <td>
-          <form name="AdminAdd2" id="AdminAdd2" method="post" action="<?php echo base_url()?>webadmin/category/manage_terms_condition" >
-              <table width="70%" border="0" align="center" cellpadding="0" cellspacing="0" id="ManageTermsDataTable" style="display:none;">
-                    <tr>
-                      <td align="left" valign="top" width="20%">&nbsp;</td>
-                      <td align="left" valign="top" width="30%">&nbsp;</td>
-                      <td align="left" valign="top" width="5%">&nbsp;</td>
-                      <td align="left" valign="top" width="45%">&nbsp;</td>
-                    </tr>
-                      <tr>
-                      <th colspan="4"><span class="PageHeading">Manage Terms Conditions <span id="ManageSEOTableHeading"></span></th>
-                    </tr>
-                    <tr>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                    </tr>
-                    <tr>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                    </tr>
-                    <tr>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top" class="ListHeadingLable">Category Region </td>
-                      <td align="left" valign="top"><label><strong>:</strong></label></td>
-                      <td align="left" valign="top"><select name="CategoryTermsRegionID" id="CategoryTermsRegionID" class="required">
-                              <option value="" selected>select</option>
-                              <option value="1" >USA</option>
-                              <option value="99">India</option>
-                              <option value="240">Others</option>
-                          </select></td>
-                    </tr>
-                    <tr>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top"><input  type="hidden" name="parrentCategoryId" value="<?php echo $parrentData[0]->categoryId;?>"/>
-                    <input  type="hidden" name="TermsDatacategoryId" id="TermsDatacategoryId" value=""/></td>
-                    </tr>
-
-                    <tr class="ListHeadingLable">
-                      <td align="left" valign="top" id="TermsTDHTML" colspan="4"></td>
-                    </tr>
-                    <tr>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                    </tr>
-                    <tr>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top"><label></label></td>
-                      <td align="left" valign="top"><input type="submit" name="Submit3" value="Submit" class="btn-primary btn-large"/>&nbsp;&nbsp;&nbsp;
-                        <input type="button" name="Submit22" value="Cancel" onclick="return CancelAdd();" class="btn-primary btn-large"/></td>
-                    </tr>
-                    <tr>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                    </tr>
-                    <tr>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                      <td align="left" valign="top">&nbsp;</td>
-                    </tr>
-                  </table>
-          </form>
-      </td>
-  </tr>
   
   
   <tr>
@@ -530,33 +498,6 @@ $(document).ready(function(){
 	$("#AdminAdd").validate();	
 	$("#AdminAdd1").validate();	
 	
-        $('.seoDataManage').live('click',function(){ //alert('rrr');
-            $('#AddBox').fadeOut('fast');
-            $('#EditBox').hide();
-            $('#PageHeading').hide();
-            $('#ListBox').hide();
-            $('#AddBtn').hide();
-            $('#BatchActionRow').hide();
-            $('#ManageSEOTable').fadeIn(2000);
-            $('#ManageSEOTableHeading').text($(this).attr('title'));
-            $('#SEODatacategoryId').val($(this).attr('alt'));
-        });
-        
-        $('#CategorySEORegionID').live('change',function(){
-           var SEODataAjaxURL='<?php echo ADMIN_BASE_URL.'ajax/get_category_seo_data/'?>';
-           var SEODataAjaxData='categoryId='+$('#SEODatacategoryId').val()+'&RegionID='+$(this).val();
-           console.log(SEODataAjaxData);
-            $.ajax({
-                type: "POST",
-                url: SEODataAjaxURL,
-                data: SEODataAjaxData,
-                success: function(msg){
-                    //console.log(msg);
-                    $('#SEOTDHTML').html(msg);
-                }
-                }); 
-        });
-        
         
 	/*$('#categoryName').live('blur',function(){
 		var CheckUserNameAjaxURL='<?php //echo ADMIN_BASE_URL.'ajax/check_category_name/'?>';
@@ -696,11 +637,6 @@ $(document).ready(function(){
             location.href='<?php echo base_url().'webadmin/category/manage_category_add_to_cart_link/'?>'+cat_id+'/'+ActiveAddTOCartLink;
         });
         
-        $('.categoryIdForTermsClass').live('click',function(){
-            //alert('rr');
-            var cat_id=$(this).attr('alt');
-            location.href='<?php echo base_url().'webadmin/category/update_terms/'?>'+cat_id;
-        });
         
 });
 </script>

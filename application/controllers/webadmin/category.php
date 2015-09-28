@@ -6,7 +6,7 @@ class Category extends MY_Controller{
 	}
 	
 	public function index(){
-		redirect(base_url().'admin');
+		redirect(base_url().'webadmin/');
 	}
 	
 	public function viewlist($parrentId=0){
@@ -29,63 +29,70 @@ class Category extends MY_Controller{
 	
 	public function add(){
 		$categoryName=$this->input->post('categoryName',TRUE);
-		$note=$this->input->post('note',TRUE);
-		$isTop=$this->input->post('isTop',TRUE);
+		$shortDescription=$this->input->post('shortDescription',TRUE);
 		$parrentCategoryId=$this->input->post('parrentCategoryId',TRUE);
+		$userCategoryView=$this->input->post('userCategoryView',TRUE);
+		$view=$this->input->post('view',TRUE);
 		$status=$this->input->post('status',TRUE);
-		
-		
-		if($isTop==""){
-			$isTop=1;
-		}
-		$dataArr=array(
-		'categoryName'=>$categoryName,
-		'parrentCategoryId'=>$parrentCategoryId,
-		'isTop'=>$isTop,
-		'status'=>$status,
-                'note'=>$note
-		);
-		
-		//print_r($dataArr);die;
-		$this->Category_model->add($dataArr);
-		
-		$this->session->set_flashdata('Message','Category added successfully.');
-		redirect(base_url().'webadmin/category/viewlist/'.$parrentCategoryId);
+		if($_FILES['categoryImage']['name']==""){
+                    $this->session->set_flashdata('Message','Please Browse Category Image.');
+                }else{
+                    $file=$_FILES['categoryImage'];
+                    $image=time().'.'.end(explode('.',$file['name']));
+                    //move_uploaded_file($file['tmp_name'],$imagePath.$image);
+                    $this->category_image_resize($file,$image);
+                    $status=$this->input->post('status',TRUE);
+                    $pageId=$this->input->post('pageId',TRUE);
+                    $dataArr=array(
+                        'categoryName'=>$categoryName,
+                        'parrentCategoryId'=>$parrentCategoryId,
+                        'status'=>$status,
+                        'view'=>$view,
+                        'shortDescription'=>$shortDescription,
+                        'userCategoryView'=>$userCategoryView,
+                        'image'=>$image
+                    );
+
+                    //print_r($dataArr);die;
+                    $this->Category_model->add($dataArr);
+                    $this->session->set_flashdata('Message','Category added successfully.');
+                }
+                redirect(base_url().'webadmin/category/viewlist/'.$parrentCategoryId);
 	}
 	
 	public function edit(){
-		$categoryName=$this->input->post('EditcategoryName',TRUE);
-		$note=$this->input->post('Editnote',TRUE);
-		$status=$this->input->post('Editstatus',TRUE);
-		$CategoryID=$this->input->post('CategoryID',TRUE);
-		$parrentCategoryId=$this->input->post('parrentCategoryId',TRUE);
-		
-		if($parrentCategoryId==""){
-			$parrentCategoryId=0;
-		}
-		
-		$dataArr=array(
-		'categoryName'=>$categoryName,
-		'status'=>$status,
-                'note'=>$note
-		);
-		
-		//print_r($dataArr);die;
-		
-		$this->Category_model->edit($dataArr,$CategoryID);
-		
-		$this->session->set_flashdata('Message','Category updated successfully.');
-		redirect(base_url().'webadmin/category/viewlist/'.$parrentCategoryId);
+            $categoryName=$this->input->post('EditcategoryName',TRUE);
+            $note=$this->input->post('Editnote',TRUE);
+            $status=$this->input->post('Editstatus',TRUE);
+            $CategoryID=$this->input->post('CategoryID',TRUE);
+            $parrentCategoryId=$this->input->post('parrentCategoryId',TRUE);
+
+            if($parrentCategoryId==""){
+                    $parrentCategoryId=0;
+            }
+
+            $dataArr=array(
+            'categoryName'=>$categoryName,
+            'status'=>$status,
+            'note'=>$note
+            );
+
+            //print_r($dataArr);die;
+
+            $this->Category_model->edit($dataArr,$CategoryID);
+
+            $this->session->set_flashdata('Message','Category updated successfully.');
+            redirect(base_url().'webadmin/category/viewlist/'.$parrentCategoryId);
 	}
 	
 	public function change_status($CategoryID,$Action){
-		$this->Category_model->change_category_status($CategoryID,$Action);
-                $Data=$this->Category_model->get_parrent_by_category_id($CategoryID);
-                //echo '<pre>';print_r($Data);die;
-		$parrentCategoryId=$Data[0]->parrentCategoryId;
-                //echo $parrentCategoryId;die;
-		$this->session->set_flashdata('Message','Category status updated successfully.');
-		redirect(base_url().'webadmin/category/viewlist/'.$parrentCategoryId);
+            $this->Category_model->change_category_status($CategoryID,$Action);
+            $Data=$this->Category_model->get_parrent_by_category_id($CategoryID);
+            //echo '<pre>';print_r($Data);die;
+            $parrentCategoryId=$Data[0]->parrentCategoryId;
+            //echo $parrentCategoryId;die;
+            $this->session->set_flashdata('Message','Category status updated successfully.');
+            redirect(base_url().'webadmin/category/viewlist/'.$parrentCategoryId);
 	}
 	
 	public function delete($CategoryID){
@@ -237,5 +244,57 @@ class Category extends MY_Controller{
             //print_r($dataArr);die;
             redirect(base_url().'webadmin/category/viewlist/'.$parrentCategoryId);
         }
+        
+        public function category_image_resize($file,$fileName){
+		/// process the image for all size. and water mark
+		$PHOTOPATH=$this->config->item('ResourcesPath').'category/';
+		$OriginalPath=$PHOTOPATH.'original/';
+		//echo '$OriginalPath :- '.$OriginalPath.'<br>';
+		$OriginalFilePath=$OriginalPath.$fileName;
+		//echo '$OriginalFilePath :- '.$OriginalFilePath.'<br>';
+		//echo '<pre>';print_r($file);
+		if(!@move_uploaded_file($file["tmp_name"],$OriginalFilePath)){
+			die('not moveing the file');
+		}
+		
+		//echo 'move uploaed done for original image ====<br>';
+		/// ************admin***************
+		$config['image_library'] = 'gd2';
+		$config['source_image'] = $OriginalFilePath;
+		$config['new_image'] = $PHOTOPATH. 'admin/';
+		$config['width'] = 350;
+		$config['height'] = 100;
+		$config['maintain_ratio'] = true;
+		$config['master_dim'] = 'auto';
+		$config['create_thumb'] = FALSE;
+		$this->image_lib->initialize($config);
+		$this->load->library('image_lib', $config);
+		if($this->image_lib->resize()){
+			//echo '<br>thumb done for 140X100.';
+		}else{
+			$this->image_lib->display_errors();
+		}
+		
+		$this->image_lib->clear();
+		
+		/// ************350X350*************** at first level category
+		$config['image_library'] = 'gd2';
+		$config['source_image'] = $OriginalFilePath;
+		$config['new_image'] = $PHOTOPATH. '350X350/';
+		$config['width'] = 350;
+		$config['height'] = 350;
+		$config['maintain_ratio'] = true;
+		$config['master_dim'] = 'auto';
+		$config['create_thumb'] = FALSE;
+		$this->image_lib->initialize($config);
+		$this->load->library('image_lib', $config);
+		if($this->image_lib->resize()){
+			//echo '<br>thumb done for 95X82.';
+		}else{
+			$this->image_lib->display_errors();
+		}
+		
+		$this->image_lib->clear();
+	}
 }
 ?>

@@ -181,5 +181,9 @@ class User_model extends CI_Model {
             $this->db->insert($this->_table_bill_address,$dataArr);
             return $this->db->insert_id();
         }
+        
+        public function get_user_page_type($userId){
+            return $this->db->from($this->_page_type)->where('userId',$userId)->get()->result();
+        }
 }
 ?>

@@ -22,9 +22,7 @@ class User_model extends CI_Model {
             return $this->db->insert_id();
         }
 
-        public function get_user_page_type($userId){
-            return $this->db->from($this->_page_type)->where('userId',$userId)->get()->result();
-        }
+        
         
         public function add_user_page_type($dataArr){
             $this->db->insert($this->_page_type,$dataArr);
