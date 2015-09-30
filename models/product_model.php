@@ -12,7 +12,8 @@ class Product_model extends CI_Model {
 	private $_tmp_cart="temp_cart";
 	private $_tmp_shipping="user_temp_cart_shipping";
         private $_table_deal="product_deal";
-        private $_table_brand="product_deal";
+        private $_table_brand="product_brand";
+        private $_table_seller="product_seller";
                 
 	function __construct() {
 		$this->_SiteSession=$this->session->userdata('USER_SITE_SESSION_ID');
@@ -20,6 +21,7 @@ class Product_model extends CI_Model {
 	
 	public function get_all_admin($PerPage=0,$PageNo=0){
             //echo '<pre>'.print_r($_POST);die;
+            $userId=  $this->session->userdata('FE_SESSION_VAR');
             $Title              =  $this->input->get_post('SearchFilterTitle',TRUE);
             $productModel       =  $this->input->get_post('SearchFilterCode',TRUE);
             $Status             =  $this->input->get_post('SearchFilterStatus',TRUE);
@@ -37,9 +39,11 @@ class Product_model extends CI_Model {
 		//$sql="SELECT p.*,pi.Image,co.CountryName,c.CategoryName FROM `product` as p JOIN `product_image` as pi ON(p.productId=pi.productId) JOIN `product_country` AS pc ON(p.productId=pc.productId) JOIN `category` AS c ON(p.categoryId=c.categoryId) LEFT JOIN `country` AS co ON(pc.CountryID=co.CountryID)  WHERE p.Status < 2 AND c.Status='1' ORDER BY p.productId DESC";
                 $this->db->select('p.*,pi.image,c.categoryName')->from('product p');
                 $this->db->join('product_image pi','p.productId=pi.productId');
+                $this->db->join('product_seller ps','p.productId=ps.productId');
                 $this->db->join('product_category pc','pc.productId=p.productId');
                 $this->db->join('category c','pc.categoryId=c.categoryId');
                 $this->db->where('c.status','1');
+                $this->db->where('ps.userId',$userId);
                 
                 if($Status==""){
                     $this->db->where('p.status <','2');
@@ -88,6 +92,7 @@ class Product_model extends CI_Model {
 	
         
         public function get_admin_total(){
+            $userId=  $this->session->userdata('FE_SESSION_VAR');
                 $Title              =  $this->input->get_post('SearchFilterTitle',TRUE);
                 $productModel       =  $this->input->get_post('SearchFilterCode',TRUE);
                 $Status             =  $this->input->get_post('SearchFilterStatus',TRUE);
@@ -100,10 +105,12 @@ class Product_model extends CI_Model {
 
                 $this->db->select('p.*,pi.Image,co.CountryName,c.CategoryName,c.isAddToCart')->from('product p');
                 $this->db->join('product_image pi','p.productId=pi.productId');
+                $this->db->join('product_seller ps','p.productId=ps.productId');
                 $this->db->join('product_country pc','p.productId=pc.productId');
                 $this->db->join('category c','p.categoryId=c.categoryId');
                 $this->db->join('country co','pc.CountryID=co.CountryID');
                 $this->db->where('c.Status','1');
+                $this->db->where('ps.userId',$userId);
                 
                 if($Status==""){
                     $this->db->where('p.Status <','2');
@@ -170,6 +177,11 @@ class Product_model extends CI_Model {
             }
         }
 	
+        function add_product_owner($dataArr){
+		$this->db->insert($this->_table_seller,$dataArr);
+		return $this->db->insert_id();
+        }
+        
 	public function edit($DataArr,$productId){
 		$this->db->where('productId',$productId);
 		$this->db->update($this->_table,$DataArr);
@@ -252,7 +264,16 @@ class Product_model extends CI_Model {
 		$this->delete_product_tag($productId);
                 
                 $this->db->where_in('productId',explode(',',$productId));
-		$this->db->delete($this->_table_b); 
+		$this->db->delete($this->_table_brand); 
+                
+                $this->db->where_in('productId',explode(',',$productId));
+		$this->db->delete($this->_table_category); 
+                
+                $this->db->where_in('productId',explode(',',$productId));
+		$this->db->delete($this->_table_deal); 
+                
+                $this->db->where_in('productId',explode(',',$productId));
+		$this->db->delete($this->_table_seller); 
 		return TRUE;
 	}
 	
@@ -493,12 +514,15 @@ class Product_model extends CI_Model {
 		return $this->db->query($sql)->result();
 	}
 	
-	public function get_recent($noOfItem=12){
-		$sql="SELECT p.*,pi.image,c.categoryName "
+	public function get_recent_6_product(){
+		$CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
+		$sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
                         . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                        . " JOIN product_category AS pc ON(pc.productId=p.productId)  "
-                        . " JOIN category AS c ON(pc.categoryId=c.categoryId)  "
-                        . " WHERE p.status=1 AND c.status=1 ORDER BY p.productId DESC,p.updateTime DESC LIMIT 0,$noOfItem";
+                        . " JOIN product_country AS pc ON(pc.productId=p.productId) "
+                        . " JOIN category AS c ON(p.categoryId=c.categoryId)  "
+                        . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
+                        . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
+                        . " WHERE p.Status=1 AND c.Status=1 AND pc.CountryID='".$CountryID."' AND p.isNew='1' ORDER BY p.productId DESC,p.DealPriceUpdateTime DESC LIMIT 0,6";
 		return $this->db->query($sql)->result();
 	}
         

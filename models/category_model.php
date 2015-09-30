@@ -63,7 +63,7 @@ class Category_model extends CI_Model {
 	}
 	
 	public function get_subcategory_by_category_id($categoryId){
-		$sql="SELECT `categoryId` , `categoryName`,`showProduct`,`isAddToCart` FROM category WHERE `parrentCategoryId` ='".$categoryId."' AND status=1";
+		$sql="SELECT `categoryId` , `categoryName` FROM category WHERE `parrentCategoryId` ='".$categoryId."' AND status=1";
 		return $this->db->query($sql)->result();
 	}
 	

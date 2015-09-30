@@ -244,4 +244,50 @@ class Ajax extends MY_Controller{
         }
         echo $stateDropdown;die;
     }
+    
+    function next_category_dropdown(){
+        $categoryId=  $this->input->post('categoryId',TRUE);
+        $required=  $this->input->post('required',TRUE);
+        $categoryDataArr=$this->Category_model->get_subcategory_by_category_id($categoryId);
+        $html='';
+        if(empty($categoryDataArr)){
+            echo $html;die;
+        }else{
+            if($required=='yes'){
+                $required=' required';
+            }else{$required='';}
+            $html='<tr><td class="text-left" width="33%">Select Next Category</td><td class="text-left" width="33%"><select class="form-control '.$required.'" name="NextCategory'.$categoryId.'" id="NextCategory'.$categoryId.'"><option value="">Select</option>';
+            foreach ($categoryDataArr AS $k){
+                $html.='<option value="'.$k->categoryId.'">'.$k->categoryName.'</option>';
+            }
+            $html.='</select></td></tr>';
+            $html.='<script type="text/javascript">jQuery(document).ready(function(){
+       jQuery("#NextCategory'.$categoryId.'").on("change",function(){
+           var removeNextRow=0;
+           jQuery("#categoryMainTable tr").each(function(){
+                if(removeNextRow>0){
+                    jQuery(this).remove();
+                }else{
+                    if(jQuery(this).find("select[id=\'NextCategory'.$categoryId.'\']").length>0){removeNextRow=1;}
+                }
+           });
+           if(jQuery(this).val()==""){
+                return false;
+            }
+         var ajaxURL="'.BASE_URL.'ajax/next_category_dropdown/"; 
+           var ajaxData="categoryId="+jQuery(this).val();
+           jQuery.ajax({
+               type:"POST",
+               url:ajaxURL,
+               data:ajaxData,
+               success:function(msg){
+                   jQuery("#categoryMainTable tr:last").after(msg);
+               }
+           }); 
+       }); 
+    });
+</script>';
+            echo $html;die;
+        }
+    }
 }

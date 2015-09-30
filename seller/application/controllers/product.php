@@ -20,7 +20,7 @@ class Product extends MY_Controller{
             $this->load->view('product_list',$data);
 	}
         
-        function add_product($productPageType=""){
+        function add_product($categoryId=""){
             $this->config->load('product');
             $data=$this->_get_logedin_template();
             $this->load->model('User_model');
@@ -28,12 +28,44 @@ class Product extends MY_Controller{
             //$ServiceData=My_Services::request_services('User_model','get_user_page_type',array(4));
             //$ServiceData=My_Services::request_services('User_model','change_user_status',array(4,1));
             //pre($ServiceData);die;
-            $pageTypeData=$this->User_model->get_user_page_type($this->session->userdata('FE_SESSION_VAR'));
+            //$pageTypeData=$this->User_model->get_user_page_type($this->session->userdata('FE_SESSION_VAR'));
             //pre($pageTypeData);die;
-            if(empty($pageTypeData)){
-                redirect(BASE_URL.'index/update_brand_page_type');
+            if(empty($categoryId)){
+                //$productPageType=$pageTypeData[0]->pageType;
+                $menuArr=array();
+                $TopCategoryData=$this->Category_model->get_top_category_for_product_list();
+                //pre($TopCategoryData);die;
+                /*foreach($TopCategoryData as $k){
+                    $SubCateory=$this->Category_model->get_subcategory_by_category_id($k->categoryId);
+                    if(count($SubCateory)>0){
+                        foreach($SubCateory as $kk => $vv){
+                            $menuArr[$vv->categoryId]=$k->categoryName.' -> '.$vv->categoryName;
+                            $ThirdCateory=$this->Category_model->get_subcategory_by_category_id($vv->categoryId);
+                            if(count($ThirdCateory)>0){
+                                foreach($ThirdCateory AS $k3 => $v3){
+                                    // now going for 4rath
+                                    $menuArr[$v3->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName;
+                                    $FourthCateory=$this->Category_model->get_subcategory_by_category_id($v3->categoryId);
+                                    if(count($FourthCateory)>0){ //print_r($v3);die;
+                                        foreach($FourthCateory AS $k4 => $v4){
+                                            $menuArr[$v4->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName.' -> '.$v4->categoryName;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }*/
+                //pre($menuArr);die;
+                $data['categoryData']=$TopCategoryData;  //$menuArr;
+                //$data['productPageType']=$productPageType;
+                $data['brandArr']=array();
+                //if($productPageType==""){}else{$viewPage='add_product_'.$productPageType;}
+                //$data['productPage']=$this->load->view($viewPage,$data,TRUE);
+                $viewPage='add_product';
+                $this->load->view($viewPage,$data);
             }else{
-                $productPageType=$pageTypeData[0]->pageType;
+                //echo '$categoryId  ='.$categoryId;die;
                 $menuArr=array();
                 $TopCategoryData=$this->Category_model->get_top_category_for_product_list();
                 //pre($TopCategoryData);die;
@@ -60,11 +92,16 @@ class Product extends MY_Controller{
                 }
                 //pre($menuArr);die;
                 $data['CategoryData']=$menuArr;
-                $data['productPageType']=$productPageType;
+                $categoryDetailsArr=$this->Category_model->get_details_by_id($categoryId);
+                $productPageTypeArr=  $this->config->item('productPageTypeArr');
+                //pre($categoryDetailsArr);die;
                 $data['brandArr']=array();
                 //if($productPageType==""){}else{$viewPage='add_product_'.$productPageType;}
                 //$data['productPage']=$this->load->view($viewPage,$data,TRUE);
-               $viewPage='add_product_'.$pageTypeData[0]->pageType;
+                $data['categoryId']=$categoryId;
+               $viewPage='add_product_'.$productPageTypeArr[$categoryDetailsArr[0]->view];
+                $data['productPageType']=$productPageTypeArr[$categoryDetailsArr[0]->view];
+               //echo $viewPage;die;
                 $this->load->view($viewPage,$data);
             }
         }

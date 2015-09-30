@@ -55,7 +55,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                     <label class="control-label main">Product Name</label>                     
                     </div>
                       <div class="col-sm-8">
-                         <input type="text" class="form-control" id="title" placeholder="Product Name" value="Test product Name" name="title" >
+                         <input type="text" class="form-control" id="title" placeholder="Product Name" value="" name="title" >
               <span class="error"></span>
                       </div>
                       </div>
@@ -67,7 +67,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                     <label class="control-label main">Product Short Description:</label>                     
                     </div>
                       <div class="col-sm-8">
-                         <textarea class="form-control" id="shortDescription" placeholder="Meta Tag Description" rows="5" name="shortDescription">Test Product short description</textarea>
+                         <textarea class="form-control" id="shortDescription" placeholder="Meta Tag Description" rows="5" name="shortDescription"></textarea>
               <span class="error"></span>
                       </div>
                       </div>
@@ -88,7 +88,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                             <!-- /.toolbar --> 
                           </header>
                           <div class="body">
-                            <textarea class="ckeditor" cols="80" id="description" name="description" rows="10">Test product description</textarea>
+                            <textarea class="ckeditor" cols="80" id="description" name="description" rows="10"></textarea>
                           </div>
                         </div>
             </div>
@@ -100,7 +100,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                     <label class="control-label main">Meta Tag Title:</label>                     
                     </div>
                       <div class="col-sm-8">
-                         <input type="text" class="form-control" id="metaTitle" placeholder="Meta Tag Title" value="Meta Tag Title" name="metaTitle" >
+                         <input type="text" class="form-control" id="metaTitle" placeholder="Meta Tag Title" value="" name="metaTitle" >
               <span class="error"></span>
                       </div>
                       </div>
@@ -113,7 +113,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                     <label class="control-label main">Meta Tag Description:</label>                     
                     </div>
                       <div class="col-sm-8">
-                          <textarea class="form-control" id="metaDescription" placeholder="Meta Tag Description" rows="5" name="metaDescription">Meta Tag Description</textarea>
+                          <textarea class="form-control" id="metaDescription" placeholder="Meta Tag Description" rows="5" name="metaDescription"></textarea>
               <span class="error"></span>
                       </div>
                       </div>
@@ -126,7 +126,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                     <label class="control-label main">Meta Tag Keywords:</label>                     
                     </div>
                       <div class="col-sm-8">
-                           <textarea class="form-control" id="metaKeyword" placeholder="Meta Tag Keywords" rows="5" name="metaKeyword">Meta Tag Keywords</textarea>
+                           <textarea class="form-control" id="metaKeyword" placeholder="Meta Tag Keywords" rows="5" name="metaKeyword"></textarea>
               <span class="error"></span>
                       </div>
                       </div>
@@ -140,7 +140,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                     <label class="control-label main">Product Tags:</label>                     
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="tag" placeholder="Product Tags" value="tag1,tag2,tag3" name="tag">
+                          <input type="text" class="form-control" id="tag" placeholder="Product Tags" value="" name="tag">
               <span class="error"></span>
                       </div>
                       </div>
@@ -185,7 +185,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                       <label for="input-model" class="control-label main">Model</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="model" placeholder="Model" value="model1" name="model">
+                          <input type="text" class="form-control" id="model" placeholder="Model" value="" name="model">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -232,7 +232,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                       <label for="input-model" class="control-label main">Other Features</label>
                     </div>
                       <div class="col-sm-8">
-                          <textarea class="form-control" id="mobileOtherFeatures" placeholder="Other Features" rows="5" name="mobileOtherFeatures">Other Features</textarea>
+                          <textarea class="form-control" id="mobileOtherFeatures" placeholder="Other Features" rows="5" name="mobileOtherFeatures"></textarea>
                         <span class="error"></span>
                       </div>
                       </div>
@@ -245,7 +245,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                       <label for="input-model" class="control-label main">Screen Size (in cm)</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" placeholder="Screen Size" value="Screen Size" name="screenSize" id="screenSize">
+                          <input type="text" class="form-control" placeholder="Screen Size" value="" name="screenSize" id="screenSize">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -274,7 +274,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                       <label for="input-model" class="control-label main">Display Type</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="displayType" placeholder="Display Type" value="Display Type" name="displayType">
+                          <input type="text" class="form-control" id="displayType" placeholder="Display Type" value="" name="displayType">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -286,7 +286,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                       <label for="input-model" class="control-label main">Pixel Density</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="pixelDensity" placeholder="Pixel Density" value="Pixel Density" name="pixelDensity">
+                          <input type="text" class="form-control" id="pixelDensity" placeholder="Pixel Density" value="" name="pixelDensity">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -316,7 +316,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                       <label for="input-model" class="control-label main">OS Version</label>
                     </div>
                       <div class="col-sm-8">
-                         <input type="text" class="form-control" id="osVersion" placeholder="OS Version" value="Adroid Gelly  Bin" name="osVersion">
+                         <input type="text" class="form-control" id="osVersion" placeholder="OS Version" value="" name="osVersion">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -346,7 +346,7 @@ No</label>
                       <label for="input-model" class="control-label main">Rear Camera</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="mobileRearCamera" placeholder="Rear Camera" value="yes" name="mobileRearCamera">
+                          <input type="text" class="form-control" id="mobileRearCamera" placeholder="Rear Camera" value="" name="mobileRearCamera">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -375,7 +375,7 @@ No</label>
                       <label for="input-model" class="control-label main">Front Camera</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="frontCamera" placeholder="Front Camera" value="Fcamera yes" name="frontCamera">
+                          <input type="text" class="form-control" id="frontCamera" placeholder="Front Camera" value="" name="frontCamera">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -387,7 +387,7 @@ No</label>
                       <label for="input-model" class="control-label main">Other Camera Features</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="mobileOtherCameraFeatures" placeholder="mobile Other Camera Features" value="mobile Other Camera Features" name="mobileOtherCameraFeatures">
+                          <input type="text" class="form-control" id="mobileOtherCameraFeatures" placeholder="mobile Other Camera Features" value="" name="mobileOtherCameraFeatures">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -420,7 +420,7 @@ No</label>
                       <label for="input-model" class="control-label main">Processor Speed</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="processorSpeed" placeholder="Processor Speed" value="Processor Speed" name="processorSpeed">
+                          <input type="text" class="form-control" id="processorSpeed" placeholder="Processor Speed" value="" name="processorSpeed">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -467,7 +467,7 @@ No</label>
                       <label for="input-model" class="control-label main">RAM</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="ram" placeholder="RAM" value="500" name="ram">
+                          <input type="text" class="form-control" id="ram" placeholder="RAM" value="" name="ram">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -479,7 +479,7 @@ No</label>
                       <label for="input-model" class="control-label main">Internal Memory</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="internalMemory" placeholder="PInternal Memory" value="5GB" name="internalMemory">
+                          <input type="text" class="form-control" id="internalMemory" placeholder="PInternal Memory" value="" name="internalMemory">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -491,7 +491,7 @@ No</label>
                       <label for="input-model" class="control-label main">Expandable Memory</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="expandableMemory" placeholder="Expandable Memory" value="32GB" name="expandableMemory">
+                          <input type="text" class="form-control" id="expandableMemory" placeholder="Expandable Memory" value="" name="expandableMemory">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -503,7 +503,7 @@ No</label>
                       <label for="input-model" class="control-label main">Memory Card Slot</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="memoryCardSlot" placeholder="Memory Card Slot" value="2" name="memoryCardSlot">
+                          <input type="text" class="form-control" id="memoryCardSlot" placeholder="Memory Card Slot" value="" name="memoryCardSlot">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -516,7 +516,7 @@ No</label>
                       <label for="input-model" class="control-label main">Battery Capacity</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="batteryCapacity" placeholder="Battery Capacity" value="30days" name="batteryCapacity">
+                          <input type="text" class="form-control" id="batteryCapacity" placeholder="Battery Capacity" value="" name="batteryCapacity">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -545,7 +545,7 @@ No</label>
                       <label for="input-model" class="control-label main">Talk Time</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="talkTime" placeholder="Talk Time" value="24hrs" name="talkTime">
+                          <input type="text" class="form-control" id="talkTime" placeholder="Talk Time" value="" name="talkTime">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -557,7 +557,7 @@ No</label>
                       <label for="input-model" class="control-label main">Standby Time</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="standbyTime" placeholder="Standby Time" value="48hrs" name="standbyTime">
+                          <input type="text" class="form-control" id="standbyTime" placeholder="Standby Time" value="" name="standbyTime">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -570,7 +570,7 @@ No</label>
                       <label for="input-model" class="control-label main">Warranty Type</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="warrantyType" placeholder="Warranty Type" value="6 months" name="warrantyType">
+                          <input type="text" class="form-control" id="warrantyType" placeholder="Warranty Type" value="" name="warrantyType">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -582,7 +582,7 @@ No</label>
                       <label for="input-model" class="control-label main">Warranty Duration(In Month)</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="warrantyDuration" placeholder="Warranty Duration(In Month)" value="60" name="warrantyDuration">
+                          <input type="text" class="form-control" id="warrantyDuration" placeholder="Warranty Duration(In Month)" value="" name="warrantyDuration">
                         <span class="error"></span>
                       </div>
                       </div>
@@ -599,20 +599,16 @@ No</label>
           
           <!-- Step 3 -->
           <section class="idealsteps-step">
-                    <div class="form-group field">
+                    <!--<div class="form-group field">
                       <label for="input-category" class=" control-label main"><span title="" data-toggle="tooltip" data-original-title="(Autocomplete)">Categories</span></label>
                       <div class="col-sm-10">
                         <!--<input type="text" class="form-control" id="input-category" placeholder="Categories" value="" name="category" autocomplete="off"><span class="error"></span>
                         <ul class="dropdown-menu">
-                        </ul>-->
-                        <select name="categoryId" id="categoryId">
-                            <option value="default">Select</option>
-                            <?php foreach($CategoryData AS $k => $v){?>
-                                <option value="<?php echo $k;?>" <?php //if($k==$TopCategoryID){echo 'selected';}?>><?php echo $v;?></option>
-                            <?php }?>
-                        </select>
+                        </ul>
+                          
                       </div>
-                    </div>
+                    </div>-->
+                    <input type="hidden" name="categoryId" id="categoryId" value="<?php echo $categoryId;?>">
                                                          
                    <div class="form-group field required field">
                     <div class="row">
@@ -665,7 +661,7 @@ No</label>
                      <label for="input-minimum" class="control-label main"><span title="" data-toggle="tooltip" data-original-title="Force a minimum ordered amount">Minimum Quantity</span></label> 
                        </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control required" id="minQty" placeholder="Minimum Quantity" value="1" name="minQty"><span class="error"></span>
+                          <input type="text" class="form-control required" id="minQty" placeholder="Minimum Quantity" value="" name="minQty"><span class="error"></span>
                       </div>
                       </div>
                     </div> 
@@ -676,7 +672,7 @@ No</label>
                       <label for="input-subtract" class="control-label main">Quantity</label>
                       </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="qty" placeholder="Minimum Quantity" value="20" name="qty">
+                          <input type="text" class="form-control" id="qty" placeholder="Minimum Quantity" value="" name="qty">
                         <span class="error"></span>
                        </div>
                       </div>
@@ -690,13 +686,13 @@ No</label>
                       <div class="col-sm-8">
                         <div class="row">
                           <div class="col-sm-4">
-                            <input type="text" class="form-control" id="length" placeholder="Length" value="10" name="length" style="width:100px;">
+                            <input type="text" class="form-control" id="length" placeholder="Length" value="" name="length" style="width:100px;">
                           </div>
                           <div class="col-sm-4">
-                            <input type="text" class="form-control" id="width" placeholder="Width" value="10" name="width"  style="width:100px;">
+                            <input type="text" class="form-control" id="width" placeholder="Width" value="" name="width"  style="width:100px;">
                           </div>
                           <div class="col-sm-4">
-                            <input type="text" class="form-control" id="height" placeholder="Height" value="10" name="height"  style="width:100px;">
+                            <input type="text" class="form-control" id="height" placeholder="Height" value="" name="height"  style="width:100px;">
                           </div>
                         </div>
                       </div>
@@ -726,7 +722,7 @@ No</label>
                       <label for="input-weight" class=" control-label main">Weight</label>
                       </div>
                       <div class="col-sm-8">
-                        <input type="text" class="form-control" id="weight" placeholder="Weight" value="200" name="weight"><span class="error"></span>
+                        <input type="text" class="form-control" id="weight" placeholder="Weight" value="" name="weight"><span class="error"></span>
                       </div>
                     </div>
                     </div>
@@ -967,7 +963,7 @@ jQuery(document).ready(function(){
         'WarrantyDuration': 'required',
         'qty': 'required',
         'minQty': 'required',
-        'categoryId':'select:default',
+        //'categoryId':'select:default',
         'img1':'required extension:jpg:png',
         'img2':'required extension:jpg:png',
 		'img3':'required extension:jpg:png',
