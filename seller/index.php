@@ -56,7 +56,7 @@ if (defined('ENVIRONMENT'))
  * as this file.
  *
  */
-	$system_path = 'system';
+	$system_path = '../system';
 
 /*
  *---------------------------------------------------------------
@@ -175,6 +175,8 @@ if (defined('ENVIRONMENT'))
 	// Name of the "system folder"
 	define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
 
+	// Path to root folder
+	define('ROOTPATH', str_replace("system/", "", $system_path));
 
 	// The path to the "application" folder
 	if (is_dir($application_folder))
