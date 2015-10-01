@@ -1,16 +1,17 @@
 <?php echo $AdminHomeLeftPanel;
 $productPageTypeArr=$this->config->item('productPageTypeArr');
+if(empty($productPageTypeArr))
+    $productPageTypeArr=array('1'=>'mobile','2'=>'laptop','3'=>'fashion');
 $categoryTemplateArr=$this->config->item('categoryTemplateArr');
+if(empty($categoryTemplateArr))
+    $categoryTemplateArr=array('1'=>'category_template1','2'=>'category_template2','3'=>'category_template3');
 $categoryImagePath=ResourcesPath.'category/admin/';
 $categoryImageURL=SiteResourcesURL.'category/admin/';
 //print_r($parrentData);die;?>
 <table cellspacing=5 cellpadding=5 width=90% border=0 >
-  
   <tr id="PageHeading">
     <td class="PageHeading" >Category Manager</td>
-  </tr>
-
-  
+  </tr>  
   <tr>
     <td style="padding-left:50px;">&nbsp;</td>
   </tr>
