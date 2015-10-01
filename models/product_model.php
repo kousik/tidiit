@@ -987,4 +987,13 @@ class Product_model extends CI_Model {
         else
             return FALSE;
     }
+    
+    public function get_recent($noOfItem=12){
+        $sql="SELECT p.*,pi.image,c.categoryName "
+                . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
+                . " JOIN product_category AS pc ON(pc.productId=p.productId)  "
+                . " JOIN category AS c ON(pc.categoryId=c.categoryId)  "
+                . " WHERE p.status=1 AND c.status=1 ORDER BY p.productId DESC,p.updateTime DESC LIMIT 0,$noOfItem";
+        return $this->db->query($sql)->result();
+    }
 }
