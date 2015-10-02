@@ -116,18 +116,21 @@
                                                     <div id="login_form">
                                                         <form class="contact_form" action="#" method="post" name="tidiit_user_login_form" id="tidiit_user_login_form">
                                                     <h1>Login Into Your Account</h1>
-                                                <ul>
-                                                    <li>
-                                                        <input type="email" class="textbox1 email required" name="userName" id="userName" placeholder="user@tidiit.com" required />
-                                                        <span class="form_hint">Enter a valid email</span>
-                                                         <p><img src="<?php echo SiteImagesURL;?>contact.png" alt=""></p>
-                                                    </li>
-                                                    <li>
-                                                        <input type="password" name="loginPassword" id="loginPassword" class="textbox2 required" placeholder="password" required>
-                                                        <p><img src="<?php echo SiteImagesURL;?>lock.png" alt=""></p>
-                                                    </li>
+                                                    
+                                                  <div class="form-group has-error">
+                                                    <div class="input-group col-md-8"> 
+                                                      <input id="userName" name="userName" type="text" placeholder="user@tidiit.com" class="form-control email" required >
+                                                      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                                    </div><span id="Email-error" class="help-block">Enter a valid email</span>
+                                                  </div>
+                                                    
+                                                  <div class="form-group has-error">
+                                                    <div class="input-group  col-md-8"> 
+                                                      <input id="loginPassword" name="loginPassword" type="password" placeholder="password" class="form-control" required >
+                                                      <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                                    </div><span id="Email-error" class="help-block">Enter a valid email</span>
+                                                  </div>  
                                                     <input type="hidden" name="webIdLogin" id="webIdLogin" value="">
-                                             </ul>
 
                                              <div class="clear"></div>
                                              <div class="row rem">

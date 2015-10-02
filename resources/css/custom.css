@@ -202,7 +202,7 @@ body{
 
 
 
-.header_right_sectn{border-right:1px solid #eeeeee;}
+.header_right_sectn{border-right:1px solid #eeeeee; min-height:145px;}
 
 
 
@@ -909,10 +909,37 @@ body{
 	border-radius:0;
 
 }
+.howItWork{
+background: none repeat scroll 0 0 rgb(26, 183, 190);
 
+    color: rgb(255, 255, 255);
 
+    font-family: arial;
 
-.inline:hover, .quick_cntct:hover{
+    font-size: 18px;
+
+    padding: 0px 15px;
+
+    position: fixed;
+
+    right:-72px;
+
+    top:90px;
+
+    transform: rotate(270deg);
+
+	-ms-transform: rotate(270deg); /* IE 9 */
+
+    -webkit-transform: rotate(270deg); /* Chrome, Safari, Opera */
+
+	border: 4px double rgba(26, 183, 190, 0);
+
+	text-decoration:none;
+
+	border-radius:0;
+	z-index:1;
+}
+.inline:hover, .quick_cntct:hover, .howItWork:hover{
 
 	color:#077B7F;
 
@@ -930,11 +957,9 @@ body{
 
 
 
-.modal{left:1.5%;}
 
 
 
-.modal-dialog{margin:20px 0 0;}
 
 
 
@@ -1030,35 +1055,6 @@ body{
 
 }
 
-.modal-content {
-
-    /* Bootstrap sets the size of the modal in the modal-dialog class, we need to inherit it */
-
-    width:inherit;
-
-    height:inherit;
-
-    /* To center horizontally */
-
-    margin: 0 auto;
-
-    pointer-events:all;
-
-}
-
-#myModalLogin .modal-content{
-
-	width:85%;
-
-}
-
-#myModalReg .modal-content{
-
-	width:85%;
-
-}
-
-/**/
 
 
 
@@ -1076,9 +1072,9 @@ body{
 
     position: fixed;
 
-    right: -3.5%;
+    right:-51px;
 
-    top: 45%;
+    top:260px;
 
     transform: rotate(270deg);
 
@@ -2841,6 +2837,29 @@ ul, ol {
     background-color:#1ab7be;
     border-color:#1ab7be;
 }
+.acc-wrapper #accordion .panel-heading>a{ display:block;     padding: 10px 15px; color:#fff; font-size:16px; text-decoration:none;}
+.acc-wrapper #accordion .panel-heading>a:hover{ text-decoration:none;}
+.acc-wrapper #accordion .panel-heading{padding:0;background-color: #1ab7be; border-color:#1ab7be;}
+.acc-wrapper #accordion .panel.panel-default{ border:0;     overflow: hidden;}
+.acc-wrapper #accordion .panel-body{border: 1px solid #ddd; border-radius:0 0 4px 4px;}
+.acc-wrapper #accordion .panel-heading>a.collapsed .fa-minus-square:before {
+    content: "\f0fe";
+}
+.acc-wrapper #accordion .panel-body>.spec-body{ padding:0;}
+.orderType .input-group.order-labl{ border: 1px solid #fff; border-radius:4px; cursor:pointer;}
+.orderType .input-group.order-labl .input-group-addon{ border:0; background-color:#fff;}
+.orderType .input-group.order-labl label {    width: 100%;    margin: 0;    padding: 6px; border-left: 1px solid #fff;cursor:pointer; color:#fff;}
+.orderType .input-group-addon input[type=radio]{ margin-top:4px;}
+.orderType-content{ background-color: #1ab7be;}
+.modal-title {font-size: 26px;	color:#474646;	font-family: "controllerfive";}
+.grouporder_id .gen_infmtn h6{ margin-bottom:0;}
+.grouporder_id .list-group-item>.badge{   padding: 2px 5px; background-color:rgba(0,0,0,0.6)}
+.grouporder_id label.list-group-item{ cursor:pointer;}
+.group-selection { margin-bottom:15px; margin-top:15px;}
+.group-selection .input-group{ border:1px solid #1ab7be; border-radius:4px; margin-bottom:10px;}
+.group-label{    display: table-cell;    vertical-align: middle;    padding:10px;}
+.group-selection .input-group-addon{ border:0; background-color:#1ab7be;}
+
 @media screen and (max-width: 600px) {
 	.cart-container-table .table>tbody>tr{        border-bottom: 5px solid #FFF;}
 	.product-img img{  margin:10px 0; width:100px; height:auto;}
@@ -3008,7 +3027,7 @@ ul, ol {
 
 	
 
-	.quick_cntct, .quick_cntct:focus{right: -16%; top: 55%;}
+	.quick_cntct, .quick_cntct:focus{}
 
 	
 
@@ -3062,7 +3081,7 @@ ul, ol {
 
 	
 
-	.quick_cntct, .quick_cntct:focus{right: -14%; top: 48%;}
+	.quick_cntct, .quick_cntct:focus{}
 
 	
 
@@ -3126,7 +3145,7 @@ ul, ol {
 
 	
 
-	.quick_cntct, .quick_cntct:focus{right: -10.5%; top: 72%;}
+	.quick_cntct, .quick_cntct:focus{}
 
 	
 
@@ -3344,8 +3363,8 @@ ul, ol {
 
 	
 
-	.logo{padding: 28px 20px;}
-
+	.logo{padding: 28px 20px;     MIN-HEIGHT: 145px;}
+	.icon_text {    padding: 32px 10px; }
 	
 
 	.search input{width:75%;}
@@ -3380,7 +3399,7 @@ ul, ol {
 
 	
 
-	.quick_cntct, .quick_cntct:focus{right:-5%; top:50%;}
+	.quick_cntct, .quick_cntct:focus{}
 
 	
 
@@ -3498,7 +3517,7 @@ ul, ol {
 
 	
 
-	.quick_cntct, .quick_cntct:focus{top:45%;}
+	.quick_cntct, .quick_cntct:focus{}
 
 	
 
@@ -3576,49 +3595,6 @@ ul, ol {
 
 }
 
-
-
-
-
-
-
-.modal {
-
-    /*! adjust transition time */
-
-    -webkit-transition: all ease-out !important;
-
-    -moz-transition: all 0.3s ease-out !important;
-
-    -o-transition: all 0.3s ease-out !important;
-
-    transition: all 0.3s ease-out !important;
-
-}
-
-.modal.in .modal-dialog {
-
-    /*! editthis transform to any transform you want */
-
-    -webkit-transform: scale(1, 1) !important;
-
-    -ms-transform: scale(1, 1) !important;
-
-    transform: scale(1, 1) !important;
-
-}
-
-.modal.fade .modal-dialog {
-
-    /*! disable sliding from left/right/top/bottom */
-
-    -webkit-transform: translate(0, 0);
-
-    -ms-transform: translate(0, 0);
-
-    transform: translate(0, 0);
-
-}
 
 
 
@@ -3906,43 +3882,11 @@ hr.divider-horizontal {
 
 }
 
-.btn {
+.btn.btn-primary {
 
     background: none repeat scroll 0 0 #1ab7be;
-
-    border: medium none;
-
-    border-radius: 2px;
-
-    color: #fff;
-
-    cursor: pointer;
-
-    display: inline-block;
-
-    font-size: 14px;
-
-    font-weight: 500;
-
-    height: 35px;
-
-    letter-spacing: 0.5px;
-
-    line-height: 35px;
-
-    outline: 1px solid transparent;
-
-    overflow: hidden;
-
-    position: relative;
-
-    text-align: center;
-
-    text-decoration: none;
-
-    text-transform: uppercase;
-
-    transition: all 0.2s ease-out 0s;
+	    border-color: #1ab7be;
+   
 
 }
 
@@ -4218,7 +4162,7 @@ hr.divider-horizontal {
 
 
 
-#accordion {
+.detailssubbox ul#accordion {
 
     list-style: none;
 
@@ -4228,7 +4172,7 @@ hr.divider-horizontal {
 
 }
 
-#accordion div {
+.detailssubbox ul#accordion div {
 
     display: block;
 
@@ -4254,7 +4198,7 @@ hr.divider-horizontal {
 
 }
 
-#accordion ul {
+.detailssubbox ul#accordion ul {
 
     list-style: none;
 
@@ -4262,13 +4206,13 @@ hr.divider-horizontal {
 
 }
 
-#accordion ul{
+.detailssubbox ul#accordion ul{
 
     display: none;
 
 }
 
-#accordion ul li {
+.detailssubbox ul#accordion ul li {
 
     font-weight: normal;
 
@@ -4280,13 +4224,13 @@ hr.divider-horizontal {
 
 }
 
-#accordion a {
+.detailssubbox ul#accordion a {
 
     text-decoration: none;
 
 }
 
-#accordion a:hover {
+.detailssubbox ul#accordion a:hover {
 
     text-decoration: underline;
 
@@ -4302,10 +4246,11 @@ hr.divider-horizontal {
 
 .rem{ margin-top:9%; }
 
-.checkbox{ margin-top:40px !important; }
-
-.forgot{ margin-top:42px !important; margin-right:15px !important; width:auto !important; }
-
+#myModalLogin .input-group:hover input,  #myModalLogin .input-group:hover .input-group-addon{
+    border-color:#79B42B;
+    color: #79B42B;
+}
+#login_form .input-group-addon{ background-color:#fff;}
 .popRightForm{   }
 
 .popLeftForm .contact_form input[type="submit"]{ margin-top:79px !important; }
