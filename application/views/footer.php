@@ -121,21 +121,25 @@
                                                     <div class="input-group col-md-8"> 
                                                       <input id="userName" name="userName" type="text" placeholder="user@tidiit.com" class="form-control email" required >
                                                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                                                    </div><span id="Email-error" class="help-block">Enter a valid email</span>
+                                                    </div>
                                                   </div>
                                                     
                                                   <div class="form-group has-error">
                                                     <div class="input-group  col-md-8"> 
                                                       <input id="loginPassword" name="loginPassword" type="password" placeholder="password" class="form-control" required >
                                                       <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                                                    </div><span id="Email-error" class="help-block">Enter a valid email</span>
+                                                    </div>
                                                   </div>  
                                                     <input type="hidden" name="webIdLogin" id="webIdLogin" value="">
 
                                              <div class="clear"></div>
                                              <div class="row rem">
                                                     <div class="col-sm-5">	
-                                                            <label class="checkbox"><input type="checkbox" name="rememberMe" checked><i></i>Remember me</label>
+                                                            <div class="checkbox">
+                <label class="checkbox">
+                  <input type="checkbox" name="checkbox" checked><i></i> Remember me
+                </label>
+              </div>
                                                 </div>
                                                 <div class="col-sm-5">
                                                     <div class="forgot">
@@ -144,7 +148,7 @@
                                                 </div>
                                             </div>
 
-                                             <input type="submit" name="loginInSubmit" id="loginInSubmit" value="Sign In"/>
+                                             <input type="submit" name="loginInSubmit" id="loginInSubmit" value="Sign In" class="btn btn-default col-md-8"/>	
 
                                                     <div class="clear"></div>	
                                             </form>
@@ -161,7 +165,7 @@
                                                          <p><img src="<?php echo SiteImagesURL;?>contact.png" alt=""></p>
                                                     </li>	       
                                              </ul>
-                                                    <input type="submit" name="forgotPasswrod" id="forgotPasswrod" value="Submit"/>		
+                                                    <input type="submit" name="forgotPasswrod" id="forgotPasswrod" value="Submit" class="btn btn-default col-md-8"/>	
                                                     <input type="hidden" name="webIdForgotpass" id="webIdForgotpass" value="">                                                 
                                                     <div class="clear"></div>	
                                             </form>
@@ -176,39 +180,45 @@
                                                         <form class="contact_form" action="#" method="post" name="tidiit_user_register_form" id="tidiit_user_register_form">
                                                     <h1>Signup for New Account</h1>
                                                 <ul>
-                                                    <li>
-                                                        <input type="text" class="textbox1" name="firstName" placeholder="Enter First Name" required value="Judhisthira"/>
-                                                        <span class="form_hint">Enter first name</span>
-                                                         <p><img src="<?php echo SiteImagesURL;?>contact.png" alt=""></p>
-                                                    </li>
-                                                <li>
-                                                    <input type="text" class="textbox1" name="lastName" placeholder="Enter Last Name" required id="lastName" value="Sahoo"/>
-                                                        <span class="form_hint">Enter last name</span>
-                                                         <p><img src="<?php echo SiteImagesURL;?>contact.png" alt=""></p>
-                                                    </li>
-                                                    <li>
-                                                        <input type="email" class="textbox1" name="email" placeholder="user@tidiit.com" required id="email" value="jduhsiahoo@gail.com" />
-                                                        <span class="form_hint">Enter a valid email</span>
-                                                         <p><img src="<?php echo SiteImagesURL;?>contact.png" alt=""></p>
-                                                    </li>
-                                                    <li>
-                                                        <input type="password" name="password" class="textbox2" placeholder="password" id="password" required value="1234">
-                                                        <span class="form_hint">Enter password</span>
-                                                        <p><img src="<?php echo SiteImagesURL;?>lock.png" alt=""></p>
-                                                    </li>
-                                                <li>
-                                                    <input type="password" name="confirmPassword" class="textbox2" placeholder="Confirm Password" id="confirmPassword" required value="1234">
-                                                    <span class="form_hint">Enter confirm password</span>
-                                                        <p><img src="<?php echo SiteImagesURL;?>lock.png" alt=""></p>
-                                                    </li>
+                                                    <div class="form-group has-error">
+                                                        <div class="input-group col-md-8"> 
+                                                          <input id="firstName" name="firstName" type="text" placeholder="Enter First Name" class="form-control" required >
+                                                          <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group has-error">
+                                                        <div class="input-group col-md-8"> 
+                                                          <input id="lastName" name="lastName" type="text" placeholder="Enter Last Name" class="form-control" required >
+                                                          <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group has-error">
+                                                        <div class="input-group col-md-8"> 
+                                                          <input id="email" name="email" type="email" placeholder="Enter email as username" class="form-control" required >
+                                                          <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group has-error">
+                                                        <div class="input-group col-md-8"> 
+                                                          <input id="password" name="password" type="password" placeholder="Enter Password" class="form-control" required >
+                                                          <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group has-error">
+                                                        <div class="input-group col-md-8"> 
+                                                          <input id="confirmPassword" name="confirmPassword" type="password" placeholder="Enter Confirm Password" class="form-control" required >
+                                                          <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                                        </div>
+                                                    </div>
+                                                
                                                <!-- <li class="frm_gender">
                                                     <span><input type="radio" name="gender" value="male" />Male</span>
                                                     <span><input type="radio" name="gender" value="female" />Female	</span>            
                                                         <p><img src="<?php //echo SiteImagesURL;?>lock.png" alt=""></p>
                                                     </li>-->
                                                <input type="hidden" name="webIdRegistration" id="webIdRegistration" value="">
-                                             </ul>
-                                                    <input type="submit" name="SignIn" value="Sign Up" id="SignIn"/>
+                                             
+                                                    <input type="submit" name="SignIn" id="SignIn" value="Sign In" class="btn btn-default col-md-8"/>	
                                                             <div class="clear"></div>	
 
                                                     <div class="clear"></div>	
