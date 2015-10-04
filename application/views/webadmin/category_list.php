@@ -64,7 +64,11 @@ function ShowAddAdminBox(){
         $('#EdituserCategoryView').val(DataArr[id]['userCategoryView']);
         //$("input[type='radio'][name='Editview'][value='"+DataArr[id]['view']+"']").prop("checked",true);
         //$("input[type='radio'][name='EdituserCategoryView'][value='"+DataArr[id]['userCategoryView']+"']").prop("checked",true);
-        var srcData='<?php echo $categoryImageURL;?>'+DataArr[id]['image'];
+        if(DataArr[id]['image']==""){
+            var srcData='<?php echo SiteImagesURL.'no-image.png';?>';
+        }else{
+            var srcData='<?php echo $categoryImageURL;?>'+DataArr[id]['image'];
+        }
         $('#EditEditcategoryImageImg').attr('height','100').attr('width','100').attr('src',srcData);	
         <?php }?>
 	$('#categoryId').val(DataArr[id]['categoryId']);

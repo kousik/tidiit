@@ -31,13 +31,13 @@ class Brand_model extends CI_Model{
 	
 	
 	public function change_status($bannerId,$Status){
-		$this->db->where('bannerId',$bannerId);
+		$this->db->where('brandId',$bannerId);
 		$this->db->update($this->_table,array('Status'=>$Status));
 		return TRUE;
 	}
 	
 	public function delete($bannerId){
-		$this->db->delete($this->_table, array('bannerId' => $bannerId)); 
+		$this->db->delete($this->_table, array('brandId' => $bannerId)); 
 		return TRUE;
 	}
 }

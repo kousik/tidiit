@@ -17,26 +17,29 @@ class Brand extends MY_Controller{
         
         function add(){
             //pre($_FILES);die;
+            $image='';
+            if(!array_key_exists('brandImage', $_FILES)){
+                $_FILES=array();
+                $_FILES['brandImage']=array();
+                $_FILES['brandImage']['name']="";
+            }
             if($_FILES['brandImage']['name']!=""){
                 //$imagePath=$this->config->item('ResourcesPath').'banner/';
                 $file=$_FILES['brandImage'];
                 $image=time().'.'.end(explode('.',$file['name']));
                 //move_uploaded_file($file['tmp_name'],$imagePath.$image);
-                $this->brand_image_resize($file,$image);
-                $title=$this->input->post('title',TRUE);
-                
-                $status=$this->input->post('status',TRUE);
-                $dataArr=array(
-                    'brandImage'=>$image,
-                    'status'=>1,
-                    'title'=>$title
-                    );
-                $this->Brand_model->add($dataArr);
-                
-                $this->session->set_flashdata('Message','Brand  added successfully.');
-            }else{
-                $this->session->set_flashdata('Message','Invalid Banner uploaded.');
+                $this->brand_image_resize($file,$image);   
             }
+            $title=$this->input->post('title',TRUE);
+            $status=$this->input->post('status',TRUE);
+            $dataArr=array(
+                'brandImage'=>$image,
+                'status'=>1,
+                'title'=>$title
+                );
+            $this->Brand_model->add($dataArr);
+
+            $this->session->set_flashdata('Message','Brand  added successfully.');
             redirect(base_url().'webadmin/brand/viewlist');
         }
 	
@@ -77,7 +80,7 @@ class Brand extends MY_Controller{
 	
 	public function delete($brandId){
             $details=$this->Brand_model->details($brandId);
-            pre($details);die;
+            //pre($details);die;
             $this->delete_brand_image($details[0]->brandImage);
             
             $this->Brand_model->delete($brandId);
@@ -102,8 +105,8 @@ class Brand extends MY_Controller{
         $config['image_library'] = 'gd2';
         $config['source_image'] = $OriginalFilePath;
         $config['new_image'] = $PHOTOPATH. 'admin/';
-        $config['width'] = 75;
-        $config['height'] = 75;
+        $config['width'] = 50;
+        $config['height'] = 05;
         $config['maintain_ratio'] = true;
         $config['master_dim'] = 'auto';
         $config['create_thumb'] = FALSE;
