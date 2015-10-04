@@ -145,11 +145,11 @@ function AskDelete(id){
 	<a href='<?php echo base_url().'webadmin/category/viewlist/'.$InerArr->categoryId;?>' style="text-decoration: underline;"> <?php echo $InerArr->categoryName;?></a>
 	</td>
         <td><?php if($InerArr->image==""){?>
-            <img src="<?php echo SiteImagesURL.'no-image.png'?>" height="100" width="100">    
+            <img src="<?php echo SiteImagesURL.'no-image.png'?>" height="50" width="50">    
         <?php }else{
             if(!file_exists($categoryImagePath.$InerArr->image)){
             ?>
-            <img src="<?php echo SiteImagesURL.'no-image.png'?>" height="75" width="75">
+            <img src="<?php echo SiteImagesURL.'no-image.png'?>" height="50" width="50">
         <?php }else{?>
             <img src="<?php echo $categoryImageURL.$InerArr->image;?>">
         <?php }

@@ -205,8 +205,8 @@ class Category extends MY_Controller{
             $config['image_library'] = 'gd2';
             $config['source_image'] = $OriginalFilePath;
             $config['new_image'] = $PHOTOPATH. 'admin/';
-            $config['width'] = 75;
-            $config['height'] = 75;
+            $config['width'] = 50;
+            $config['height'] = 50;
             $config['maintain_ratio'] = true;
             $config['master_dim'] = 'auto';
             $config['create_thumb'] = FALSE;
