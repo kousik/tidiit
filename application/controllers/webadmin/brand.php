@@ -49,6 +49,11 @@ class Brand extends MY_Controller{
 		$brandId=$this->input->post('brandId',TRUE);
                 $image='';
                 $details=$this->Brand_model->details($brandId);
+                if(!array_key_exists('EditbrandImage', $_FILES)){
+                    $_FILES=array();
+                    $_FILES['EditbrandImage']=array();
+                    $_FILES['EditbrandImage']['name']="";
+                }
                 if($_FILES['EditbrandImage']['name']!=""){
                     $file=$_FILES['EditbrandImage'];
                     $image=time().'.'.end(explode('.',$file['name']));
