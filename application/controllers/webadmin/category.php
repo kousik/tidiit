@@ -49,6 +49,7 @@ class Category extends MY_Controller{
                     $this->session->set_flashdata('Message','Please Browse Category Image.');
                 }else{
                     if($_FILES['categoryImage']['name']!=""){
+                        $file=$_FILES['categoryImage'];
                         $image=time().'.'.end(explode('.',$file['name']));
                         //move_uploaded_file($file['tmp_name'],$imagePath.$image);
                         $this->category_image_resize($file,$image);
