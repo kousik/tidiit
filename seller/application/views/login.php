@@ -101,7 +101,7 @@
           <div class="col-md-6">
               <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
-                      <input id="contactNo" name="contactNo" type="phone" placeholder="" class="form-control " required >
+                      <input id="contactNo" name="contactNo" type="phone" placeholder="enter your contactno" class="form-control " required >
                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
                     </div>
                 </div>
