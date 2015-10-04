@@ -149,9 +149,9 @@ function AskDelete(id){
         <?php }else{
             if(!file_exists($categoryImagePath.$InerArr->image)){
             ?>
-            <img src="<?php echo SiteImagesURL.'no-image.png'?>" height="100" width="100">
+            <img src="<?php echo SiteImagesURL.'no-image.png'?>" height="75" width="75">
         <?php }else{?>
-            <img src="<?php echo $categoryImageURL.$InerArr->image;?>" height="100" width="100">
+            <img src="<?php echo $categoryImageURL.$InerArr->image;?>">
         <?php }
         }?></td>
 	<?php /*<td><?php echo ($InerArr->PopularStore=='1')?'Yes':'No';?></td>*/?>
