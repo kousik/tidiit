@@ -1,13 +1,21 @@
 <?php echo $AdminHomeLeftPanel;
-$productPageTypeArr=$this->config->item('productPageTypeArr');
-if(empty($productPageTypeArr))
-    $productPageTypeArr=array('1'=>'mobile','2'=>'laptop','3'=>'fashion');
-$categoryTemplateArr=$this->config->item('categoryTemplateArr');
-if(empty($categoryTemplateArr))
-    $categoryTemplateArr=array('1'=>'category_template1','2'=>'category_template2','3'=>'category_template3');
 $categoryImagePath=ResourcesPath.'category/admin/';
 $categoryImageURL=SiteResourcesURL.'category/admin/';
-//print_r($parrentData);die;?>
+$categoryTemplateNewArr=array();
+foreach($categoryTemplateArr AS $k){
+    $categoryTemplateNewArr[$k->categoryViewTemplateID]=$k->templateName;
+}
+$categoryTemplateArr=$categoryTemplateNewArr;
+
+
+$productPageTypeNewArr=array();
+foreach($productPageTypeArr AS $k){
+    $productPageTypeNewArr[$k->productViewTemplateID]=$k->templateName;
+}
+$productPageTypeArr=$productPageTypeNewArr;
+//pre($categoryTemplateArr);
+//pre($productPageTypeArr);die;
+?>
 <table cellspacing=5 cellpadding=5 width=90% border=0 >
   <tr id="PageHeading">
     <td class="PageHeading" >Category Manager</td>
@@ -48,8 +56,10 @@ function ShowAddAdminBox(){
 	$('#EditmetaTitle').val(DataArr[id]['metaTitle']);
 	$('#EditmetaKeyWord').val(DataArr[id]['metaKeyWord']);
 	$('#EditmetaDescription').val(DataArr[id]['metaDescription']);
-        $("input[type='radio'][name='Editview'][value='"+DataArr[id]['view']+"']").prop("checked",true);
-        $("input[type='radio'][name='EdituserCategoryView'][value='"+DataArr[id]['userCategoryView']+"']").prop("checked",true);
+        $('#Editview').val(DataArr[id]['view']);
+        $('#EdituserCategoryView').val(DataArr[id]['userCategoryView']);
+        //$("input[type='radio'][name='Editview'][value='"+DataArr[id]['view']+"']").prop("checked",true);
+        //$("input[type='radio'][name='EdituserCategoryView'][value='"+DataArr[id]['userCategoryView']+"']").prop("checked",true);
         var srcData='<?php echo $categoryImageURL;?>'+DataArr[id]['image'];
         $('#EditEditcategoryImageImg').attr('height','100').attr('width','100').attr('src',srcData);	
 	$('#categoryId').val(DataArr[id]['categoryId']);
@@ -257,9 +267,12 @@ function AskDelete(id){
     <td align="left" valign="top" class="ListHeadingLable"> Select Category Page Template </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top">
-        <?php foreach($categoryTemplateArr as $k => $v){?>
-        <label><input type="radio" name="EdituserCategoryView" value="<?php echo $k;?>" /> <?php echo $v;?> </label>
+        <select name="EdituserCategoryView" id="EdituserCategoryView" required>
+        <option value="">Select</option>
+        <?php foreach($categoryTemplateArr as $k=>$v){?>
+            <option value="<?php echo $k;?>"><?php echo $v;?></option>
         <?php }?>
+        </select>
     </td>
   </tr>
   <tr>
@@ -270,12 +283,14 @@ function AskDelete(id){
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable"> Select Seller and Buyer Product Product Page Template </td>
+    <td align="left" valign="top" class="ListHeadingLable"> Select Seller and Buyer Product Page Template </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top">
-        <?php foreach($productPageTypeArr as $k => $v){?>
-        <label><input type="radio" name="Editview" value="<?php echo $k;?>" class="required"/> <?php echo $v;?> </label>
+        <select name="Editview" id="Editview" required><option value="">Select</option>
+        <?php foreach($productPageTypeArr as $k=>$v){?>
+            <option value="<?php echo $k;?>"><?php echo $v;?></option>
         <?php }?>
+        </select>
     </td>
   </tr>
   <tr>
@@ -438,9 +453,11 @@ function AskDelete(id){
     <td align="left" valign="top" class="ListHeadingLable"> Select Category Page Template</td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top">
+        <select name="userCategoryView" id="userCategoryView" required><option value="">Select</option>
         <?php foreach($categoryTemplateArr as $k => $v){?>
-        <label><input type="radio" name="userCategoryView" value="<?php echo $k;?>" class="required"/> <?php echo $v;?> </label>
+            <option value="<?php echo $k;?>"><?php echo $v;?></option>
         <?php }?>
+        </select>
     </td>
   </tr>
   <tr>
@@ -451,12 +468,15 @@ function AskDelete(id){
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable"> Select Seller and Buyer Product Product Page Template</td>
+    <td align="left" valign="top" class="ListHeadingLable"> Select Seller and Buyer Product Page Template</td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top">
-        <?php foreach($productPageTypeArr as $k => $v){?>
-        <label><input type="radio" name="view" value="<?php echo $k;?>" class="required"/> <?php echo $v;?> </label>
-        <?php }?></td>
+        <select name="view" id="view" required><option value="">Select</option>
+        <?php foreach($productPageTypeArr as $k=>$v){?>
+            <option value="<?php echo $k;?>"><?php echo $v;?></option>
+        <?php }?>
+        </select>
+    </td>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>

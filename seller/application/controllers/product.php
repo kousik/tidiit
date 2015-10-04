@@ -99,8 +99,18 @@ class Product extends MY_Controller{
                 //if($productPageType==""){}else{$viewPage='add_product_'.$productPageType;}
                 //$data['productPage']=$this->load->view($viewPage,$data,TRUE);
                 $data['categoryId']=$categoryId;
-               $viewPage='add_product_'.$productPageTypeArr[$categoryDetailsArr[0]->view];
-                $data['productPageType']=$productPageTypeArr[$categoryDetailsArr[0]->view];
+                $productPageTypeArr=$this->Product_model->get_page_template();
+                //pre($productPageTypeArr);die;
+                $templateName='';
+                foreach($productPageTypeArr As $k){
+                    if($k->productViewTemplateID==$categoryDetailsArr[0]->view){
+                        $templateName=$k->templateFileName;
+                        break;
+                    }
+                }
+                //pre($productPageTypeArr[$categoryDetailsArr[0]->view]);die;
+               $viewPage='add_product_'.$templateName;
+               $data['productPageType']=substr($templateName,0,-4);
                //echo $viewPage;die;
                 $this->load->view($viewPage,$data);
             }

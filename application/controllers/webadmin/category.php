@@ -3,6 +3,7 @@ class Category extends MY_Controller{
 	public function __construct(){
 		parent::__construct();
 		$this->load->model('Category_model');
+		$this->load->model('Product_model');
 	}
 	
 	public function index(){
@@ -24,6 +25,8 @@ class Category extends MY_Controller{
 		}
                 //pre($parrentData);die;
 		$data["parrentData"]=$parrentData;
+                $data['productPageTypeArr']=$this->Product_model->get_page_template();
+                $data['categoryTemplateArr']=$this->Category_model->get_page_template();
 		$this->load->view('webadmin/category_list',$data);
 	}
 	

@@ -2,6 +2,7 @@
 class Category_model extends CI_Model {
 	public $_table='category';
 	public $_table_seo='seo_data';
+	public $_table_template='category_view_page';
 	function __construct() {
 		
 	}
@@ -145,5 +146,8 @@ WHERE c.categoryId =".$categoryId;
             return $this->db->query($sql)->result();
         }
         
+    function get_page_template(){
+        return $this->db->from($this->_table_template)->get()->result();
+    }
 }
 ?>

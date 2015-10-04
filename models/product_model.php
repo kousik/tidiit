@@ -14,6 +14,7 @@ class Product_model extends CI_Model {
         private $_table_deal="product_deal";
         private $_table_brand="product_brand";
         private $_table_seller="product_seller";
+        private $_table_template="product_view_page";
                 
 	function __construct() {
 		$this->_SiteSession=$this->session->userdata('USER_SITE_SESSION_ID');
@@ -995,5 +996,9 @@ class Product_model extends CI_Model {
                 . " JOIN category AS c ON(pc.categoryId=c.categoryId)  "
                 . " WHERE p.status=1 AND c.status=1 ORDER BY p.productId DESC,p.updateTime DESC LIMIT 0,$noOfItem";
         return $this->db->query($sql)->result();
+    }
+    
+    function get_page_template(){
+        return $this->db->from($this->_table_template)->get()->result();
     }
 }
