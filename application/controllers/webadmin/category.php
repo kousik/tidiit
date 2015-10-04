@@ -40,11 +40,15 @@ class Category extends MY_Controller{
 		$metaDescription=$this->input->post('metaDescription',TRUE);
 		$view=$this->input->post('view',TRUE);
 		$status=$this->input->post('status',TRUE);
+                if(!array_key_exists('categoryImage', $_FILES)){
+                    $_FILES=array();
+                    $_FILES['categoryImage']=array();
+                    $_FILES['categoryImage']['name']="";
+                }
 		if($_FILES['categoryImage']['name']=="" && $parrentCategoryId>0){
                     $this->session->set_flashdata('Message','Please Browse Category Image.');
                 }else{
                     if($_FILES['categoryImage']['name']!=""){
-                        $file=$_FILES['categoryImage'];
                         $image=time().'.'.end(explode('.',$file['name']));
                         //move_uploaded_file($file['tmp_name'],$imagePath.$image);
                         $this->category_image_resize($file,$image);
@@ -61,7 +65,7 @@ class Category extends MY_Controller{
                         'image'=>$image,
                         'metaTitle'=>$metaTitle,
                         'metaKeyWord'=>$metaKeyWord,
-                        'metaDescription'=>metaDescription
+                        'metaDescription'=>$metaDescription
                     );
 
                     //print_r($dataArr);die;
