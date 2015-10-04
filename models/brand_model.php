@@ -40,5 +40,9 @@ class Brand_model extends CI_Model{
 		$this->db->delete($this->_table, array('brandId' => $bannerId)); 
 		return TRUE;
 	}
+        
+        public function get_all(){
+            return $this->db->get($this->_table)->result();
+        }
 }
 ?>

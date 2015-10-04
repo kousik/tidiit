@@ -178,7 +178,23 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                       </div>
                     </div>
                     
-                                        
+                    <div class="form-group field required field">
+                    <div class="row">
+                    <div class="col-sm-4">
+                      <label for="input-model" class="control-label main">Brand</label>
+                    </div>
+                      <div class="col-sm-8">
+                        <select class="form-control" name="brandId" id="brandId">
+                            <option value="default">Select</option>  
+                            <?php foreach ($brandArr AS $k){?>
+                            <option value="<?php echo $k->brandId;?>"><?php echo $k->title;?></option>  
+                            <?php }?>
+                        </select>
+                        <span class="error"></span>
+                      </div>
+                      </div>
+                    </div>
+              
                   <div class="form-group field required field">
                     <div class="row">
                     <div class="col-sm-4">
@@ -951,7 +967,8 @@ jQuery(document).ready(function(){
         'metaDescription': 'required',
         'metaKeyword': 'required',
         'tag': 'required',
-		'mobileBoxContent[]': 'minoption:2 maxoption:3',
+        'mobileBoxContent[]': 'minoption:2 maxoption:3',
+        'brandId': 'select:default',
         'model': 'required',
         'noOfSims': 'select:default',
         'color': 'select:default',

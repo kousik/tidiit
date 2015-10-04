@@ -4,6 +4,7 @@ class Product extends MY_Controller{
 		parent::__construct();
 		$this->load->model('Product_model');
 		$this->load->model('Category_model');
+		$this->load->model('Brand_model');
                 parse_str($_SERVER['QUERY_STRING'],$_GET);
             $this->db->cache_off();
 	}
@@ -34,70 +35,16 @@ class Product extends MY_Controller{
                 //$productPageType=$pageTypeData[0]->pageType;
                 $menuArr=array();
                 $TopCategoryData=$this->Category_model->get_top_category_for_product_list();
-                //pre($TopCategoryData);die;
-                /*foreach($TopCategoryData as $k){
-                    $SubCateory=$this->Category_model->get_subcategory_by_category_id($k->categoryId);
-                    if(count($SubCateory)>0){
-                        foreach($SubCateory as $kk => $vv){
-                            $menuArr[$vv->categoryId]=$k->categoryName.' -> '.$vv->categoryName;
-                            $ThirdCateory=$this->Category_model->get_subcategory_by_category_id($vv->categoryId);
-                            if(count($ThirdCateory)>0){
-                                foreach($ThirdCateory AS $k3 => $v3){
-                                    // now going for 4rath
-                                    $menuArr[$v3->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName;
-                                    $FourthCateory=$this->Category_model->get_subcategory_by_category_id($v3->categoryId);
-                                    if(count($FourthCateory)>0){ //print_r($v3);die;
-                                        foreach($FourthCateory AS $k4 => $v4){
-                                            $menuArr[$v4->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName.' -> '.$v4->categoryName;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }*/
-                //pre($menuArr);die;
                 $data['categoryData']=$TopCategoryData;  //$menuArr;
-                //$data['productPageType']=$productPageType;
-                $data['brandArr']=array();
-                //if($productPageType==""){}else{$viewPage='add_product_'.$productPageType;}
-                //$data['productPage']=$this->load->view($viewPage,$data,TRUE);
                 $viewPage='add_product';
                 $this->load->view($viewPage,$data);
             }else{
                 //echo '$categoryId  ='.$categoryId;die;
                 $menuArr=array();
                 $TopCategoryData=$this->Category_model->get_top_category_for_product_list();
-                //pre($TopCategoryData);die;
-                foreach($TopCategoryData as $k){
-                    $SubCateory=$this->Category_model->get_subcategory_by_category_id($k->categoryId);
-                    if(count($SubCateory)>0){
-                        foreach($SubCateory as $kk => $vv){
-                            $menuArr[$vv->categoryId]=$k->categoryName.' -> '.$vv->categoryName;
-                            $ThirdCateory=$this->Category_model->get_subcategory_by_category_id($vv->categoryId);
-                            if(count($ThirdCateory)>0){
-                                foreach($ThirdCateory AS $k3 => $v3){
-                                    // now going for 4rath
-                                    $menuArr[$v3->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName;
-                                    $FourthCateory=$this->Category_model->get_subcategory_by_category_id($v3->categoryId);
-                                    if(count($FourthCateory)>0){ //print_r($v3);die;
-                                        foreach($FourthCateory AS $k4 => $v4){
-                                            $menuArr[$v4->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName.' -> '.$v4->categoryName;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                //pre($menuArr);die;
-                $data['CategoryData']=$menuArr;
                 $categoryDetailsArr=$this->Category_model->get_details_by_id($categoryId);
                 $productPageTypeArr=  $this->config->item('productPageTypeArr');
-                //pre($categoryDetailsArr);die;
-                $data['brandArr']=array();
-                //if($productPageType==""){}else{$viewPage='add_product_'.$productPageType;}
-                //$data['productPage']=$this->load->view($viewPage,$data,TRUE);
+                $data['brandArr']=$this->Brand_model->get_all();
                 $data['categoryId']=$categoryId;
                 $productPageTypeArr=$this->Product_model->get_page_template();
                 //pre($productPageTypeArr);die;
@@ -128,6 +75,7 @@ class Product extends MY_Controller{
                 $config=array(
                     array('field'   => 'mobileBoxContent[]','label'   => 'Items in the box','rules'   => 'trim|required|xss_clean'),  
                     array('field'   => 'model','label'   => 'Model','rules'   => 'trim|required|xss_clean'),
+                    array('field'   => 'brandId','label'   => 'Brand','rules'   => 'trim|required|xss_clean'),
                     array('field'   => 'noOfSims','label'   => 'Nos of SIM in the box','rules'   => 'trim|required|xss_clean'),
                     array('field'   => 'color','label'   => 'Mobile Color','rules'   => 'trim|required|xss_clean'),
                     array('field'   => 'os','label'   => 'Operating System','rules'   => 'trim|required|xss_clean'),
@@ -140,6 +88,7 @@ class Product extends MY_Controller{
                 $mobileBoxContent=$this->input->post('mobileBoxContent');
                 //$mobileBoxContent=$this->input->post('mobileBoxContent[]',TRUE);
                 $model=$this->input->post('model',TRUE);
+                $brandId=$this->input->post('brandId',TRUE);
                 $noOfSims=$this->input->post('noOfSims',TRUE);
                 $color=$this->input->post('color',TRUE);
                 $mobileOtherFeatures=$this->input->post('mobileOtherFeatures',TRUE);
@@ -220,12 +169,12 @@ class Product extends MY_Controller{
                         'lowestPrice'=>$lowestPrice,'heighestPrice'=>$heighestPrice);
                 $ParrentDataArr=$this->Category_model->get_all_parrent_details($categoryId);
                 //pre($ParrentDataArr);
-                if($ParrentDataArr[0]->SecondParentCategoryID==""){
-                    $dataArr['CategoryID1']=$ParrentDataArr[0]->FirstParentCategoryID;
+                if($ParrentDataArr[0]->secondParentcategoryId==""){
+                    $dataArr['CategoryID1']=$ParrentDataArr[0]->firstParentcategoryId;
                     $dataArr['CategoryID2']=$categoryId;
                 }else{
-                    $dataArr['CategoryID1']=$ParrentDataArr[0]->SecondParentCategoryID;
-                    $dataArr['CategoryID2']=$ParrentDataArr[0]->FirstParentCategoryID;
+                    $dataArr['CategoryID1']=$ParrentDataArr[0]->secondParentcategoryId;
+                    $dataArr['CategoryID2']=$ParrentDataArr[0]->firstParentcategoryId;
                     $dataArr['CategoryID3']=$categoryId;
                 }
                     if(!empty($mobileConnectivity)){$dataArr['mobileConnectivity']=implode(',', $mobileConnectivity);}
@@ -313,7 +262,8 @@ class Product extends MY_Controller{
                 //echo 'price added done.<br>';
                 $this->Product_model->add_product_category(array('productId'=>$productId,'categoryId'=>$categoryId));
                 //echo 'product category done.<br>';
-                $this->Product_model->add_product_owner(array('productId'=>$productId,'userId'=>$userId));
+                $this->Product_model->add_product_owner(array('productId'=>$productId,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+                $this->Product_model->add_brand(array('productId'=>$productId,'brandId'=>$brandId));
                 
                 $this->session->set_flashdata('Message','Product added successfully.');
                 redirect(base_url().'product/viewlist');

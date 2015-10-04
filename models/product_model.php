@@ -168,6 +168,11 @@ class Product_model extends CI_Model {
 		return $this->db->insert_id();
         }
         
+        public function add_brand($data){
+            $this->db->insert($this->_table_brand,$data);
+            return $this->db->insert_id();
+        }
+        
         function add_product_category($dataArr){
             $rs=$this->db->from($this->_table_category)->where('categoryId',$dataArr['categoryId'])->where('productId',$dataArr['productId'])->get()->result();
             if(count($rs)==0){
@@ -282,6 +287,8 @@ class Product_model extends CI_Model {
 		$this->db->insert_batch($this->_table_image,$dataArr);
 		return $this->db->insert_id();
 	}
+        
+        
 	
 	public function edit_product_image($dataArr,$productId){
 		$this->db->where('productId',$productId);
