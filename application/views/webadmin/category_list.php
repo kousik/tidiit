@@ -15,6 +15,9 @@ foreach($productPageTypeArr AS $k){
 $productPageTypeArr=$productPageTypeNewArr;
 //pre($categoryTemplateArr);
 //pre($productPageTypeArr);die;
+$parrentCategoryId=$this->uri->segment(4);
+if($parrentCategoryId=="")
+    $parrentCategoryId=0;
 ?>
 <table cellspacing=5 cellpadding=5 width=90% border=0 >
   <tr id="PageHeading">
@@ -56,12 +59,14 @@ function ShowAddAdminBox(){
 	$('#EditmetaTitle').val(DataArr[id]['metaTitle']);
 	$('#EditmetaKeyWord').val(DataArr[id]['metaKeyWord']);
 	$('#EditmetaDescription').val(DataArr[id]['metaDescription']);
+        <?php if($parrentCategoryId>0){?>
         $('#Editview').val(DataArr[id]['view']);
         $('#EdituserCategoryView').val(DataArr[id]['userCategoryView']);
         //$("input[type='radio'][name='Editview'][value='"+DataArr[id]['view']+"']").prop("checked",true);
         //$("input[type='radio'][name='EdituserCategoryView'][value='"+DataArr[id]['userCategoryView']+"']").prop("checked",true);
         var srcData='<?php echo $categoryImageURL;?>'+DataArr[id]['image'];
         $('#EditEditcategoryImageImg').attr('height','100').attr('width','100').attr('src',srcData);	
+        <?php }?>
 	$('#categoryId').val(DataArr[id]['categoryId']);
 	
  }
@@ -262,6 +267,7 @@ function AskDelete(id){
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
   </tr>
+  <?php if($parrentCategoryId>0){?>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top" class="ListHeadingLable"> Select Category Page Template </td>
@@ -308,6 +314,7 @@ function AskDelete(id){
         <input type="file" name="EditcategoryImage" id="EditcategoryImage" style="display:none;">
     </td>
   </tr>
+  <?php }?>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
@@ -436,6 +443,7 @@ function AskDelete(id){
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
   </tr>
+  <?php if($parrentCategoryId>0){?>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top" class="ListHeadingLable"> Select Category Image</td>
@@ -478,6 +486,7 @@ function AskDelete(id){
         </select>
     </td>
   </tr>
+  <?php }?>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
