@@ -449,7 +449,7 @@ No</label>
                     </div>
                       <div class="col-sm-8">
                           <select class="form-control required" id="processorCores" name="processorCores">
-                         <option value="">Select</option>
+                         <option value="default">Select</option>
                          <?php foreach ($mobileProcessorCores AS $k=>$v){?>
                           <option value="<?php echo $k;?>"><?php echo $v;?></option>
                           <?php }?>
@@ -971,6 +971,7 @@ jQuery(document).ready(function(){
         'brandId': 'select:default',
         'model': 'required',
         'noOfSims': 'select:default',
+        'screenSize': 'required',
         'color': 'select:default',
         'os': 'select:default',
         'ram': 'required',
@@ -980,7 +981,10 @@ jQuery(document).ready(function(){
         'WarrantyDuration': 'required',
         'qty': 'required',
         'minQty': 'required',
-        //'categoryId':'select:default',
+        'mobileRearCamera': 'required',
+        'frontCamera': 'required',
+        'processorSpeed': 'required',
+        'processorCores':'select:default',
         'img1':'required extension:jpg:png',
         'img2':'required extension:jpg:png',
 		'img3':'required extension:jpg:png',

@@ -1,4 +1,16 @@
-<?php echo $html_heading; echo $header;?>
+<?php echo $html_heading; echo $header;
+//$productPageTypeArr=$this->config->item('productPageTypeArr');
+$mobileBoxContents=$this->config->item('mobileBoxContents');
+$mobileColor=$this->config->item('mobileColor');
+$mobileDisplayResolution=$this->config->item('mobileDisplayResolution');
+$mobileConnectivity=$this->config->item('mobileConnectivity');
+$mobileOS=$this->config->item('mobileOS');
+$mobileProcessorCores=$this->config->item('mobileProcessorCores');
+$mobileBatteryType=$this->config->item('mobileBatteryType');
+$mobileProcessorBrand=$this->config->item('mobileProcessorBrand');
+$priceRangeSettingsArr=$this->config->item('priceRangeSettings');
+$priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
+?>
     </div>
 </header>
 
@@ -79,17 +91,17 @@
             <a href="<?php echo SiteImagesURL;?>pro/side.jpg" rel="zoom-id: Zoomer;" rev="<?php echo SiteImagesURL;?>pro/side.jpg"><img src="<?php echo SiteImagesURL;?>pro/side.jpg"width="75" /></a> </div>
             
           <div class="col-md-7 img-cont">
-            <h2>Lava Flair Z1 8 GB</h2>
+            <h2><?php echo $productDetailsArr[0]->title;?></h2>
             <div class="rating_cont"> <span>
               <input name="my_input" value="4" id="rating_simple2" type="hidden">
               </span> <span class="ratings-wrapper"> <a class="showRatingTooltip"> 7 Ratings</a> </span> <span>Be the first to review</span> <!--<span>Q&A </span>--> </div>
             <div class="pdp-e-i-keyfeatures">
               <ul>
-                <li title="1 Year Brand Warranty">-&nbsp;1 Year Brand Warranty</li>
-                <li title="13.97 cm (5.5) Display">-&nbsp;13.97 cm (5.5) Display</li>
-                <li title="2 GB RAM &amp; 16 GB ROM">-&nbsp;2 GB RAM &amp; 16 GB ROM</li>
-                <li title="13 MP Rear &amp;  8 MP Front Camera">-&nbsp;13 MP Rear &amp;  8 MP Front Camera</li>
-                <li title="1.7 Ghz Octa Core processor">-&nbsp;1.7 Ghz Octa Core processor</li>
+                <li title="<?php echo $productDetailsArr[0]->warrantyDuration.' months';?> Brand Warranty">-&nbsp; <?php echo $productDetailsArr[0]->warrantyDuration.' months';?> Brand Warranty</li>
+                <li title="<?php echo $productDetailsArr[0]->screenSize;?> Display">-&nbsp;<?php echo $productDetailsArr[0]->screenSize;?> Display</li>
+                <li title="<?php echo $productDetailsArr[0]->ram;?> RAM &amp; <?php echo $productDetailsArr[0]->internalMemory;?> ROM">-&nbsp;<?php echo $productDetailsArr[0]->ram;?> RAM &amp; <?php echo $productDetailsArr[0]->internalMemory;?> ROM</li>
+                <li title="<?php echo $productDetailsArr[0]->mobileRearCamera;?> Rear &amp;  <?php echo $productDetailsArr[0]->frontCamera;?> Front Camera">-&nbsp;<?php echo $productDetailsArr[0]->mobileRearCamera;?> Rear &amp;  <?php echo $productDetailsArr[0]->frontCamera;?> Front Camera</li>
+                <li title="<?php echo $productDetailsArr[0]->processorSpeed;?> <?php echo $productDetailsArr[0]->processorCores;?> processor">-&nbsp;<?php echo $productDetailsArr[0]->processorSpeed;?> <?php echo $productDetailsArr[0]->processorCores;?> processor</li>
                 <li class="pdp-e-i-keyspecs"><i style="visibility:hidden">-&nbsp;</i><span class="viewSpecs"><a href="#allDetails" onClick="ScrollMe('allDetails'); return false;">View all item details</a></span></li>
               </ul>
             </div>
@@ -97,7 +109,7 @@
          
             <div class="row pdp-e-i-MRP  ">            	
                 <div class="col-xs-3  pdp-e-i-MRP-l"><input type="checkbox" name="selectPackege" value="6" > Packege of 6 </div>
-                <div class="col-xs-3  pdp-e-i-MRP-r reset-padding"><span class="rsDiv">Rs</span>&nbsp;<s><span>12,290</span></s> [<span class="pdp-e-i-MRP-r-dis">27</span>% OFF]</div>
+                <!--<div class="col-xs-3  pdp-e-i-MRP-r reset-padding"><span class="rsDiv">Rs</span>&nbsp;<s><span>12,290</span></s> [<span class="pdp-e-i-MRP-r-dis">27</span>% OFF]</div> -->
                 <div class="col-xs-3  pdp-e-i-PAY-r reset-padding"><span>Rs&nbsp;<span itemprop="price" class="payBlkBig">8,999</span></span></div>            
             </div>
             
@@ -375,21 +387,17 @@
               </div>
               <div class="spec-body">
                 <ul class="dtls-list clear">
-                  <li class="col-xs-6 dtls-li"> 1 Year Brand Warranty</li>
-                  <li class="col-xs-6 dtls-li"> 13.97 cm (5.5) Display</li>
-                  <li class="col-xs-6 dtls-li"> 2 GB RAM &amp; 16 GB ROM</li>
-                  <li class="col-xs-6 dtls-li"> 13 MP Rear &amp;  8 MP Front Camera</li>
-                  <li class="col-xs-6 dtls-li"> 1.7 Ghz Octa Core processor</li>
-                  <li class="col-xs-6 dtls-li"> Expandable upto 64 GB</li>
-                  <li class="col-xs-6 dtls-li"> 3G</li>
-                  <li class="col-xs-6 dtls-li"> 1280 x 720 pixels screen resolution</li>
-                  <li class="col-xs-6 dtls-li"> Warranty Period: 12 Months Brand Warranty</li>
-                  <li class="col-xs-6 dtls-li"> Dual SIM (GSM + GSM)</li>
-                  <li class="col-xs-6 dtls-li"> 3100 mAh Li-Ion Polymer Battery (removable)</li>
-                  <li class="col-xs-6 dtls-li"> Conference Call Feature</li>
-                  <li class="col-xs-6 dtls-li"> Colour Variants: Black and White</li>
-                  <li class="col-xs-6 dtls-li"> HD Video Recording</li>
-                  <li id="highlightSupc" class="col-xs-6 dtls-li"> SUPC: SDL017771771</li>
+                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->warrantyDuration.' months';?> Brand Warranty</li>
+                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->screenSize;?> Display</li>
+                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->ram;?> RAM &amp; <?php echo $productDetailsArr[0]->internalMemory;?> ROM</li>
+                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->mobileRearCamera;?> Rear &amp;  <?php echo $productDetailsArr[0]->frontCamera;?> Front Camera</li>
+                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->processorSpeed;?> <?php echo $productDetailsArr[0]->processorCores;?> processor</li>
+                  <li class="col-xs-6 dtls-li"> Expandable upto <?php echo $productDetailsArr[0]->expandableMemory;?></li>
+                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->mobileConnectivity;?></li>
+                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->displayResolution;?> pixels screen resolution</li>
+                  <li class="col-xs-6 dtls-li"> No of SIM <?php echo $productDetailsArr[0]->noOfSims;?></li>
+                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->batteryCapacity.' '.$productDetailsArr[0]->batteryType;?> Battery (removable)</li>
+                  <li class="col-xs-6 dtls-li"> Colour Variants: <?php echo $productDetailsArr[0]->color;?></li>
                 </ul>
               </div>
             </div>

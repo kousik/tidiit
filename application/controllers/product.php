@@ -13,6 +13,7 @@ class Product extends MY_Controller{
         if($str==""){
             redirect(BASE_URL);
         }
+        $this->config->load('product');
         /*$strArr=explode('+',$str);
         $productId=  base64_decode(end($strArr));*/
         $productId=  base64_decode($str);
