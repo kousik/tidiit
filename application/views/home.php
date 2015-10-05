@@ -129,7 +129,7 @@
             <div class="row">
                 <div id="demo">
                     <div id="owl-demo" class="owl-carousel">
-                        <?php foreach($bestSelllingItem AS $k){ //pre($k);die;?>
+                        <?php foreach($bestSelllingItem AS $k){ //pre(HOME_LISTING.$k->image);die;?>
                         <div class="item">
                             <div class="prodct_box">
                                 <a href="#">
