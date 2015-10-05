@@ -180,7 +180,7 @@
                                     <li><i class="fa fa-star-o"></i></li>
                                 </ul>
                                 <p><?php echo $k->lowestPrice.' - '.$k->heighestPrice;?></p>
-                                <p><a href="<?php echo BASE_URL.str_replace('+','-',urlencode(my_seo_freindly_url($k->title))).'+'. base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
+                                <p><a href="<?php echo BASE_URL.'product/details/'.base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
                             </div>
                         </div>
                         <?php }?>
@@ -212,7 +212,7 @@
                                     <li><i class="fa fa-star-o"></i></li>
                                 </ul>
                                 <p><?php echo $k->lowestPrice.' - '.$k->heighestPrice;?></p>
-                                <p><a href="<?php echo BASE_URL.str_replace('+','-',urlencode(my_seo_freindly_url($k->title))).'+'. base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
+                                <p><a href="<?php echo BASE_URL.'product/details/'.base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
                             </div>
                         </div>
                         <?php }?>

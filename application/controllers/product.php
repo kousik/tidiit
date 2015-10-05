@@ -13,8 +13,9 @@ class Product extends MY_Controller{
         if($str==""){
             redirect(BASE_URL);
         }
-        $strArr=explode('+',$str);
-        $productId=  base64_decode(end($strArr));
+        /*$strArr=explode('+',$str);
+        $productId=  base64_decode(end($strArr));*/
+        $productId=  base64_decode($str);
         //echo $productId;die;
         $productDetailsArr=  $this->Product_model->details($productId);
         $productImageArr=$this->Product_model->get_products_images($productId);

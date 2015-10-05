@@ -1,9 +1,7 @@
 <?php echo $html_heading; echo $header;?>
     </div>
 </header>
-<link rel="stylesheet" href="<?php echo SiteCSSURL;?>colorbox.css" />
-<link rel="stylesheet" href="<?php echo SiteCSSURL;?>new.css" />
-<link href="<?php echo SiteCSSURL;?>rating_simple.css" rel="stylesheet" type="text/css">
+
         
 <button class="inline btn btn-primary howItWork" data-toggle="modal" data-target=".bs-example-modal-lg" href="#inline_content">HOW IT WORKS</button>
 
