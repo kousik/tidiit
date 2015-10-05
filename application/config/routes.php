@@ -41,12 +41,11 @@ $segArr=explode('/', $_SERVER['REQUEST_URI']);
 /*if($_SERVER['REQUEST_SCHEME']=='http' && $_SERVER['HTTP_HOST']=='tidiit-local.com'){
     header('location:https://tidiit-local.com/');
 }*/
-
+$route['(:any)']="product/details/$1";
 $route['webadmin']="webadmin/index";
 $route['webadmin/index']="webadmin/index/login";
 
 $route['default_controller'] = "index";
-
 $route['404_override'] = 'index/under_construnction';
 
 

@@ -455,13 +455,7 @@ class Product_model extends CI_Model {
 	}
 	
 	public function details($id){
-		$sql="SELECT p.*,c.CountryName,c.CountryID,pi.Image,dis.Amount,pd.DiscountID,ca.isAddToCart "
-                        . " FROM `product` AS p JOIN `product_country` AS pc ON(p.productId=pc.productId) "
-                        . " JOIN product_image as pi ON(p.productID=pi.productId) "
-                        . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                        . " LEFT JOIN `country` AS c ON(pc.CountryID=c.CountryID) "
-                        . " LEFT JOIN `category` AS ca ON(ca.categoryId=p.categoryId) "
-                        . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) WHERE p.productId='".$id."' ";
+		$sql="SELECT p.* FROM `product` AS p WHERE p.productId='".$id."' ";
 		//die($sql);
 		return $this->db->query($sql)->result();
 	}
