@@ -182,6 +182,7 @@ class Product extends MY_Controller{
                     unset($retDataArr['data']['tag']);
                     $mobileDataArr=array_merge($retDataArr['data'],$dataArr);
                     //pre($mobileDataArr);die;
+                    //echo base64_encode(serialize($mobileDataArr));die;
                     $priceArr=array();
                     $priceArr[]=array('qty'=>$bulkQty,'price'=>$price);
                     for($i=1;$i<$total_price_row_added;$i++){

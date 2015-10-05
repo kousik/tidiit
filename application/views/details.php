@@ -8,8 +8,8 @@ $mobileOS=$this->config->item('mobileOS');
 $mobileProcessorCores=$this->config->item('mobileProcessorCores');
 $mobileBatteryType=$this->config->item('mobileBatteryType');
 $mobileProcessorBrand=$this->config->item('mobileProcessorBrand');
-$priceRangeSettingsArr=$this->config->item('priceRangeSettings');
-$priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
+//$priceRangeSettingsArr=$this->config->item('priceRangeSettings');
+//$priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
 ?>
     </div>
 </header>
