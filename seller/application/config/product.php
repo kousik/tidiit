@@ -1,12 +1,12 @@
 <?php
-$config['mobileBoxContents']=array('1'=>'Handset','2'=>'Charger','3'=>'USB Cable','4'=>'User Manual','5'=>'Warranty Card');
-$config['mobileColor']=array('1'=>'Red','2'=>'Blue','3'=>'Gray','4'=>'Orrange');
-$config['mobileDisplayResolution']=array('1'=>'320 X 480','2'=>'360 X 640','3'=>'720 x 1280');
+$config['mobileBoxContents']=array('1'=>'Handset','2'=>'Charger','3'=>'USB Cable','4'=>'User Manual','5'=>'Warranty Card','Ear phones');
+$config['mobileColor']=array('1'=>'Red','2'=>'Blue','3'=>'Gray','4'=>'Orrange','Black','White');
+$config['mobileDisplayResolution']=array('1'=>'1280X800','2'=>'1024X600','3'=>'1024X768','4'=>'2048X1536','5'=>'480X320','6'=>'960X640','7'=>'640X1136','8'=>'480X360','9'=>'640X480','10'=>'800X480','11'=>'768X1024','12'=>'960X540','13'=>'480X800','14'=>'800X400','15'=>'768X1280','16'=>'540X960','17'=>'240X320');
 $config['mobileConnectivity']=array('1'=>'GSM','2'=>'CDMA','3'=>'3G/WCDMA','4'=>'4G/LTE');
 $config['mobileOS']=array('1'=>'Android','2'=>'IOS','3'=>'Windos','4'=>'Blackbery');
-$config['mobileProcessorCores']=array('1'=>'Duo Core');
-$config['mobileProcessorBrand']=array('1'=>'Asus','2'=>'Intel');
-$config['mobileBatteryType']=array('1'=>'lean','2'=>'Intel');
+$config['mobileProcessorCores']=array('1'=>'Duo Core','2'=>'Celeron','3'=>'Xeon');
+$config['mobileProcessorBrand']=array('1'=>'Asus','2'=>'Intel','3'=>'AMD');
+$config['mobileBatteryType']=array('1'=>'Intex','2'=>'Micromax','3'=>'Samsung','4'=>'LG','5'=>'Karbonn','6'=>'Gionee','7'=>'Lenovo','8'=>'BlackBerry','9'=>'Huawei','10'=>'Sagetel');
 $config['priceRangeSettings']=array(
   'mobile'=>array('start'=>5,'consistencyNo'=>5,'end'=>5000),  
   'laptop'=>array('start'=>1,'consistencyNo'=>2,'end'=>500),  
