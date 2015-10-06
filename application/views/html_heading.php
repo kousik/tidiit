@@ -33,7 +33,7 @@
         <!-- owl carousel CSS -->
     	<link href="<?php echo SiteCSSURL;?>owl.carousel.css" rel="stylesheet">
         <link href="<?php echo SiteCSSURL;?>owl.theme.css" rel="stylesheet">
-        <link href="<?php echo SiteCSSURL;?>login.css" rel="stylesheet" type="text/css" media="all" />
+        <?php /*<link href="<?php echo SiteCSSURL;?>login.css" rel="stylesheet" type="text/css" media="all" /> */?>
         <script type="text/javascript">
         //<![CDATA[
             // URL for access ajax data

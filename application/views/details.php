@@ -71,9 +71,6 @@ jQuery(document).ready(function(){
         $(this).closest('div').next('.spec-body').toggle("slow");
     });
     
-    jQuery("#add-cart-button-id").click(function(){
-        jQuery("#orderTypeId").show( "slow" );
-    });
     
 });  
 </script>
@@ -180,17 +177,7 @@ jQuery(document).ready(function(){
             <hr class="divider-horizontal">
             <div id="pdp-buynow-rp" class="container-fluid buy-button-container reset-padding">
               <div class="row-fluid">               
-                
-                <div id="add-cart-button-id" class="col-xs-8 btn btn-xl rippleWhite buyLink marR15"> <span class="intialtext">add to truck</span> </div>
-                <div class="orderType " id="orderTypeId" style="display:none;">
-                	<div id="buy-button-id" class="col-xs-9 btn btn-xl rippleWhite buyLink buyNow marR15">
-                	<input type="radio" name="ordertype" id="grp" value="Group" checked><label for="grp">Group Order</label>
-                    </div>
-                    <div id="buy-button-id" class="col-xs-9 btn btn-xl rippleWhite buyLink buyNow ">
-                	<input type="radio" name="ordertype" id="sin" value="Single" checked><label for="sin">Single Order</label>
-                    </div>
-                </div>              
-                                
+                <div id="add-cart-button-id" class="col-xs-8 btn btn-primary btn-xl rippleWhite buyLink marR15" data-toggle="modal" data-target=".multiselect-modal-sm"> <span class="intialtext">add to truck</span> </div>                
               </div>
             </div>
           </div>
@@ -806,4 +793,33 @@ jQuery(document).ready(function(){
     </div>
   </div>
 </article>
+<div class="modal fade multiselect-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content orderType-content">
+      <div class="modal-body">
+      	<div class="orderType">
+         
+            <div class="input-group form-group order-labl">
+              <span class="input-group-addon">
+                <input type="radio" name="ordertype" id="grp" value="Group" checked>
+              </span>
+              <label for="grp">Group Order</label>
+            </div><!-- /input-group -->
+            
+            <div class="input-group order-labl form-group">
+              <span class="input-group-addon">
+                <input type="radio" name="ordertype" id="sin" value="Single" checked>
+              </span>
+              <label for="sin">Single Order</label>
+            </div><!-- /input-group -->
+            
+            <div class="text-center">
+                <button type="button" class="btn btn-default">Process</button>
+            </div>
+                </div>
+                <div class="clearfix"></div>
+      </div>
+    </div>
+  </div>
+</div>
 <?php echo $footer;?>
