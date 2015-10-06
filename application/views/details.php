@@ -71,7 +71,24 @@ jQuery(document).ready(function(){
         $(this).closest('div').next('.spec-body').toggle("slow");
     });
     
-    
+    jQuery('.add-to-truck-process-btn').click(function(){
+        var productPriceIdData=jQuery('input:radio[name=selectPackege]:checked').val();
+        if(productPriceIdData==undefined){
+            myJsMain.commonFunction.tidiitAlert('Tidiit Validate System',"Please select price for the product.",140);
+            $('.multiselect-modal-sm').modal('hide');
+        }else{
+            
+            jQuery('#productPriceId').val(productPriceIdData);
+            var order_type=jQuery('input:radio[name=ordertype]:checked').val();
+            if(order_type=='group'){
+                jQuery('#add_to_truck_process_form').attr('action','<?php echo BASE_URL.'user/process_my_group_orders/';?>');
+            }else{
+                jQuery('#add_to_truck_process_form').attr('action','<?php echo  BASE_URL.'cart/add/';?>');
+            }
+            jQuery('#add_to_truck_process_form').submit();
+        }    
+        
+    });
 });  
 </script>
 <button class="inline btn btn-primary howItWork" data-toggle="modal" data-target=".bs-example-modal-lg" href="#inline_content">HOW IT WORKS</button>
@@ -801,22 +818,26 @@ jQuery(document).ready(function(){
          
             <div class="input-group form-group order-labl">
               <span class="input-group-addon">
-                <input type="radio" name="ordertype" id="grp" value="Group" checked>
+                <input type="radio" name="ordertype" value="group">
               </span>
               <label for="grp">Group Order</label>
             </div><!-- /input-group -->
             
             <div class="input-group order-labl form-group">
               <span class="input-group-addon">
-                <input type="radio" name="ordertype" id="sin" value="Single" checked>
+                <input type="radio" name="ordertype" value="single" checked>
               </span>
               <label for="sin">Single Order</label>
             </div><!-- /input-group -->
             
             <div class="text-center">
-                <button type="button" class="btn btn-default">Process</button>
+                <button type="button" class="btn btn-default add-to-truck-process-btn">Process</button>
             </div>
-                </div>
+            <form name="add_to_truck_process_form" id="add_to_truck_process_form" method="post">
+                <input type="hidden" name="productId" id="productId" value="<?php echo $productDetailsArr[0]->productId;?>">
+                <input type="hidden" name="prorductPriceId" id="prorductPriceId" value="">
+            </form>
+        </div>
                 <div class="clearfix"></div>
       </div>
     </div>
