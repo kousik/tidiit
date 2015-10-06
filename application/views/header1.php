@@ -11,7 +11,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-3 padng_right_none">
-                    <div class="logo"><img src="<?php echo SiteImagesURL;?>logo.png" /></div>
+                    <div class="logo"><a href="<?php echo BASE_URL;?>"><img src="<?php echo SiteImagesURL;?>logo.png" /></a></div>
                 </div>
                 <div class="col-md-9 padng_left_none">
                     <div class="header_right_sectn">
