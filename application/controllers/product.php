@@ -20,6 +20,7 @@ class Product extends MY_Controller{
         //echo $productId;die;
         $productDetailsArr=  $this->Product_model->details($productId);
         $productImageArr=$this->Product_model->get_products_images($productId);
+        $productPriceArr=$this->Product_model->get_products_price($productId);
         $SEODataArr=array();
         if($this->is_loged_in()){
             $data=$this->_get_logedin_template($SEODataArr);
@@ -28,6 +29,7 @@ class Product extends MY_Controller{
         }
         $data['productDetailsArr']=$productDetailsArr;
         $data['productImageArr']=$productImageArr;
+        $data['productPriceArr']=$productPriceArr;
         
         $this->load->view('details',$data);
     }

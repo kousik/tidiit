@@ -13,8 +13,70 @@ $mobileProcessorBrand=$this->config->item('mobileProcessorBrand');
 ?>
     </div>
 </header>
+<link href="<?php echo SiteCSSURL;?>rating_simple.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="<?php echo SiteJSURL;?>rating_simple.js"></script> 
+<!-- link to magiczoom.css file -->
+<link href="<?php echo SiteCSSURL;?>magiczoom.css" rel="stylesheet" type="text/css" media="screen"/>
+<!-- link to magiczoom.js file --> 
+<script src="<?php echo SiteJSURL;?>magiczoom.js" type="text/javascript"></script>
 
-        
+<script type="text/javascript">
+jQuery(document).ready(function(){
+  jQuery("#rating_simple2").webwidget_rating_simple({
+        rating_star_length: '5',
+        rating_initial_value: '',
+        rating_function_name: '',//this is function name for click
+        directory: '<?php echo SiteJSURL;?>'
+    });  
+    
+    jQuery('.price2').hide();
+    //Examples of how to assign the Colorbox event to elements
+    jQuery('.category_inner').hover(function(){
+                jQuery('.cate_cont').toggleClass('seenMenu','hiddenMenu'); //Adds 'a', removes 'b' and vice versa
+       });
+
+    jQuery("#accordion > li > div").click(function(){
+        if(false == $(this).next().is(':visible')) {
+            jQuery('#accordion ul').slideUp(300);
+        }
+        jQuery(this).next().slideToggle(300);
+    });
+
+    jQuery('#accordion ul:eq(0)').show();
+    
+    jQuery('#orderTypeId').hide();		
+    var owl = $("#owl-demo4");		
+    owl.owlCarousel({		
+          items : 5, //10 items above 1000px browser width
+          itemsDesktop : [1024,4], //5 items between 1000px and 901px
+          itemsDesktopSmall : [900,3], // 3 items betweem 900px and 601px
+          itemsTablet: [600,2], //2 items between 600 and 0;
+          itemsMobile : 2, // itemsMobile disabled - inherit from itemsTablet option
+          pagination : false,
+          autoPlay: true,
+          navigation : false,
+
+    });
+
+    // Custom Navigation Events
+    jQuery(".topseller_next").click(function(){
+          owl.trigger('owl.next');
+    });
+    jQuery(".topseller_prev").click(function(){
+          owl.trigger('owl.prev');
+    });
+
+    jQuery(".spec-title" ).click(function() {
+        //console.log('i am hit');
+        $(this).closest('div').next('.spec-body').toggle("slow");
+    });
+    
+    jQuery("#add-cart-button-id").click(function(){
+        jQuery("#orderTypeId").show( "slow" );
+    });
+    
+});  
+</script>
 <button class="inline btn btn-primary howItWork" data-toggle="modal" data-target=".bs-example-modal-lg" href="#inline_content">HOW IT WORKS</button>
 
         
@@ -79,16 +141,13 @@ $mobileProcessorBrand=$this->config->item('mobileProcessorBrand');
         <div class="page_content"> 
           
           <!--- New -->
-          <div class="col-md-4"> <a href="<?php echo SiteImagesURL;?>pro/front.jpg" class="MagicZoom" id="Zoomer" rel="selectors-effect-speed: 600; disable-zoom: false;" title="Blue Yamaha YZF-R1"><img src="<?php echo SiteImagesURL;?>pro/front.jpg"/></a> <br/>
-            
+          <div class="col-md-4"> 
+            <a href="<?php echo PRODUCT_DEAILS_EXTRA_BIG.$productImageArr[0]->image;?>" class="MagicZoom" id="Zoomer" rel="selectors-effect-speed: 600; disable-zoom: false;" title="<?php echo $productDetailsArr[0]->title;?>"><img src="<?php echo PRODUCT_DEAILS_EXTRA_BIG.$productImageArr[0]->image;?>"/></a> <br/>
+            <?php foreach ($productImageArr As $k){?>
             <!-- selector with own title --> 
-            <a href="<?php echo SiteImagesURL;?>pro/front.jpg" rel="zoom-id: Zoomer;" rev="<?php echo SiteImagesURL;?>pro/front.jpg" title="Red Yahama YZF-R1"><img src="<?php echo SiteImagesURL;?>pro/front.jpg" width="75"/></a> 
-            
-            <!-- selector without title and with own zoom window size --> 
-            <a href="<?php echo SiteImagesURL;?>pro/back.jpg" rel="zoom-id: Zoomer;" rev="<?php echo SiteImagesURL;?>pro/back.jpg" title="Black Yamaha YZF-R1"><img src="<?php echo SiteImagesURL;?>pro/back.jpg" width="75"/></a> 
-            
-            <!-- selector with reverse opacity mode --> 
-            <a href="<?php echo SiteImagesURL;?>pro/side.jpg" rel="zoom-id: Zoomer;" rev="<?php echo SiteImagesURL;?>pro/side.jpg"><img src="<?php echo SiteImagesURL;?>pro/side.jpg"width="75" /></a> </div>
+            <a href="<?php echo PRODUCT_DEAILS_EXTRA_BIG.$k->image;?>" rel="zoom-id: Zoomer;" rev="<?php echo PRODUCT_DEAILS_EXTRA_BIG.$k->image;?>" title="<?php echo $productDetailsArr[0]->title;?>"><img src="<?php echo PRODUCT_DEAILS_SMALL.$k->image;?>" width="75"/></a> 
+            <?php }?> 
+         </div>
             
           <div class="col-md-7 img-cont">
             <h2><?php echo $productDetailsArr[0]->title;?></h2>
@@ -101,29 +160,21 @@ $mobileProcessorBrand=$this->config->item('mobileProcessorBrand');
                 <li title="<?php echo $productDetailsArr[0]->screenSize;?> Display">-&nbsp;<?php echo $productDetailsArr[0]->screenSize;?> Display</li>
                 <li title="<?php echo $productDetailsArr[0]->ram;?> RAM &amp; <?php echo $productDetailsArr[0]->internalMemory;?> ROM">-&nbsp;<?php echo $productDetailsArr[0]->ram;?> RAM &amp; <?php echo $productDetailsArr[0]->internalMemory;?> ROM</li>
                 <li title="<?php echo $productDetailsArr[0]->mobileRearCamera;?> Rear &amp;  <?php echo $productDetailsArr[0]->frontCamera;?> Front Camera">-&nbsp;<?php echo $productDetailsArr[0]->mobileRearCamera;?> Rear &amp;  <?php echo $productDetailsArr[0]->frontCamera;?> Front Camera</li>
-                <li title="<?php echo $productDetailsArr[0]->processorSpeed;?> <?php echo $productDetailsArr[0]->processorCores;?> processor">-&nbsp;<?php echo $productDetailsArr[0]->processorSpeed;?> <?php echo $productDetailsArr[0]->processorCores;?> processor</li>
+                <?php 
+                $processorType="";if(array_key_exists($productDetailsArr[0]->processorCores, $mobileProcessorCores)){$processorType=$mobileProcessorCores[$productDetailsArr[0]->processorCores];}
+                ?>
+                <li title="<?php echo $productDetailsArr[0]->processorSpeed;?> <?php echo $processorType;?> processor">-&nbsp;<?php echo $productDetailsArr[0]->processorSpeed;?> <?php echo $processorType;?> processor</li>
                 <li class="pdp-e-i-keyspecs"><i style="visibility:hidden">-&nbsp;</i><span class="viewSpecs"><a href="#allDetails" onClick="ScrollMe('allDetails'); return false;">View all item details</a></span></li>
               </ul>
             </div>
          <hr class="divider-horizontal">
-         
+             <?php foreach ($productPriceArr As $k){ //pre($k);die;?>
             <div class="row pdp-e-i-MRP  ">            	
-                <div class="col-xs-3  pdp-e-i-MRP-l"><input type="checkbox" name="selectPackege" value="6" > Packege of 6 </div>
+                <div class="col-xs-3  pdp-e-i-MRP-l"><input type="radio" name="selectPackege" value="<?php echo $k->productPriceId;?>" > Packege of <?php echo $k->qty;?> </div>
                 <!--<div class="col-xs-3  pdp-e-i-MRP-r reset-padding"><span class="rsDiv">Rs</span>&nbsp;<s><span>12,290</span></s> [<span class="pdp-e-i-MRP-r-dis">27</span>% OFF]</div> -->
-                <div class="col-xs-3  pdp-e-i-PAY-r reset-padding"><span>Rs&nbsp;<span itemprop="price" class="payBlkBig">8,999</span></span></div>            
+                <div class="col-xs-3  pdp-e-i-PAY-r reset-padding"><span>Rs&nbsp;<span itemprop="price" class="payBlkBig"><?php echo $k->price;?></span></span></div>            
             </div>
-            
-            <div class="row pdp-e-i-MRP  ">            	
-                <div class="col-xs-3  pdp-e-i-MRP-l"><input type="checkbox" name="selectPackege" value="66" > Packege of 66 </div>
-                <div class="col-xs-3  pdp-e-i-MRP-r reset-padding"><span class="rsDiv">Rs</span>&nbsp;<s><span>12,290</span></s> [<span class="pdp-e-i-MRP-r-dis">27</span>% OFF]</div>
-                <div class="col-xs-3  pdp-e-i-PAY-r reset-padding"><span>Rs&nbsp;<span itemprop="price" class="payBlkBig">8,999</span></span></div>            
-            </div>
-            
-            <div class="row pdp-e-i-MRP  ">            	
-                <div class="col-xs-3  pdp-e-i-MRP-l"><input type="checkbox" name="selectPackege" value="6666" > Packege of 6666 </div>
-                <div class="col-xs-3  pdp-e-i-MRP-r reset-padding"><span class="rsDiv">Rs</span>&nbsp;<s><span>12,290</span></s> [<span class="pdp-e-i-MRP-r-dis">27</span>% OFF]</div>
-                <div class="col-xs-3  pdp-e-i-PAY-r reset-padding"><span>Rs&nbsp;<span itemprop="price" class="payBlkBig">8,999</span></span></div>            
-            </div>
+             <?php }?>
             
                         
             <hr class="divider-horizontal">
@@ -391,13 +442,17 @@ $mobileProcessorBrand=$this->config->item('mobileProcessorBrand');
                   <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->screenSize;?> Display</li>
                   <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->ram;?> RAM &amp; <?php echo $productDetailsArr[0]->internalMemory;?> ROM</li>
                   <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->mobileRearCamera;?> Rear &amp;  <?php echo $productDetailsArr[0]->frontCamera;?> Front Camera</li>
-                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->processorSpeed;?> <?php echo $productDetailsArr[0]->processorCores;?> processor</li>
+                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->processorSpeed;?> <?php echo $processorType;?> processor</li>
                   <li class="col-xs-6 dtls-li"> Expandable upto <?php echo $productDetailsArr[0]->expandableMemory;?></li>
-                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->mobileConnectivity;?></li>
-                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->displayResolution;?> pixels screen resolution</li>
+                  <?php $connectivityType='';if(array_key_exists($productDetailsArr[0]->mobileConnectivity,$mobileConnectivity)){$connectivityType=$mobileConnectivity[$productDetailsArr[0]->mobileConnectivity];}?>
+                  <li class="col-xs-6 dtls-li"> <?php echo $connectivityType;?></li>
+                  <?php $mobileDisplayResolutiontype='';if(array_key_exists($productDetailsArr[0]->displayResolution, $mobileDisplayResolution)){$mobileDisplayResolutiontype=$mobileDisplayResolution[$productDetailsArr[0]->displayResolution];}?>
+                  <li class="col-xs-6 dtls-li"> <?php echo $mobileDisplayResolutiontype;?> pixels screen resolution</li>
                   <li class="col-xs-6 dtls-li"> No of SIM <?php echo $productDetailsArr[0]->noOfSims;?></li>
-                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->batteryCapacity.' '.$productDetailsArr[0]->batteryType;?> Battery (removable)</li>
-                  <li class="col-xs-6 dtls-li"> Colour Variants: <?php echo $productDetailsArr[0]->color;?></li>
+                  <?php $mobileBatteryName='';if(array_key_exists($productDetailsArr[0]->batteryType, $mobileBatteryType)){$mobileBatteryName=$mobileBatteryType[$productDetailsArr[0]->batteryType];}?>
+                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->batteryCapacity.' '.$mobileBatteryName;?> Battery (removable)</li>
+                  <?php $mobileColorName='';if(array_key_exists($productDetailsArr[0]->color, $mobileColor)){$mobileColorName=$mobileColor[$productDetailsArr[0]->color];}?>
+                  <li class="col-xs-6 dtls-li"> Colour Variants: <?php echo $mobileColorName;?></li>
                 </ul>
               </div>
             </div>
