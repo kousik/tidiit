@@ -5,7 +5,8 @@
     </style>
     
   <body class="login">
-    <div class="form-signin">
+   <div class="row">
+    <div class="col-md-6 col-md-offset-3 well">   
       <div class="text-center">
         <img src="<?php echo SiteImagesURL;?>logo.png" alt="Metis Logo">
       </div>
@@ -101,7 +102,7 @@
           <div class="col-md-6">
               <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
-                      <input id="contactNo" name="contactNo" type="phone" placeholder="enter your contactno" class="form-control " required >
+                      <input id="contactNo" name="contactNo" type="phone" placeholder="" class="form-control " required >
                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
                     </div>
                 </div>
