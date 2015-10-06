@@ -12,9 +12,6 @@ myJsMain.login=function(){
     $('#login_form').validate({
         rules: validationRules,
         onsubmit: true,
-        errorPlacement: function(error, element) {
-            return true;
-        },
         errorElement: "nothing",
         errorClass: "invalid",
         validClass: "success"
@@ -106,9 +103,6 @@ myJsMain.registration=function(){
     $('#registration_form').validate({
         rules: validationRules,
         onsubmit: true,
-        errorPlacement: function(error, element) {
-            return true;
-        },
         errorElement: "nothing",
         errorClass: "invalid",
         validClass: "success"
