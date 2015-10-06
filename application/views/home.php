@@ -129,7 +129,7 @@
             <div class="row">
                 <div id="demo">
                     <div id="owl-demo" class="owl-carousel">
-                        <?php foreach($bestSelllingItem AS $k){ //pre($k);die;?>
+                        <?php foreach($bestSelllingItem AS $k){ //pre(HOME_LISTING.$k->image);die;?>
                         <div class="item">
                             <div class="prodct_box">
                                 <a href="#">
@@ -180,7 +180,7 @@
                                     <li><i class="fa fa-star-o"></i></li>
                                 </ul>
                                 <p><?php echo $k->lowestPrice.' - '.$k->heighestPrice;?></p>
-                                <p><a href="<?php echo BASE_URL.str_replace('+','-',urlencode(my_seo_freindly_url($k->title))).'+'. base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
+                                <p><a href="<?php echo BASE_URL.'product/details/'.base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
                             </div>
                         </div>
                         <?php }?>
@@ -212,7 +212,7 @@
                                     <li><i class="fa fa-star-o"></i></li>
                                 </ul>
                                 <p><?php echo $k->lowestPrice.' - '.$k->heighestPrice;?></p>
-                                <p><a href="<?php echo BASE_URL.str_replace('+','-',urlencode(my_seo_freindly_url($k->title))).'+'. base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
+                                <p><a href="<?php echo BASE_URL.'product/details/'.base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
                             </div>
                         </div>
                         <?php }?>

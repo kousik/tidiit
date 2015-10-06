@@ -13,6 +13,22 @@ class Product extends MY_Controller{
         if($str==""){
             redirect(BASE_URL);
         }
-        $productDetailsArr=  $this->Product_model->details(base64_decode($str));
+        $this->config->load('product');
+        /*$strArr=explode('+',$str);
+        $productId=  base64_decode(end($strArr));*/
+        $productId=  base64_decode($str);
+        //echo $productId;die;
+        $productDetailsArr=  $this->Product_model->details($productId);
+        $productImageArr=$this->Product_model->get_products_images($productId);
+        $SEODataArr=array();
+        if($this->is_loged_in()){
+            $data=$this->_get_logedin_template($SEODataArr);
+        }else{
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        }
+        $data['productDetailsArr']=$productDetailsArr;
+        $data['productImageArr']=$productImageArr;
+        
+        $this->load->view('details',$data);
     }
 }

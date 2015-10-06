@@ -14,6 +14,7 @@ class Product_model extends CI_Model {
         private $_table_deal="product_deal";
         private $_table_brand="product_brand";
         private $_table_seller="product_seller";
+        private $_table_template="product_view_page";
                 
 	function __construct() {
 		$this->_SiteSession=$this->session->userdata('USER_SITE_SESSION_ID');
@@ -167,6 +168,11 @@ class Product_model extends CI_Model {
 		return $this->db->insert_id();
         }
         
+        public function add_brand($data){
+            $this->db->insert($this->_table_brand,$data);
+            return $this->db->insert_id();
+        }
+        
         function add_product_category($dataArr){
             $rs=$this->db->from($this->_table_category)->where('categoryId',$dataArr['categoryId'])->where('productId',$dataArr['productId'])->get()->result();
             if(count($rs)==0){
@@ -281,6 +287,8 @@ class Product_model extends CI_Model {
 		$this->db->insert_batch($this->_table_image,$dataArr);
 		return $this->db->insert_id();
 	}
+        
+        
 	
 	public function edit_product_image($dataArr,$productId){
 		$this->db->where('productId',$productId);
@@ -447,13 +455,7 @@ class Product_model extends CI_Model {
 	}
 	
 	public function details($id){
-		$sql="SELECT p.*,c.CountryName,c.CountryID,pi.Image,dis.Amount,pd.DiscountID,ca.isAddToCart "
-                        . " FROM `product` AS p JOIN `product_country` AS pc ON(p.productId=pc.productId) "
-                        . " JOIN product_image as pi ON(p.productID=pi.productId) "
-                        . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                        . " LEFT JOIN `country` AS c ON(pc.CountryID=c.CountryID) "
-                        . " LEFT JOIN `category` AS ca ON(ca.categoryId=p.categoryId) "
-                        . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) WHERE p.productId='".$id."' ";
+		$sql="SELECT p.* FROM `product` AS p WHERE p.productId='".$id."' ";
 		//die($sql);
 		return $this->db->query($sql)->result();
 	}
@@ -993,7 +995,11 @@ class Product_model extends CI_Model {
                 . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
                 . " JOIN product_category AS pc ON(pc.productId=p.productId)  "
                 . " JOIN category AS c ON(pc.categoryId=c.categoryId)  "
-                . " WHERE p.status=1 AND c.status=1 ORDER BY p.productId DESC,p.updateTime DESC LIMIT 0,$noOfItem";
+                . " WHERE p.status=1 AND c.status=1 GROUP BY pi.productId ORDER BY p.productId DESC,p.updateTime DESC LIMIT 0,$noOfItem";
         return $this->db->query($sql)->result();
+    }
+    
+    function get_page_template(){
+        return $this->db->from($this->_table_template)->get()->result();
     }
 }

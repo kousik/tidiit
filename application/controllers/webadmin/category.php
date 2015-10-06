@@ -3,6 +3,7 @@ class Category extends MY_Controller{
 	public function __construct(){
 		parent::__construct();
 		$this->load->model('Category_model');
+		$this->load->model('Product_model');
 	}
 	
 	public function index(){
@@ -24,6 +25,8 @@ class Category extends MY_Controller{
 		}
                 //pre($parrentData);die;
 		$data["parrentData"]=$parrentData;
+                $data['productPageTypeArr']=$this->Product_model->get_page_template();
+                $data['categoryTemplateArr']=$this->Category_model->get_page_template();
 		$this->load->view('webadmin/category_list',$data);
 	}
 	
@@ -37,14 +40,22 @@ class Category extends MY_Controller{
 		$metaDescription=$this->input->post('metaDescription',TRUE);
 		$view=$this->input->post('view',TRUE);
 		$status=$this->input->post('status',TRUE);
-		
-		if($_FILES['categoryImage']['name']==""){
+                if(!array_key_exists('categoryImage', $_FILES)){
+                    $_FILES=array();
+                    $_FILES['categoryImage']=array();
+                    $_FILES['categoryImage']['name']="";
+                }
+		if($_FILES['categoryImage']['name']=="" && $parrentCategoryId>0){
                     $this->session->set_flashdata('Message','Please Browse Category Image.');
                 }else{
-                    $file=$_FILES['categoryImage'];
-                    $image=time().'.'.end(explode('.',$file['name']));
-                    //move_uploaded_file($file['tmp_name'],$imagePath.$image);
-                    $this->category_image_resize($file,$image);
+                    if($_FILES['categoryImage']['name']!=""){
+                        $file=$_FILES['categoryImage'];
+                        $image=time().'.'.end(explode('.',$file['name']));
+                        //move_uploaded_file($file['tmp_name'],$imagePath.$image);
+                        $this->category_image_resize($file,$image);
+                    }else{
+                        $image="";
+                    }
                     $dataArr=array(
                         'categoryName'=>$categoryName,
                         'parrentCategoryId'=>$parrentCategoryId,
@@ -55,7 +66,7 @@ class Category extends MY_Controller{
                         'image'=>$image,
                         'metaTitle'=>$metaTitle,
                         'metaKeyWord'=>$metaKeyWord,
-                        'metaDescription'=>metaDescription
+                        'metaDescription'=>$metaDescription
                     );
 
                     //print_r($dataArr);die;
@@ -195,8 +206,8 @@ class Category extends MY_Controller{
             $config['image_library'] = 'gd2';
             $config['source_image'] = $OriginalFilePath;
             $config['new_image'] = $PHOTOPATH. 'admin/';
-            $config['width'] = 350;
-            $config['height'] = 100;
+            $config['width'] = 50;
+            $config['height'] = 50;
             $config['maintain_ratio'] = true;
             $config['master_dim'] = 'auto';
             $config['create_thumb'] = FALSE;
