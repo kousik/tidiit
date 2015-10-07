@@ -348,7 +348,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
 <input type="radio" value="Yes" name="multiLanguages" style="position: absolute; left: -9999px;">
 Yes</label>
                          <label class="ideal-radiocheck-label" onClick="">
-<input type="radio" value="No" name="multiLanguages" style="position: absolute; left: -9999px;">
+                             <input type="radio" value="No" name="multiLanguages" style="position: absolute; left: -9999px;" checked>
 No</label>
                         <span class="error"></span>
                       </div>
@@ -378,7 +378,7 @@ No</label>
 <input type="radio" value="Yes" name="mobileFlash" style="position: absolute; left: -9999px;">
 Yes</label>
                          <label class="ideal-radiocheck-label" onClick="">
-<input type="radio" value="No" name="mobileFlash" style="position: absolute; left: -9999px;">
+                             <input type="radio" value="No" name="mobileFlash" style="position: absolute; left: -9999px;" checked>
 No</label>
                         <span class="error"></span>
                       </div>
