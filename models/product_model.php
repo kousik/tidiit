@@ -455,7 +455,8 @@ class Product_model extends CI_Model {
 	}
 	
 	public function details($id){
-		$sql="SELECT p.* FROM `product` AS p WHERE p.productId='".$id."' ";
+		$sql="SELECT p.*,b.title AS brandTitle FROM `product` AS p JOIN `product_brand` AS pb ON(p.productId=pb.productId) "
+                        . " JOIN `brand` AS b ON(pb.brandId=b.brandId) WHERE p.productId='".$id."' ";
 		//die($sql);
 		return $this->db->query($sql)->result();
 	}

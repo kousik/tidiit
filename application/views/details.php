@@ -466,14 +466,27 @@ jQuery(document).ready(function(){
               </div>
               <div itemprop="description" class="spec-body">
               <div class="detailssubbox">
-              <ul id="accordion">
+                  <ul id="accordion" style="width:100%;">
                     <li><div class="product-spec">In The Box</div>
                         <ul>
                           <table width="100%" cellspacing="2" cellpadding="0" border="0">
                             <tbody>                              
                               <tr>
                                 <td width="20%">Box Contents</td>
-                                <td>Handset, Charger, USB Cable, Earphones, User Manual </td>
+                                <td>
+                                    <?php $mobileContentArr=  explode(',', $productDetailsArr[0]->mobileBoxContent);
+                                    if(!empty($mobileContentArr)){
+                                        $inBox='';
+                                    foreach($mobileContentArr AS $k){
+                                        if($inBox=='')
+                                            $inBox=$mobileBoxContents[$k];
+                                        else
+                                            $inBox.= ', '.$mobileBoxContents[$k];
+                                    }
+                                    echo $inBox;
+                                    ?>
+                                    <?php }else{ echo 'No thing inside';}?>
+                                </td>
                               </tr>
                             </tbody>
                           </table>
@@ -485,36 +498,32 @@ jQuery(document).ready(function(){
                             <tbody>                             
                               <tr>
                                 <td width="20%">Brand</td>
-                                <td>InFocus </td>
+                                <td><?php echo $productDetailsArr[0]->brandTitle;?></td>
                               </tr>
                               <tr>
                                 <td width="20%">Model</td>
-                                <td>M330 </td>
-                              </tr>
-                              <tr>
-                                <td width="20%">Form</td>
-                                <td>Touch </td>
+                                <td><?php echo $productDetailsArr[0]->model;?> </td>
                               </tr>
                               <tr>
                                 <td width="20%">SIMs</td>
-                                <td>Dual SIM (GSM+GSM) </td>
+                                <td><?php if($productDetailsArr[0]->noOfSims==1){echo 'Single Sim';}else{ echo 'Dual Sims';}?></td>
                               </tr>
-                              <tr>
+                              <!--<tr>
                                 <td width="20%">SIM Size</td>
                                 <td>Mini Sim </td>
-                              </tr>
+                              </tr>-->
                               <tr>
                                 <td width="20%">Colour</td>
-                                <td>White </td>
+                                <td><?php echo $mobileColorName;?> </td>
                               </tr>
                               <tr>
                                 <td width="20%">Other Features</td>
-                                <td>Email, Document Viewer </td>
+                                <td><?php echo $productDetailsArr[0]->mobileOtherFeatures;?></td>
                               </tr>
-                              <tr>
+                              <!--<tr>
                                 <td width="20%">Call Features</td>
                                 <td>Call Waiting, Call Forwarding, Loudspeaker </td>
-                              </tr>
+                              </tr>-->
                             </tbody>
                           </table>
                         </ul>
@@ -525,17 +534,17 @@ jQuery(document).ready(function(){
                             <tbody>                             
                               <tr>
                                 <td width="20%">Screen Size (in cm)</td>
-                                <td>13.97 cm (5.5) </td>
+                                <td><?php echo $productDetailsArr[0]->screenSize;?> </td>
                               </tr>
                               <tr>
                                 <td width="20%">Display Resolution</td>
-                                <td>1280 X 720 pixels HD </td>
+                                <td><?php echo $mobileDisplayResolutiontype;?> </td>
                               </tr>
                               <tr>
                                 <td width="20%">Display Type</td>
-                                <td>Capacitive </td>
+                                <td><?php echo $productDetailsArr[0]->displayType;?> </td>
                               </tr>
-                              <tr>
+                              <!--<tr>
                                 <td width="20%">Screen Protection</td>
                                 <td>Gorilla Glass 2 </td>
                               </tr>
@@ -550,7 +559,7 @@ jQuery(document).ready(function(){
                               <tr>
                                 <td width="20%">Other Screen Features</td>
                                 <td>HD Display </td>
-                              </tr>
+                              </tr>-->
                             </tbody>
                           </table>
                         </ul>
@@ -561,15 +570,15 @@ jQuery(document).ready(function(){
                             <tbody>                             
                               <tr>
                                 <td width="20%">OS Version</td>
-                                <td>Android KitKat 4.4 with InLife UI </td>
+                                <td><?php echo $mobileOS[$productDetailsArr[0]->os].' '.$productDetailsArr[0]->osVersion;?></td>
                               </tr>
-                              <tr>
+                              <!--<tr>
                                 <td width="20%">Preinstalled Apps</td>
                                 <td>- </td>
-                              </tr>
+                              </tr>-->
                               <tr>
                                 <td width="20%">Multi-languages Supported</td>
-                                <td>Yes </td>
+                                <td><?php echo ($productDetailsArr[0]->multiLanguages==1) ? 'Yes' : 'No';?> </td>
                               </tr>
                             </tbody>
                           </table>
@@ -583,23 +592,23 @@ jQuery(document).ready(function(){
                              
                               <tr>
                                 <td width="20%">Rear Camera</td>
-                                <td>13 MP </td>
+                                <td><?php echo $productDetailsArr[0]->mobileRearCamera;?> </td>
                               </tr>
-                              <tr>
+                              <!--<tr>
                                 <td width="20%">Auto Focus</td>
                                 <td>Yes </td>
-                              </tr>
+                              </tr>-->
                               <tr>
                                 <td width="20%">Flash</td>
-                                <td>Yes </td>
+                                <td><?php echo ($productDetailsArr[0]->mobileFlash==1) ? 'Yes' : "No";?> </td>
                               </tr>
                               <tr>
                                 <td width="20%">Front Camera</td>
-                                <td>8 MP </td>
+                                <td><?php echo $productDetailsArr[0]->frontCamera;?> </td>
                               </tr>
                               <tr>
                                 <td width="20%">Other Camera Features</td>
-                                <td>Sony Exmor R Sensor, Blue Glass Filter, f2.2 apperture speed </td>
+                                <td><?php echo $productDetailsArr[0]->mobileOtherCameraFeatures;?></td>
                               </tr>
                             </tbody>
                           </table>
@@ -611,21 +620,10 @@ jQuery(document).ready(function(){
                         	<table width="100%" cellspacing="2" cellpadding="0" border="0">
                             <tbody>                            
                               <tr>
-                                <td width="20%">GSM</td>
-                                <td>900/1800/1900 </td>
+                                <td width="20%">By</td>
+                                <td><?php echo $mobileConnectivity[$productDetailsArr[0]->mobileConnectivity];?></td>
                               </tr>
-                              <tr>
-                                <td width="20%">CDMA</td>
-                                <td>No </td>
-                              </tr>
-                              <tr>
-                                <td width="20%">3G/WCDMA</td>
-                                <td>WCDMA:900/2100MHz </td>
-                              </tr>
-                              <tr>
-                                <td width="20%">4G/LTE</td>
-                                <td>- </td>
-                              </tr>
+                              
                             </tbody>
                           </table>
                         </ul>
@@ -637,15 +635,15 @@ jQuery(document).ready(function(){
                             <tbody>                              
                               <tr>
                                 <td width="20%">Processor Speed</td>
-                                <td>1.7 GHz </td>
+                                <td><?php echo $productDetailsArr[0]->processorSpeed;?> </td>
                               </tr>
                               <tr>
                                 <td width="20%">Processor Cores</td>
-                                <td>Octa Core </td>
+                                <td><?php echo $processorType;?> </td>
                               </tr>
                               <tr>
                                 <td width="20%">Processor Brand</td>
-                                <td>MTK MT6592 </td>
+                                <td><?php echo $mobileProcessorBrand[$productDetailsArr[0]->processorBrand];?></td>
                               </tr>
                             </tbody>
                           </table>
@@ -659,30 +657,30 @@ jQuery(document).ready(function(){
                              
                               <tr>
                                 <td width="20%">RAM</td>
-                                <td>2 GB </td>
+                                <td><?php echo $productDetailsArr[0]->ram;?></td>
                               </tr>
                               <tr>
                                 <td width="20%">Internal Memory</td>
-                                <td>16 GB </td>
+                                <td><?php echo $productDetailsArr[0]->internalMemory;?> </td>
                               </tr>
-                              <tr>
+                              <!--<tr>
                                 <td width="20%">User Memory</td>
                                 <td>Approx 12 GB </td>
-                              </tr>
+                              </tr>-->
                               <tr>
                                 <td width="20%">Expandable Memory</td>
-                                <td>upto 64 GB </td>
+                                <td><?php echo $productDetailsArr[0]->expandableMemory;?> </td>
                               </tr>
                               <tr>
                                 <td width="20%">Memory Card Slot</td>
-                                <td>microSD </td>
+                                <td><?php echo $productDetailsArr[0]->memoryCardSlot;?> </td>
                               </tr>
                             </tbody>
                           </table>
                         </ul>
                      </li>
                      
-                     <li><div class="product-spec">Hardware</div>
+                     <!--<li><div class="product-spec">Hardware</div>
                         <ul>
                         	<table width="100%" cellspacing="2" cellpadding="0" border="0">
                             <tbody>
@@ -732,7 +730,7 @@ jQuery(document).ready(function(){
                             </tbody>
                           </table>
                         </ul>
-                     </li>
+                     </li>-->
                      
                      <li><div class="product-spec">Battery &amp; Power</div>
                         <ul>
@@ -740,23 +738,23 @@ jQuery(document).ready(function(){
                             <tbody>                             
                               <tr>
                                 <td width="20%">Battery Capacity</td>
-                                <td>3100 mAh </td>
+                                <td><?php echo $productDetailsArr[0]->batteryCapacity;?> </td>
                               </tr>
                               <tr>
                                 <td width="20%">Battery Type</td>
-                                <td>Li-Polymer </td>
+                                <td><?php $batteryTypeName='';if(array_key_exists($productDetailsArr[0]->batteryType, $mobileBatteryType)){ echo $mobileBatteryType[$productDetailsArr[0]->batteryType];}?></td>
                               </tr>
-                              <tr>
+                              <!--<tr>
                                 <td width="20%">Replaceable Battery</td>
                                 <td>No </td>
-                              </tr>
+                              </tr>-->
                               <tr>
                                 <td width="20%">Talk Time</td>
-                                <td>Up to 18 hours </td>
+                                <td><?php echo $productDetailsArr[0]->talkTime;?> </td>
                               </tr>
                               <tr>
                                 <td width="20%">Standby Time</td>
-                                <td>Up to 550 hours </td>
+                                <td><?php echo $productDetailsArr[0]->standbyTime;?> </td>
                               </tr>
                             </tbody>
                           </table>
@@ -769,11 +767,11 @@ jQuery(document).ready(function(){
                             <tbody>                              
                               <tr>
                                 <td width="20%">HxWxD</td>
-                                <td>7.81 X 15.34 X 0.93 cm (78.1 X 153.4 X 9.3) </td>
+                                <td><?php echo $productDetailsArr[0]->height.' X '.$productDetailsArr[0]->width.' X '.$productDetailsArr[0]->length;?> </td>
                               </tr>
                               <tr>
                                 <td width="20%">Weight</td>
-                                <td>167 gm </td>
+                                <td><?php echo $productDetailsArr[0]->weight?> </td>
                               </tr>
                             </tbody>
                           </table>
@@ -787,11 +785,11 @@ jQuery(document).ready(function(){
                              
                               <tr>
                                 <td width="20%">Warranty Type</td>
-                                <td>Brand Warranty </td>
+                                <td><?php echo $productDetailsArr[0]->warrantyType?> </td>
                               </tr>
                               <tr>
-                                <td width="20%">Warranty Duration</td>
-                                <td>12 Months </td>
+                                <td width="20%">Warranty Duration(in Month)</td>
+                                <td><?php echo $productDetailsArr[0]->warrantyDuration?> </td>
                               </tr>
                             </tbody>
                           </table>
