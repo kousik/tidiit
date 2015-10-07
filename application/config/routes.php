@@ -45,6 +45,9 @@ $segArr=explode('/', $_SERVER['REQUEST_URI']);
 $route['webadmin']="webadmin/index";
 $route['webadmin/index']="webadmin/index/login";
 
+//Logout
+$route['logout']="index/logout";
+
 $route['default_controller'] = "index";
 $route['404_override'] = 'index/under_construnction';
 

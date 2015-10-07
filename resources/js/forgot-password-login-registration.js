@@ -28,7 +28,7 @@ myJsMain.login=function(){
         if(resultData.result=='bad'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         }else if(resultData.result=='good'){
-            location.href=$(location).attr('href'); //resultData.url;
+            window.location.href = resultData.url;
             //myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.url,200);
         }
     }
@@ -112,7 +112,7 @@ myJsMain.registration=function(){
         if(resultData.result=='bad'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         }else if(resultData.result=='good'){
-            location.href=$(location).attr('href'); //resultData.url;
+            window.location.href = resultData.url;
             //myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.url,200);
         }
     }

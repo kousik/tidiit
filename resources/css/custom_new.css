@@ -2619,3 +2619,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
 	.club_img_sectn li a img{width:66px; height:66px;}
 	
 }
+
+.iframe {
+    cursor: pointer;
+}
+
+label.error {
+    display: none;
+}

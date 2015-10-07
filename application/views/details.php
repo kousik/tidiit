@@ -78,7 +78,7 @@ jQuery(document).ready(function(){
             $('.multiselect-modal-sm').modal('hide');
         }else{
             
-            jQuery('#productPriceId').val(productPriceIdData);
+            jQuery('#prorductPriceId').val(productPriceIdData);
             var order_type=jQuery('input:radio[name=ordertype]:checked').val();
             if(order_type=='group'){
                 jQuery('#add_to_truck_process_form').attr('action','<?php echo BASE_URL.'user/process_my_group_orders/';?>');

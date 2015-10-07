@@ -65,4 +65,10 @@ class User extends MY_Controller{
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
         $this->load->view('my_groups',$data);
     }
+    
+    function process_my_group_orders(){
+        print_r($_POST);die;
+        $productId = $this->input->post('productId');
+        $prorductPriceId = $this->input->post('prorductPriceId');
+    }
 }
