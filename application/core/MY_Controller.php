@@ -11,6 +11,7 @@ class MY_Controller extends CI_Controller {
         $this->load->model('Cms_model');
         $this->load->model('Product_model');
         $this->load->model('Category_model');
+        $this->load->library('session');
     }
 
     public function _logout(){
@@ -21,6 +22,7 @@ class MY_Controller extends CI_Controller {
             $this->session->unset_userdata('FE_SESSION_USER_PROFILE_IMG_VAR');
             $this->session->unset_userdata('FE_SESSION_USER_TYPE');
             $this->session->unset_userdata('FE_SESSION_VAR_TYPE');
+            $this->session->unset_userdata('FE_SESSION_UDATA');
             $this->session->unset_userdata('ShippingSelected');
             $this->session->unset_userdata('ShippingID');
             $this->session->set_userdata('TotalItemInCart',0);
@@ -384,5 +386,14 @@ class MY_Controller extends CI_Controller {
     function _show_under_construction(){
         $data=$this->_show_admin_logedin_layout();
         $this->load->view('under_construction',$data);
+    }
+    
+    /**
+     * Get Current Logged in User data
+     * @return Object User Data
+     */
+    function _get_current_user_details(){        
+        $user = $this->session->userdata('FE_SESSION_UDATA');
+        return $user;
     }
 }

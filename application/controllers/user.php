@@ -67,7 +67,8 @@ class User extends MY_Controller{
     }
     
     function process_my_group_orders(){
-        print_r($_POST);die;
+        print_r($_POST);
+        $user = $this->_get_current_user_details(); print_r($user);die;
         $productId = $this->input->post('productId');
         $prorductPriceId = $this->input->post('prorductPriceId');
     }
