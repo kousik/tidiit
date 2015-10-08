@@ -187,6 +187,7 @@
                                             <input id="firstName" name="firstName" type="text" placeholder="Enter First Name" class="form-control" required >
                                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
                                         </div>
+                                        <label id="firstName-error" class="error" for="firstName"></label>
                                     </div>
                                     <div class="form-group has-error">
                                         <div class="input-group col-md-8"> 

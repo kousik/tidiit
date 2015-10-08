@@ -23,13 +23,15 @@
 			<tr height="20" bgcolor="#DFDFDF">
               <td style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/cms/viewlist/'?>">Manage Static Pages Content</a> </td>
             </tr>
-			
+            <tr height="20" bgcolor="#DFDFDF">
+              <td style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/country_controller/viewlist/'?>">country Manager</a> </td>
+            </tr>
             <?php /*?>
             <tr height="20" bgcolor="#DFDFDF">
               <td style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/banner/viewlist/'?>">Other Page Banner Manager</a> </td>
             </tr><?php */?>
             <tr height="20" bgcolor="#DFDFDF">
-              <td style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/faq/viewlist/'?>">FAQ Managert</a> </td>
+              <td style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/faq/viewlist/'?>">FAQ Manager</a> </td>
             </tr>
             <?php /* ?>
             <tr height="20" bgcolor="#DFDFDF">
