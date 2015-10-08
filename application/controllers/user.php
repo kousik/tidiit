@@ -2,6 +2,7 @@
 class User extends MY_Controller{
     public function __construct(){
         parent::__construct();
+        $this->_isLoggedIn();
         $this->load->model('User_model');
         $this->db->cache_off();
     }
@@ -67,9 +68,13 @@ class User extends MY_Controller{
     }
     
     function process_my_group_orders(){
-        print_r($_POST);
-        $user = $this->_get_current_user_details(); print_r($user);die;
+        $SEODataArr=array();
+        $data=$this->_get_logedin_template($SEODataArr);
+        $user = $this->_get_current_user_details(); //print_r($user);die;
         $productId = $this->input->post('productId');
         $prorductPriceId = $this->input->post('prorductPriceId');
+        $data['userMenuActive']=7;
+        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $this->load->view('group_order/group_order',$data);
     }
 }

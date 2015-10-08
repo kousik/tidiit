@@ -89,7 +89,7 @@ myJsMain.registration=function(){
         onsubmit: true,
         messages:{
             email:{
-                remote:"Pleas provide valid username"
+                remote:$.validator.format("{0} Pleas provide valid username.")
             }
         }
     });

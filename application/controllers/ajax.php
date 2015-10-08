@@ -36,12 +36,12 @@ class Ajax extends MY_Controller{
                   'field'   => 'lastName',
                   'label'   => 'Last Name',
                   'rules'   => 'trim|required|xss_clean|min_length[3]|max_length[25]'
-               ),
+               )/*,
             array(
                   'field'   => 'webIdRegistration',
                   'label'   => 'Unathorize Access',
                   'rules'   => 'trim|required|xss_clean|callback_valid_security_code'
-               )
+               )*/
             /*,
             array(
                   'field'   => 'agree',
@@ -175,9 +175,9 @@ class Ajax extends MY_Controller{
             $str=$userName;
         }
         if($this->User_model->check_username_exists($str,'buyer')==TRUE){
-            echo 'false';die;
+            echo "false";die;
         }else{
-            echo 'true';die;
+            echo "true";die;
         }
     }
     
