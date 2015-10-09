@@ -49,7 +49,6 @@ class Ajax extends MY_Controller{
                   'rules'   => 'trim|required|xss_clean'
                )*/
          );
-        //print_r($_POST);die;
         //echo json_encode(array('result'=>'bad','msg'=> 'kkkkkkkkkkkkkkk'));die;
         //initialise the rules with validatiion helper
         $this->form_validation->set_rules($config); 
@@ -64,51 +63,27 @@ class Ajax extends MY_Controller{
             $lastName=$this->input->post('lastName',TRUE);
             $email=$this->input->post('email',TRUE);
             $userName=$email;
-            /*$mobile=$this->input->post('mobile',TRUE);
-            $contactNo=$this->input->post('contactNo',TRUE);
-            $fax=$this->input->post('fax',TRUE);
-            $address=$this->input->post('address',TRUE);
-            $city=$this->input->post('city',TRUE);
-            $stateId=$this->input->post('stateId',TRUE);
-            $countryId=$this->input->post('countryId',TRUE);
-            $zip=$this->input->post('zip',TRUE);
-            $aboutMe=$this->input->post('aboutMe',TRUE);
-            $receiveNewsLetter=$this->input->post('receiveNewsLetter',TRUE);*/
-            $receiveNewsLetter='';
-            //echo json_encode(array('result'=>'bad','msg'=>$receiveNewsLetter));die; 
+            $receiveNewsLetter = 1;
             
             $dataArr=array('userName'=>$userName,'password'=>  base64_encode($password).'~'.md5('tidiit'),'firstName'=>$firstName,'lastName'=>$lastName,
                 'email'=>$email,'IP'=> $this->input->ip_address(),'userResources'=>'site','userType'=>'buyer','status'=>1);
             $userId=$this->User_model->add($dataArr);
             
-            if($userId!=""){
-                /*
-                 * 
-                 $this->load->library('email');
-                $msg=$this->get_user_reg_email_body($firstName,$userName,$password);
-                $SupportEmail=$this->Siteconfig_model->get_value_by_name('SupportEmail');
-                $this->email->from($SupportEmail, 'Tidiit Inc Ltd Support');
-                $this->email->to($email,$firstName.' '.$lastName);
-                $this->email->subject('Your Tidiit Inc Ltd account information.');
-                $this->email->message($msg);
-                $this->email->send();
-                 * 
-                 */
-                //$billDataArr=array('userId'=>$userId,'countryId'=>$countryId,'stateId'=>$stateId,'city'=>$city,'address'=>$address,'zip'=>$zip,'contactNo'=>$contactNo);
-                //$this->User_model->add_bill_address($billDataArr);
+            if($userId!=""){               
             
                 if($receiveNewsLetter==1){
                     if($this->User_model->is_already_subscribe($email)==FALSE){
                         $this->User_model->subscribe($email);
                     }
                 }
-                
+                $users=$this->User_model->get_details_by_id($userId);
                 $this->session->set_userdata('FE_SESSION_VAR',$userId);
                 $this->session->set_userdata('FE_SESSION_USERNAME_VAR',$userName);
-                //$this->session->set_userdata('FE_SESSION_USERNAME_VAR',$UserName);
                 $this->session->set_userdata('FE_SESSION_VAR_TYPE','buyer');
+                $this->session->set_userdata('FE_SESSION_VAR_FNAME',$firstName);
+                $this->session->set_userdata('FE_SESSION_UDATA',$users[0]);
                 
-                echo json_encode(array('result'=>'good','url'=>BASE_URL,'msg'=>'You have successfully register your account with "Tidiit Inc Ltd.Your login information will be sent to registered email account.'));die; 
+                echo json_encode(array('result'=>'good','url'=>BASE_URL.'/user/edit_profile','msg'=>'You have successfully register your account with "Tidiit Inc Ltd.Your login information will be sent to registered email account.'));die; 
             }else{
                 echo json_encode(array('result'=>'bad','msg'=>'Please check your user anme and password and try again.'));die;     
             }

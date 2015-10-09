@@ -84,27 +84,24 @@ myJsMain.registration=function(){
             maxlength:12
         }
     };
+    
+    /**
+     * 
+     */
     $('#tidiit_user_register_form').validate({
         rules: registerValidationRules,
-        onsubmit: true,
         messages:{
             email:{
-                remote:$.validator.format("{0} Pleas provide valid username.")
+                remote:"Pleas provide valid username."
             }
+        },
+        submitHandler: function (form) {
+            //form.submit(function(e) {
+            $('#SignIn').prop('disabled',true);            
+            myJsMain.commonFunction.ajaxSubmit($(form),myJsMain.baseURL+'ajax/check_registration', registrationFormCallback);
+    //});
         }
-    });
-    $('#tidiit_user_register_form').submit(function(e) {
-        e.preventDefault();
-        if ($(this).valid()) {
-            $('#SignIn').prop('disabled',true);
-            myJsMain.commonFunction.tidiitAlert('Tidiit System','returning',180);
-            
-            //$('#fade_background').fadeIn();
-            //$('#LoadingDiv').fadeIn();
-            myJsMain.commonFunction.ajaxSubmit($(this),myJsMain.baseURL+'ajax/check_registration', registrationFormCallback);
-        }
-    });
-    
+    });   
     
      // this is just to show product list page
     function registrationFormCallback(resultData){ //alert('rr');

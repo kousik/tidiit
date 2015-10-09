@@ -179,7 +179,7 @@
                 <div class="col-md-5 col-sm-5 col-md-push-1">
                     <div class="contact-form">
                         <div id="login_form ">
-                            <form class="contact_form" action="#" method="post" name="tidiit_user_register_form" id="tidiit_user_register_form">
+                            <form class="contact_form" action="#" method="post" name="tidiit_user_register_form" id="tidiit_user_register_form" novalidate="novalidate">
                                 <h1>Signup for New Account</h1>
                                 <ul>
                                     <div class="form-group has-error">
