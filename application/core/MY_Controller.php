@@ -29,6 +29,8 @@ class MY_Controller extends CI_Controller {
 
             $this->session->set_flashdata('LoginPageMsg', 'You are logout successfully');
     }
+    
+    
 
     function is_loged_in(){
         $FE_SESSION_VAR = $this->session->userdata('FE_SESSION_VAR');
@@ -84,6 +86,18 @@ class MY_Controller extends CI_Controller {
                     //echo 'not getting';die;
                     return false;
             }
+        }
+    }
+    
+    /**
+    * Check if user is logged in
+    *
+    * @access    private
+    */
+    public function _isLoggedIn() {
+        if($this->is_loged_in() != true){
+            $this->_logout();
+            redirect(BASE_URL);
         }
     }
     

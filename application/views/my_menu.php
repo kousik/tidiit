@@ -7,6 +7,9 @@
           <li <?php if($userMenuActive==3){?>class="active"<?php }?>><a href="<?php echo BASE_URL.'my-billing-address';?>">Billing Address <img src="<?php echo SiteImagesURL;?>promtrs.png" /></a></li>
           <li <?php if($userMenuActive==4){?>class="active"<?php }?>><a href="<?php echo BASE_URL.'my-orders';?>">Orders <img src="<?php echo SiteImagesURL;?>tickts.png" /></a></li>
           <li <?php if($userMenuActive==5){?>class="active"<?php }?>><a href="<?php echo BASE_URL.'my-groups';?>">Groups <img src="<?php echo SiteImagesURL;?>evnts.png" /></a></li>
+          <?php if($userMenuActive==7){?>
+          <li <?php if($userMenuActive==7){?>class="active"<?php }?>><a href="javascript://">Groups Order<span><i class="fa fa-line-chart"></i></span></a></li>
+          <?php }?>
           <li <?php if($userMenuActive==6){?>class="active"<?php }?>><a href="#">Financ Info <img src="<?php echo SiteImagesURL;?>state.png" /></a></li>
         </ul>
     </div>
