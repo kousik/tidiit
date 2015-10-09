@@ -16,8 +16,8 @@
   </tr>
   <tr>
     <td style="padding-left:10px;">
-        <input type="button" name="AddBtn" id="AddBtn" value="Add State" onclick="ShowAddAdminBox();" class="btn-primary btn-large"/> &nbsp; &nbsp; &nbsp;
-         <input type="button" name="AddBtn" id="AddBtn" value="Back to State List" onclick="location.href='<?php echo base_url().'webadmin/country_controller/viewStatList/'.$countryId;?>'" class="btn-primary btn-large"/>
+        <input type="button" name="AddBtn" id="AddBtn" value="Add City" onclick="ShowAddAdminBox();" class="btn-primary btn-large"/> &nbsp; &nbsp; &nbsp;
+         <input type="button" name="AddBtn1" id="AddBtn1" value="Back to State List" onclick="location.href='<?php echo base_url().'webadmin/country_controller/viewStatList/'.$countryId;?>'" class="btn-primary btn-large"/>
     </td>
   </tr>
 <script language="javascript">
@@ -116,6 +116,7 @@ function AskDelete(id){
   DataArr[<?php echo $InerArr->cityId?>]=new Array();
   DataArr[<?php echo $InerArr->cityId?>]['cityId']='<?php echo $InerArr->cityId?>';
   DataArr[<?php echo $InerArr->cityId?>]['city']='<?php echo $InerArr->city?>';
+  DataArr[<?php echo $InerArr->cityId?>]['stateId']='<?php echo $InerArr->stateId?>';
   DataArr[<?php echo $InerArr->cityId?>]['countryId']='<?php echo $InerArr->countryId?>';
   DataArr[<?php echo $InerArr->cityId?>]['status']='<?php echo $InerArr->status?>';
   </script>
