@@ -128,6 +128,7 @@ function AskDelete(id){
     <td colspan="6" style="text-align: center; height: 40px;"> No Record Found</td>
   </tr>
   <?php }?>
+  
 </table>
     </td>
   </tr>

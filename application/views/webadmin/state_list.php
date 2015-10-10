@@ -217,7 +217,7 @@ function AskDelete(id){
   
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable">Zeozone Name </td>
+    <td align="left" valign="top" class="ListHeadingLable">State Name </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top"><input type="text" name="stateName" id="stateName" value="" class="required"></td>
   </tr>
