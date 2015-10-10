@@ -4,7 +4,7 @@
 <table cellspacing=5 cellpadding=5 width=90% border=0>
   
   <tr id="PageHeading">
-    <td class="PageHeading" >City Manager</td>
+    <td class="PageHeading" >Zip Manager</td>
   </tr>
 
   
@@ -16,8 +16,8 @@
   </tr>
   <tr>
     <td style="padding-left:10px;">
-        <input type="button" name="AddBtn" id="AddBtn" value="Add City" onclick="ShowAddAdminBox();" class="btn-primary btn-large"/> &nbsp; &nbsp; &nbsp;
-         <input type="button" name="AddBtn1" id="AddBtn1" value="Back to State List" onclick="location.href='<?php echo base_url().'webadmin/country_controller/viewStatList/'.$countryId;?>'" class="btn-primary btn-large"/>
+        <input type="button" name="AddBtn" id="AddBtn" value="Add Zip" onclick="ShowAddAdminBox();" class="btn-primary btn-large"/> &nbsp; &nbsp; &nbsp;
+         <input type="button" name="AddBtn1" id="AddBtn1" value="Back to City List" onclick="location.href='<?php echo base_url().'webadmin/country_controller/viewCityList/'.$stateId;?>'" class="btn-primary btn-large"/>
     </td>
   </tr>
 <script language="javascript">
@@ -38,8 +38,8 @@ function ShowAddAdminBox(){
 	$('#ListBox').fadeOut(400);
 	
 	$('#EditBox').fadeIn(2500);
-	$('#EditcityId').val(DataArr[id]['cityId']);
-	$('#Editcity').val(DataArr[id]['city']);
+	$('#EditzipId').val(DataArr[id]['zipId']);
+	$('#Editzip').val(DataArr[id]['zip']);
 	
 	if(document.AdminEdit.Editstatus[0].value==DataArr[id]['status'])
 	{
@@ -47,8 +47,8 @@ function ShowAddAdminBox(){
 	}else{
 		document.AdminEdit.Editstatus[1].checked=true;
 	}
-	//alert(DataArr[id]['cityId']);
-	$('#cityId').val(DataArr[id]['cityId']);
+	//alert(DataArr[id]['zipId']);
+	$('#zipId').val(DataArr[id]['zipId']);
  }
 
  function CancelEdit(){
@@ -70,7 +70,7 @@ function ShowAddAdminBox(){
  
 function AskDelete(id){
 	if(confirm('Are you sure to delete(Y/N) ?')){
-		location.href='<?php echo base_url()?>webadmin/country_controller/city_delete/'+id;
+		location.href='<?php echo base_url()?>webadmin/country_controller/zip_delete/'+id;
 	}
 	return false;
 }
@@ -84,9 +84,8 @@ function AskDelete(id){
 	<table width="100%" border="0" align="center" cellpadding="1" cellspacing="1" id="ListBox" class="alt_row">
   <tr class="ListHeadingLable" bgcolor="#DFDFDF" height="25px;">
     <td width="2%">Sl No </td>
+    <td width="20%">Zip Name</td>
     <td width="20%">City Name</td>
-    <td width="20%">State Name</td>
-    <td width="20%">Country Name</td>
     <td width="10%">status</td>
     <td width="30%">Action</td>
   </tr>
@@ -98,29 +97,26 @@ function AskDelete(id){
   foreach($DataArr as $InerArr){?>
   <tr class="ListTestLable <?php if($val%2 == 0){ echo 'oddtbl'; } else { echo 'eventbl'; } ?>" height="20px;">
     <td><?php echo $val+1;?></td>
+    <td><?php echo $InerArr->zip;?></td>
     <td><?php echo $InerArr->city;?></td>
-    <td><?php echo $InerArr->stateName;?></td>
-    <td><?php echo $InerArr->countryName;?></td>
-    
     <td><?php echo ($InerArr->status=='1')?'Active':'Inactive';?></td>
     <td>
 	<?php if($InerArr->status=='1'){$action=0;}else{$action=1;}?>
-	<a href="<?php echo base_url().'webadmin/country_controller/city_change_status/'.$InerArr->cityId.'/'.$action;?>" class="AdminDashBoardLinkText"><?php if($InerArr->status=='1'){?><img src="<?php echo $SiteImagesURL.'webadmin/';?>active1.png" alt="Active" title="Active" /><?php }else{?><img src="<?php echo $SiteImagesURL.'webadmin/';?>inactive1.png" alt="inactive" title="Inactive" /><?php }?></a>
+	<a href="<?php echo base_url().'webadmin/country_controller/zip_change_status/'.$InerArr->zipId.'/'.$action;?>" class="AdminDashBoardLinkText"><?php if($InerArr->status=='1'){?><img src="<?php echo $SiteImagesURL.'webadmin/';?>active1.png" alt="Active" title="Active" /><?php }else{?><img src="<?php echo $SiteImagesURL.'webadmin/';?>inactive1.png" alt="inactive" title="Inactive" /><?php }?></a>
 	&nbsp;&nbsp;
-	<a href="javascript:void(0);" onclick="ShowEditBox('<?php echo $InerArr->cityId;?>');" class="AdminDashBoardLinkText"><img src="<?php echo $SiteImagesURL.'webadmin/';?>edit.png" width="15" height="15" title="Edit"/></a>
+	<a href="javascript:void(0);" onclick="ShowEditBox('<?php echo $InerArr->zipId;?>');" class="AdminDashBoardLinkText"><img src="<?php echo $SiteImagesURL.'webadmin/';?>edit.png" width="15" height="15" title="Edit"/></a>
 	&nbsp;&nbsp;
-	<a href="javascript:void(0);" onclick="AskDelete('<?php echo $InerArr->cityId;?>');" class="AdminDashBoardLinkText"><img src="<?php echo $SiteImagesURL.'webadmin/';?>delete.png" width="15" height="15" title="Delete"/></a>
+	<a href="javascript:void(0);" onclick="AskDelete('<?php echo $InerArr->zipId;?>');" class="AdminDashBoardLinkText"><img src="<?php echo $SiteImagesURL.'webadmin/';?>delete.png" width="15" height="15" title="Delete"/></a>
         &nbsp;&nbsp;
-        <a href="<?php echo base_url().'webadmin/country_controller/viewZipList/'.$InerArr->cityId;?>" class="AdminDashBoardLinkText">Manage Zip</a>
+        <a href="<?php echo base_url().'webadmin/country_controller/viewLocalityList/'.$InerArr->zipId;?>" class="AdminDashBoardLinkText">Manage Locality</a>
 	</td> 
   </tr>
   <script language="javascript">
-  DataArr[<?php echo $InerArr->cityId?>]=new Array();
-  DataArr[<?php echo $InerArr->cityId?>]['cityId']='<?php echo $InerArr->cityId?>';
-  DataArr[<?php echo $InerArr->cityId?>]['city']='<?php echo $InerArr->city?>';
-  DataArr[<?php echo $InerArr->cityId?>]['stateId']='<?php echo $InerArr->stateId?>';
-  DataArr[<?php echo $InerArr->cityId?>]['countryId']='<?php echo $InerArr->countryId?>';
-  DataArr[<?php echo $InerArr->cityId?>]['status']='<?php echo $InerArr->status?>';
+  DataArr[<?php echo $InerArr->zipId?>]=new Array();
+  DataArr[<?php echo $InerArr->zipId?>]['zipId']='<?php echo $InerArr->zipId?>';
+  DataArr[<?php echo $InerArr->zipId?>]['zip']='<?php echo $InerArr->zip?>';
+  DataArr[<?php echo $InerArr->zipId?>]['cityId']='<?php echo $InerArr->cityId?>';
+  DataArr[<?php echo $InerArr->zipId?>]['status']='<?php echo $InerArr->status?>';
   </script>
   <?php $val++;}
   }else{?>
@@ -133,10 +129,10 @@ function AskDelete(id){
   </tr>
  
   <tr>
-    <td><form name="AdminEdit" id="AdminEdit" method="post" action="<?=base_url()?>webadmin/country_controller/edit_city/">
+    <td><form name="AdminEdit" id="AdminEdit" method="post" action="<?=base_url()?>webadmin/country_controller/edit_zip/">
 	<table width="70%" border="0" align="center" cellpadding="0" cellspacing="0" id="EditBox" style="display:none;">
   <tr>
-    <th colspan="4"><span class="PageHeading">City Edit Form</span></th>
+    <th colspan="4"><span class="PageHeading">Zip Edit Form</span></th>
   </tr>
   <tr>
     <td align="left" valign="top" height="40px;">&nbsp;</td>
@@ -147,9 +143,9 @@ function AskDelete(id){
   
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable">City Name </td>
+    <td align="left" valign="top" class="ListHeadingLable">Zip </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"><input type="text" name="Editcity" id="Editcity" value=""></td>
+    <td align="left" valign="top"><input type="text" name="Editzip" id="Editzip" value=""></td>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
@@ -184,8 +180,8 @@ function AskDelete(id){
     <td align="left" valign="top"><label></label></td>
     <td align="left" valign="top"><input type="submit" name="Submit3" value="Submit" class="btn-primary btn-large"/>&nbsp;&nbsp;&nbsp;
       <input type="button" name="Submit22" value="Cancel" onclick="return CancelAdd();" class="btn-primary btn-large"/>
-      <input  type="hidden" name="cityId"  id="cityId" value=""/>
-      <input  type="hidden" name="stateId"  value="<?php echo $stateId;?>"/>
+      <input  type="hidden" name="zipId"  id="zipId" value=""/>
+      <input  type="hidden" name="cityId" value="<?php echo $cityId;?>"/>
     </td>
   </tr>
   <tr>
@@ -204,13 +200,13 @@ function AskDelete(id){
 </form></td>
   </tr>
   <tr>
-    <td><form name="AdminAdd" id="AdminAdd" method="post" action="<?=base_url()?>webadmin/country_controller/add_city" >
+    <td><form name="AdminAdd" id="AdminAdd" method="post" action="<?=base_url()?>webadmin/country_controller/add_zip" >
 <table width="90%" border="0" align="center" cellpadding="0" cellspacing="0" id="AddBox" style="display:none;">
   <tr>
     <th width="13%" align="left" valign="top" scope="col">&nbsp;</th>
     <th width="18%" align="left" valign="top" scope="col">&nbsp;</th>
     <th width="3%" align="left" valign="top" scope="col" class="PageHeading">&nbsp;</th>
-    <th width="66%" align="left" valign="top" scope="col"><span class="PageHeading">City Add Form </span></th>
+    <th width="66%" align="left" valign="top" scope="col"><span class="PageHeading">Zip Add Form </span></th>
   </tr>
   <tr>
     <td align="left" valign="top" height="50px">&nbsp;</td>
@@ -221,9 +217,9 @@ function AskDelete(id){
   
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable">City Name </td>
+    <td align="left" valign="top" class="ListHeadingLable">Zip Name </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"><input type="text" name="city" id="city" value="" class="required"></td>
+    <td align="left" valign="top"><input type="text" name="zip" id="zip" value="" class="required"></td>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
@@ -253,8 +249,7 @@ function AskDelete(id){
     <td align="left" valign="top"><label></label></td>
     <td align="left" valign="top"><input type="submit" name="Submit3" value="Submit" class="btn-primary btn-large"/>&nbsp;&nbsp;&nbsp;
       <input type="button" name="Submit22" value="Cancel" onclick="return CancelAdd();" class="btn-primary btn-large"/>
-      <input  type="hidden" name="stateId"  value="<?php echo $stateId;?>"/>
-      <input  type="hidden" name="countryId"  value="<?php echo $countryId;?>"/>
+      <input  type="hidden" name="cityId"  value="<?php echo $cityId;?>"/>
     </td>
   </tr>
   <tr>
@@ -291,7 +286,7 @@ $(document).ready(function(){
 	$("#AdminAdd").validate();	
 	$("#AdminEdit").validate();	
 	$('#addCheckAll').on('click',function(){
-		$('input[name="cityId[]"]').each(function(){
+		$('input[name="zipId[]"]').each(function(){
                 jQuery(this).prop( "checked", true );
         });	
 		$('#addUnCheckAll').show();
@@ -299,7 +294,7 @@ $(document).ready(function(){
 	});
 	
 	$('#addUnCheckAll').on('click',function(){
-		$('input[name="cityId[]"]').each(function(){
+		$('input[name="zipId[]"]').each(function(){
                 jQuery(this).prop( "checked", false );
         });	
 		$('#addCheckAll').show();

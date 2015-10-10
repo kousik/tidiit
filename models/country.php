@@ -14,21 +14,17 @@ class Country extends CI_Model {
     public $_table = 'country';
     public $_table_state = 'state';
     public $_table_city = 'city';
+    public $_table_zip = 'zip';
+    public $_table_locality = 'locality';
     public $result = null;
 
-    function __construct()
-    {
+    function __construct(){
         parent::__construct();
     }
     
 	
 	function get_all(){
-		$this->db->select('*');
-		$this->db->from($this->_table);
-		//$this->db->where('Status <','2');
-		$query = $this->db->get();
-		$this->result = $query->result();
-		return $this->result;
+            return $this->db->get($this->_table)->result();
 	}	
 	
 	function get_state_country($countryId){
@@ -36,49 +32,27 @@ class Country extends CI_Model {
 	}	
 	
 	function get_all_state(){
-		$this->db->select('*');
-		$this->db->from($this->_table_state);
-		//$this->db->where('Status <','2');
-		$query = $this->db->get();
-		$this->result = $query->result();
-		return $this->result;
+            return  $this->db->get($this->_table_state)->result();
 	}
 	
 	public function get_indian_state(){
-		return $this->get_state_country(99);
+            return $this->get_state_country(99);
 	}
 	
 	function get_usa_state(){
-		return $this->get_state_country(1);
+            return $this->get_state_country(1);
 	}
 	
 	function get_240(){
-		$this->db->select('*');
-		$this->db->from($this->_table);
-		$this->db->where('CountryID <>','1');
-		$this->db->where('CountryID <>','99');
-		$query = $this->db->get();
-		$this->result = $query->result();
-		//echo $this->db->last_query();die;
-		return $this->result;
+            return $this->db->from($this->_table)->where('CountryID <>','1')->where('CountryID <>','99')->get()->result();
 	}
 	
 	function get_country_name($id){
-		$this->db->select('CountryName');
-		$this->db->from($this->_table);
-		$this->db->where('CountryID',$id);
-		$query = $this->db->get();
-		$this->result = $query->result();
-		return $this->result;
+            return $this->db->select('CountryName')->from($this->_table)->where('CountryID',$id)->get()->result();
 	}
 	
 	function get_state_name($id){
-		$this->db->select('stateName');
-		$this->db->from($this->_table_state);
-		$this->db->where('stateId',$id);
-		$query = $this->db->get();
-		$this->result = $query->result();
-		return $this->result;
+            return $this->db->select('stateName')->from($this->_table_state)->where('stateId',$id)->get()->result();
 	}
         
         function get_add_state($countryId,$stateName){
@@ -100,8 +74,15 @@ class Country extends CI_Model {
             return $this->db->query($sql)->result();
         }
         
-        function state_change_status(){
-            
+        function edit($dataArr,$countryId){
+            $this->db->where('countryId',$countryId);
+            $this->db->update($this->_table,$dataArr);
+            return TRUE;
+        }
+        
+        function delete($countryId){
+            $this->db->delete($this->_table, array('countryId' => $countryId)); 
+            return TRUE;
         }
         
         function state_details($stateId){
@@ -121,6 +102,92 @@ class Country extends CI_Model {
         
         function delete_state($stateId){
             $this->db->delete($this->_table_state, array('stateId' => $stateId)); 
+            return TRUE;
+        }
+        
+        function get_add_city($dataArr){
+            $Arr=$this->db->select('cityId')->from($this->_table_city)->where('city',$dataArr['city'])->where('stateId',$dataArr['stateId'])->get()->row_array();
+            if(count($Arr)>0){
+                return $Arr['cityId'];
+            }else{
+                $this->db->insert($this->_table_city,$dataArr);
+                return $this->db->insert_id();
+            }
+        }
+        
+        
+        function get_add_zip($dataArr){
+            $Arr=$this->db->select('zipId')->from($this->_table_zip)->where('zip',$dataArr['zip'])->where('cityId',$dataArr['cityId'])->get()->row_array();
+            if(count($Arr)>0){
+                return $Arr['zipId'];
+            }else{
+                $this->db->insert($this->_table_zip,$dataArr);
+                return $this->db->insert_id();
+            }
+        }
+        
+        function get_add_locality($dataArr){
+            $Arr=$this->db->select('localityId')->from($this->_table_locality)->where('locality',$dataArr['locality'])->where('zipId',$dataArr['zipId'])->get()->row_array();
+            if(count($Arr)>0){
+                return $Arr['localityId'];
+            }else{
+                $this->db->insert($this->_table_locality,$dataArr);
+                return $this->db->insert_id();
+            }
+        }
+        
+        function edit_city($dataArr,$cityId){
+            $this->db->where('cityId',$cityId);
+            $this->db->update($this->_table_city,$dataArr);
+            return TRUE;		
+        }
+        
+        function delete_city($cityId){
+            $this->db->delete($this->_table_city, array('cityId' => $cityId)); 
+            return TRUE;
+        }
+        
+        function city_details($cityId){
+            return $this->db->from($this->_table_city)->where('cityId',$cityId)->get()->result();
+        }
+        
+        function get_all_zip($cityId){
+            $sql="SELECT z.*,c.city FROM `zip` As z JOIN `city` AS c ON(z.cityId=c.cityId) WHERE c.cityId=".$cityId;
+            return $this->db->query($sql)->result();
+        }
+        
+        function zip_details($zipId){
+            return $this->db->from($this->_table_zip)->where('zipId',$zipId)->get()->result();
+        }
+        
+        function edit_zip($dataArr,$zipId){
+            $this->db->where('zipId',$zipId);
+            $this->db->update($this->_table_zip,$dataArr);
+            return TRUE;		
+        }
+        
+        function delete_zip($zipId){
+            $this->db->delete($this->_table_zip, array('zipId' => $zipId)); 
+            return TRUE;
+        }
+        
+        function get_all_locality($zipId){
+            $sql="SELECT l.*,z.zip,c.city FROM `locality` AS l JOIN `zip` As z ON(l.zipId=z.zipId) JOIN `city` AS c ON(z.cityId=c.cityId) WHERE l.zipId=".$zipId;
+            return $this->db->query($sql)->result();
+        }
+        
+        function locality_details($localityId){
+            return $this->db->from($this->_table_locality)->where('localityId',$localityId)->get()->result();
+        }
+        
+        function edit_locality($dataArr,$localityId){
+            $this->db->where('localityId',$localityId);
+            $this->db->update($this->_table_locality,$dataArr);
+            return TRUE;		
+        }
+        
+        function delete_locality($localityId){
+            $this->db->delete($this->_table_locality, array('localityId' => $localityId)); 
             return TRUE;
         }
 }
