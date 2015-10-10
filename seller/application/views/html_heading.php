@@ -16,8 +16,9 @@
     <link rel="stylesheet" href="<?php echo SiteCSSURL;?>metisMenu.min.css">
     <link rel="stylesheet" href="<?php echo SiteCSSURL;?>fullcalendar.min.css">
 
-    <!-- Metis core stylesheet -->
-    <link rel="stylesheet" href="<?php echo SiteCSSURL;?>main.min.css">
+    <!-- Metis core stylesheet
+    <link rel="stylesheet" href="<?php //echo SiteCSSURL;?>main.min.css"> -->
+    <link rel="stylesheet" href="<?php echo SiteCSSURL;?>main.css">
     <script type="text/javascript">
 //<![CDATA[
     // URL for access ajax data

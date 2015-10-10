@@ -1,4 +1,9 @@
-
+<style type="text/css">
+/*start-contact-form*/
+.contact_form {width: 95%;float: left;position: relative;}
+.contact-form{background:#fff;padding: 7%;position: relative;border-radius: 12px;-webkit-border-radius: 12px;-moz-border-radius: 12px;-o-border-radius: 12px;}
+.contact-form h1{font-size: 26px;color:#474646;font-family: "controllerfive";}
+</style>
 <footer>
     <div class="container">
         <div class="fotr_top">
@@ -122,14 +127,15 @@
                                         <input id="userName" name="userName" type="text" placeholder="user@tidiit.com" class="form-control email" required >
                                         <span class="input-group-addon"><i class="fa fa-user"></i></span>
                                     </div>
+                                    <label id="userName-error" class="error" for="userName"></label>
                                 </div>
-                                <label id="userName-error" class="error" for="userName"></label>
 
                                 <div class="form-group has-error">
                                     <div class="input-group  col-md-8"> 
                                         <input id="loginPassword" name="loginPassword" type="password" placeholder="password" class="form-control" required >
                                         <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                                     </div>
+                                    <label id="loginPassword-error" class="error" for="loginPassword"></label>
                                 </div>
                                 <label id="loginPassword-error" class="error" for="loginPassword"></label>
                                 <input type="hidden" name="webIdLogin" id="webIdLogin" value="">
@@ -160,13 +166,13 @@
                         <div id="forgot_form" style="display:none;">
                             <form class="contact_form" action="#" method="post" name="tidiit_user_forgot_form" id="tidiit_user_forgot_form">
                                 <h1>Send Password Reset Link</h1>
-                                <ul>
-                                    <li>
-                                        <input type="email" class="textbox1" name="userEmail" id="userEmail"  placeholder="user@tidiit.com" required />
-                                        <span class="form_hint">Enter a valid email</span>
-                                        <p><img src="<?php echo SiteImagesURL; ?>contact.png" alt=""></p>
-                                    </li>	       
-                                </ul>
+                                <div class="form-group has-error">
+                                    <div class="input-group col-md-8"> 
+                                        <input id="userEmail" name="userEmail" type="email" placeholder="user@tidiit.com" class="form-control email" required >
+                                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                    </div>
+                                    <label id="userEmail-error" class="error" for="userEmail"></label>
+                                </div>
                                 <input type="submit" name="forgotPasswrod" id="forgotPasswrod" value="Submit" class="btn btn-default col-md-8"/>	
                                 <input type="hidden" name="webIdForgotpass" id="webIdForgotpass" value="">                                                 
                                 <div class="clear"></div>	
@@ -194,17 +200,20 @@
                                             <input id="lastName" name="lastName" type="text" placeholder="Enter Last Name" class="form-control" required >
                                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
                                         </div>
+                                        <label id="lastName-error" class="error" for="lastName"></label>
                                     </div>
                                     <div class="form-group has-error">
                                         <div class="input-group col-md-8"> 
                                             <input id="email" name="email" type="email" placeholder="Enter email as username" class="form-control" required >
                                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
                                         </div>
+                                        <label id="email-error" class="error" for="email"></label>
                                     </div>
                                     <div class="form-group has-error">
                                         <div class="input-group col-md-8"> 
                                             <input id="password" name="password" type="password" placeholder="Enter Password" class="form-control" required >
                                             <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                            <label id="password-error" class="error" for="password"></label>
                                         </div>
                                     </div>
                                     <div class="form-group has-error">
@@ -212,6 +221,7 @@
                                             <input id="confirmPassword" name="confirmPassword" type="password" placeholder="Enter Confirm Password" class="form-control" required >
                                             <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                                         </div>
+                                        <label id="confirmPassword-error" class="error" for="confirmPassword"></label>
                                     </div>
 
                                     <!-- <li class="frm_gender">

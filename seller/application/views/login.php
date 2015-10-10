@@ -1,9 +1,9 @@
 <?php echo $html_heading;?>  
-  <style>
-      #LoadingDiv{display: none;}
-        .logoinpanel{width:550px;font-family:Tahoma, Geneva, sans-serif;font-size:13px;border:4px solid #FF9900;padding:10px;background-color:#fff;overflow: hidden;}
-    </style>
-    
+<style type="text/css">
+    #LoadingDiv{display: none;}
+    .logoinpanel{width:550px;font-family:Tahoma, Geneva, sans-serif;font-size:13px;border:4px solid #FF9900;padding:10px;background-color:#fff;overflow: hidden;}
+    /*start-contact-form*/
+</style>    
   <body class="login">
    <div class="row">
     <div class="col-md-6 col-md-offset-3 well">   
@@ -13,14 +13,26 @@
       <hr>
       <div class="tab-content">
         <div id="login" class="tab-pane active">
-            <form name="login_form" id="login_form">
-            <p class="text-muted text-center">
-              Login
+            <form name="login_form" id="login_form" class="contact_form">
+            <p class="text-muted text-center pad1">
+            <h1 style="font-size: 26px;color:#474646;font-family:controllerfive !important;" class="text-center">Login</h1>
             </p>
              <div class="col-md-12">
-                 <input type="email" name="userName" id="userName" placeholder="Username" class="form-control top">
-                 <input type="password" placeholder="Password" name="password" id="password" class="form-control bottom">
-            <div class="checkbox">
+                <div class="form-group has-error">
+                    <div class="input-group col-md-8"> 
+                      <input id="userName" name="userName" type="email" placeholder="enter your email for login" class="form-control email" required >
+                      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                    </div>
+                    <label id="userName-error" class="error" for="userName"></label>
+                </div>
+                 <div class="form-group has-error">
+                    <div class="input-group col-md-8"> 
+                        <input id="password" name="password" type="password" placeholder="enter your password for login" class="form-control" required >
+                      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                    </div>
+                    <label id="password-error" class="error" for="password"></label>
+                </div>
+                <div class="checkbox">
               <label>
                   <input type="checkbox" name="rememberMe" id="rememberMe"> Remember Me
               </label>
@@ -31,7 +43,7 @@
         </div>
         <div id="forgot" class="tab-pane">
             <form name="forgot_password_form" id="forgot_password_form">
-            <p class="text-muted text-center">Forgot Password</p>
+                <p class="text-muted text-center"><h1 style="font-size: 26px;color:#474646;font-family:controllerfive !important;" class="text-center">Forgot Password</h1></p>
              <div class="col-md-12">
                  <input type="email" name="userName" id="userName" placeholder="mail@domain.com" class="form-control">
             <br>
@@ -42,42 +54,48 @@
         
         <div id="signup" class="tab-pane">
             <form id="registration_form" name="registration_form">
-              <p class="text-muted text-center">Registration</p>
+                <p class="text-muted text-center"><h1 style="font-size: 26px;color:#474646;font-family:controllerfive !important;" class="text-center">Registration</h1></p>
           <div class="col-md-6">
                 <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                       <input id="userName" name="userName" type="email" placeholder="enter your email for login" class="form-control email" required >
                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
                     </div>
+                    
                 </div>
                 <div class="form-group has-error">
                     <div class="input-group  col-md-8"> 
                       <input id="password" name="password" type="password" placeholder="enter your  password" class="form-control" required >
                       <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                     </div>
+                    
                 </div>
                 <div class="form-group has-error">
                     <div class="input-group  col-md-8"> 
                       <input id="confirmPassword" name="confirmPassword" type="password" placeholder="enter your  confirm password" class="form-control" required >
                       <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                     </div>
+                    
                 </div>
                 <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                         <input id="firstName" name="firstName" type="text" placeholder="ener seller first name" class="form-control" required >
                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
                     </div>
+                    
                 </div>
               <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                         <input id="lastName" name="lastName" type="text" placeholder="ener seller last name" class="form-control" required >
                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
                     </div>
+                  
                 </div>
                 <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                       <input id="email" name="email" type="email" placeholder="enter your email" class="form-control email" required >
                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                      
                     </div>
                 </div>
                 <div class="form-group has-error">
@@ -102,27 +120,31 @@
           <div class="col-md-6">
               <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
-                      <input id="contactNo" name="contactNo" type="phone" placeholder="" class="form-control " required >
+                      <input id="contactNo" name="contactNo" type="phone" placeholder="enter your contact number" class="form-control " required >
                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
                     </div>
+                  
                 </div>
               <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                       <input id="fax" name="fax" type="phone" placeholder="enter your fax" class="form-control " >
                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
                     </div>
+                  
                 </div>
               <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                       <input id="address" name="address" type="text" placeholder="enter your address" class="form-control " required >
                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
                     </div>
+                  
                 </div>
               <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                       <input id="city" name="city" type="text" placeholder="enter your city" class="form-control " required >
                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
                     </div>
+                  
                 </div>
               
               <div class="form-group has-error">
@@ -133,6 +155,7 @@
                   <option value="<?php echo $k->countryId;?>"><?php echo $k->countryName;?></option>
                   <?php }?>
             </select>
+                        
                     </div>
               </div>
               <div class="form-group has-error">
@@ -141,18 +164,21 @@
                             <option value=""> * Select * </option>  
                         </select>
                     </div>
+                  
               </div>
               <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                       <input id="zip" name="zip" type="text" placeholder="enter your zip" class="form-control " required >
                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
                     </div>
+                  
                 </div>
             <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                     <input type="text" class="form-control bottom" placeholder="Security Code Shown on Left Side" name="secret" id="secret">
                     <span class="input-group-addon"><i class="fa fa-user"></i></span>
                     </div>
+                
             </div>
             <!--<input type="text"  name="contactNo" id="contactNo" placeholder="Contact No." class="form-control top" required>
               
