@@ -83,7 +83,7 @@ class Ajax extends MY_Controller{
                 $this->session->set_userdata('FE_SESSION_VAR_FNAME',$firstName);
                 $this->session->set_userdata('FE_SESSION_UDATA',$users[0]);
                 
-                echo json_encode(array('result'=>'good','url'=>BASE_URL.'/user/edit_profile','msg'=>'You have successfully register your account with "Tidiit Inc Ltd.Your login information will be sent to registered email account.'));die; 
+                echo json_encode(array('result'=>'good','url'=>BASE_URL.'my-billing-address','msg'=>'You have successfully register your account with "Tidiit Inc Ltd.Your login information will be sent to registered email account.'));die; 
             }else{
                 echo json_encode(array('result'=>'bad','msg'=>'Please check your user anme and password and try again.'));die;     
             }
@@ -188,6 +188,137 @@ class Ajax extends MY_Controller{
             $this->load->view('how_it_works',$data);
         }else{
             echo '';die;
+        }
+    }
+    
+    function show_city_by_country(){
+        $countryId=$this->input->post('countryId',TRUE);
+        if($countryId==""){
+            echo '';die;
+        }else{
+            $this->load->model('Country');
+            $cityDataArr=$this->Country->get_city_country($countryId);
+            if(empty($cityDataArr)){
+                echo '';die;
+            }else{
+                $html='<select class="form-control nova heght_cntrl required" name="cityId" id="cityId" value=""  tabindex="1"><option value="">Select</option>';
+                foreach($cityDataArr AS $k){
+                    $html .='<option value="'.$k->cityId.'">'.$k->city.'</option>';
+                }
+                $html .='</select>';
+                echo $html;die;
+            }
+        }
+    }
+    
+    function show_zip_by_city(){
+        $cityId=$this->input->post('cityId',TRUE);
+        if($cityId==""){
+            echo '';die;
+        }else{
+            $this->load->model('Country');
+            $zipDataArr=$this->Country->get_all_zip1($cityId);
+            if(empty($zipDataArr)){
+                echo '';die;
+            }else{
+                $html='<select class="form-control nova heght_cntrl required" name="zipId" id="zipId" value=""  tabindex="1"><option value="">Select</option>';
+                foreach($zipDataArr AS $k){
+                    $html .='<option value="'.$k->zipId.'">'.$k->zip.'</option>';
+                }
+                $html .='</select>';
+                echo $html;die;
+            }
+        }
+    }
+    
+    function show_locality_by_zip(){
+        $zipId=$this->input->post('zipId',TRUE);
+        if($zipId==""){
+            echo '';die;
+        }else{
+            $this->load->model('Country');
+            $localityDataArr=$this->Country->get_all_locality1($zipId);
+            if(empty($localityDataArr)){
+                echo '';die;
+            }else{
+                $html='<select class="form-control nova heght_cntrl required" name="localityId" id="localityId" value=""  tabindex="1"><option value="">Select</option>';
+                foreach($localityDataArr AS $k){
+                    $html .='<option value="'.$k->localityId.'">'.$k->locality.'</option>';
+                }
+                $html .='</select>';
+                echo $html;die;
+            }
+        }
+    }
+    
+    function submit_my_billing_address(){
+        $config = array(
+            array(
+                  'field'   => 'firstName',
+                  'label'   => 'First Name',
+                  'rules'   => 'trim|required|xss_clean'
+               ),
+            array(
+                  'field'   => 'lastName',
+                  'label'   => 'Last Name',
+                  'rules'   => 'trim|required|xss_clean'
+               ),
+           array(
+                  'field'   => 'phone',
+                  'label'   => 'Phone',
+                  'rules'   => 'trim|required|xss_clean'
+               ),
+           array(
+                  'field'   => 'email',
+                  'label'   => 'Email',
+                  'rules'   => 'trim|required|xss_clean|valid_email'
+               ),
+           array(
+                  'field'   => 'countryId',
+                  'label'   => 'Country',
+                  'rules'   => 'trim|required|xss_clean'
+               ),
+           array(
+                  'field'   => 'cityId',
+                  'label'   => 'City',
+                  'rules'   => 'trim|required|xss_clean'
+               ),
+           array(
+                  'field'   => 'zipId',
+                  'label'   => 'Zip',
+                  'rules'   => 'trim|required|xss_clean'
+               ),
+           array(
+                  'field'   => 'localityId',
+                  'label'   => 'Locality',
+                  'rules'   => 'trim|required|xss_clean'
+               ) 
+         );
+        //initialise the rules with validatiion helper
+        $this->form_validation->set_rules($config); 
+        //checking validation
+        if($this->form_validation->run() == FALSE){
+                //retun to login page with peroper error
+                echo json_encode(array('result'=>'bad','msg'=>validation_errors()));die;
+        }else{
+            $userId=$this->session->userdata('FE_SESSION_VAR');
+            if($userId==""){
+                echo json_encode(array('result'=>'bad','msg'=>'Please login before update changes.'));die;
+            }else{
+                $firstName=$this->input->post('firstName',TRUE);
+                $lastName=$this->input->post('lastName',TRUE);
+                $phone=$this->input->post('phone',TRUE);
+                $email=$this->input->post('email',TRUE);
+                $countryId=$this->input->post('countryId',TRUE);
+                $cityId=$this->input->post('cityId',TRUE);
+                $zipId=$this->input->post('zipId',TRUE);
+                $localityId=$this->input->post('localityId',TRUE);
+                
+                $this->User_model->edit(array('firstName'=>$firstName,'lastName'=>$lastName,'email'=>$email),$userId);
+                $this->User_model->edit_biiling_info(array('contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId),$userId);
+                echo json_encode(array('result'=>'good'));die; 
+            }
+            
         }
     }
 }

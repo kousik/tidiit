@@ -42,6 +42,16 @@ $segArr=explode('/', $_SERVER['REQUEST_URI']);
     header('location:https://tidiit-local.com/');
 }*/
 //$route['(:any)']="product/details/$1";
+$route['my-billing-address']="user/my_billing_address";
+$route['my-shipping-address']="user/my_shipping_address";
+$route['myaccount']="user/my_account";
+$route['my-orders']="user/my_orders";
+$route['my-groups']="user/my_groups";
+$route['my-groups-orders']="user/my_group_orders";
+$route['my-finance-info']="user/my_finance_info";
+$route['my-profile']="user/my_profile";
+
+
 $route['webadmin']="webadmin/index";
 $route['webadmin/index']="webadmin/index/login";
 

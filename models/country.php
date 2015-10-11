@@ -26,10 +26,18 @@ class Country extends CI_Model {
 	function get_all(){
             return $this->db->get($this->_table)->result();
 	}	
+        
+        function get_all1(){
+            return $this->db->get_where($this->_table,array('status'=>1))->result();
+        }
 	
 	function get_state_country($countryId){
             return $this->db->from($this->_table_state)->where('countryId',$countryId)->get()->result();
-	}	
+	}
+        
+        function get_state_country1($countryId){
+            return $this->db->from($this->_table_state)->where('countryId',$countryId)->where('status',1)->get()->result();
+	}
 	
 	function get_all_state(){
             return  $this->db->get($this->_table_state)->result();
@@ -94,6 +102,10 @@ class Country extends CI_Model {
             return $this->db->query($sql)->result();
         }
         
+        function get_all_city1($stateId){
+            return $this->from($this->_table_city)->where('stateId',$stateId)->where('status',1)->get()->result();
+        }
+        
         function edit_state($dataArr,$stateId){
             $this->db->where('stateId',$stateId);
             $this->db->update($this->_table_state,$dataArr);
@@ -156,6 +168,10 @@ class Country extends CI_Model {
             return $this->db->query($sql)->result();
         }
         
+        function get_all_zip1($cityId){
+            return $this->db->from($this->_table_zip)->where('cityId',$cityId)->where('status',1)->get()->result();
+        }
+        
         function zip_details($zipId){
             return $this->db->from($this->_table_zip)->where('zipId',$zipId)->get()->result();
         }
@@ -176,6 +192,10 @@ class Country extends CI_Model {
             return $this->db->query($sql)->result();
         }
         
+        function get_all_locality1($zipId){
+            return $this->db->from($this->_table_locality)->where('zipId',$zipId)->where('status',1)->get()->result();
+        }
+        
         function locality_details($localityId){
             return $this->db->from($this->_table_locality)->where('localityId',$localityId)->get()->result();
         }
@@ -190,6 +210,11 @@ class Country extends CI_Model {
             $this->db->delete($this->_table_locality, array('localityId' => $localityId)); 
             return TRUE;
         }
+        
+        function get_city_country($countryId){
+            return $this->db->get_where($this->_table_city,array('countryId'=>$countryId,'status'=>1))->result();
+        }
+        
 }
 
 ?>

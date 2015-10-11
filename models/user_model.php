@@ -185,5 +185,9 @@ class User_model extends CI_Model {
         public function get_user_page_type($userId){
             return $this->db->from($this->_page_type)->where('userId',$userId)->get()->result();
         }
+        
+        function get_billing_address(){
+            return $this->db->select('u.firstName,u.lastName,u.email,ba.*')->from('user u')->join('billing_address ba','u.userId=ba.userId','left')->where('u.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+        }
 }
 ?>
