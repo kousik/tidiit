@@ -1,8 +1,8 @@
-myJsMain.my_billing_address=function(){
+myJsMain.my_billing_address=function(){ 
     var loginValidationRules = {
         firstName: {required: true},
         lastName: {required: true},
-        phone: {required: true,phone:true},
+        phone: {required: true},
         email: {required: true,email:true},
         countryId: {required: true},
         cityId: {required: true},
@@ -10,9 +10,9 @@ myJsMain.my_billing_address=function(){
         localityId: {required: true}
     };
     $('#my_billing_address').validate({rules: loginValidationRules,onsubmit: true});
-    $('#my_billing_address').submit(function(e) { alert('rrr');
+    $('#my_billing_address').submit(function(e) { 
         e.preventDefault();
-        if ($(this).valid()) { alert('kkkkkk');
+        if ($(this).valid()) { 
             $('#billingAddessSubmit').prop('disabled',true);
             //$('#fade_background').fadeIn();
             //$('#LoadingDiv').fadeIn();

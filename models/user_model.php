@@ -106,7 +106,7 @@ class User_model extends CI_Model {
 	}
 	
 	public function add_biiling_info($dataArray){
-		$this->db->insert($this->_billing,$dataArray);
+		$this->db->insert($this->_table_bill_address,$dataArray);
 		return $this->db->insert_id();		
 	}
 	
@@ -117,7 +117,7 @@ class User_model extends CI_Model {
 	
 	public function edit_biiling_info($dataArray,$userId){
 		$this->db->where('userId',$userId);
-		$this->db->update($this->_billing,$dataArray);
+		$this->db->update($this->_table_bill_address,$dataArray);
 		return TRUE;
 	}
 	
@@ -177,10 +177,6 @@ class User_model extends CI_Model {
             return $this->db->insert_id();
         }
         
-        function add_bill_address($dataArr){
-            $this->db->insert($this->_table_bill_address,$dataArr);
-            return $this->db->insert_id();
-        }
         
         public function get_user_page_type($userId){
             return $this->db->from($this->_page_type)->where('userId',$userId)->get()->result();
@@ -188,6 +184,10 @@ class User_model extends CI_Model {
         
         function get_billing_address(){
             return $this->db->select('u.firstName,u.lastName,u.email,ba.*')->from('user u')->join('billing_address ba','u.userId=ba.userId','left')->where('u.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+        }
+        
+        function is_billing_address_added(){
+            return $this->db->get_where($this->_table_bill_address,array('userId'=>$this->session->userdata('FE_SESSION_VAR')))->result();
         }
 }
 ?>

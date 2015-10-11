@@ -103,7 +103,7 @@ class Country extends CI_Model {
         }
         
         function get_all_city1($stateId){
-            return $this->from($this->_table_city)->where('stateId',$stateId)->where('status',1)->get()->result();
+            return $this->db->from($this->_table_city)->where('stateId',$stateId)->where('status',1)->get()->result();
         }
         
         function edit_state($dataArr,$stateId){

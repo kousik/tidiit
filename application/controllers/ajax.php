@@ -313,9 +313,17 @@ class Ajax extends MY_Controller{
                 $cityId=$this->input->post('cityId',TRUE);
                 $zipId=$this->input->post('zipId',TRUE);
                 $localityId=$this->input->post('localityId',TRUE);
+                $address=$this->input->post('address',TRUE);
                 
                 $this->User_model->edit(array('firstName'=>$firstName,'lastName'=>$lastName,'email'=>$email),$userId);
-                $this->User_model->edit_biiling_info(array('contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId),$userId);
+                $isAdded=$this->User_model->is_billing_address_added();
+                if(empty($isAdded)){
+                    $this->load->model('Country');
+                    $rs=$this->Country->city_details($cityId);
+                    $this->User_model->add_biiling_info(array('contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'userId'=>$userId,'stateId'=>$rs[0]->stateId,'address'>$address));
+                }else{
+                    $this->User_model->edit_biiling_info(array('contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'address'=>$address),$userId);
+                }
                 echo json_encode(array('result'=>'good'));die; 
             }
             
