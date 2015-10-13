@@ -143,7 +143,7 @@ function AskDelete(id)
   </tr>
  
   <tr>
-    <td><form name="AdminEdit" id="AdminEdit" method="post" action="<?php echo base_url();?>webadmin/brand/edit/">
+      <td><form name="AdminEdit" id="AdminEdit" method="post" action="<?php echo base_url();?>webadmin/brand/edit/" enctype="multipart/form-data">
 <table width="70%" border="0" align="center" cellpadding="0" cellspacing="0" id="EditBox" style="display:none;">
   <tr>
     <th colspan="4"><span class="PageHeading">Brand Edit Form</span></th>
@@ -222,7 +222,7 @@ function AskDelete(id)
 </form></td>
   </tr>
   <tr>
-    <td><form name="AdminAdd" id="AdminAdd" method="post" action="<?php echo base_url();?>webadmin/brand/add" >
+    <td><form name="AdminAdd" id="AdminAdd" method="post" action="<?php echo base_url();?>webadmin/brand/add" enctype="multipart/form-data">
 <table width="70%" border="0" align="center" cellpadding="0" cellspacing="0" id="AddBox" style="display:none;">
   <tr>
     <th width="13%" align="left" valign="top" scope="col">&nbsp;</th>

@@ -252,15 +252,15 @@
                 <div class="col-md-4 col-sm-4">
                     <div class="abot_box">
                         <img src="<?php echo SiteImagesURL;?>about_img.png" />
-                        <a href="#"><h3>About Tidiit</h3></a>
+                        <a href="<?php echo BASE_URL.'content/about-us/'.  base64_encode(1);?>"><h3>About Tidiit</h3></a>
                         <p>Lorem Ipsum is simply dummy text of the printing and type setting industry.</p>
-                        <p><a href="#">Learn More..</a></p>
+                        <p><a href="<?php echo BASE_URL.'content/about-us/'.  base64_encode(1);?>">Learn More..</a></p>
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-4">
                         <div class="abot_box">
                         <img src="<?php echo SiteImagesURL;?>faq_img.png" />
-                        <a href="#"><h3>New Buyers FAQ</h3></a>
+                        <a href="#"><h3>New Sellers FAQ</h3></a>
                         <p>Lorem Ipsum is simply dummy text of the printing and type setting industry.</p>
                         <p><a href="#">Learn More..</a></p>
                     </div>

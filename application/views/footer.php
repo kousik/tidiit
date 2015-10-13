@@ -5,6 +5,7 @@
 .contact-form h1{font-size: 26px;color:#474646;font-family: "controllerfive";}
 </style>
 <footer>
+    <div id="cartInnerHtmlDiv"></div>
     <div class="container">
         <div class="fotr_top">
             <div class="row">
@@ -248,11 +249,20 @@
 
 <script type="text/javascript">
     jQuery(document).ready(function () {
+        jQuery('.showCartDetails').click(function(){
+            jQuery.ajax({
+                type:"POST",
+                url:myJsMain.baseURL+'ajax/show_cart/',
+                success:function(msg){
+                    jQuery('#cartInnerHtmlDiv').html(msg);
+                }
+            });
+        });
         jQuery('.showLogin').click(function(){
             jQuery('#myModalLogin').modal('show');
         });
         jQuery('.all_catgrs').click(function () {
-            location.href = '<?php echo BASE_URL; ?>';
+            //location.href = '<?php //echo BASE_URL; ?>';
         });
         jQuery('#demo1').skdslider({'delay': 5000, 'animationSpeed': 2000, 'showNextPrev': true, 'showPlayButton': true, 'autoSlide': true, 'animationType': 'sliding'});
 

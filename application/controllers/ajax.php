@@ -451,6 +451,7 @@ class Ajax extends MY_Controller{
         endif;
     }
     
+<<<<<<< HEAD
     function send_notification($data){
         /*
         $notify['senderId'] = ;
@@ -504,5 +505,12 @@ class Ajax extends MY_Controller{
         endif;
         
         $this->User_model->notification_add($data);
+=======
+    
+    function show_cart(){
+        $data=array();
+        $ret=$this->load->view('cart',$data,true);
+        echo $ret;die;
+>>>>>>> fbe189e064637024e17000dd314278dc9f67579c
     }
 }
