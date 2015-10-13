@@ -27,6 +27,7 @@ class Product extends MY_Controller{
         }else{
             $data=$this->_get_tobe_login_template($SEODataArr);
         }
+        $data['is_loged_in'] = $this->is_loged_in();
         $data['productDetailsArr']=$productDetailsArr;
         $data['productImageArr']=$productImageArr;
         $data['productPriceArr']=$productPriceArr;

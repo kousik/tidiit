@@ -22,6 +22,7 @@ $mobileProcessorBrand=$this->config->item('mobileProcessorBrand');
 
 <script type="text/javascript">
 jQuery(document).ready(function(){
+    var is_loged_in = '<?=$is_loged_in?>';
   jQuery("#rating_simple2").webwidget_rating_simple({
         rating_star_length: '5',
         rating_initial_value: '',
@@ -77,7 +78,12 @@ jQuery(document).ready(function(){
             myJsMain.commonFunction.tidiitAlert('Tidiit Validate System',"Please select price for the product.",140);
             $('.multiselect-modal-sm').modal('hide');
         }else{
-            
+            if(!is_loged_in){
+                myJsMain.commonFunction.tidiitAlert('Tidiit Validate System',"Please sign in or sign up first for buy this product.",140);
+                $('.multiselect-modal-sm').modal('hide');
+                $( "a.signIn" ).trigger( "click" );
+                return false;
+            }
             jQuery('#prorductPriceId').val(productPriceIdData);
             var order_type=jQuery('input:radio[name=ordertype]:checked').val();
             if(order_type=='group'){

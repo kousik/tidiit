@@ -18,7 +18,7 @@
                         <div class="right_top">
                             <div class="row">
                                 <div class="col-md-4 col-sm-4">
-                                    <p class="wlcm_txt">Welcome !<span><a class='iframe' data-toggle="modal" data-target="#myModalLogin" >Join Free</a></span> or <span><a class='iframe' data-toggle="modal" data-target="#myModalLogin" >Sign in</a></span></p>
+                                    <p class="wlcm_txt">Welcome !<span><a class='iframe signIn' data-toggle="modal" data-target="#myModalLogin" >Join Free</a></span> or <span><a class='iframe' data-toggle="modal" data-target="#myModalLogin" >Sign in</a></span></p>
                                     
                                 </div>
                                 <div class="col-md-3 col-sm-3 search padng_right_none">
