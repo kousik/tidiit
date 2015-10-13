@@ -38,8 +38,8 @@ class User extends MY_Controller{
         $data=$this->_get_logedin_template($SEODataArr);
         $userBillingDataDetails=$this->User_model->get_billing_address();
         //pre($userBillingDataDetails);die;
-        if($userBillingDataDetails[0]->cityId!=""){
-            $data['CityDataArr']=  $this->Country->get_all_city1($userBillingDataDetails[0]->stateId);
+        if($userBillingDataDetails[0]->countryId!=""){
+            $data['CityDataArr']=  $this->Country->get_all_city1($userBillingDataDetails[0]->countryId);
         }
         if($userBillingDataDetails[0]->zipId!=""){
             $data['ZipDataArr']=  $this->Country->get_all_zip1($userBillingDataDetails[0]->cityId);
@@ -57,16 +57,28 @@ class User extends MY_Controller{
     }
     
     function my_orders(){
+        $this->load->model('Country');
+        
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
+        $data['countryDataArr']=$this->Country->get_all1();
+        
         $data['userMenuActive']=4;
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
         $this->load->view('my_orders',$data);
     }
     
     function my_groups(){
+        $this->load->model('Category_model');
+        $this->load->model('Country');
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
+        $data['countryDataArr']=$this->Country->get_all1();
+        $data['CatArr']=$this->Category_model->get_all(0);
+        $user = $this->_get_current_user_details();
+        $my_groups = $this->User_model->get_my_groups();
+        $data['myGroups']=$my_groups;
+        $data['user']=$user;
         $data['userMenuActive']=5;
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
         $this->load->view('my_groups',$data);

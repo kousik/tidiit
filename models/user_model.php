@@ -6,6 +6,7 @@ class User_model extends CI_Model {
 	private $_table_bill_address='billing_address';
         private $_brand='brand_user';
         private $_page_type="page_type_user";
+        private $_group="group";
 
 
         public $result=NULL;
@@ -189,5 +190,80 @@ class User_model extends CI_Model {
         function is_billing_address_added(){
             return $this->db->get_where($this->_table_bill_address,array('userId'=>$this->session->userdata('FE_SESSION_VAR')))->result();
         }
+        
+        function get_all_users_by_locality($localityId){
+            $this->db->select('userId')->from($this->_table_bill_address)->where('localityId',$localityId);
+            $query=$this->db->get();
+            $data = $query->result();
+            if($data): 
+                $udata = array();
+                foreach($data as $key => $usr):
+                    $udatas = $this->get_details_by_id($usr->userId);
+                    $udata[] = $udatas[0];
+                endforeach;
+                return $udata;
+            else:    
+                return false;
+            endif;
+        }
+        
+        
+        public function group_add($dataArray){
+            $this->db->insert($this->_group,$dataArray);
+            return $this->db->insert_id();
+	}
+        
+        
+        public function group_delete($groupId){
+            $this->db->delete($this->_group, array('groupId' => $groupId)); 
+            return TRUE;
+	}
+        
+        public function get_my_groups(){
+            $this->db->order_by('groupId','desc');
+            $datas = $this->db->from($this->_group)->where('groupAdminId =',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+            if($datas):
+                $groups = array();
+                foreach($datas as $key => $grp):
+                    $users = explode(",", $grp->groupUsers);
+                    $udata = array();
+                    if($users):                        
+                        foreach($users as $ukey => $usrId):
+                            $udatas = $this->get_details_by_id($usrId);
+                            $udata[] = $udatas[0];
+                        endforeach;
+                    endif;
+                    $grp->users = $udata;
+                    $groups[] = $grp;
+                endforeach;
+                return (object)$groups;
+            else:
+                return false;
+            endif;
+	}
+        
+        public function get_my_on_groups(){
+           // SELECT *  FROM shirts WHERE FIND_IN_SET('1',colors) > 0
+            $datas = $this->db->from($this->_group)->where('groupUsers =',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+            if($datas):
+                $groups = array();
+                foreach($datas as $key => $grp):
+                    $users = explode(",", $grp->groupUsers);
+                    $udata = array();
+                    if($users):                        
+                        foreach($users as $ukey => $usrId):
+                            $udatas = $this->get_details_by_id($usrId);
+                            $udata[] = $udatas[0];
+                        endforeach;
+                    endif;
+                    $grp->users = $udata;
+                    $groups[] = $grp;
+                endforeach;
+                return (object)$groups;
+            else:
+                return false;
+            endif;
+	}
+        
 }
 ?>

@@ -44,7 +44,7 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <label>Address</label>
-                                                <input type="text" name="" class="form-control" value="<?php echo $userBillingDataDetails[0]->address;?>" required>
+                                                <input type="text" name="address" class="form-control" value="<?php echo $userBillingDataDetails[0]->address;?>" required>
                                             </div>
                                             <div class="col-md-12">
                                                 <div class="row">

@@ -251,6 +251,32 @@ class Ajax extends MY_Controller{
         }
     }
     
+    function show_locality_all_users(){
+       $localityId=$this->input->post('localityId',TRUE);
+        if($localityId==""){
+            echo '';die;
+        }else{
+            $this->load->model('User_model');
+            $UsersDataArr=$this->User_model->get_all_users_by_locality($localityId);
+            if(empty($UsersDataArr)){
+                echo '';die;
+            }else{
+                $html ='<div class="form-group"><label>Select Group Users :</label></div>';
+                $html .='<div class="boxes">';
+                foreach($UsersDataArr as $user):
+                $html.='<div class="form-group checkbox-'.$user->userId.'"><div class="checkbox">
+                           <label>
+                               <input type="checkbox" class="tags-group" name="" value="'.$user->userId.'" data-name="'.$user->firstName.' '.$user->lastName.' ('.$user->email.')"> '.$user->firstName.' '.$user->lastName.' ('.$user->email.')
+                           </label>
+                      </div></div>';
+                $html .='';
+                endforeach;
+                $html .='</div>';
+                echo $html;die;
+            }
+        } 
+    }
+    
     function submit_my_billing_address(){
         $config = array(
             array(
@@ -320,7 +346,7 @@ class Ajax extends MY_Controller{
                 if(empty($isAdded)){
                     $this->load->model('Country');
                     $rs=$this->Country->city_details($cityId);
-                    $this->User_model->add_biiling_info(array('contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'userId'=>$userId,'stateId'=>$rs[0]->stateId,'address'>$address));
+                    $this->User_model->add_biiling_info(array('contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'userId'=>$userId,'address'=>$address));
                 }else{
                     $this->User_model->edit_biiling_info(array('contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'address'=>$address),$userId);
                 }
@@ -328,5 +354,51 @@ class Ajax extends MY_Controller{
             }
             
         }
+    }
+    
+    function add_new_group(){
+        $groupAdminId = $this->input->post('groupAdminId',TRUE);
+        $groupTitle = $this->input->post('groupTitle',TRUE);
+        $productType = $this->input->post('productType',TRUE);
+        $groupUsersArr = $this->input->post('groupUsers',TRUE);
+        $groupUsers = implode(",", $groupUsersArr);
+        $colors = array('red','maroon','purple','green','blue');
+        $rand_keys = array_rand($colors, 1);
+        $groupColor = $colors[$rand_keys];
+        $groupId = $this->User_model->group_add(array('groupAdminId'=>$groupAdminId,'groupTitle'=>$groupTitle,'productType'=>$productType,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor));
+        if($groupId):
+            //Set notification Mail and Insert notification in  DB Table
+            
+            /*$html ='<div class="col-md-3 col-sm-3 grp_dashboard js-group-popover " title="Group : "  data-container="body" data-toggle="popover" data-placement="top" data-content=\'<div class="row" id="group-id-'.$groupId.'">';
+            $html .='<div class="col-md-12">';
+            if($groupUsersArr):
+            foreach($groupUsersArr as $ukey => $usr):
+            $udatas = $this->User_model->get_details_by_id($usr);
+            $udata = $udatas[0];
+            $html .='<h5><strong>Group Users</strong></h5>';
+            $html .='<p class="text-left">'.$udata->firstName.' '.$udata->lastName.'</p>';
+            endforeach; endif;
+            $html .='<button type="button" class="btn btn-primary js-group-edit" data-id="'.$groupId.'">Modify</button>';
+            $html .='<button type="button" class="btn btn-danger pull-right js-group-delete" data-id="'.$groupId.'">Delete</button>';
+            $html .='</div></div>\'>';
+            $html .='<div class="'.$groupColor.'">';
+            $html .='<span><i class="fa  fa-group fa-5x"></i></span>';
+            $html .='</div>';
+            $html .='<div class="grp_title">'.$groupTitle.'</div>';
+            $html .='</div>';*/
+            echo json_encode(array('result'=>'good'));die; 
+        else:    
+            echo json_encode(array('result'=>'bad','msg'=>'Some error happen. Please try again!'));die;
+        endif;
+    }
+    
+    function delete_group(){
+        $groupId = $this->input->post('groupId',TRUE);
+        $del = $this->User_model->group_delete($groupId);
+        if($del):
+            echo json_encode(array('result'=>'good'));die; 
+        else:    
+            echo json_encode(array('result'=>'bad'));die;
+        endif;
     }
 }
