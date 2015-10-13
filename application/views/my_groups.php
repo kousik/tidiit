@@ -2,7 +2,7 @@
 <script src="<?php echo SiteJSURL;?>user-all-my-js.js" type="text/javascript"></script>
 <style type="text/css">
     .popover{
-        width: 700px;
+        width: 100%;
     }
 </style>
 </div>
@@ -25,13 +25,18 @@
                                     <div class="js-my-groups">    
                                         <?php foreach($myGroups as $gkey => $group):?>        
                                         <div class="col-md-3 col-sm-3 grp_dashboard js-group-popover " title="Group : <?=$group->groupTitle?>"  data-container="body" data-toggle="popover" data-placement="left"  id="group-id-<?=$group->groupId?>" data-content='<div class="row">
-                                             <div class="col-md-12"><?php if($group->users):?>
+                                             <div class="col-md-12">
+                                                 <h5><strong>Group Admin</strong></h5>
+                                                 <p class="text-left"><?=$group->admin->firstName?> <?=$group->admin->lastName?></p>
+                                                 <?php if($group->users):?>
                                              <h5><strong>Group Users</strong></h5><?php
                                                 foreach($group->users as $ukey => $usr):?>
                                              <p class="text-left"><?=$usr->firstName?> <?=$usr->lastName?></p>
                                              <?php endforeach; endif;?>
+                                              <?php if(!$group->hide):?>
                                              <a class="btn btn-primary js-group-edit" href="<?=BASE_URL?>edit_groups/<?=base64_encode($group->groupId*987654321)?>" data-id="<?=$group->groupId?>">Modify</a>
                                              <button type="button" class="btn btn-danger pull-right js-group-delete" data-id="<?=$group->groupId?>">Delete</button>
+                                              <?php endif;?>
                                              </div></div>'>
                                                 <div class="<?=$group->groupColor?>">
                                                         <span><i class="fa  fa-group fa-5x"></i></span>
