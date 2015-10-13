@@ -2627,3 +2627,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
 label.error {
     display: none;
 }
+
+.boxes {
+ max-height: 150px;
+ overflow: auto;
+}

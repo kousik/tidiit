@@ -28,6 +28,7 @@ class Country extends CI_Model {
 	}	
         
         function get_all1(){
+            $this->db->order_by('countryName','asc');
             return $this->db->get_where($this->_table,array('status'=>1))->result();
         }
 	
@@ -103,7 +104,7 @@ class Country extends CI_Model {
         }
         
         function get_all_city1($stateId){
-            return $this->db->from($this->_table_city)->where('stateId',$stateId)->where('status',1)->get()->result();
+            return $this->db->from($this->_table_city)->where('countryId',$stateId)->where('status',1)->get()->result();
         }
         
         function edit_state($dataArr,$stateId){
