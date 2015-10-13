@@ -111,7 +111,7 @@ class Brand extends MY_Controller{
         $config['source_image'] = $OriginalFilePath;
         $config['new_image'] = $PHOTOPATH. 'admin/';
         $config['width'] = 50;
-        $config['height'] = 05;
+        $config['height'] = 50;
         $config['maintain_ratio'] = true;
         $config['master_dim'] = 'auto';
         $config['create_thumb'] = FALSE;
