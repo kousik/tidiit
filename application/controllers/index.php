@@ -7,6 +7,17 @@ class Index extends MY_Controller{
         //$this->db->cache_off();
     }
     
+    function under_construnction(){
+        $SEODataArr=array();
+        if($this->is_loged_in()){
+            $data=$this->_get_logedin_template($SEODataArr);
+        }else{
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        }
+
+        $this->load->view('under_construction',$data);
+    }
+    
     function index(){
         $SEODataArr=array();
         if($this->is_loged_in()){
