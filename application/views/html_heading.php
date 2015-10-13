@@ -48,8 +48,9 @@
         <!-- General JS fiies start here
         <script src="<?php //echo SiteJSURL;?>1.11.2_jquery.min.js"></script> -->
         <script src="<?php echo SiteJSURL;?>jquery.min.js"></script>
-        <script src="<?php echo SiteJSURL;?>jquery-ui.min.js"></script>
         <script src="<?php echo SiteJSURL;?>bootstrap.min.js"></script>
+        <script src="<?php echo SiteJSURL;?>jquery-ui.min.js"></script>
+        
         <!-- General JS fiies end here-->
         
         <!-- Skd Slider Assets -->
