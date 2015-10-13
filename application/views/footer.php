@@ -248,6 +248,9 @@
 
 <script type="text/javascript">
     jQuery(document).ready(function () {
+        jQuery('.showLogin').click(function(){
+            jQuery('#myModalLogin').modal('show');
+        });
         jQuery('.all_catgrs').click(function () {
             location.href = '<?php echo BASE_URL; ?>';
         });
