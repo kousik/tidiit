@@ -401,4 +401,11 @@ class Ajax extends MY_Controller{
             echo json_encode(array('result'=>'bad'));die;
         endif;
     }
+    
+    
+    function show_cart(){
+        $data=array();
+        $ret=$this->load->view('cart',$data,true);
+        echo $ret;die;
+    }
 }

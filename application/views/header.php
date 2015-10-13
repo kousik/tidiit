@@ -72,7 +72,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
-                                    <div class="icon_text active">
+                                    <div class="icon_text active showCartDetails">
                                         <div class="circle_brdr">
                                             <span><i class="fa fa-truck"></i></span>
                                         </div>
