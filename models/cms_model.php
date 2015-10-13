@@ -24,7 +24,7 @@ class Cms_model extends CI_Model {
 	}
 	
 	public function get_content_by_id($CMSID){
-		$this->db->select('*')->from($this->_table)->where('CMSID',$CMSID);
+		$this->db->select('*')->from($this->_table)->where('cmsId',$CMSID);
 		return $this->db->get()->result();
 	}
 	

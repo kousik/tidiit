@@ -252,7 +252,7 @@
             jQuery('#myModalLogin').modal('show');
         });
         jQuery('.all_catgrs').click(function () {
-            location.href = '<?php echo BASE_URL; ?>';
+            //location.href = '<?php //echo BASE_URL; ?>';
         });
         jQuery('#demo1').skdslider({'delay': 5000, 'animationSpeed': 2000, 'showNextPrev': true, 'showPlayButton': true, 'autoSlide': true, 'animationType': 'sliding'});
 

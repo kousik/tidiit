@@ -51,6 +51,8 @@ $route['my-groups-orders']="user/my_group_orders";
 $route['my-finance-info']="user/my_finance_info";
 $route['my-profile']="user/my_profile";
 
+$route['content/(:any)/(:any)']="content/show_content/$2";
+
 
 $route['webadmin']="webadmin/index";
 $route['webadmin/index']="webadmin/index/login";

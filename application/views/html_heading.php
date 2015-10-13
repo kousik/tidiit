@@ -21,6 +21,7 @@
         
         <!-- Custom CSS -->
     	<link href="<?php echo SiteCSSURL;?>custom.css" rel="stylesheet">
+    	<link href="<?php echo SiteCSSURL;?>new.css" rel="stylesheet">
     	<link href="<?php echo SiteCSSURL;?>custom_new.css" rel="stylesheet">
         
         <!-- font awesome CSS -->
