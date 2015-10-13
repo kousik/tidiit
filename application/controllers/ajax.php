@@ -365,27 +365,76 @@ class Ajax extends MY_Controller{
         $colors = array('red','maroon','purple','green','blue');
         $rand_keys = array_rand($colors, 1);
         $groupColor = $colors[$rand_keys];
+        $notify = array();
+        
         $groupId = $this->User_model->group_add(array('groupAdminId'=>$groupAdminId,'groupTitle'=>$groupTitle,'productType'=>$productType,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor));
         if($groupId):
-            //Set notification Mail and Insert notification in  DB Table
-            
-            /*$html ='<div class="col-md-3 col-sm-3 grp_dashboard js-group-popover " title="Group : "  data-container="body" data-toggle="popover" data-placement="top" data-content=\'<div class="row" id="group-id-'.$groupId.'">';
-            $html .='<div class="col-md-12">';
-            if($groupUsersArr):
-            foreach($groupUsersArr as $ukey => $usr):
-            $udatas = $this->User_model->get_details_by_id($usr);
-            $udata = $udatas[0];
-            $html .='<h5><strong>Group Users</strong></h5>';
-            $html .='<p class="text-left">'.$udata->firstName.' '.$udata->lastName.'</p>';
-            endforeach; endif;
-            $html .='<button type="button" class="btn btn-primary js-group-edit" data-id="'.$groupId.'">Modify</button>';
-            $html .='<button type="button" class="btn btn-danger pull-right js-group-delete" data-id="'.$groupId.'">Delete</button>';
-            $html .='</div></div>\'>';
-            $html .='<div class="'.$groupColor.'">';
-            $html .='<span><i class="fa  fa-group fa-5x"></i></span>';
-            $html .='</div>';
-            $html .='<div class="grp_title">'.$groupTitle.'</div>';
-            $html .='</div>';*/
+            foreach($groupUsersArr as $guser):
+                $notify['senderId'] = $groupAdminId;
+                $notify['receiverId'] = $guser;
+                $notify['nType'] = "GROUP-ADD";
+                $notify['nTitle'] = $groupTitle;
+                $this->send_notification($notify);
+            endforeach;
+            echo json_encode(array('result'=>'good'));die; 
+        else:    
+            echo json_encode(array('result'=>'bad','msg'=>'Some error happen. Please try again!'));die;
+        endif;
+    }
+    
+    function update_group(){
+        $groupId = $this->input->post('groupId',TRUE);
+        $groupTitle = $this->input->post('groupTitle',TRUE);
+        $productType = $this->input->post('productType',TRUE);
+        $groupUsersArr = $this->input->post('groupUsers',TRUE);
+        $groupUsers = implode(",", $groupUsersArr);
+        $colors = array('red','maroon','purple','green','blue');
+        $rand_keys = array_rand($colors, 1);
+        $groupColor = $colors[$rand_keys];
+        
+        $bfrUpdateGroup = $this->User_model->get_group_by_id($groupId);
+        $bfrUsers = explode(",", $bfrUpdateGroup->groupUsers);
+        $olduser = array();
+        $deluser = array();
+        $newUser = array();
+        foreach($groupUsersArr as $guser):
+            if(in_array($guser, $bfrUsers)):
+                $olduser[] = $guser;
+            else:
+                $newUser[] = $guser;
+            endif;
+        endforeach;
+        foreach($bfrUsers as $bfruser):
+            if(!in_array($bfruser, $groupUsersArr)):
+                $deluser[] = $bfruser;
+            endif;
+        endforeach;        
+        
+        $groupId = $this->User_model->group_update(array('groupTitle'=>$groupTitle,'productType'=>$productType,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor), $groupId);
+        if($groupId):
+            foreach($olduser as $ouser):
+                $notify['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                $notify['receiverId'] = $ouser;
+                $notify['nType'] = "GROUP-MODIFY";
+                $notify['nTitle'] = $groupTitle;
+                $this->send_notification($notify);
+            endforeach;
+
+            foreach($newUser as $nuser):
+                $notify['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                $notify['receiverId'] = $nuser;
+                $notify['nType'] = "GROUP-MODIFY-NEW";
+                $notify['nTitle'] = $groupTitle;
+                $this->send_notification($notify);
+            endforeach;
+
+            foreach($deluser as $duser):
+                $notify['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                $notify['receiverId'] = $duser;
+                $notify['nType'] = "GROUP-MODIFY-DELETE";
+                $notify['nTitle'] = $groupTitle;
+                $this->send_notification($notify);
+            endforeach;
             echo json_encode(array('result'=>'good'));die; 
         else:    
             echo json_encode(array('result'=>'bad','msg'=>'Some error happen. Please try again!'));die;
@@ -400,5 +449,60 @@ class Ajax extends MY_Controller{
         else:    
             echo json_encode(array('result'=>'bad'));die;
         endif;
+    }
+    
+    function send_notification($data){
+        /*
+        $notify['senderId'] = ;
+        $notify['receiverId'] = ;
+        $notify['nType'] = ;
+        $notify['nTitle'] = ;
+        $notify['nMessage'] = ;
+         */
+        $type = $data['nType'];
+        switch($type){
+            case 'GROUP-ADD':
+                $data['nMessage'] = "Hi, <br> You Have added in my group <b>[".$data['nTitle']."]</b>";
+                $data['isEmail'] = true;
+                $data['isMobMessage'] = true;
+                $data['createDate'] = date('Y-m-d H:i:s');
+                break;
+            case 'GROUP-MODIFY':
+                $data['nMessage'] = "Hi, <br> Group <b>[".$data['nTitle']."]</b> has been modified.";
+                $data['isEmail'] = true;
+                $data['isMobMessage'] = true;
+                $data['createDate'] = date('Y-m-d H:i:s');
+                break;
+            case 'GROUP-MODIFY-NEW':
+                $data['nMessage'] = "Hi, <br> You Have added in my group <b>[".$data['nTitle']."]</b>";
+                $data['isEmail'] = true;
+                $data['isMobMessage'] = true;
+                $data['createDate'] = date('Y-m-d H:i:s');
+                break;
+            case 'GROUP-MODIFY-DELETE':
+                $data['nMessage'] = "Hi, <br> You are not part of this group <b>[".$data['nTitle']."]</b>";
+                $data['isEmail'] = true;
+                $data['isMobMessage'] = true;
+                $data['createDate'] = date('Y-m-d H:i:s');
+                break;
+        }
+        
+        
+        $data['isRead'] = 0;
+        $data['status'] = 1;
+        
+        
+        
+        if($data['isMobMessage']):
+            //Send Mobile message
+            unset($data['isMobMessage']);
+        endif;
+        
+        if($data['isEmail']):
+            //Send Email message
+            unset($data['isEmail']);
+        endif;
+        
+        $this->User_model->notification_add($data);
     }
 }

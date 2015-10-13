@@ -83,6 +83,24 @@ class User extends MY_Controller{
         $this->load->view('my_groups',$data);
     }
     
+    
+    function edit_groups($groupId){
+        $groupId = base64_decode($groupId)/987654321;
+        $this->load->model('Category_model');
+        $this->load->model('Country');
+        $SEODataArr=array();
+        $data=$this->_get_logedin_template($SEODataArr);
+        $data['countryDataArr']=$this->Country->get_all1();
+        $data['CatArr']=$this->Category_model->get_all(0);
+        $user = $this->_get_current_user_details();
+        $group = $this->User_model->get_group_by_id($groupId);
+        $data['group']=$group;
+        $data['user']=$user;
+        $data['userMenuActive']=5;
+        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $this->load->view('my_group_edit',$data);
+    }
+    
     function process_my_group_orders(){
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);

@@ -1,10 +1,5 @@
 <?php echo $html_heading; echo $header;?>
 <script src="<?php echo SiteJSURL;?>user-all-my-js.js" type="text/javascript"></script>
-<style type="text/css">
-    .popover{
-        width: 700px;
-    }
-</style>
 </div>
 </header>
 <article>
@@ -18,58 +13,22 @@
                     <!-- Tab panes -->
                     <div class="tab_dashbord">
                     	<div class="active row">
-                        	<div class="col-md-12 col-sm-12">
-                             <div class="gen_infmtn">
-                            	<h6>My Groups <span class="pull-right"><input type="button" data-toggle="modal" data-target="#myModalLogin" name="" value="Creat new Group" /></span></h6>
-                                </div>
-                                    <div class="js-my-groups">    
-                                        <?php foreach($myGroups as $gkey => $group):?>        
-                                        <div class="col-md-3 col-sm-3 grp_dashboard js-group-popover " title="Group : <?=$group->groupTitle?>"  data-container="body" data-toggle="popover" data-placement="left"  id="group-id-<?=$group->groupId?>" data-content='<div class="row">
-                                             <div class="col-md-12"><?php if($group->users):?>
-                                             <h5><strong>Group Users</strong></h5><?php
-                                                foreach($group->users as $ukey => $usr):?>
-                                             <p class="text-left"><?=$usr->firstName?> <?=$usr->lastName?></p>
-                                             <?php endforeach; endif;?>
-                                             <a class="btn btn-primary js-group-edit" href="<?=BASE_URL?>edit_groups/<?=base64_encode($group->groupId*987654321)?>" data-id="<?=$group->groupId?>">Modify</a>
-                                             <button type="button" class="btn btn-danger pull-right js-group-delete" data-id="<?=$group->groupId?>">Delete</button>
-                                             </div></div>'>
-                                                <div class="<?=$group->groupColor?>">
-                                                        <span><i class="fa  fa-group fa-5x"></i></span>
-                                            </div>
-                                            <div class="grp_title"><?=$group->groupTitle?></div>
-                                        </div>
-                                        <?php endforeach;?>    
-                                    </div> 
-                            </div>                            
-                            
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</article>
-
- <!-- Modal -->
- <div class="modal fade" id="myModalLogin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-     <div class="modal-dialog modal-lg opn_box" style='padding:10px; background:#fff; border-radius:10px;'>
-         <button aria-label="Close" data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span></button>
-         <div class="container">
-             <form action="#" method="post" name="add_groups" class="form-inline" id="add_groups">
+                            <div class="col-md-12 col-sm-12">
+                                    
+                                <form action="#" method="post" name="update_groups" class="form-inline" id="update_groups">
                  <div class="row">
                      <div class="col-md-12 col-sm-12">
+                         <div class="gen_infmtn">
+                            	<h6>Edit Group: <?=$group->groupTitle?> </h6>
+                                </div>
                          <div class="create_grp">
                              <div id="login_form">
                                  <form class="contact_form" action="#" method="post" name="contact_form"  novalidate="novalidate">
-                                     <input type="hidden" name="groupAdminId" value="<?=$user->userId?>">
-                                     <h1>Select Group Memebers</h1>
-                                     <hr />
+                                     <input type="hidden" name="groupId" value="<?=$group->groupId?>">
                                      <div class="row">
                                          <div class="col-md-12">
                                             <label for="groupTitle">Group Title</label>
-                                            <input type="text" class="form-control" id="groupTitle" name="groupTitle" placeholder="Jane Doe" required>
+                                            <input type="text" class="form-control" id="groupTitle" name="groupTitle" placeholder="Jane Doe" value='<?=$group->groupTitle?>' required>
                                           </div>
                                          <div class="col-md-4">
                                              <label for="locality" class="col-md-6 pad_none">Select Country :</label>
@@ -112,7 +71,7 @@
                                                  <select name="productType" class="form-control nova heght_cntrl" id="productType" required>
                                                      <option value="">Select</option>
                                                      <?php foreach ($CatArr AS $cat): ?>
-                                                         <option value="<?= $cat->categoryId ?>"><?= $cat->categoryName ?></option>
+                                                         <option value="<?= $cat->categoryId ?>" <?php if($cat->categoryId == $group->productType):?> selected<?php endif;?>><?= $cat->categoryName ?></option>
                                                      <?php endforeach; ?>
                                                  </select>
                                              </div>
@@ -126,11 +85,15 @@
                                      <div class="row">
                                          <div class="col-xs-12 col-sm-6 col-md-6 js-show-group-users-tags">
                                              <div class="form-group"><label>Selected Users :</label></div>
+                                             <?php foreach($group->users as $ukey => $usr):?>
+                                             <input type="hidden" name="groupUsers[]" value="<?=$usr->userId?>" class="checkbox-close-<?=$usr->userId?>">
+                                             <button type="button" class="btn btn-info btn-xs checkbox-close-<?=$usr->userId?>"><?=$usr->firstName?> <?=$usr->lastName?> | <span aria-hidden="true" class="checkbox-close" data-id="<?=$usr->userId?>">&times;</span></button>
+                                             <?php endforeach;?>
                                          </div>
                                      </div>
                                      <div class="row">
                                          <div class="col-md-3 pull-right">
-                                             <input type="submit"  class="grpButton" name="creatGrp" id="grpButton" value="Create New Group" />
+                                             <input type="submit"  class="grpButton" name="creatGrp" id="grpButton" value="Modify Group" />
                                          </div>
                                      </div>
                                      <div class="clear"></div>	
@@ -149,12 +112,20 @@
 
 
                  </div>
-             </form>
-         </div>           
+             </form>    
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
 
-     </div>
- </div>
-<!-- /.modal -->
 <script type="text/javascript">
     var zipDynEle='<select class="form-control nova heght_cntrl" name="zipId" id="zipId" value=""  tabindex="1"><option value="">Select</option></select>';
     var localityDynEle='<select class="form-control nova heght_cntrl" name="localityId" id="localityId" value=""  tabindex="1"><option value="">Select</option></select>';

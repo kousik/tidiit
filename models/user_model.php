@@ -7,6 +7,7 @@ class User_model extends CI_Model {
         private $_brand='brand_user';
         private $_page_type="page_type_user";
         private $_group="group";
+        private $_notification ="notifications";
 
 
         public $result=NULL;
@@ -214,9 +215,32 @@ class User_model extends CI_Model {
 	}
         
         
+        public function group_update($DataArr,$groupId){
+            $this->db->where('groupId',$groupId);
+            $this->db->update($this->_group,$DataArr);
+            return TRUE;		
+	}
+        
+        
         public function group_delete($groupId){
             $this->db->delete($this->_group, array('groupId' => $groupId)); 
             return TRUE;
+	}
+        
+        public function get_group_by_id($groupId){
+            $this->db->limit(1);
+            $groupData = $this->db->select('*')->from($this->_group)->where('groupId',$groupId)->get()->result();            
+            $group = $groupData[0];
+            $users = explode(",", $group->groupUsers);
+            $udata = array();
+            if($users):                        
+                foreach($users as $ukey => $usrId):
+                    $udatas = $this->get_details_by_id($usrId);
+                    $udata[] = $udatas[0];
+                endforeach;
+            endif;
+            $group->users = $udata;
+            return $group;
 	}
         
         public function get_my_groups(){
@@ -263,6 +287,12 @@ class User_model extends CI_Model {
             else:
                 return false;
             endif;
+	}
+        
+        
+        public function notification_add($dataArray){
+            $this->db->insert($this->_notification,$dataArray);
+            return $this->db->insert_id();
 	}
         
 }

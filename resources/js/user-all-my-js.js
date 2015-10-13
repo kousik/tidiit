@@ -48,8 +48,20 @@ myJsMain.my_create_groups=function(){
             myJsMain.commonFunction.ajaxSubmit($(form),myJsMain.baseURL+'ajax/add_new_group', groupCreateCallback);
     //});
         }
-    });        
-        // this is just to show product list page
+    });
+    
+    $('#update_groups').validate({
+        rules: createGroupValidationRules,
+        submitHandler: function (form) {
+            //form.submit(function(e) {
+            $('#grpButton').prop('disabled',true);            
+            myJsMain.commonFunction.ajaxSubmit($(form),myJsMain.baseURL+'ajax/update_group', groupUpdateCallback);
+    //});
+        }
+    });
+    
+    
+    // this is just to show product list page
     function groupCreateCallback(resultData){
         $('#grpButton').prop('disabled',false);
         if(resultData.result=='bad'){
@@ -59,6 +71,17 @@ myJsMain.my_create_groups=function(){
             $( "div.js-my-groups" ).append(resultData.msg);
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Group has been added successfully.",200);
             window.setTimeout(function(){location.reload()},3000);
+        }
+    }
+    
+    
+    // this is just to show product list page
+    function groupUpdateCallback(resultData){
+        $('#grpButton').prop('disabled',false);
+        if(resultData.result=='bad'){
+            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
+        } else if(resultData.result=='good') {
+            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Group has been updated successfully.",200);
         }
     }
 }

@@ -48,6 +48,7 @@ $route['myaccount']="user/my_account";
 $route['my-orders']="user/my_orders";
 $route['my-groups']="user/my_groups";
 $route['my-groups-orders']="user/my_group_orders";
+$route['edit_groups/(:any)']="user/edit_groups/$1";
 $route['my-finance-info']="user/my_finance_info";
 $route['my-profile']="user/my_profile";
 
