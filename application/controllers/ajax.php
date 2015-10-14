@@ -261,10 +261,10 @@ class Ajax extends MY_Controller{
             if(empty($UsersDataArr)){
                 echo '';die;
             }else{
-                $html ='<div class="form-group"><label>Select Group Users :</label></div>';
+                $html ='<label class="col-sm-3 control-label">Select Group Users :</label>';
                 $html .='<div class="boxes">';
                 foreach($UsersDataArr as $user):
-                $html.='<div class="form-group checkbox-'.$user->userId.'"><div class="checkbox">
+                $html.='<div class="checkbox-'.$user->userId.'"><div class="checkbox">
                            <label>
                                <input type="checkbox" class="tags-group" name="" value="'.$user->userId.'" data-name="'.$user->firstName.' '.$user->lastName.' ('.$user->email.')"> '.$user->firstName.' '.$user->lastName.' ('.$user->email.')
                            </label>

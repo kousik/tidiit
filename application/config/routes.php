@@ -58,6 +58,10 @@ $route['content/(:any)/(:any)']="content/show_content/$2";
 $route['webadmin']="webadmin/index";
 $route['webadmin/index']="webadmin/index/login";
 
+//Order
+$route['shopping/add-group-order']="shopping/process_my_group_orders";
+
+
 //Logout
 $route['logout']="index/logout";
 
