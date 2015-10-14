@@ -105,18 +105,7 @@ class User extends MY_Controller{
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
         $this->load->view('my_group_edit',$data);
     }
-    
-    function process_my_group_orders(){
-        $SEODataArr=array();
-        $data=$this->_get_logedin_template($SEODataArr);
-        $user = $this->_get_current_user_details(); //print_r($user);die;
-        $productId = $this->input->post('productId');
-        $prorductPriceId = $this->input->post('prorductPriceId');
-        $data['userMenuActive']=7;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
-        $this->load->view('group_order/group_order',$data);
-    }
-    
+        
     function my_group_orders(){
         
     }

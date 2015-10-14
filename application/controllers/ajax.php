@@ -261,10 +261,10 @@ class Ajax extends MY_Controller{
             if(empty($UsersDataArr)){
                 echo '';die;
             }else{
-                $html ='<div class="form-group"><label>Select Group Users :</label></div>';
+                $html ='<label class="col-sm-3 control-label">Select Group Users :</label>';
                 $html .='<div class="boxes">';
                 foreach($UsersDataArr as $user):
-                $html.='<div class="form-group checkbox-'.$user->userId.'"><div class="checkbox">
+                $html.='<div class="checkbox-'.$user->userId.'"><div class="checkbox">
                            <label>
                                <input type="checkbox" class="tags-group" name="" value="'.$user->userId.'" data-name="'.$user->firstName.' '.$user->lastName.' ('.$user->email.')"> '.$user->firstName.' '.$user->lastName.' ('.$user->email.')
                            </label>
@@ -463,7 +463,7 @@ class Ajax extends MY_Controller{
         $type = $data['nType'];
         switch($type){
             case 'GROUP-ADD':
-                $data['nMessage'] = "Hi, <br> You Have added in my group <b>[".$data['nTitle']."]</b>";
+                $data['nMessage'] = "Hi, <br> You Have added in my newly created group <b>[".$data['nTitle']."]</b>";
                 $data['isEmail'] = true;
                 $data['isMobMessage'] = true;
                 $data['createDate'] = date('Y-m-d H:i:s');

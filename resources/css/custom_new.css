@@ -2630,10 +2630,16 @@ label.error {
 
 .boxes {
  max-height: 150px;
- overflow: auto;
+ overflow-y: scroll;
+ margin-left: 24%;
+ width: 56%;
 }
 
-
+.js-show-group-users-tags button{
+    padding: 5px;
+    margin: 2px;
+    font-size: 14px;
+}
 
 .ui-widget-content {
     background: #F9F9F9;
