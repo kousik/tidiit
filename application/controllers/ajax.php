@@ -463,7 +463,7 @@ class Ajax extends MY_Controller{
         $type = $data['nType'];
         switch($type){
             case 'GROUP-ADD':
-                $data['nMessage'] = "Hi, <br> You Have added in my group <b>[".$data['nTitle']."]</b>";
+                $data['nMessage'] = "Hi, <br> You Have added in my newly created group <b>[".$data['nTitle']."]</b>";
                 $data['isEmail'] = true;
                 $data['isMobMessage'] = true;
                 $data['createDate'] = date('Y-m-d H:i:s');
