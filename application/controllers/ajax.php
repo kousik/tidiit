@@ -513,4 +513,19 @@ class Ajax extends MY_Controller{
         $ret=$this->load->view('cart',$data,true);
         echo $ret;die;
     }
+    
+    function get_subcategory_for_user_product_type(){
+        $this->load->model('Category_model','category');
+        $categoryId=$this->input->post('categoryId',TRUE);
+        $dataArr=$this->category->get_subcategory_by_category_id($categoryId);
+        if(empty($dataArr)){
+            echo '';die;
+        }else{
+            $html='';
+            foreach($dataArr AS $k):
+                $html.='<div class="col-md-12 showInerCategoryData" catDivId="'.$k->categoryId.'" style="cursor: pointer;text-decoration: underline;"><input type="checkbox" name="productTypeId" value="'.$k->categoryId.'" class="required">'.$k->categoryName.'</div><div class="col-md-12" style="height: 10px;"></div>';
+            endforeach;
+            echo $html;die;
+        }
+    }
 }

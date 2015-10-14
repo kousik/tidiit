@@ -114,7 +114,12 @@
                                                     
                                                 </div>
                                             </div>
-                                          
+                                            <div class="col-md-12 rootShowInerCategoryData">
+                                                <?php foreach($topCategoryDataArr AS $k):?>
+                                                <div class="col-md-12 showInerCategoryData" catDivId="<?php echo $k->categoryId;?>" style="cursor: pointer;text-decoration: underline;"><?php echo $k->categoryName;?></div>
+                                                <div class="col-md-12" style="height: 10px;"></div>
+                                                <?php endforeach;?>
+                                            </div>
                                         </div>
                                     </div>
                                     
@@ -146,7 +151,7 @@
            }else{
                jQuery.ajax({
                    type:"POST",
-                   url:'<?php echo BASE_URL.'ajax/show_city_by_country/'?>',
+                   url:myJsMain.baseURL+'ajax/show_city_by_country/',
                    data:'countryId='+jQuery(this).val(),
                    success:function(msg){
                        if(msg!=""){
@@ -166,7 +171,7 @@
            }else{
                jQuery.ajax({
                    type:"POST",
-                   url:'<?php echo BASE_URL.'ajax/show_zip_by_city/'?>',
+                   url:myJsMain.baseURL+'ajax/ajax/show_zip_by_city/',
                    data:'cityId='+jQuery(this).val(),
                    success:function(msg){
                        if(msg!=""){
@@ -185,7 +190,7 @@
            }else{
                jQuery.ajax({
                    type:"POST",
-                   url:'<?php echo BASE_URL.'ajax/show_locality_by_zip/'?>',
+                   url:myJsMain.baseURL+'ajax/show_locality_by_zip/',
                    data:'zipId='+jQuery(this).val(),
                    success:function(msg){
                        if(msg!=""){
@@ -194,6 +199,20 @@
                    }
                });
            }
+        });
+        
+        jQuery('.rootShowInerCategoryData').on('click','.showInerCategoryData',function(){
+            /*var test='<div class="col-md-12 showInerCategoryData" catDivId="15" style="cursor: pointer;text-decoration: underline;"><input type="checkbox" name="productTypeId" value="15" class="required">Fragrance</div><div class="col-md-12" style="height: 10px;"></div><div class="col-md-12 showInerCategoryData" catDivId="16" style="cursor: pointer;text-decoration: underline;"><input type="checkbox" name="productTypeId" value="16" class="required">Make Up</div><div class="col-md-12" style="height: 10px;"></div>';
+            jQuery(this).append(test);*/
+            jQuery.ajax({
+                type:"POST",
+                url:myJsMain.baseURL+'ajax/get_subcategory_for_user_product_type/',
+                data:"categoryId="+jQuery(this).attr('catDivId'),
+                success:function(msg){
+                    //alert(msg);
+                    jQuery(this).append(msg);
+                }
+            });
         });
     });
 </script>

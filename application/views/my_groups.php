@@ -23,7 +23,8 @@
                             	<h6>My Groups <span class="pull-right"><input type="button" data-toggle="modal" data-target="#myModalLogin" name="" value="Creat new Group" /></span></h6>
                                 </div>
                                     <div class="js-my-groups">    
-                                        <?php foreach($myGroups as $gkey => $group):?>        
+                                        <?php if(!empty($myGroups)):
+                                        foreach($myGroups as $gkey => $group):?>        
                                         <div class="col-md-3 col-sm-3 grp_dashboard js-group-popover " title="Group : <?=$group->groupTitle?>"  data-container="body" data-toggle="popover" data-placement="left"  id="group-id-<?=$group->groupId?>" data-content='<div class="row">
                                              <div class="col-md-12">
                                                  <h5><strong>Group Admin</strong></h5>
@@ -44,6 +45,7 @@
                                             <div class="grp_title"><?=$group->groupTitle?></div>
                                         </div>
                                         <?php endforeach;?>    
+                                        <?php endif;?>
                                     </div> 
                             </div>                            
                             

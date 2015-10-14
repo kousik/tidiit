@@ -34,6 +34,7 @@ class User extends MY_Controller{
     
     function my_billing_address(){
         $this->load->model('Country');
+        $this->load->model('Category_model','category');
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $userBillingDataDetails=$this->User_model->get_billing_address();
@@ -53,6 +54,9 @@ class User extends MY_Controller{
         $data['countryDataArr']=$this->Country->get_all1();
         $data['userMenuActive']=3;
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        
+        $data['topCategoryDataArr']=  $this->category->get_top_category_for_product_list();
+        
         $this->load->view('my_billing_address',$data);
     }
     
