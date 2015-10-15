@@ -31,7 +31,9 @@ echo $html_heading; echo $header;?>
                             <div class="tab_dashbord">
 
                                 <div class="active row grouporder_id">
-
+                                   <form action="#" method="post" name="start_groups_order" id="start_groups_order"> 
+                                    <input type="hidden" id="js-order-info" name="orderId" value="" data-groupid="" data-userid="<?=$user->userId?>" >
+                                    
                                     <div class="col-md-12 col-sm-12">
 
                                         <div class="gen_infmtn">
@@ -41,7 +43,7 @@ echo $html_heading; echo $header;?>
                                         </div>
 
 
-                                        <div class="group-selection">
+                                        <div class="group-selection js-display-selected-group">
                                             <label class="input-group">
                                                 <span class="input-group-addon">
                                                     <input type="radio"  name="selectgroup" id="optionsRadios1" class="js-order-group" value="exists">
@@ -60,7 +62,7 @@ echo $html_heading; echo $header;?>
 
                                         </div>
                                         <div class="clearfix"></div>
-
+                                        <div class="panel js-display-exisit-group"></div>
                                         <div class="panel panel-default">
                                             <div class="panel-body">
 
@@ -78,17 +80,9 @@ echo $html_heading; echo $header;?>
 
                                         <button type="button" class="btn btn-primary pull-right">Invite Group User to Process the Order</button>
                                         <div class="clearfix"></div>
-
-
-
-
-
-
-
-
                                     </div>                            
 
-
+                                   </form>
 
                                 </div>
 
@@ -123,7 +117,7 @@ echo $html_heading; echo $header;?>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Create New Group</h4>
       </div>
-      <form action="#" method="post" name="add_groups" class="form-horizontal" id="add_groups"> 
+      <form action="#" method="post" name="add_groups_for_order" class="form-horizontal" id="add_groups_for_order"> 
           <input type="hidden" name="groupAdminId" value="<?=$user->userId?>">
       <div class="modal-body">          
               <div class="form-group">
@@ -317,9 +311,41 @@ echo $html_heading; echo $header;?>
             e.preventDefault();
             var grp = jQuery(this).val();
             if(grp == 'new'){
+                $('div.js-display-exisit-group').empty();
                 $('#createGroupModalLogin').modal('show');
+            } else if( grp == 'exists'){                
+                var userId = $('input[id="js-order-info"]').data('userid');
+                $.post( myJsMain.baseURL+'ajax/get_my_groups/', {
+                    userId: userId
+                },
+                function(data){ 
+                    if(data.contents){
+                        $('div.js-display-exisit-group').html(data.contents);
+                    }
+                }, 'json' );
             }
         }); 
+        
+        jQuery("body").delegate('input[id="js-order-info"]', "click", function(e){
+            e.preventDefault();
+            var groupId = $(this).data('groupid');
+            var jqout = $(this);
+            $.post( myJsMain.baseURL+'ajax/get_single_group/', {
+                groupId: groupId
+            },
+            function(data){ 
+                if(data.contents){
+                    $('div.js-display-exisit-group').empty();
+                    $('div.js-display-selected-group').html(data.contents);
+                }
+            }, 'json' );
+        }); 
+        
+        jQuery("body").delegate('input[class="js-select-group"]', "click", function(e){
+            var gid = $(this).val();
+            $('input[id="js-order-info"]').attr('data-groupid', gid);
+            $('input[id="js-order-info"]').trigger( "click" );            
+        });    
     });
 </script>
 <?php echo $footer;?>
