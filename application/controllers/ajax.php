@@ -523,9 +523,12 @@ class Ajax extends MY_Controller{
         }else{
             $html='';
             foreach($dataArr AS $k):
-                $html.='<div class="col-md-12 showInerCategoryData" catDivId="'.$k->categoryId.'" style="cursor: pointer;text-decoration: underline;"><input type="checkbox" name="productTypeId" value="'.$k->categoryId.'" class="required">'.$k->categoryName.'</div><div class="col-md-12" style="height: 10px;"></div>';
+                $html.='<div class="col-md-12 showInerCategoryData" catDivId="'.$k->categoryId.'" style="cursor: pointer;text-decoration: underline;">';
+                $html.='<input type="checkbox" name="productTypeId" value="'.$k->categoryId.'" class="required">'.$k->categoryName.'</div>';
+               $html.='<div class="col-md-12" style="height: 10px;">';
+               $html.='</div>';
             endforeach;
-            echo $html;die;
+            echo json_encode(array('content'=>$html));die;
         }
     }
 }

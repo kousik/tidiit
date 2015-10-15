@@ -116,7 +116,8 @@
                                             </div>
                                             <div class="col-md-12 rootShowInerCategoryData">
                                                 <?php foreach($topCategoryDataArr AS $k):?>
-                                                <div class="col-md-12 showInerCategoryData" catDivId="<?php echo $k->categoryId;?>" style="cursor: pointer;text-decoration: underline;"><?php echo $k->categoryName;?></div>
+                                                <div class="col-md-12 showInerCategoryData" data-catDivId="<?php echo $k->categoryId;?>" style="cursor: pointer;text-decoration: underline;">
+                                                    <?php echo $k->categoryName;?></div>
                                                 <div class="col-md-12" style="height: 10px;"></div>
                                                 <?php endforeach;?>
                                             </div>
@@ -201,18 +202,32 @@
            }
         });
         
-        jQuery('.rootShowInerCategoryData').on('click','.showInerCategoryData',function(){
+        jQuery("body").delegate('div.showInerCategoryData', "click", function(e){
+            e.preventDefault();
+        //jQuery('.rootShowInerCategoryData').on('click','.showInerCategoryData',function(){
             /*var test='<div class="col-md-12 showInerCategoryData" catDivId="15" style="cursor: pointer;text-decoration: underline;"><input type="checkbox" name="productTypeId" value="15" class="required">Fragrance</div><div class="col-md-12" style="height: 10px;"></div><div class="col-md-12 showInerCategoryData" catDivId="16" style="cursor: pointer;text-decoration: underline;"><input type="checkbox" name="productTypeId" value="16" class="required">Make Up</div><div class="col-md-12" style="height: 10px;"></div>';
             jQuery(this).append(test);*/
-            jQuery.ajax({
+            //var obj = $(this);
+            //var jq=$;
+            /*jQuery.ajax({
                 type:"POST",
                 url:myJsMain.baseURL+'ajax/get_subcategory_for_user_product_type/',
-                data:"categoryId="+jQuery(this).attr('catDivId'),
+                data:"categoryId="+jQuery(this).data('catDivId'),
                 success:function(msg){
                     //alert(msg);
-                    jQuery(this).append(msg);
+                    //console.log($(this).attr('class'));
+                    obj.html(msg);
                 }
-            });
+            });*/
+    var catId = $(this).data('catdivid');
+    console.log(catId+'='+$(this));
+            jQuery.post( myJsMain.baseURL+'ajax/get_subcategory_for_user_product_type/', {
+			categoryId: catId
+		},
+		function(data){
+                    console.log($(this).data('catdivid')+'='+$(this));
+		$(this).html(data.content);
+		}, 'json' );
         });
     });
 </script>
