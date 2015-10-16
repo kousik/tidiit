@@ -206,13 +206,16 @@
         
         jQuery("body").delegate('a.showInerCategoryData', "click", function(e){
             e.preventDefault();
-        
+            var oldHtmlContent=$(this).html();
+            //return false;
             var catId = $(this).data('catdivid');
             var jqout = $(this);
             $.post( myJsMain.baseURL+'ajax/get_subcategory_for_user_product_type/', {
                 categoryId: catId
             },
-            function(data){                
+            function(data){
+                jqout.parent('div').empty();
+                jqout.parent('div').html(oldHtmlContent);
                 jqout.parent('div').append(data.content);
             }, 'json' );
         });
