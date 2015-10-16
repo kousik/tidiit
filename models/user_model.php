@@ -241,6 +241,8 @@ class User_model extends CI_Model {
                 endforeach;
             endif;
             $group->users = $udata;
+            $getgpadmin = $this->get_details_by_id($group->groupAdminId); 
+            $group->admin = $getgpadmin[0];
             return $group;
 	}
         

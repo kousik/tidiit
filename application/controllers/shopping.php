@@ -16,9 +16,13 @@ class Shopping extends MY_Controller{
         
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
-        $user = $this->_get_current_user_details(); //print_r($user);die;
+        $user = $this->_get_current_user_details(); 
         $productId = $this->input->post('productId');
         $prorductPriceId = $this->input->post('prorductPriceId');
+        if((isset($productId) && !$productId) && (isset($prorductPriceId) && !$prorductPriceId)):
+            redirect(BASE_URL.'404_override');
+        endif;
+        
         $data['userMenuActive']=7;
         $data['countryDataArr']=$this->Country->get_all1();
         $data['CatArr']=$this->Category_model->get_all(0);

@@ -376,7 +376,7 @@ class Ajax extends MY_Controller{
                 $notify['nTitle'] = $groupTitle;
                 $this->send_notification($notify);
             endforeach;
-            echo json_encode(array('result'=>'good'));die; 
+            echo json_encode(array('result'=>'good','gid'=>$groupId));die; 
         else:    
             echo json_encode(array('result'=>'bad','msg'=>'Some error happen. Please try again!'));die;
         endif;
@@ -451,6 +451,87 @@ class Ajax extends MY_Controller{
         endif;
     }
     
+    
+    function get_single_group(){
+        $groupId = $this->input->post('groupId',TRUE);
+        $group = $this->User_model->get_group_by_id($groupId);
+        ob_start();?>
+        <div class="container-fluid">
+            <div class="alert alert-success" role="alert">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                <span class="sr-only">Success:</span>
+                Group has been added successfully. Please process the order without reload page.
+            </div>
+            <div class="col-md-3 col-sm-3 grp_dashboard" style="margin:0;">
+            <div class="<?= $group->groupColor ?>">
+                <span><i class="fa  fa-group fa-5x"></i></span>
+            </div>
+            <div class="grp_title"><?= $group->groupTitle ?></div>
+        </div>        
+        <div class="col-md-6">
+            <h5><strong>Group Admin</strong></h5>
+            <p class="text-left"><?= $group->admin->firstName ?> <?= $group->admin->lastName ?></p>
+            <?php if ($group->users): ?>
+                <h5><strong>Group Users</strong></h5><?php foreach ($group->users as $ukey => $usr): ?>
+                    <p class="text-left"><?= $usr->firstName ?> <?= $usr->lastName ?></p>
+                <?php endforeach;
+            endif;
+            ?>
+        </div>
+        </div><?php
+        $result['contents'] = ob_get_contents();
+	ob_end_clean();
+	echo json_encode( $result );
+	die;
+    }
+    
+    function get_my_groups(){
+        $me = $this->input->post('userId',TRUE);
+        $groups = $this->User_model->get_my_groups();
+        ob_start();
+        if($groups):?>
+        <div class="alert alert-success" role="alert">
+            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+            <span class="sr-only">Success:</span>
+            Please select a group!
+        </div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Group Admin</th>
+                    <th>Users</th>
+                    <th>Select</th>
+                </tr>
+            </thead>
+            <tbody><?php
+                foreach($groups as $key => $group):?>
+                <tr>
+                    <td><span class="badge" style="background-color:<?=$group->groupColor?>;"><span><i class="fa  fa-group fa-5x"></i></span></span> <?=$group->groupTitle?></td>
+                    <td><?=$group->admin->firstName?> <?=$group->admin->lastName?> <?php if($me == $group->admin->userId):?>[ME]<?php endif;?></td>
+                    <td><?php if($group->users):
+                        foreach($group->users as $ukey => $usr):?>
+                       <?=$ukey+1?>#  <?=$usr->firstName?> <?=$usr->lastName?><br />
+                        <?php endforeach; endif;?>
+                    </td>
+                    <td><input type="radio" name="select-group" class="js-select-group" value="<?=$group->groupId?>" ></td>
+                </tr><?php
+                endforeach;?>
+            </tbody>
+        </table>
+        <?php
+        else:?>
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            You have no own groups or not added any other groups. Please create group first!
+        </div>
+        <?php
+        endif;
+        $result['contents'] = ob_get_contents();
+	ob_end_clean();
+	echo json_encode( $result );
+	die;
+    }
 
     function send_notification($data){
         /*

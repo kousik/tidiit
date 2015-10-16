@@ -43,9 +43,19 @@ myJsMain.my_create_groups=function(){
     $('#add_groups').validate({
         rules: createGroupValidationRules,
         submitHandler: function (form) {
-            //form.submit(function(e) {
+            
             $('#grpButton').prop('disabled',true);            
-            myJsMain.commonFunction.ajaxSubmit($(form),myJsMain.baseURL+'ajax/add_new_group', groupCreateCallback);
+           // myJsMain.commonFunction.ajaxSubmit($(form),myJsMain.baseURL+'ajax/add_new_group', groupCreateCallback);
+    //});
+        }
+    });
+    
+    $('#add_groups_for_order').validate({
+        rules: createGroupValidationRules,
+        submitHandler: function (form) {
+            
+            $('#grpButton').prop('disabled',true);            
+            myJsMain.commonFunction.ajaxSubmit($(form),myJsMain.baseURL+'ajax/add_new_group', groupCreateForOrderCallback);
     //});
         }
     });
@@ -68,9 +78,21 @@ myJsMain.my_create_groups=function(){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         } else if(resultData.result=='good') {
             $( "#myModalLogin .close" ).trigger( "click" );
-            $( "div.js-my-groups" ).append(resultData.msg);
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Group has been added successfully.",200);
             window.setTimeout(function(){location.reload()},3000);
+        }
+    }
+    
+    // this is just to show product list page
+    function groupCreateForOrderCallback(resultData){
+        $('#grpButton').prop('disabled',false);
+        if(resultData.result=='bad'){
+            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
+        } else if(resultData.result=='good') {
+            $('input[id="js-order-info"]').attr('data-groupid', resultData.gid);
+            $('input[id="js-order-info"]').trigger( "click" );
+            $( "#createGroupModalLogin .close" ).trigger( "click" );
+            
         }
     }
     
@@ -78,10 +100,10 @@ myJsMain.my_create_groups=function(){
     // this is just to show product list page
     function groupUpdateCallback(resultData){
         $('#grpButton').prop('disabled',false);
-        if(resultData.result=='bad'){
+        if(resultData.result == 'bad'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
-        } else if(resultData.result=='good') {
+        } else if(resultData.result == 'good') {
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Group has been updated successfully.",200);
         }
-    }
-}
+    };
+};
