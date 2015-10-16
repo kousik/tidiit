@@ -1007,4 +1007,9 @@ class Product_model extends CI_Model {
     function get_products_price($produtcId){
         return $this->db->from($this->_table_price)->where('productId',$produtcId)->get()->result();
     }
+    
+    function get_products_price_details_by_id($productPriceId){        
+        $data = $this->db->from($this->_table_price)->where('productPriceId',$productPriceId)->get()->result();
+        return $data[0];
+    }
 }

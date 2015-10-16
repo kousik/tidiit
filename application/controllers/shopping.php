@@ -6,9 +6,11 @@ class Shopping extends MY_Controller{
         parent::__construct();
         $this->_isLoggedIn();
         $this->load->model('User_model');
+        $this->load->model('Order_model');
         $this->db->cache_off();
         $this->load->library('cart');
         $this->load->model('Category_model');
+        $this->load->model('Product_model');
         $this->load->model('Country');
     }
         
@@ -22,7 +24,56 @@ class Shopping extends MY_Controller{
         if((isset($productId) && !$productId) && (isset($prorductPriceId) && !$prorductPriceId)):
             redirect(BASE_URL.'404_override');
         endif;
+        $product = $this->Product_model->details($productId);
+        $product = $product[0];
+        $prod_price_info = $this->Product_model->get_products_price_details_by_id($prorductPriceId);
+        $is_cart_update = false;
+        $cart = $this->cart->contents();
+        //$this->cart->destroy();
+        if($cart): 
+            foreach ($cart as $item):            
+                if(($item['id'] == $productId)):
+                    $data['orderId'] = $item['options']['orderId'];
+                    $is_cart_update = $item['rowid'];
+                endif;
+            endforeach;
+        endif;
         
+        //Order first step
+        $order_data = array();
+        $order_data['orderType'] = 'GROUP';
+        $order_data['productId'] = $productId;
+        $order_data['productPriceId'] = $prorductPriceId;
+        $order_data['orderDate'] = date('Y-m-d H:i:s');
+        
+        //Cart first step
+        $cart_data = array();
+        $cart_data['id'] = $productId;
+        $cart_data['name'] = $product->title;
+        $single_price = ($prod_price_info->price/$prod_price_info->qty);
+        $cart_data['price'] = number_format($single_price, 2, '.', '');
+        $cart_data['qty'] = 1;
+        
+        if(!isset($data['orderId'])):
+            $data['orderId']=$this->Order_model->add($order_data);
+        endif;
+        
+        //$data['orderId'] = 0;
+        $order_data['orderId'] = $data['orderId'];
+        $order_data['prorductPriceId'] = $prorductPriceId;
+        $cart_data['options'] = $order_data;
+        if($is_cart_update):
+            //$cart_data['rowid'] = $is_cart_update;
+            $this->_remove_cart($is_cart_update); //echo $is_cart_update;
+            $this->_add_to_cart($cart_data);
+            //$this->_update_single_cart($cart_data);
+        else:
+            $this->_add_to_cart($cart_data);
+        endif;
+        
+        //$cart = $this->cart->contents();
+        //print_r($cart); print_r($prod_price_info);
+        $data['priceInfo'] = $prod_price_info;
         $data['userMenuActive']=7;
         $data['countryDataArr']=$this->Country->get_all1();
         $data['CatArr']=$this->Category_model->get_all(0);
@@ -44,17 +95,16 @@ class Shopping extends MY_Controller{
             'qty' => 0
         );
         
-        $data = array_merge($data, $insert_data);
+        $datas = array_merge($insert_data, $data);
         
         // This function add items into cart.
-        $this->cart->insert($data);
+        $this->cart->insert($datas);
     }
     
     
-    function _update_cart(){
+    function _update_cart($cart_info){
 
         // Recieve post values,calcute them and update
-        $cart_info = $_POST['cart'] ;
         foreach( $cart_info as $id => $cart) {
             $rowid = $cart['rowid'];
             $price = $cart['price'];
@@ -70,6 +120,12 @@ class Shopping extends MY_Controller{
 
             $this->cart->update($data);
         }
+    }
+    
+    function _update_single_cart($cart_info){
+
+        // Recieve post values,calcute them and update
+        $this->cart->update($cart_info);
     }
     
     
