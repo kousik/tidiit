@@ -32,13 +32,13 @@ echo $html_heading; echo $header;?>
 
                                 <div class="active row grouporder_id">
                                    <form action="#" method="post" name="start_groups_order" id="start_groups_order"> 
-                                    <input type="hidden" id="js-order-info" name="orderId" value="" data-groupid="" data-userid="<?=$user->userId?>" >
+                                    <input type="hidden" id="js-order-info" name="orderId" value="<?=$orderId?>" data-groupid="" data-userid="<?=$user->userId?>" >
                                     
                                     <div class="col-md-12 col-sm-12">
 
                                         <div class="gen_infmtn">
 
-                                            <h6>Groups order Id <strong>53432424</strong> </h6>
+                                            <h6>Groups order ID <span class="label label-success"><?=$orderId?></span> </h6>
 
                                         </div>
 
@@ -67,18 +67,20 @@ echo $html_heading; echo $header;?>
                                             <div class="panel-body">
 
                                                 <div class="form-horizontal">
-                                                    <label for="input3" class="col-sm-7 control-label">Please enter your no of Quantity of this Order</label>
+                                                    <label for="input3" class="col-sm-7 control-label">Please enter your no of Quantity of this Order<br>Available quantity : ( <?=$priceInfo->qty?> ) </label>
                                                     <div class="col-sm-5">
-                                                        <input type="text" class="form-control" id="input3" placeholder="">
+                                                        <input type="text" class="form-control" id="js-estd-qty" placeholder="">
+                                                        <input type="hidden" class="form-control" id="js-avail-qty" value="<?=$priceInfo->qty?>">
                                                     </div>
 
 
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="alert alert-danger js-message" role="alert" style="display: none;"></div>
                                         <div class="clearfix"></div>
 
-                                        <button type="button" class="btn btn-primary pull-right">Invite Group User to Process the Order</button>
+                                        <button type="button" class="btn btn-primary pull-right js-group-order-process">Invite Group User to Process the Order</button>
                                         <div class="clearfix"></div>
                                     </div>                            
 
@@ -303,8 +305,9 @@ echo $html_heading; echo $header;?>
         }); 
         
         
+        
     });
-    jQuery(function () {
+    jQuery(document).ready( function() {
         $('.js-group-popover').popover({html:true,container: 'body'});
         
         jQuery("body").delegate('.js-order-group', "click", function(e){
@@ -327,8 +330,8 @@ echo $html_heading; echo $header;?>
         }); 
         
         jQuery("body").delegate('input[id="js-order-info"]', "click", function(e){
-            e.preventDefault();
-            var groupId = $(this).data('groupid');
+            e.preventDefault();//console.log($(this).data('groupid'));
+            var groupId = $(this).attr('data-groupid');
             var jqout = $(this);
             $.post( myJsMain.baseURL+'ajax/get_single_group/', {
                 groupId: groupId
@@ -345,7 +348,34 @@ echo $html_heading; echo $header;?>
             var gid = $(this).val();
             $('input[id="js-order-info"]').attr('data-groupid', gid);
             $('input[id="js-order-info"]').trigger( "click" );            
-        });    
+        });   
+        
+        jQuery("body").delegate('button.js-group-order-process', "click", function(e){
+            var obj = $('input[id="js-order-info"]'); 
+            if(!obj.attr('data-groupid')){
+                $('div.js-message').html('Please add a group!');
+                //$('div.js-message').show();
+                $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
+                return;
+            }
+            
+            if(!$('#js-estd-qty').val()){
+                $('div.js-message').html('Please enter your quantity!');
+                //$('div.js-message').show();
+                $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
+                return;
+            }
+            console.log($('#js-estd-qty').val()+'==='+$('#js-avail-qty').val());
+            var estd = $('#js-estd-qty').val();
+            var avail = $('#js-avail-qty').val();
+            if(parseInt(estd) > parseInt(avail)){
+                $('div.js-message').html("Quantity can't exceed from available quantity!");
+                //$('div.js-message').show();
+                $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
+                  
+                return;
+            }
+        });
     });
 </script>
 <?php echo $footer;?>
