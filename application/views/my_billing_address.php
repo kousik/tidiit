@@ -174,7 +174,7 @@
            }else{
                jQuery.ajax({
                    type:"POST",
-                   url:myJsMain.baseURL+'ajax/ajax/show_zip_by_city/',
+                   url:myJsMain.baseURL+'ajax/show_zip_by_city/',
                    data:'cityId='+jQuery(this).val(),
                    success:function(msg){
                        if(msg!=""){
