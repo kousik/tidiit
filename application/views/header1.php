@@ -31,7 +31,7 @@
                                     <ul class="sub_menu">
                                         <li><a href="<?php echo BASE_URL.'buyer-protection';?>">Buyer Protection <i class="fa fa-angle-down"></i></a></li>
                                         <li><a href="<?php echo BASE_URL.'help';?>">Help <i class="fa fa-angle-down"></i></a></li>
-                                        <li><a href="javascript:void(0);" class="showLogin">My Account <i class="fa fa-angle-down"></i></a></li>
+                                        <li><a href="javascript:void(0);" class="showMyAccount">My Account <i class="fa fa-angle-down"></i></a></li>
                                     </ul>
                                 </div>
                             </div>
