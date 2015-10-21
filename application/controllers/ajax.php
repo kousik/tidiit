@@ -12,31 +12,11 @@ class Ajax extends MY_Controller{
     public function check_registration(){
         //echo 'kk';die;
         $config = array(
-            array(
-                  'field'   => 'email',
-                  'label'   => 'User Name',
-                  'rules'   => 'trim|required|xss_clean|min_length[8]|max_length[35]|valid_email|callback_username_check'
-               ),
-            array(
-                  'field'   => 'password',
-                  'label'   => 'Password',
-                  'rules'   => 'trim|required|xss_clean|min_length[4]|max_length[15]'
-               ),
-            array(
-                  'field'   => 'confirmPassword',
-                  'label'   => 'Password',
-                  'rules'   => 'trim|required|xss_clean|matches[password]'
-               ),
-            array(
-                  'field'   => 'firstName',
-                  'label'   => 'First Name',
-                  'rules'   => 'trim|required|xss_clean|min_length[3]|max_length[25]'
-               ),
-            array(
-                  'field'   => 'lastName',
-                  'label'   => 'Last Name',
-                  'rules'   => 'trim|required|xss_clean|min_length[3]|max_length[25]'
-               )/*,
+            array('field'   => 'email','label'   => 'User Name','rules'=> 'trim|required|xss_clean|min_length[8]|max_length[35]|valid_email|callback_username_check'),
+            array('field'   => 'password','label'   => 'Password','rules'   => 'trim|required|xss_clean|min_length[4]|max_length[15]'),
+            array('field'   => 'confirmPassword','label'   => 'Password','rules'   => 'trim|required|xss_clean|matches[password]'),
+            array('field'   => 'firstName','label'   => 'First Name','rules'   => 'trim|required|xss_clean|min_length[3]|max_length[25]'),
+            array('field'   => 'lastName','label'   => 'Last Name','rules'   => 'trim|required|xss_clean|min_length[3]|max_length[25]')/*,
             array(
                   'field'   => 'webIdRegistration',
                   'label'   => 'Unathorize Access',
@@ -92,16 +72,8 @@ class Ajax extends MY_Controller{
     
     public function check_login(){
         $config = array(
-            array(
-                  'field'   => 'userName',
-                  'label'   => 'User Name',
-                  'rules'   => 'trim|required|xss_clean'
-               ),
-                array(
-                  'field'   => 'loginPassword',
-                  'label'   => 'Password',
-                  'rules'   => 'trim|required|xss_clean'
-               )
+            array('field'   => 'userName','label'   => 'User Name','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'loginPassword','label'   => 'Password','rules'   => 'trim|required|xss_clean')
          );
         //initialise the rules with validatiion helper
         $this->form_validation->set_rules($config); 
@@ -128,8 +100,6 @@ class Ajax extends MY_Controller{
             }
         }
     }
-    
-    
     
     public function username_check($str){
         $userName=$this->input->post('email',TRUE);
@@ -279,46 +249,15 @@ class Ajax extends MY_Controller{
     
     function submit_my_billing_address(){
         $config = array(
-            array(
-                  'field'   => 'firstName',
-                  'label'   => 'First Name',
-                  'rules'   => 'trim|required|xss_clean'
-               ),
-            array(
-                  'field'   => 'lastName',
-                  'label'   => 'Last Name',
-                  'rules'   => 'trim|required|xss_clean'
-               ),
-           array(
-                  'field'   => 'phone',
-                  'label'   => 'Phone',
-                  'rules'   => 'trim|required|xss_clean'
-               ),
-           array(
-                  'field'   => 'email',
-                  'label'   => 'Email',
-                  'rules'   => 'trim|required|xss_clean|valid_email'
-               ),
-           array(
-                  'field'   => 'countryId',
-                  'label'   => 'Country',
-                  'rules'   => 'trim|required|xss_clean'
-               ),
-           array(
-                  'field'   => 'cityId',
-                  'label'   => 'City',
-                  'rules'   => 'trim|required|xss_clean'
-               ),
-           array(
-                  'field'   => 'zipId',
-                  'label'   => 'Zip',
-                  'rules'   => 'trim|required|xss_clean'
-               ),
-           array(
-                  'field'   => 'localityId',
-                  'label'   => 'Locality',
-                  'rules'   => 'trim|required|xss_clean'
-               ) 
+            array('field'   => 'firstName','label'   => 'First Name','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'lastName','label'   => 'Last Name','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'phone','label'   => 'Phone','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'email','label'   => 'Email','rules'   => 'trim|required|xss_clean|valid_email'),
+           array('field'   => 'address','label'   => 'Address','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'countryId','label'   => 'Country','rules'   => 'trim|required|xss_clean'), 
+           array('field'   => 'cityId','label'   => 'City','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'zipId','label'   => 'Zip','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'localityId','label'   => 'Locality','rules'   => 'trim|required|xss_clean') 
          );
         //initialise the rules with validatiion helper
         $this->form_validation->set_rules($config); 
@@ -342,13 +281,13 @@ class Ajax extends MY_Controller{
                 $address=$this->input->post('address',TRUE);
                 
                 $this->User_model->edit(array('firstName'=>$firstName,'lastName'=>$lastName,'email'=>$email),$userId);
+                $this->load->model('Country');
+                $rs=$this->Country->city_details($cityId);
                 $isAdded=$this->User_model->is_billing_address_added();
                 if(empty($isAdded)){
-                    $this->load->model('Country');
-                    $rs=$this->Country->city_details($cityId);
-                    $this->User_model->add_biiling_info(array('contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'userId'=>$userId,'address'=>$address));
+                    $this->User_model->add_biiling_info(array('contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'userId'=>$userId,'address'=>$address,'stateId'=>$rs[0]->stateId));
                 }else{
-                    $this->User_model->edit_biiling_info(array('contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'address'=>$address),$userId);
+                    $this->User_model->edit_biiling_info(array('contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'address'=>$address,'stateId'=>$rs[0]->stateId),$userId);
                 }
                 echo json_encode(array('result'=>'good'));die; 
             }
@@ -610,6 +549,121 @@ class Ajax extends MY_Controller{
                 //$html.='</div>';
             endforeach;
             echo json_encode(array('content'=>$html));die;
+        }
+    }
+    
+    function submit_shippiing_address(){
+        $config = array(
+            array('field'   => 'firstName','label'   => 'First Name','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'lastName','label'   => 'Last Name','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'phone','label'   => 'Phone','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'address','label'   => 'Address','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'countryId','label'   => 'Country','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'cityId','label'   => 'City','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'zipId','label'   => 'Zip','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'localityId','label'   => 'Locality','rules'   => 'trim|required|xss_clean') 
+         );
+        //initialise the rules with validatiion helper
+        $this->form_validation->set_rules($config); 
+        //checking validation
+        if($this->form_validation->run() == FALSE){
+                //retun to login page with peroper error
+                echo json_encode(array('result'=>'bad','msg'=>validation_errors()));die;
+        }else{
+            $userId=$this->session->userdata('FE_SESSION_VAR');
+            if($userId==""){
+                echo json_encode(array('result'=>'bad','msg'=>'Please login before update changes.'));die;
+            }else{
+                $firstName=$this->input->post('firstName',TRUE);
+                $lastName=$this->input->post('lastName',TRUE);
+                $phone=$this->input->post('phone',TRUE);
+                $countryId=$this->input->post('countryId',TRUE);
+                $cityId=$this->input->post('cityId',TRUE);
+                $zipId=$this->input->post('zipId',TRUE);
+                $localityId=$this->input->post('localityId',TRUE);
+                $address=$this->input->post('address',TRUE);
+                
+                $this->load->model('Country');
+                $rs=$this->Country->city_details($cityId);
+                
+                $isAdded=$this->User_model->is_shipping_address_added();
+                if(empty($isAdded)){
+                    $this->User_model->add_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'userId'=>$userId,'address'=>$address,'stateId'=>$rs[0]->stateId));
+                }else{
+                    $this->User_model->edit_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'address'=>$address,'stateId'=>$rs[0]->stateId),$userId);
+                }
+                echo json_encode(array('result'=>'good'));die; 
+            }
+            
+        }
+    }
+    
+    function submit_finance(){
+        $config = array(
+            array('field'   => 'mpesaFullName','label'   => 'Full Name in m-Pesa Account','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'mpesaAccount','label'   => 'm-Pesa Account Number','rules'   => 'trim|required|xss_clean') 
+         );
+        //initialise the rules with validatiion helper
+        $this->form_validation->set_rules($config); 
+        //checking validation
+        if($this->form_validation->run() == FALSE){
+            //retun to login page with peroper error
+            echo json_encode(array('result'=>'bad','msg'=>validation_errors()));die;
+        }else{
+            $userId=$this->session->userdata('FE_SESSION_VAR');
+            if($userId==""){
+                echo json_encode(array('result'=>'bad','msg'=>'Please login before update changes.'));die;
+            }else{
+                $mpesaFullName=$this->input->post('mpesaFullName',TRUE);
+                $mpesaAccount=$this->input->post('mpesaAccount',TRUE);
+                
+                $isAdded=$this->User_model->get_finance_info();
+                if(empty($isAdded)){
+                    $this->User_model->add_finance(array('mpesaFullName'=>$mpesaFullName,'mpesaAccount'=>$mpesaAccount,'userId'=>$userId));
+                }else{
+                    $this->User_model->edit_finance(array('mpesaFullName'=>$mpesaFullName,'mpesaAccount'=>$mpesaAccount),$userId);
+                }
+                echo json_encode(array('result'=>'good'));die; 
+            }
+            
+        }
+    }
+    
+    function submit_my_profile(){
+        $config = array(
+            array('field'   => 'firstName','label'   => 'First Name','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'lastName','label'   => 'Last Name','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'email','label'   => 'Email','rules'   => 'trim|required|xss_clean|valid_email'),
+            array('field'   => 'contactNo','label'   => 'Phone','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'DOB','label'   => 'Date of Birth','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'aboutMe','label'   => 'City','rules'   => 'trim|required|xss_clean')
+         );
+        //initialise the rules with validatiion helper
+        $this->form_validation->set_rules($config); 
+        //checking validation
+        if($this->form_validation->run() == FALSE){
+                //retun to login page with peroper error
+                echo json_encode(array('result'=>'bad','msg'=>validation_errors()));die;
+        }else{
+            $userId=$this->session->userdata('FE_SESSION_VAR');
+            if($userId==""){
+                echo json_encode(array('result'=>'bad','msg'=>'Please login before update changes.'));die;
+            }else{
+                $firstName=$this->input->post('firstName',TRUE);
+                $lastName=$this->input->post('lastName',TRUE);
+                $contactNo=$this->input->post('contactNo',TRUE);
+                $email=$this->input->post('email',TRUE);
+                $DOB=$this->input->post('DOB',TRUE);
+                $mobile=$this->input->post('mobile',TRUE);
+                $fax=$this->input->post('fax',TRUE);
+                $aboutMe=$this->input->post('aboutMe',TRUE);
+                
+                //echo json_encode(array('result'=>'bad','msg'=>$DOB));die;
+                
+                $this->User_model->edit(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo,
+                    'email'=>$email,'DOB'=>$DOB,'mobile'=>$mobile,'fax'=>$fax,'aboutMe'=>$aboutMe),$userId);
+                echo json_encode(array('result'=>'good'));die; 
+            }
         }
     }
 }

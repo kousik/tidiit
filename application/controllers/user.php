@@ -25,10 +25,35 @@ class User extends MY_Controller{
     }
     
     function my_shipping_address(){
+        $this->load->model('Country');
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $data['userMenuActive']=2;
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $userShippingDataDetails=$this->User_model->get_user_shipping_information();
+        if(empty($userShippingDataDetails)){
+            $userShippingDataDetails[0]=new stdClass();
+            $userShippingDataDetails[0]->firstName="";
+            $userShippingDataDetails[0]->lastName="";
+            $userShippingDataDetails[0]->countryId="";
+            $userShippingDataDetails[0]->cityId="";
+            $userShippingDataDetails[0]->zipId="";
+            $userShippingDataDetails[0]->localityId="";
+            $userShippingDataDetails[0]->phone="";
+            $userShippingDataDetails[0]->address="";
+            $userShippingDataDetails[0]->contactNo="";
+        }
+        if($userShippingDataDetails[0]->countryId!=""){
+            $data['cityDataArr']=  $this->Country->get_all_city1($userShippingDataDetails[0]->countryId);
+        }
+        if($userShippingDataDetails[0]->zipId!=""){
+            $data['zipDataArr']=  $this->Country->get_all_zip1($userShippingDataDetails[0]->cityId);
+        }
+        if($userShippingDataDetails[0]->localityId!=""){
+            $data['localityDataArr']=  $this->Country->get_all_locality($userShippingDataDetails[0]->zipId);
+        }
+        $data['countryDataArr']=$this->Country->get_all1();
+        $data['userShippingDataDetails']=$userShippingDataDetails;
         $this->load->view('my_shipping_address',$data);
     }
     
@@ -38,15 +63,28 @@ class User extends MY_Controller{
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $userBillingDataDetails=$this->User_model->get_billing_address();
+        if(empty($userBillingDataDetails)){
+            $userBillingDataDetails[0]=new stdClass();
+            $userBillingDataDetails[0]->firstName="";
+            $userBillingDataDetails[0]->lastName="";
+            $userBillingDataDetails[0]->countryId="";
+            $userBillingDataDetails[0]->cityId="";
+            $userBillingDataDetails[0]->zipId="";
+            $userBillingDataDetails[0]->localityId="";
+            $userBillingDataDetails[0]->phone="";
+            $userBillingDataDetails[0]->address="";
+            $userBillingDataDetails[0]->contactNo="";
+            $userBillingDataDetails[0]->email="";
+        }
         //pre($userBillingDataDetails);die;
         if($userBillingDataDetails[0]->countryId!=""){
-            $data['CityDataArr']=  $this->Country->get_all_city1($userBillingDataDetails[0]->countryId);
+            $data['cityDataArr']=  $this->Country->get_all_city1($userBillingDataDetails[0]->countryId);
         }
         if($userBillingDataDetails[0]->zipId!=""){
-            $data['ZipDataArr']=  $this->Country->get_all_zip1($userBillingDataDetails[0]->cityId);
+            $data['zipDataArr']=  $this->Country->get_all_zip1($userBillingDataDetails[0]->cityId);
         }
         if($userBillingDataDetails[0]->localityId!=""){
-            $data['LocalityDataArr']=  $this->Country->get_all_locality($userBillingDataDetails[0]->zipId);
+            $data['localityDataArr']=  $this->Country->get_all_locality($userBillingDataDetails[0]->zipId);
         }
         $data['userBillingDataDetails']=$userBillingDataDetails;
         $countryDataArr=$this->Country->get_all1();
@@ -111,10 +149,27 @@ class User extends MY_Controller{
     }
     
     function my_finance_info(){
-        
+        $SEODataArr=array();
+        $data=$this->_get_logedin_template($SEODataArr);
+        $data['userMenuActive']=6;
+        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $financeDataArr=$this->User_model->get_finance_info();
+        if(empty($financeDataArr)){
+            $financeDataArr[0]=new stdClass();
+            $financeDataArr[0]->mpesaFullName="";
+            $financeDataArr[0]->mpesaAccount="";
+        }
+        $data['financeDataArr']=$financeDataArr;
+        $this->load->view('my_finance',$data);
     }
     
     function my_profile(){
-        
+        $SEODataArr=array();
+        $data=$this->_get_logedin_template($SEODataArr);
+        $data['userMenuActive']=8;
+        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $userDataArr=$this->User_model->get_details_by_id($this->session->userdata('FE_SESSION_VAR'));
+        $data['userDataArr']=$this->User_model->get_details_by_id($this->session->userdata('FE_SESSION_VAR'));
+        $this->load->view('edit_profile',$data);
     }
 }

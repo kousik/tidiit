@@ -14,27 +14,27 @@
                     	<div class="active row">
                         	<div class="col-md-12 col-sm-12">
                                 <div class="col-md-3 col-sm-3 dashboard red">
-                                	<span><i class="fa  fa-dashboard fa-5x"></i></span>
+                                    <span><i class="fa  fa-dashboard fa-5x" onclick="location.href=myJsMain.baseURL+'my-profile';"></i></span>
                             	</div>
                                 
                                 <div class="col-md-3 col-sm-3 dashboard blue">
-                                	<span><i class="fa fa-truck fa-5x"></i></span>
+                                	<span><i class="fa fa-truck fa-5x" onclick="location.href=myJsMain.baseURL+'my-shipping-address';"></i></span>
                             	</div>
                                 
                                 <div class="col-md-3 col-sm-3 dashboard green">
-                                	<span><i class="fa   fa-ship fa-5x"></i></span>
+                                	<span><i class="fa   fa-ship fa-5x" onclick="location.href=myJsMain.baseURL+'my-billing-address';"></i></span>
                             	</div>
                                 
                                 <div class="col-md-3 col-sm-3 dashboard yellow">
-                                	<span><i class="fa   fa-group fa-5x"></i></span>
+                                	<span><i class="fa   fa-group fa-5x" onclick="location.href=myJsMain.baseURL+'my-groups';"></i></span>
                             	</div>
                                 
                                 <div class="col-md-3 col-sm-3 dashboard purple">
-                                	<span><i class="fa fa-server fa-5x"></i></span>
+                                	<span><i class="fa fa-server fa-5x" onclick="location.href=myJsMain.baseURL+'my-orders';"></i></span>
                             	</div>
                                 
                                 <div class="col-md-3 col-sm-3 dashboard maroon">
-                                	<span><i class="fa  fa-credit-card fa-5x"></i></span>
+                                	<span><i class="fa  fa-credit-card fa-5x" onclick="location.href=myJsMain.baseURL+'my-finance-info';"></i></span>
                             	</div> 
                             </div>                        
                             

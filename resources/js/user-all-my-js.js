@@ -3,6 +3,7 @@ myJsMain.my_billing_address=function(){
         firstName: {required: true},
         lastName: {required: true},
         phone: {required: true},
+        address: {required: true},
         email: {required: true,email:true},
         countryId: {required: true},
         cityId: {required: true},
@@ -29,6 +30,104 @@ myJsMain.my_billing_address=function(){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         }else if(resultData.result=='good'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Billing address updated successfully.",200);
+        }
+    }
+}
+
+myJsMain.my_profile=function(){ 
+    var myProfileValidationRules = {
+        firstName: {required: true},
+        lastName: {required: true},
+        contactNo: {required: true},
+        email: {required: true,email:true},
+        DOB: {required: true},
+        aboutMe: {required: true}
+    };
+    $('#my_profile').validate({rules: myProfileValidationRules,onsubmit: true});
+    $('#my_profile').submit(function(e) { 
+        e.preventDefault();
+        if ($(this).valid()) { 
+            $('#profileSubmit').prop('disabled',true);
+            //$('#fade_background').fadeIn();
+            //$('#LoadingDiv').fadeIn();
+            myJsMain.commonFunction.ajaxSubmit($(this),myJsMain.baseURL+'ajax/submit_my_profile', profileFormCallback);
+        }
+    });
+        
+        // this is just to show product list page
+    function profileFormCallback(resultData){
+        $('#profileSubmit').prop('disabled',false);
+        //$('#fade_background').fadeOut();
+        //$('#LoadingDiv').fadeOut();
+        if(resultData.result=='bad'){
+            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
+        }else if(resultData.result=='good'){
+            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Profile updated successfully.",200);
+        }
+    }
+}
+
+myJsMain.my_shipping_address=function(){ 
+    var shippingAddressValidationRules = {
+        firstName: {required: true},
+        lastName: {required: true},
+        phone: {required: true},
+        address: {required: true},
+        countryId: {required: true},
+        cityId: {required: true},
+        zipId: {required: true},
+        localityId: {required: true}
+    };
+    $('#my_shipping_address').validate({rules: shippingAddressValidationRules,onsubmit: true});
+    $('#my_shipping_address').submit(function(e) { 
+        e.preventDefault();
+        if ($(this).valid()) { 
+            $('#shippingAddessSubmit').prop('disabled',true);
+            //$('#fade_background').fadeIn();
+            //$('#LoadingDiv').fadeIn();
+            myJsMain.commonFunction.ajaxSubmit($(this),myJsMain.baseURL+'ajax/submit_shippiing_address', shippingAddressFormCallback);
+        }
+    });
+        
+        // this is just to show product list page
+    function shippingAddressFormCallback(resultData){
+        $('#shippingAddessSubmit').prop('disabled',false);
+        //$('#fade_background').fadeOut();
+        //$('#LoadingDiv').fadeOut();
+        if(resultData.result=='bad'){
+            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
+        }else if(resultData.result=='good'){
+            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Shipping address updated successfully.",200);
+        }
+    }
+}
+
+
+myJsMain.my_finance=function(){ 
+    var financeValidationRules = {
+        mpesaFullName: {required: true},
+        mpesaAccount: {required: true}
+    };
+    $('#my_finance').validate({rules: financeValidationRules,onsubmit: true});
+    $('#my_finance').submit(function(e) { 
+        e.preventDefault();
+        if ($(this).valid()) { 
+            $('#financeSubmit').prop('disabled',true);
+            //$('#fade_background').fadeIn();
+            //$('#LoadingDiv').fadeIn();
+            myJsMain.commonFunction.ajaxSubmit($(this),myJsMain.baseURL+'ajax/submit_finance', financeFormCallback);
+        }
+    });
+        
+        // this is just to show product list page
+    function financeFormCallback(resultData){
+        $('#financeSubmit').prop('disabled',false);
+        //$('#fade_background').fadeOut();
+        //$('#LoadingDiv').fadeOut();
+        if(resultData.result=='bad'){
+            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
+        }else if(resultData.result=='good'){
+            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Finance data updated successfully.",200);
         }
     }
 }

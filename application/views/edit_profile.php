@@ -1,4 +1,5 @@
 <?php echo $html_heading; echo $header;?>
+<script src="<?php echo SiteJSURL;?>user-all-my-js.js" type="text/javascript"></script>
 </div>
 </header>
 <article>
@@ -13,19 +14,19 @@
                     <div class="tab_dashbord">
                     	<div class="active row">
                         	<div class="col-md-12 col-sm-12">
-                                <form action="#" method="get">
+                                <form action="#" method="post" name="my_profile" id="my_profile">
                                     <div class="gen_infmtn">
-                                        <h6>Update Profile <span class="pull-right"><input type="submit" name="" value="Update" /></span></h6>
+                                        <h6>Update Profile <span class="pull-right"><input type="submit" name="profileSubmit" id="profileSubmit" value="Update" /></span></h6>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <label>First Name</label>
-                                                        <input type="text" name="firstName" id="firstName" class="form-control" value="" required>
+                                                        <input type="text" name="firstName" id="firstName" class="form-control" value="<?php echo $userDataArr[0]->firstName;?>" required>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label>Last Name</label>
-                                                        <input type="text" name="lastName" id="lastName" class="form-control" value="" required>
+                                                        <input type="text" name="lastName" id="lastName" class="form-control" value="<?php echo $userDataArr[0]->lastName;?>" required>
                                                     </div>
                                                 </div>
                                             </div>
@@ -33,57 +34,33 @@
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <label>Phone</label>
-                                                        <input type="text" name="" class="form-control" value="" required>
+                                                        <input type="text" name="contactNo" id="contactNo" class="form-control" value="<?php echo $userDataArr[0]->contactNo;?>" required>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label>Email</label>
-                                                        <input type="email" name="" class="form-control" value="" required>
+                                                        <input type="email" name="email" id="email" class="form-control email" value="<?php echo $userDataArr[0]->email;?>" required>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <label>Address</label>
-                                                <input type="text" name="" class="form-control" value="" required>
                                             </div>
                                             <div class="col-md-12">
                                                 <div class="row">
-                                                    <div class="col-md-2 col-sm-2 pad_rit_none">
-                                                        <label>City</label>
-                                                        <input type="text" name="" class="form-control" value="" required>
+                                                    <div class="col-md-4">
+                                                            <label>mobile</label>
+                                                            <input type="text" name="mobile" id="mobile" class="form-control" value="<?php echo $userDataArr[0]->mobile?>">
                                                     </div>
-                                                    <div class="col-md-2 col-sm-2 pad_rit_none">
-                                                        <label>State</label>
-                                                        <p style="position:relative;">
-                                                            <select class="form-control nova heght_cntrl" name="country_id" value=""  tabindex="1">
-                                                                <option value="">&nbsp;</option>
-                                                                <option value=""></option>
-                                                                <option value=""></option>
-                                                                <option value=""></option>
-                                                                <option value=""></option>
-                                                                <option value=""></option>
-                                                                <option value=""></option>
-                                                            </select>
-                                                        </p>
+                                                    <div class="col-md-4">
+                                                        <label>Fax</label>
+                                                        <input type="text" name="fax" id="fax" class="form-control" value="<?php echo $userDataArr[0]->fax;?>">
                                                     </div>
-                                                    <div class="col-md-2 col-sm-2 pad_rit_none">
-                                                        <label>Zip Code</label>
-                                                        <input type="text" name="" class="form-control" value="" required>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <label>Country</label>
-                                                        <p style="position:relative;">
-                                                            <select class="form-control nova heght_cntrl" name="country_id" value=""  tabindex="1">
-                                                                <option value="">&nbsp;</option>
-                                                                <option value=""></option>
-                                                                <option value=""></option>
-                                                                <option value=""></option>
-                                                                <option value=""></option>
-                                                                <option value=""></option>
-                                                                <option value=""></option>
-                                                            </select>
-                                                        </p>
+                                                    <div class="col-md-4">
+                                                        <label>Date of Birth</label>
+                                                        <input type="date" name="DOB" id="DOB" class="form-control" value="<?php echo ($userDataArr[0]->DOB!="") ? date('d-m-Y',strtotime($userDataArr[0]->DOB)) :"";?>" data-date-format="dd-mm-yyyy">
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>About Me</label>
+                                                <textarea class="form-control" name="aboutMe" id="aboutMe" cols="35" rows="5"><?php echo $userDataArr[0]->aboutMe;?></textarea>
                                             </div>
                                            
                                         </div>
@@ -105,3 +82,9 @@
   </div>
 </article>
 <?php echo $footer;?>
+<script type="text/javascript">
+    myJsMain.my_profile();
+    jQuery(document).ready(function(){
+        jQuery('#DOB').datepicker();
+    });
+</script>

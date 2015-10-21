@@ -69,7 +69,7 @@
                                                             <?php }else{?> 
                                                             <select class="form-control nova heght_cntrl" name="cityId" id="cityId" value=""  tabindex="1">
                                                                 <option value="">Select</option>
-                                                                <?php foreach($CityDataArr As $k){?>
+                                                                <?php foreach($cityDataArr As $k){?>
                                                                 <option value="<?php echo $k->cityId;?>" <?php if($k->cityId==$userBillingDataDetails[0]->cityId){?>selected<?php }?>><?php echo $k->city;?></option>
                                                                 <?php }?> 
                                                             </select>
@@ -86,7 +86,7 @@
                                                             <?php }else{ ?>
                                                             <select class="form-control nova heght_cntrl" name="zipId" id="zipId" value=""  tabindex="1">
                                                                 <option value="">Select</option>
-                                                                <?php foreach($ZipDataArr AS $k){?>
+                                                                <?php foreach($zipDataArr AS $k){?>
                                                                 <option value="<?php echo $k->zipId;?>" <?php if($k->zipId==$userBillingDataDetails[0]->zipId){?>selected<?php }?>><?php echo $k->zip; ?></option>
                                                                 <?php }?>
                                                             </select>
@@ -104,7 +104,7 @@
                                                             <?php }else{?>
                                                             <select class="form-control nova heght_cntrl" name="localityId" id="localityId" value=""  tabindex="1">
                                                                 <option value="">Select</option>
-                                                                <?php foreach($LocalityDataArr AS $k){?>
+                                                                <?php foreach($localityDataArr AS $k){?>
                                                                 <option value="<?php echo $k->localityId;?>" <?php if($k->localityId==$userBillingDataDetails[0]->localityId){?>selected<?php }?>><?php echo $k->locality;?></option>
                                                                 <?php }?>
                                                             </select>

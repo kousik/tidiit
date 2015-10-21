@@ -3,11 +3,13 @@ class User_model extends CI_Model {
         private $_table='user';
 	private $_table_type='user_type';
 	private $_subscriber='subscriber';
-	private $_table_bill_address='billing_address';
+	private $_bill_address='billing_address';
+	private $_shipping_address='shipping_address';
         private $_brand='brand_user';
         private $_page_type="page_type_user";
         private $_group="group";
         private $_notification ="notifications";
+        private $_finance ="user_m_pesa";
 
 
         public $result=NULL;
@@ -41,7 +43,7 @@ class User_model extends CI_Model {
 	}
 	
 	public function get_details_by_id($userId){
-            return $this->db->select('*')->from($this->_table)->where('userId',$userId)->get()->result();
+            return $this->db->from($this->_table)->where('userId',$userId)->get()->result();
 	}
 	
 	public function get_active_user(){
@@ -108,41 +110,32 @@ class User_model extends CI_Model {
 	}
 	
 	public function add_biiling_info($dataArray){
-		$this->db->insert($this->_table_bill_address,$dataArray);
+		$this->db->insert($this->_bill_address,$dataArray);
 		return $this->db->insert_id();		
 	}
 	
-	public function add_shipping_info($dataArray){
-		$this->db->insert($this->_shipping,$dataArray);
+	public function add_shipping($dataArray){
+		$this->db->insert($this->_shipping_address,$dataArray);
 		return $this->db->insert_id();		
 	}
 	
 	public function edit_biiling_info($dataArray,$userId){
 		$this->db->where('userId',$userId);
-		$this->db->update($this->_table_bill_address,$dataArray);
+		$this->db->update($this->_bill_address,$dataArray);
 		return TRUE;
 	}
 	
-	public function edit_shipping_info($dataArray,$userId){
+	public function edit_shipping($dataArray,$userId){
 		$this->db->where('userId',$userId);
-		$this->db->update($this->_shipping,$dataArray);
+		$this->db->update($this->_shipping_address,$dataArray);
 		return TRUE;
 	}
 	
 	/// this is for only guest user
 	public function get_user_shipping_information(){
-		$sql="";
-		die('get_user_shipping_information() is calling User_model');
-		return $this->db->query($sql)->result();
+            return $this->db->from($this->_shipping_address)->where('userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
 	}
 	
-	/// this is for only guest user
-	public function get_user_shipping_information1(){
-            die('get_user_shipping_information1() is calling User_model');
-            $sql="";
-            //die($sql);
-            return $this->db->query($sql)->result();
-	}
 	
 	public function get_password($userName){
 		$sql="SELECT password,firstName,lastName FROM user WHERE userName='".$userName."'";
@@ -189,12 +182,12 @@ class User_model extends CI_Model {
         }
         
         function is_billing_address_added(){
-            return $this->db->get_where($this->_table_bill_address,array('userId'=>$this->session->userdata('FE_SESSION_VAR')))->result();
+            return $this->db->get_where($this->_bill_address,array('userId'=>$this->session->userdata('FE_SESSION_VAR')))->result();
         }
         
         function get_all_users_by_locality($localityId){
             $this->db->where('userId !=', $this->session->userdata('FE_SESSION_VAR'));
-            $this->db->select('userId')->from($this->_table_bill_address)->where('localityId',$localityId);
+            $this->db->select('userId')->from($this->_bill_address)->where('localityId',$localityId);
             $query=$this->db->get();
             $data = $query->result();
             if($data): 
@@ -315,5 +308,23 @@ class User_model extends CI_Model {
             return $this->db->insert_id();
 	}
         
+        function is_shipping_address_added(){
+            return $this->db->get_where($this->_shipping_address,array('userId'=>$this->session->userdata('FE_SESSION_VAR')))->result();
+        }
+        
+        function get_finance_info(){
+            return $this->db->get_where($this->_finance,array('userId'=>  $this->session->userdata('FE_SESSION_VAR')))->result();
+        }
+        
+        public function add_finance($dataArray){
+		$this->db->insert($this->_finance,$dataArray);
+		return $this->db->insert_id();		
+	}
+	
+	public function edit_finance($dataArray,$userId){
+		$this->db->where('userId',$userId);
+		$this->db->update($this->_finance,$dataArray);
+		return TRUE;
+	}
 }
 ?>
