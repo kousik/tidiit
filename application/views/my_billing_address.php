@@ -210,14 +210,28 @@
             //return false;
             var catId = $(this).data('catdivid');
             var jqout = $(this);
+            if($(this).parent().children().length>2){
+                return false;
+            }
+            //$(this).prev().ch
             $.post( myJsMain.baseURL+'ajax/get_subcategory_for_user_product_type/', {
                 categoryId: catId
             },
             function(data){
-                jqout.parent('div').empty();
-                jqout.parent('div').html(oldHtmlContent);
+                //jqout.parent('div').empty();
+                //jqout.parent('div').html(oldHtmlContent);
                 jqout.parent('div').append(data.content);
             }, 'json' );
         });
+        
+        jQuery("body").delegate('.productTypeCategorySelection', "click", function(e){
+            $(this).parent().children().each(function(idx,ele){
+                //if(ele.attr('type'))
+                if(idx>1){
+                    ele.remove();
+                }
+            });
+        });
+        
     });
 </script>
