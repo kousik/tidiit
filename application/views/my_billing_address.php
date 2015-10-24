@@ -213,7 +213,7 @@
             if($(this).parent().children().length>2){
                 return false;
             }
-            //$(this).prev().ch
+            $(this).prev().attr('checked', false); 
             $.post( myJsMain.baseURL+'ajax/get_subcategory_for_user_product_type/', {
                 categoryId: catId
             },

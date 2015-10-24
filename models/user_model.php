@@ -10,6 +10,7 @@ class User_model extends CI_Model {
         private $_group="group";
         private $_notification ="notifications";
         private $_finance ="user_m_pesa";
+        private $_user_product_type_category ="user_product_type_category";
 
 
         public $result=NULL;
@@ -326,5 +327,18 @@ class User_model extends CI_Model {
 		$this->db->update($this->_finance,$dataArray);
 		return TRUE;
 	}
+        
+        function update_user_product_type_category($dataArr,$userId){
+            if($this->db->where('userId',$userId)->from($this->_user_product_type_category)->count_all_results()>0){
+                /// update record
+                $this->db->where('userId',$userId);
+		$this->db->update($this->_user_product_type_category,$dataArr);
+                return TRUE;
+            }else{
+                $dataArr['userId']=$userId;
+                $this->db->insert($this->_user_product_type_category,$dataArr);
+		return $this->db->insert_id();		
+            }
+        }
 }
 ?>

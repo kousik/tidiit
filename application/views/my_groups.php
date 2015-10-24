@@ -116,8 +116,9 @@
                   <div class="col-sm-7">
                       <select name="productType" class="form-control nova heght_cntrl" id="productType" required>
                           <option value="">Select</option>
-                          <?php foreach ($CatArr AS $cat): ?>
-                              <option value="<?= $cat->categoryId ?>"><?= $cat->categoryName ?></option>
+                          <?php //foreach ($CatArr AS $cat): ?>
+                          <?php foreach ($CatArr AS $categoryId=>$categoryName): ?>
+                              <option value="<?= $categoryId ?>"><?= $categoryName ?></option>
                           <?php endforeach; ?>
                       </select>
                   </div>

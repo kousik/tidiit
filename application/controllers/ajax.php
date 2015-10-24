@@ -257,7 +257,8 @@ class Ajax extends MY_Controller{
            array('field'   => 'countryId','label'   => 'Country','rules'   => 'trim|required|xss_clean'), 
            array('field'   => 'cityId','label'   => 'City','rules'   => 'trim|required|xss_clean'),
            array('field'   => 'zipId','label'   => 'Zip','rules'   => 'trim|required|xss_clean'),
-           array('field'   => 'localityId','label'   => 'Locality','rules'   => 'trim|required|xss_clean') 
+           array('field'   => 'localityId','label'   => 'Locality','rules'   => 'trim|required|xss_clean') , 
+           array('field'   => 'productTypeId[]','label'   => 'Product Type','rules'   => 'trim|required|xss_clean')
          );
         //initialise the rules with validatiion helper
         $this->form_validation->set_rules($config); 
@@ -279,7 +280,16 @@ class Ajax extends MY_Controller{
                 $zipId=$this->input->post('zipId',TRUE);
                 $localityId=$this->input->post('localityId',TRUE);
                 $address=$this->input->post('address',TRUE);
-                
+                $productTypeId=$this->input->post('productTypeId',TRUE);
+                $newCateoryArr=array();
+                //pre($productTypeId);
+                foreach ($productTypeId AS $k =>$v){
+                    $newCateoryArr[]=$v;
+                    $newCateoryArr=$this->recusive_category($newCateoryArr,$v);
+                }
+                //pre($newCateoryArr);die;
+                $this->User_model->update_user_product_type_category(array('productTypeCateoryId'=>implode(',', $newCateoryArr)),$userId);
+                //echo json_encode(array('result'=>'good'));die; 
                 $this->User_model->edit(array('firstName'=>$firstName,'lastName'=>$lastName,'email'=>$email),$userId);
                 $this->load->model('Country');
                 $rs=$this->Country->city_details($cityId);
@@ -292,6 +302,20 @@ class Ajax extends MY_Controller{
                 echo json_encode(array('result'=>'good'));die; 
             }
             
+        }
+    }
+    
+    function recusive_category($newCateoryArr,$categoryId){
+        $this->load->model('Category_model','category');
+        $chieldCateArr=$this->category->get_subcategory_by_category_id($categoryId);
+        if(empty($chieldCateArr)){
+            return $newCateoryArr;
+        }else{    
+            foreach($chieldCateArr AS $k){
+                $newCateoryArr[]=$k->categoryId;
+                $newCateoryArr=$this->recusive_category($newCateoryArr, $k->categoryId);
+            }
+            return $newCateoryArr;
         }
     }
     
@@ -561,7 +585,7 @@ class Ajax extends MY_Controller{
            array('field'   => 'countryId','label'   => 'Country','rules'   => 'trim|required|xss_clean'),
            array('field'   => 'cityId','label'   => 'City','rules'   => 'trim|required|xss_clean'),
            array('field'   => 'zipId','label'   => 'Zip','rules'   => 'trim|required|xss_clean'),
-           array('field'   => 'localityId','label'   => 'Locality','rules'   => 'trim|required|xss_clean') 
+           array('field'   => 'localityId','label'   => 'Locality','rules'   => 'trim|required|xss_clean')
          );
         //initialise the rules with validatiion helper
         $this->form_validation->set_rules($config); 

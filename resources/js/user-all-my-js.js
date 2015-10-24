@@ -8,7 +8,8 @@ myJsMain.my_billing_address=function(){
         countryId: {required: true},
         cityId: {required: true},
         zipId: {required: true},
-        localityId: {required: true}
+        localityId: {required: true},
+        productTypeId: {required: true}
     };
     $('#my_billing_address').validate({rules: loginValidationRules,onsubmit: true});
     $('#my_billing_address').submit(function(e) { 
