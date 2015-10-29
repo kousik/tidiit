@@ -76,7 +76,31 @@ class Shopping extends MY_Controller{
         $data['priceInfo'] = $prod_price_info;
         $data['userMenuActive']=7;
         $data['countryDataArr']=$this->Country->get_all1();
-        $data['CatArr']=$this->Category_model->get_all(0);
+        $menuArr=array();
+        $TopCategoryData=$this->Category_model->get_top_category_for_product_list();
+        //$AllButtomCategoryData=$this->Category_model->buttom_category_for_product_list();
+        foreach($TopCategoryData as $k){
+            $SubCateory=$this->Category_model->get_subcategory_by_category_id($k->categoryId);
+            if(count($SubCateory)>0){
+                foreach($SubCateory as $kk => $vv){
+                    $menuArr[$vv->categoryId]=$k->categoryName.' -> '.$vv->categoryName;
+                    $ThirdCateory=$this->Category_model->get_subcategory_by_category_id($vv->categoryId);
+                    if(count($ThirdCateory)>0){
+                        foreach($ThirdCateory AS $k3 => $v3){
+                            // now going for 4rath
+                            $menuArr[$v3->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName;
+                            $FourthCateory=$this->Category_model->get_subcategory_by_category_id($v3->categoryId);
+                            if(count($FourthCateory)>0){ //print_r($v3);die;
+                                foreach($FourthCateory AS $k4 => $v4){
+                                    $menuArr[$v4->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName.' -> '.$v4->categoryName;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $data['CatArr']=$menuArr;
         $user = $this->_get_current_user_details();
         $my_groups = $this->User_model->get_my_groups();
         $data['myGroups']=$my_groups;

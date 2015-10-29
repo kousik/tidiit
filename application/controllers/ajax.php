@@ -415,7 +415,6 @@ class Ajax extends MY_Controller{
         endif;
     }
     
-    
     function get_single_group(){
         $groupId = $this->input->post('groupId',TRUE);
         $group = $this->User_model->get_group_by_id($groupId);
