@@ -215,12 +215,7 @@ class MY_Controller extends CI_Controller {
     public function html_heading($SEODataArr=array()){
         $fbData=array();
         $data=  $this->load_default_resources();
-        $data['SiteImagesURL']=$this->config->item('SiteImagesURL');
-        $data['SiteCSSURL']=$this->config->item('SiteCSSURL');
-        $data['SiteJSURL']=$this->config->item('SiteJSURL');
-        $data['SiteResourcesURL']=$this->config->item('SiteResourcesURL');
-
-
+        
         $SiteSessionID=$this->session->userdata('USER_SITE_SESSION_ID');
         if($SiteSessionID==""){
                 $NewSessionID=uniqid();
@@ -254,6 +249,32 @@ class MY_Controller extends CI_Controller {
             $data['fbData']=$fbData;
         }
         //echo $this->uri->segment(1).' = '.$this->uri->segment(2);die;
+        $TopCategoryData=$this->Category_model->get_top_category_for_product_list();
+        //$AllButtomCategoryData=$this->Category_model->buttom_category_for_product_list();
+        foreach($TopCategoryData as $k){
+            $SubCateory=$this->Category_model->get_subcategory_by_category_id($k->categoryId);
+            if(count($SubCateory)>0){
+                foreach($SubCateory as $kk => $vv){
+                    $ThirdCateory=$this->Category_model->get_subcategory_by_category_id($vv->categoryId);
+                    if(count($ThirdCateory)>0){
+                        foreach($ThirdCateory AS $k3 => $v3){
+                            // now going for 4rath
+                            //$menuArr[$v3->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName;
+                            $FourthCateory=$this->Category_model->get_subcategory_by_category_id($v3->categoryId);
+                            if(count($FourthCateory)>0){ //print_r($v3);die;
+                                /*foreach($FourthCateory AS $k4 => $v4){
+                                    $menuArr[$v4->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName.' -> '.$v4->categoryName;
+                                }*/
+                                $v3->SubCategory=$FourthCateory;
+                            }
+                        }
+                        $vv->SubCategory=$ThirdCateory;
+                    }
+                }
+                $k->SubCategory=$SubCateory;
+            }
+        }
+        $data['categoryMenu']=$TopCategoryData;
         $data['html_heading']=$this->load->view('html_heading',$data,true);
         //echo 'zzz1134588';die;
         return $data;

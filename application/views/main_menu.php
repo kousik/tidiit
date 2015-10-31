@@ -1,229 +1,34 @@
 <ul class="categrs">
+    <?php foreach($categoryMenu As $k): //pre($k);?>
     <li>
-            <a href="#">Electronics <span>&nbsp;</span></a>
+        <a href="javascript:void(0);"><?php echo $k->categoryName;?> <span>&nbsp;</span></a>
+        <?php if(property_exists($k, 'SubCategory')): $subCategoryArr=$k->SubCategory;?>
         <ul class="sub_catgrs">
+            <?php 
+            foreach($subCategoryArr As $kk =>$vv): //pre($v);die;?>
             <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
+                <a href="#"><?php echo $vv->categoryName;?> &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
+                <?php if(property_exists($vv, 'SubCategory')): $subSubCategory=$vv->SubCategory;?>
                 <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
+                    <?php foreach($subSubCategory AS $kkk => $vvv):?>
+                    <li>
+                        <a href="#"><?php echo $vvv->categoryName;?>&nbsp;<i class="fa fa-angle-down mobl_vrsn"></i></a>
+                        <?php if(property_exists($vvv, 'SubCategory')):?>
+                        <ul class="sub_sub_ctgrs">
+                            <?php foreach($vvv->SubCategory AS $j =>$l):?>
+                            <li><a href="#"><?php echo $l->categoryName;?></a></li>
+                            <?php endforeach;?>
+                        </ul>
+                        <?php endif;?>
+                    </li>
+                    <?php endforeach;?>
                 </ul>
+                <?php endif;?>
             </li>
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
+            <?php endforeach;?>
         </ul>
+        <?php endif; ?>
     </li>
-    <li>
-            <a href="#">Cell Phones & Accessories <span>&nbsp;</span></a>
-        <ul class="sub_catgrs">
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-        </ul>
-    </li>
-    <li>
-            <a href="#">Health & Beauty <span>&nbsp;</span></a>
-        <ul class="sub_catgrs">
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-        </ul>
-    </li>
-    <li>
-            <a href="#">Babies, Kids, Moms & Toys <span>&nbsp;</span></a>
-        <ul class="sub_catgrs">
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-        </ul>
-    </li>
-    <li>
-            <a href="#">Computers & Networking <span>&nbsp;</span></a>
-        <ul class="sub_catgrs">
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-        </ul>
-    </li>
-    <li>
-            <a href="#">Jewelry & Watches <span>&nbsp;</span></a>
-        <ul class="sub_catgrs">
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-        </ul>
-    </li>
-    <li>
-            <a href="#">Weddings & Formal Events <span>&nbsp;</span></a>
-        <ul class="sub_catgrs">
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-            <li>
-                    <a href="#">Mobile Phone &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
-                <ul class="sub_sub_ctgrs">
-                    <li><a href="#">Android Phones</a></li>
-                    <li><a href="#">Smart Phones</a></li>
-                    <li><a href="#">Android Phones</a></li>
-                </ul>
-            </li>
-        </ul>
-    </li>
-    <li>
-            <a href="#">Automobile & Motorcycle <span>&nbsp;</span></a>
-    </li>
-    <li>
-            <a href="#">Apparel <span>&nbsp;</span></a>
-    </li>
-    <li>
-            <a href="#">Sports & Outdoors <span>&nbsp;</span></a>
-    </li>
-    <li>
-            <a href="#">Home & Garden <span>&nbsp;</span></a>
-    </li>
-    <li>
-            <a href="#">Lights & Lighting <span>&nbsp;</span></a>
-    </li>
-    <li>
-            <a href="#">Hair & Styling <span>&nbsp;</span></a>
-    </li>
-    <li>
-            <a href="#">Bags, Shoes & Accessories <span>&nbsp;</span></a>
-    </li>
-    <li>
-            <a href="#">More Categories <span>&nbsp;</span></a>
-    </li>
+    <?php endforeach; //die;?> 
+    
 </ul>

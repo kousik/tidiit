@@ -94,7 +94,7 @@ class Ajax extends MY_Controller{
                 //$this->session->set_userdata('FE_SESSION_USERNAME_VAR',$UserName);
                 $this->session->set_userdata('FE_SESSION_VAR_TYPE','seller');
                 $this->session->set_userdata('FE_SESSION_UDATA',$DataArr[0]);
-                echo json_encode(array('result'=>'good','url'=>BASE_URL));die; 
+                echo json_encode(array('result'=>'good','url'=>$_SERVER['HTTP_REFERER']));die; 
             }else{
                 echo json_encode(array('result'=>'bad','msg'=>'Please check your "Username" and "Password" and try again.'));die;     
             }
