@@ -6,6 +6,7 @@ class Ajax extends MY_Controller{
         $this->load->model('Product_model');
         $this->load->model('Category_model');
         //parse_str($_SERVER['QUERY_STRING'],$_GET);
+        $this->load->library('cart');
         $this->db->cache_off();
     }
    
