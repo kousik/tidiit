@@ -40,20 +40,24 @@ class Index extends MY_Controller {
 		$Password=$this->input->post('Password',TRUE);
                 //echo '$UserName = '.$UserName.' $Password = '.$Password;die;
 		$DataArr=$this->Admin_model->is_valid_data($UserName,$Password);
-		//print_r($DataArr);die;
 		if(count($DataArr)>0){
-                    //$roleArr=$this->Admin_model->get_roles_for_user($DataArr[0]->userId);
-                    $roleArr=  $this->get_admin_user_role();
-                    //pre($roleArr);
-                    //pre($roleArr[$DataArr[0]->userType]);die;
-                    $roleVar=  serialize($roleArr[$DataArr[0]->userType]);
+                    if($DataArr[0]->userType=='accounts' || $DataArr[0]->userType=='admin' || $DataArr[0]->userType=='supper_admin'){
+                        //$roleArr=$this->Admin_model->get_roles_for_user($DataArr[0]->userId);
+                        $roleArr=  $this->get_admin_user_role();
+                        //pre($roleArr);
+                        //pre($roleArr[$DataArr[0]->userType]);die;
+                        $roleVar=  serialize($roleArr[$DataArr[0]->userType]);
                     
-                    $this->session->set_userdata('ADMIN_ROLE_VAR',$roleVar);
+                        $this->session->set_userdata('ADMIN_ROLE_VAR',$roleVar);
 			$this->session->set_userdata('ADMIN_SESSION_VAR',$DataArr[0]->userId);
 			$this->session->set_userdata('ADMIN_SESSION_USERNAME_VAR',$UserName);
 			$this->session->set_userdata('ADMIN_SESSION_USER_VAR_TYPE',$DataArr[0]->userType);
 			$this->session->set_flashdata('Message','You have loged successfully.');
 			redirect(base_url().'webadmin/index/admin_home');
+                    }else{
+                        $this->session->set_flashdata('Message','You have no access for thissection,Please contact administrator.');
+			redirect(base_url().'webadmin/index/login');
+                    }
 		}else{
 			$this->session->set_flashdata('Message','Invalid Login,Please try again');
 			redirect(base_url().'webadmin/index/login');

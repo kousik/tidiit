@@ -26,6 +26,7 @@
     </td>
   </tr>
 <script language="javascript">
+    oldEditEmailID='';
 function ShowAddAdminBox(){
     $('#MessaeBox').html("");
     $('#EditBox').hide();
@@ -43,7 +44,7 @@ function ShowAddAdminBox(){
 
     $('#EditBox').fadeIn(2500);
     $('#userId').val(id);
-
+    oldEditEmailID=DataArr[id]['email'];
     $('#EditfirstName').val(DataArr[id]['firstName']);
     $('#EditlastName').val(DataArr[id]['lastName']);
     $('#Editemail').val(DataArr[id]['email']);
@@ -453,6 +454,9 @@ $(document).ready(function(){
     });
     
     $('#Editemail').on('blur',function(){
+        if($(this).val()==oldEditEmailID){
+            return false;
+        }
         var ajaxURL='<?php echo ADMIN_BASE_URL.'ajax/is_edit_user_email_exists'?>';
         var ajaxData='email='+$(this).val()+'&userId='+$('#userId').val();
         $.ajax({
@@ -462,7 +466,7 @@ $(document).ready(function(){
             success:function(msg){
                 if(msg=='1'){
                     alert('This email id has already used,Please enter a new one.');
-                    $('#Editemail').val('');
+                    $('#Editemail').val(oldEditEmailID);
                     return false;
                 }else{
                     return true;

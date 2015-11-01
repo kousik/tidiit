@@ -1,6 +1,6 @@
 <?php
 $config['useragent'] = 'CodeIgniter';
-/*$config['protocol'] = 'smtp';
+$config['protocol'] = 'smtp';
 //$config['mailpath'] = '/usr/sbin/sendmail';
 $config['smtp_host'] = 'ssl://smtp.googlemail.com';
 //'smtpout.secureserver.net';
@@ -8,14 +8,11 @@ $config['smtp_host'] = 'ssl://smtp.googlemail.com';
 $config['smtp_user'] = 'snalwaoffice@gmail.com';//    judhisthira@dailyplaza.com
 $config['smtp_pass'] = 'Letmein10';//   ///judhsithira123
 $config['smtp_port'] = 465; 
-$config['smtp_timeout'] = 5;*/
-$config['protocol'] = 'sendmail';
-$config['mailpath'] = 'D:/xampp/sendmail/sendmail.exe';
-$config['charset'] = 'iso-8859-1';
+$config['smtp_timeout'] = 5;
 $config['wordwrap'] = TRUE;
 $config['wrapchars'] = 76;
 $config['mailtype'] = 'html';
-//$config['charset'] = 'utf-8';
+$config['charset'] = 'utf-8';
 $config['validate'] = FALSE;
 $config['priority'] = 3;
 $config['crlf'] = "\r\n";
