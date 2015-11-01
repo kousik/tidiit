@@ -2,21 +2,6 @@
 
 class User extends My_Controller {
 
-	/**
-	 * Index Page for this controller.
-	 *
-	 * Maps to the following URL
-	 * 		http://example.com/index.php/welcome
-	 *	- or -  
-	 * 		http://example.com/index.php/welcome/index
-	 *	- or -
-	 * Since this controller is set as the default controller in 
-	 * config/routes.php, it's displayed at http://example.com/
-	 *
-	 * So any other public methods not prefixed with an underscore will
-	 * map to /index.php/welcome/<method_name>
-	 * @see http://codeigniter.com/user_guide/general/urls.html
-	 */
 	public function __construct(){
 		parent::__construct();
 		$this->load->model('User_model');
@@ -28,7 +13,7 @@ class User extends My_Controller {
             if($this->_is_admin_loged_in()){
                     $data=$this->_show_admin_logedin_layout();
                     $data['DataArr']=$this->User_model->get_all();
-                    $data['UserTypeArr']=  $this->User_model->get_user_type();
+                    $data['UserTypeArr']=  $this->User_model->get_user_type_except_buyer_seller();
                     $this->load->view('webadmin/user_list',$data);
             }else{
                     $data=$this->_show_admin_login();
@@ -37,37 +22,85 @@ class User extends My_Controller {
 	}
 	
 	public function add(){
-		$userName=$this->input->post('userName',true);
-		$password=$this->input->post('password',true);
-                $status=$this->input->post('status',true);
-		$email=$this->input->post('email',true);
-		$firstName=$this->input->post('firstName',true);
-		$lastName=$this->input->post('lastName',true);
-		$contactNo=$this->input->post('contactNo',true);
-		
-                //pre($_POST);die;
-		$DataArr=array('userName'=>trim($userName),'password'=>  base64_encode(trim($password)).'~'.md5('tidiit'),'email'=>$email,
-                    'status'=>trim($status),'firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo);
-		
-		if($this->User_model->check_username_exists($userName)==TRUE){
-			$this->session->set_flashdata('Message','Username already used,Please try again.');
-			redirect(base_url().'webadmin/user/viewlist');
-		}
-		
-                if($this->User_model->check_user_email_exists($email)==TRUE){
-			$this->session->set_flashdata('Message','Email already used,Please try again.');
-			redirect(base_url().'webadmin/user/viewlist');
-		}
-                //pre($DataArr);die;
-		if($this->User_model->add($DataArr))
-		{
-			$this->session->set_flashdata('Message','User added successfully.');
-			redirect(base_url().'webadmin/user/viewlist');
-		}else{
-			$this->session->set_flashdata('Message','Unable to user,Please try again.');
-			redirect(base_url().'webadmin/user/viewlist');
-		}
+            $userName=$this->input->post('userName',true);
+            $password=$this->input->post('password',true);
+            $status=$this->input->post('status',true);
+            $email=$this->input->post('email',true);
+            $firstName=$this->input->post('firstName',true);
+            $lastName=$this->input->post('lastName',true);
+            $contactNo=$this->input->post('contactNo',true);
+            $userType=$this->input->post('userType',true);
+            
+            $config = array(
+                array('field'   => 'userName','label'   => 'User Name','rules'=> 'trim|required|xss_clean|min_length[18]|max_length[75]|valid_email|callback_username_check'),
+                array('field'   => 'email','label'   => 'User Name','rules'=> 'trim|required|xss_clean|min_length[18]|max_length[75]|valid_email|callback_email_check'),
+                array('field'   => 'password','label'   => 'Password','rules'   => 'trim|required|xss_clean|min_length[4]|max_length[25]'),
+                array('field'   => 'confirmPassword','label'   => 'Password','rules'   => 'trim|required|xss_clean|matches[password]'),
+                array('field'   => 'firstName','label'   => 'First Name','rules'   => 'trim|required|xss_clean|min_length[3]|max_length[25]|alpha'),
+                array('field'   => 'lastName','label'   => 'Last Name','rules'   => 'trim|required|xss_clean|min_length[3]|max_length[25]|alpha'),
+                array('field'   => 'contactNo','label'   => 'Phone','rules'   => 'trim|required|xss_clean|min_length[9]|max_length[10]|numeric'),
+                array('field'   => 'userType','label'   => 'User Type','rules'   => 'trim|required|xss_clean')
+             );
+            //initialise the rules with validatiion helper
+            $this->form_validation->set_rules($config); 
+            //checking validation
+            if($this->form_validation->run() == FALSE){
+                $this->session->set_flashdata('Message',validation_errors());
+            }else{
+                $DataArr=array('userName'=>trim($userName),'password'=>  base64_encode(trim($password)).'~'.md5('tidiit'),'email'=>$email,
+                'status'=>trim($status),'firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo,'userType'=>$userType);
+                if($this->User_model->add($DataArr)){
+                    $DataArr['password']=$password;
+                    $this->user_creation_notification($DataArr);
+                    $this->session->set_flashdata('Message','User added successfully.');
+                }else{
+                    $this->session->set_flashdata('Message','Unable to user,Please try again.');
+                }
+            }
+            redirect(base_url().'webadmin/user/viewlist');
 	}
+        
+        function user_creation_notification($dataArr){
+            $this->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
+            $this->email->to($dataArr['email'],$dataArr['firstName'].' '.$dataArr['lastName']);
+            $this->email->subject('Your login details for Tidiit Inc. Ltd.');
+            $data=array();
+            $data['userDetails']=$dataArr;
+            $msg=$this->load->view('email_template/admin_user_create',$data,true);
+            //echo $msg;die;
+            $this->email->message($msg);
+            $this->email->send();
+        }
+        
+        public function username_check($str){
+            $userName=$this->input->post('username',TRUE);
+            if($userName!=''){
+                $str=$userName;
+            }
+            //if($this->User_model->check_username_exists($str,'buyer')==TRUE){
+            if($this->User_model->check_username_exists_without_type($str)==TRUE){
+                $this->form_validation->set_message('username_check', 'This User Name already registered.Please try a new one.');
+                return FALSE;
+            }else{
+                return TRUE;
+            }
+        }
+        
+        public function email_check($str){
+            $email=$this->input->post('email',TRUE);
+            $userType=$this->input->post('userType',TRUE);
+            if($email!=''){
+                $str=$email;
+            }
+            //if($this->User_model->check_email_exists($str,$userType)==TRUE){
+            if($this->User_model->check_email_exists_without_type($str)==TRUE){
+                $this->form_validation->set_message('email_check', 'This email already registered.Please try a new one.');
+                return FALSE;
+            }else{
+                return TRUE;
+            }
+        }
+        
 	
 	public function edit()
 	{
@@ -113,7 +146,60 @@ class User extends My_Controller {
                 redirect(base_url().'webadmin/user/viewlist');
             }
 	}
-	
+    
+    function batchaction(){
+        $batchaction_fun=  strtolower($this->input->post('batchaction_fun',TRUE));
+        if($batchaction_fun==""){
+            $this->session->set_flashdata('Message','Please select user batch action.');
+            redirect(base_url().'webadmin/user/viewlist');
+        }
+        $batchaction_id=$this->input->post('batchaction_id',TRUE);
+        //echo $batchaction_fun;die;
+        $this->$batchaction_fun($batchaction_id);
+    }
+    
+    public function batchactive($userIds){
+        $Action='active';
+        $this->User_model->change_status($userIds ,$Action);
+
+        $this->session->set_flashdata('Message','User/s activated successfully.');
+        redirect(base_url().'webadmin/user/viewlist');
+    }
+
+    public function batchinactive($userIds){
+        $Action='inactive';
+        $this->User_model->change_status($userIds ,$Action);
+
+        $this->session->set_flashdata('Message','User/s inactivated successfully.');
+        redirect(base_url().'webadmin/user/viewlist');
+    }
+
+    public function batchdelete($userIds){
+        //$ProductImages=$this->User_model->get_products_images($userIds);
+        $this->User_model->delete($userIds);
+        /*foreach($ProductImages as $k){
+                $this->delete_product_file($k->Image);
+        }*/
+        $this->session->set_flashdata('Message','Selected User/s deleted successfully.');
+        redirect(base_url().'webadmin/user/viewlist');
+    }
+    
+    function retrive_password($userId){
+        $userDetails=$this->User_model->get_details_by_id($userId);
+        $this->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
+        $this->email->to($userDetails[0]->email,$userDetails[0]->firstName.' '.$userDetails[0]->lastName);
+        $this->email->subject('Your password at Tidiit Inc. Ltd.');
+        $data=array();
+        $data['userDetails']=$userDetails;
+        $msg=$this->load->view('email_template/retribe_user_password',$data,true);
+        //echo $msg;die;
+        $this->email->message($msg);
+        $this->email->send();
+        $this->session->set_flashdata('Message','Passwrod send user registered email address successfully.');
+        redirect(base_url().'webadmin/user/viewlist');
+    }
+    
+    
 }
 
 /* End of file welcome.php */

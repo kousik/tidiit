@@ -36,6 +36,11 @@ class User_model extends CI_Model {
         public function get_user_type(){
             return $this->db->from($this->_table_type)->get()->result();
         }
+        
+        public function get_user_type_except_buyer_seller(){
+             $names = array('buyer', 'seller');
+            return $this->db->from($this->_table_type)->where_not_in('userType', $names)->get()->result();
+        }
 	
 	public function change_user_status($userId,$status){
             $this->db->where('userId',$userId);
@@ -71,6 +76,25 @@ class User_model extends CI_Model {
             }
 	}
 	
+        function check_username_exists_without_type($userName){
+            $no=$this->db->where('userName',$userName)->where('status <','2')->from($this->_table)->count_all_results();
+            //$rs=$this->db->from($this->_table)->where('userName',$userName)->where('status <','2')->get()->result();
+            if($no>0){
+                return TRUE;
+            }else{
+                return FALSE;
+            }
+        }
+        
+        function check_email_exists_without_type($email){
+            $no=$this->db->where('email',$email)->where('status <','2')->from($this->_table)->count_all_results();
+            //$rs=$this->db->from($this->_table)->where('userName',$userName)->where('status <','2')->get()->result();
+            if($no>0){
+                return TRUE;
+            }else{
+                return FALSE;
+            }
+        }
 	
 	public function check_edit_username_exists($email,$userId){
 		//$sql="SELECT * FROM ".$this->_table." WHERE `userName`='".$email."' AND `userId`<>'".$userId."'";
@@ -106,13 +130,17 @@ class User_model extends CI_Model {
 	}
 	
 	public function delete($userId){
-		$this->db->delete($this->_table, array('userId' => $userId)); 
-		return TRUE;
+            //$this->db->delete($this->_table, array('userId' => $userId)); 
+            $this->db->where_in('userId',explode(',',$userId));
+            $this->db->delete($this->_table); 
+            return TRUE;
 	}
+        
+        
 	
 	public function add_biiling_info($dataArray){
-		$this->db->insert($this->_bill_address,$dataArray);
-		return $this->db->insert_id();		
+            $this->db->insert($this->_bill_address,$dataArray);
+            return $this->db->insert_id();
 	}
 	
 	public function add_shipping($dataArray){
@@ -340,5 +368,17 @@ class User_model extends CI_Model {
 		return $this->db->insert_id();		
             }
         }
+        
+        public function change_status($userId,$action){
+            if($action=='active'){
+                    $Status=1;
+            }else{
+                    $Status=0;
+            }
+            $this->db->where_in('userId',explode(',',$userId));
+            $this->db->update($this->_table,array('status'=>$Status));
+            //echo $this->db->last_query();die;
+            return TRUE;
+	}
 }
 ?>

@@ -83,7 +83,7 @@ class Ajax extends MY_Controller{
     
     public function is_user_name_exists(){
         $userName=  $this->input->post('userName',TRUE);
-        if($this->User_model->check_username_exists($userName)){
+        if($this->User_model->check_username_exists_without_type($userName)){
             echo 1;die;
         }else{
             echo 0;die;
@@ -92,7 +92,7 @@ class Ajax extends MY_Controller{
     
     public function is_user_email_exists(){
         $email=  $this->input->post('email',TRUE);
-        if($this->User_model->check_user_email_exists($email)){
+        if($this->User_model->check_email_exists_without_type($email)){
             echo 1;die;
         }else{
             echo 0;die;

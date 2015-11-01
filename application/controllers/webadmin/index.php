@@ -42,7 +42,7 @@ class Index extends MY_Controller {
 		$Password=$this->input->post('Password',TRUE);
                 //echo '$UserName = '.$UserName.' $Password = '.$Password;die;
 		$DataArr=$this->Admin_model->is_valid_data($UserName,$Password);
-		//print_r($DataArr);die;
+		print_r($DataArr);die;
 		if(count($DataArr)>0){
                     $roleArr=$this->Admin_model->get_roles_for_user($DataArr[0]->userId);
                     $this->session->set_userdata('ADMIN_ROLE_VAR',$roleArr);

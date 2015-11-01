@@ -27,7 +27,8 @@ class Admin_model extends CI_Model {
 	}
 	
 	public function is_valid_data($UserName,$Password){ //echo 'kk';die;
-            $rs=$this->db->from($this->_table)->where('userName',$UserName)->where('password',  base64_encode($Password))->where_in('userType',array('admin','support','supper_admin'))->get()->result();
+            echo base64_encode(trim('admin')).'~'.md5('tidiit').'<br>';
+            $rs=$this->db->from($this->_table)->where('userName',$UserName)->where('password', base64_encode(trim($Password)).'~'.md5('tidiit'))->where_in('userType',array('admin','support','supper_admin'))->get()->result();
             //$rs=  $this->db->query("SELECT * FROM (`user`) WHERE `userName` = 'webadmin' AND `password` = 'YWRtaW4=' AND `userType` IN ('admin', 'support', 'supper_admin') ")->result();
             //pre($rs);
             //echo $this->db->last_query();die;
