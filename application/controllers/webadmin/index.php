@@ -42,8 +42,13 @@ class Index extends MY_Controller {
 		$DataArr=$this->Admin_model->is_valid_data($UserName,$Password);
 		//print_r($DataArr);die;
 		if(count($DataArr)>0){
-                    $roleArr=$this->Admin_model->get_roles_for_user($DataArr[0]->userId);
-                    $this->session->set_userdata('ADMIN_ROLE_VAR',$roleArr);
+                    //$roleArr=$this->Admin_model->get_roles_for_user($DataArr[0]->userId);
+                    $roleArr=  $this->get_admin_user_role();
+                    //pre($roleArr);
+                    //pre($roleArr[$DataArr[0]->userType]);die;
+                    $roleVar=  serialize($roleArr[$DataArr[0]->userType]);
+                    
+                    $this->session->set_userdata('ADMIN_ROLE_VAR',$roleVar);
 			$this->session->set_userdata('ADMIN_SESSION_VAR',$DataArr[0]->userId);
 			$this->session->set_userdata('ADMIN_SESSION_USERNAME_VAR',$UserName);
 			$this->session->set_userdata('ADMIN_SESSION_USER_VAR_TYPE',$DataArr[0]->userType);
@@ -54,6 +59,23 @@ class Index extends MY_Controller {
 			redirect(base_url().'webadmin/index/login');
 		}
 	}
+        
+        function get_admin_user_role(){
+            return  array(
+                'accounts'=>array(
+                    'controller'=>array('order','user'),
+                    'method'=>array()
+                ),
+                'admin'=>array(
+                    'controller'=>array('index','user','category','site_config'),
+                    'method'=>array()
+                ),
+                'supper_admin'=>array(
+                    'controller'=>array('index','user','category','site_config','order','role'),
+                    'method'=>array()
+                )
+            );
+        }
 
 	public function logout(){
 		$this->session->unset_userdata('ADMIN_SESSION_VAR');

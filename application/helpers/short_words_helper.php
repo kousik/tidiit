@@ -77,14 +77,20 @@ if(!function_exists('user_role_check')){
         }
         //$roleArr=$CI->se
         $found=FALSE;
-        foreach($CI->session->userdata('ADMIN_ROLE_VAR') AS $k => $v){
+        $roleVar=  unserialize($CI->session->userdata('ADMIN_ROLE_VAR'));
+        //pre($roleVar);die;
+        if(in_array($controller, $roleVar['controller'])){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+        /*foreach($roleVar AS $k => $v){
             if($v['method']==$method && $v['controller']==$controller){
                 return TRUE;
             }elseif($v['controller']==$controller){
                 return TRUE;
             }
-        }
-        return FALSE;
+        }*/
     }
 }
 
