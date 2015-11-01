@@ -27,7 +27,7 @@ class Admin_model extends CI_Model {
 	}
 	
 	public function is_valid_data($UserName,$Password){ //echo 'kk';die;
-            echo base64_encode(trim('admin')).'~'.md5('tidiit').'<br>';
+            //echo base64_encode(trim('admin')).'~'.md5('tidiit').'<br>';
             $rs=$this->db->from($this->_table)->where('userName',$UserName)->where('password', base64_encode(trim($Password)).'~'.md5('tidiit'))->where_in('userType',array('admin','support','supper_admin'))->get()->result();
             //$rs=  $this->db->query("SELECT * FROM (`user`) WHERE `userName` = 'webadmin' AND `password` = 'YWRtaW4=' AND `userType` IN ('admin', 'support', 'supper_admin') ")->result();
             //pre($rs);
@@ -62,7 +62,9 @@ class Admin_model extends CI_Model {
         }
         
         function get_roles_for_user($userId){
-            $sql="SELECT r.`roleAccessTitle` AS `method`,rg.`accessTitle` AS `controller` FROM `role` AS r  JOIN `role_group` AS rg ON(r.roleGroupId=rg.roleGroupId)  JOIN `user_role` AS ur ON(ur.roleId=r.roleId) WHERE ur.userId=".$userId;
+            $sql="SELECT r.`roleAccessTitle` AS `method`,rg.`accessTitle` AS `controller` FROM `role` AS r  "
+                    . " JOIN `role_group` AS rg ON(r.roleGroupId=rg.roleGroupId)  "
+                    . " JOIN `user_role` AS ur ON(ur.roleId=r.roleId) WHERE ur.userId=".$userId;
             return $this->db->query($sql)->result_array();
         }
         

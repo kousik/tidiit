@@ -80,6 +80,8 @@ if(!function_exists('user_role_check')){
         foreach($CI->session->userdata('ADMIN_ROLE_VAR') AS $k => $v){
             if($v['method']==$method && $v['controller']==$controller){
                 return TRUE;
+            }elseif($v['controller']==$controller){
+                return TRUE;
             }
         }
         return FALSE;

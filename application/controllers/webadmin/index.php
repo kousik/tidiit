@@ -7,19 +7,17 @@ class Index extends MY_Controller {
 	}
 	
 	function index(){
-            
-		if($this->_is_admin_loged_in()==FALSE){
-			$this->session->set_flashdata('Message','Please login to access admin section');
-			redirect(base_url().'webadmin/index/login');
-			
-		}else{
-			redirect(base_url().'webadmin/index/admin_home');
-		}
+            if($this->_is_admin_loged_in()==FALSE){
+                $this->session->set_flashdata('Message','Please login to access admin section');
+                redirect(base_url().'webadmin/index/login');
+            }else{
+                redirect(base_url().'webadmin/index/admin_home');
+            }
 	}
 	
 	function viewsitedata(){
-		$data=$this->_show_admin_logedin_layout();
-		$this->load->view('webadmin/site_data_config_link',$data);
+            $data=$this->_show_admin_logedin_layout();
+            $this->load->view('webadmin/site_data_config_link',$data);
 	}
 	
 	function admin_home(){
@@ -42,7 +40,7 @@ class Index extends MY_Controller {
 		$Password=$this->input->post('Password',TRUE);
                 //echo '$UserName = '.$UserName.' $Password = '.$Password;die;
 		$DataArr=$this->Admin_model->is_valid_data($UserName,$Password);
-		print_r($DataArr);die;
+		//print_r($DataArr);die;
 		if(count($DataArr)>0){
                     $roleArr=$this->Admin_model->get_roles_for_user($DataArr[0]->userId);
                     $this->session->set_userdata('ADMIN_ROLE_VAR',$roleArr);
