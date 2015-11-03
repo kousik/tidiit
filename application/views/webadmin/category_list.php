@@ -97,7 +97,7 @@ function ShowAddAdminBox(){
  }
  
 function AskDelete(id){
-	if(confirm('Are you sure to delete(Y/N) ?')){
+	if(confirm('It will delete the current adn its subcategories.Are you sure to delete(Y/N) ?')){
 		location.href='<?php echo base_url()?>webadmin/category/delete/'+id;
 	}
 	return false;
