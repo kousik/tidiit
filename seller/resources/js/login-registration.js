@@ -68,9 +68,6 @@ myJsMain.registration=function(){
         contactNo:{
             required:true
         },
-        fax:{
-            required:true
-        },
         email: {
             required: true,
             email:true

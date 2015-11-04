@@ -124,8 +124,11 @@ class Category extends MY_Controller{
             redirect(base_url().'webadmin/category/viewlist/'.$parrentCategoryId);
 	}
 	
-	public function change_status($CategoryID,$Action){
-            $this->Category_model->change_category_status($CategoryID,$Action);
+	public function change_status($categoryId,$Action){
+            $retArr=$this->recusive_category($categoryId);
+            $retArr[]=$categoryId;
+            $this->Category_model->change_category_status($retArr,$Action);
+            
             $Data=$this->Category_model->get_parrent_by_category_id($CategoryID);
             //echo '<pre>';print_r($Data);die;
             $parrentCategoryId=$Data[0]->parrentCategoryId;
@@ -139,8 +142,16 @@ class Category extends MY_Controller{
             $parrentCategoryId=$Data[0]->parrentCategoryId;
             //pre($parrentCategoryId);die;
             $categoryDetails=$this->Category_model->get_details_by_id($CategoryID);
-            $this->Category_model->delete($CategoryID);
-            $this->delete_img($categoryDetails[0]->image);
+            //$this->delete_img($categoryDetails[0]->image);
+            $retArr=$this->recusive_category($CategoryID);
+            $retArr[]=$CategoryID;
+            $rs=$this->db->from('category')->where_in('categoryId',$retArr)->get()->result();
+            foreach($rs AS $k){
+                if($k->image!="")
+                    $this->delete_img($k->image);
+            }
+            //pre($rs);die;
+            $this->Category_model->delete($retArr);
             $this->session->set_flashdata('Message','Category deleted successfully.');
             redirect(base_url().'webadmin/category/viewlist/'.$parrentCategoryId);
 	}
@@ -162,7 +173,13 @@ class Category extends MY_Controller{
 	
 	public function batchactive($CategoryIDs){
 		$Action='1'; //active
-		$this->Category_model->change_category_status($CategoryIDs ,$Action);
+                $CategoryIDsArr=  explode(',',$CategoryIDs);
+                foreach($CategoryIDsArr AS $k =>$v){
+                    $retArr=$this->recusive_category($v);
+                    $CategoryIDsArr=  array_merge($CategoryIDsArr,$retArr);
+                }
+                //pre($CategoryIDsArr);die;
+		$this->Category_model->change_category_status($CategoryIDsArr ,$Action);
                 $CategoryIDArr=explode(',',$CategoryIDs);
 		$Data=$this->Category_model->get_parrent_by_category_id($CategoryIDArr[0]);
                 //echo '<pre>';print_r($Data);die;
@@ -173,7 +190,13 @@ class Category extends MY_Controller{
 	
 	public function batchinactive($CategoryIDs){
 		$Action='0'; //inactive
-		$this->Category_model->change_category_status($CategoryIDs ,$Action);
+		$CategoryIDsArr=  explode(',',$CategoryIDs);
+                foreach($CategoryIDsArr AS $k =>$v){
+                    $retArr=$this->recusive_category($v);
+                    $CategoryIDsArr=  array_merge($CategoryIDsArr,$retArr);
+                }
+                //pre($CategoryIDsArr);die;
+		$this->Category_model->change_category_status($CategoryIDsArr ,$Action);
                 $CategoryIDArr=explode(',',$CategoryIDs);
 		$Data=$this->Category_model->get_parrent_by_category_id($CategoryIDArr[0]);
                 //echo '<pre>';print_r($Data);die;
@@ -240,5 +263,19 @@ class Category extends MY_Controller{
 
             $this->image_lib->clear();
 	}
+        
+    function recusive_category($categoryId,$newCateoryArr=array()){
+        $this->load->model('Category_model','category');
+        $chieldCateArr=$this->category->get_without_status_subcategory_by_category_id($categoryId);
+        if(empty($chieldCateArr)){
+            return $newCateoryArr;
+        }else{    
+            foreach($chieldCateArr AS $k){
+                $newCateoryArr[]=$k->categoryId;
+                $newCateoryArr=$this->recusive_category($k->categoryId,$newCateoryArr);
+            }
+            return $newCateoryArr;
+        }
+    }
 }
 ?>

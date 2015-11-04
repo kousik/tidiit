@@ -97,7 +97,7 @@ function ShowAddAdminBox(){
  }
  
 function AskDelete(id){
-	if(confirm('It will delete the current adn its subcategories.Are you sure to delete(Y/N) ?')){
+	if(confirm('It will delete the current and its subcategories.Are you sure to delete(Y/N) ?')){
 		location.href='<?php echo base_url()?>webadmin/category/delete/'+id;
 	}
 	return false;
@@ -164,7 +164,7 @@ function AskDelete(id){
     <td><?php if($InerArr->view!='' && $InerArr->view>0){echo $productPageTypeArr[$InerArr->view];}?></td>
     <td>
 	<?php if($InerArr->status=='1'){$action=0;}else{$action=1;}?>
-	<a href="<?php echo base_url().'webadmin/category/change_status/'.$InerArr->categoryId.'/'.$action;?>" class="AdminDashBoardLinkText"><?php if($InerArr->status=='1'){?><img src="<?php echo $SiteImagesURL.'webadmin/';?>active1.png" alt="Inactive" title="Active" /><?php }else{?><img src="<?php echo $SiteImagesURL.'webadmin/';?>inactive1.png" alt="Inactive" title="Inactive" /><?php }?></a>
+	<a href="<?php echo base_url().'webadmin/category/change_status/'.$InerArr->categoryId.'/'.$action;?>" class="AdminDashBoardLinkText categoryActiveInactive"><?php if($InerArr->status=='1'){?><img src="<?php echo $SiteImagesURL.'webadmin/';?>active1.png" alt="Inactive" title="Active" /><?php }else{?><img src="<?php echo $SiteImagesURL.'webadmin/';?>inactive1.png" alt="Inactive" title="Inactive" /><?php }?></a>
 	&nbsp;&nbsp;
 	<a href="javascript:void(0);" onclick="ShowEditBox('<?php echo $InerArr->categoryId;?>');" class="AdminDashBoardLinkText"><img src="<?php echo $SiteImagesURL.'webadmin/';?>edit.png" width="15" height="15" title="Edit"/></a>
 	&nbsp;&nbsp;
@@ -627,9 +627,11 @@ $(document).ready(function(){
 			alert('Please select item for batch active');
 			return false;
 		}else{
+                    if(confirm('Are you sure to active the selected cateory ? Y/N')){
 			$('#batchaction_fun').val('batchactive');
 			$('#batchaction_id').val(categoryIds);
 			$('#cateory_list_form').submit();
+                    }    
 		}
 	});
 	
@@ -646,9 +648,11 @@ $(document).ready(function(){
 			alert('Please select item for batch active');
 			return false;
 		}else{
+                    if(confirm('Are you sure to inactive the selected cateory ? Y/N')){
 			$('#batchaction_fun').val('batchinactive');
 			$('#batchaction_id').val(categoryIds);
 			$('#cateory_list_form').submit();
+                    }    
 		}
 	});
 	
@@ -695,6 +699,12 @@ $(document).ready(function(){
             location.href='<?php echo base_url().'webadmin/category/manage_category_add_to_cart_link/'?>'+cat_id+'/'+ActiveAddTOCartLink;
         });
         
-        
+        $('.categoryActiveInactive').click(function(){
+            if(confirm('Are you sure to change the status ? Y/N')){
+                return true;
+            }else{
+                return false;
+            }
+        });
 });
 </script>

@@ -48,15 +48,18 @@ class Category_model extends CI_Model {
 	}
 	
 	public function change_category_status($categoryId,$status){
-		//$this->db->where('categoryId',$categoryId);
-                $this->db->where_in('categoryId',explode(',',$categoryId));
-		$this->db->update($this->_table,array('status'=>$status));
-		return TRUE;
+            $this->db->where_in('categoryId',$categoryId);
+            $this->db->update($this->_table,array('status'=>$status));
+            //echo $this->db->last_query();die;
+            return TRUE;
 	}
 	
 	public function delete($categoryId){
-		$this->db->delete($this->_table, array('categoryId' => $categoryId)); 
-		return TRUE;
+            //pre($categoryId);die;
+            $this->db->where_in('categoryId',$categoryId);
+            $this->db->delete($this->_table); 
+            //$this->db->delete($this->_table)->where('categoryId',$categoryId);; 
+            return TRUE;
 	}
 	
 	public function get_details_by_id($id){
@@ -65,6 +68,18 @@ class Category_model extends CI_Model {
 	
 	public function get_subcategory_by_category_id($categoryId){
 		$sql="SELECT `categoryId` , `categoryName` FROM category WHERE `parrentCategoryId` ='".$categoryId."' AND status=1";
+		return $this->db->query($sql)->result();
+	}
+        
+        public function get_reverse_subcategory_by_category_id($categoryId,$Action){
+		$sql="SELECT `categoryId` , `categoryName` FROM category WHERE `parrentCategoryId` ='".$categoryId."' AND status=$Action";
+                //echo $sql.'<br>';
+		return $this->db->query($sql)->result();
+	}
+        
+        public function get_without_status_subcategory_by_category_id($categoryId){
+		$sql="SELECT `categoryId` , `categoryName` FROM category WHERE `parrentCategoryId` ='".$categoryId."' ";
+                //echo $sql.'<br>';
 		return $this->db->query($sql)->result();
 	}
 	

@@ -177,9 +177,6 @@ class User_model extends CI_Model {
             return $this->db->insert_id();
         }
         
-        function add_bill_address($dataArr){
-            $this->db->insert($this->_table_bill_address,$dataArr);
-            return $this->db->insert_id();
-        }
+        
 }
 ?>
