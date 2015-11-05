@@ -12,23 +12,15 @@ class Ajax extends MY_Controller{
     
     public function check_login(){
         $config = array(
-            array(
-                  'field'   => 'userName',
-                  'label'   => 'User Name',
-                  'rules'   => 'trim|required|xss_clean'
-               ),
-                array(
-                  'field'   => 'password',
-                  'label'   => 'Password',
-                  'rules'   => 'trim|required|xss_clean'
-               )
+            array('field'   => 'userName','label'   => 'User Name','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'password','label'   => 'Password','rules'   => 'trim|required|xss_clean')
          );
         //initialise the rules with validatiion helper
         $this->form_validation->set_rules($config); 
         //checking validation
         if($this->form_validation->run() == FALSE){
-                //retun to login page with peroper error
-                echo json_encode(array('result'=>'bad','msg'=>validation_errors()));die;
+            //retun to login page with peroper error
+            echo json_encode(array('result'=>'bad','msg'=>validation_errors()));die;
         }else{
             $UserName=$this->input->post('userName',TRUE);
             $Password=$this->input->post('password',TRUE);
@@ -50,93 +42,28 @@ class Ajax extends MY_Controller{
     public function check_registration(){
         //echo json_encode(array('result'=>'bad','msg'=>' cCode= '.$_POST['secret'].'  ==  server code'.$this->session->userdata('secret')));die;     
         $config = array(
-            array(
-                  'field'   => 'userName',
-                  'label'   => 'User Name',
-                  'rules'   => 'trim|required|xss_clean|min_length[8]|max_length[35]|valid_email|callback_username_check'
-               ),
-            array(
-                  'field'   => 'password',
-                  'label'   => 'Password',
-                  'rules'   => 'trim|required|xss_clean|min_length[4]|max_length[15]'
-               ),
-            array(
-                  'field'   => 'confirmPassword',
-                  'label'   => 'Password',
-                  'rules'   => 'trim|required|xss_clean|matches[password]'
-               ),
-            array(
-                  'field'   => 'firstName',
-                  'label'   => 'First Name',
-                  'rules'   => 'trim|required|xss_clean|min_length[3]|max_length[25]'
-               ),
-            array(
-                  'field'   => 'lastName',
-                  'label'   => 'Last Name',
-                  'rules'   => 'trim|required|xss_clean|min_length[3]|max_length[25]'
-               ),
-            array(
-                  'field'   => 'email',
-                  'label'   => 'Email',
-                  'rules'   => 'trim|required|xss_clean|valid_email'
-               ),
-            array(
-                  'field'   => 'contactNo',
-                  'label'   => 'Contact No',
-                  'rules'   => 'trim|required|xss_clean|is_natural|min_length[7]|max_length[12]'
-               ),
-            array(
-                  'field'   => 'mobile',
-                  'label'   => 'Contact No',
-                  'rules'   => 'trim|xss_clean|is_natural|min_length[7]|max_length[12]'
-               ),
-            array(
-                  'field'   => 'fax',
-                  'label'   => 'Fax',
-                  'rules'   => 'trim|required|xss_clean|is_natural'
-               ),
-            array(
-                  'field'   => 'address',
-                  'label'   => 'Address',
-                  'rules'   => 'trim|required|xss_clean'
-               ),
-            array(
-                  'field'   => 'city',
-                  'label'   => 'City',
-                  'rules'   => 'trim|required|xss_clean'
-               ),
-            array(
-                  'field'   => 'stateId',
-                  'label'   => 'State Name',
-                  'rules'   => 'trim|required|xss_clean'
-               ),
-            array(
-                  'field'   => 'countryId',
-                  'label'   => 'Country Name',
-                  'rules'   => 'trim|required|xss_clean'
-               ),
-            array(
-                  'field'   => 'zip',
-                  'label'   => 'Zip',
-                  'rules'   => 'trim|required|xss_clean|is_natural|min_length[5]|max_length[8]'
-               ),
-            array(
-                  'field'   => 'secret',
-                  'label'   => 'Security Code',
-                  'rules'   => 'trim|required|xss_clean|callback_valid_security_code'
-               ),
-            array(
-                  'field'   => 'agree',
-                  'label'   => 'Agree for Terms and Condition',
-                  'rules'   => 'trim|required|xss_clean'
-               )
+            array('field'   => 'userName','label'   => 'User Name','rules'   => 'trim|required|xss_clean|min_length[8]|max_length[35]|valid_email|callback_username_check'),
+            array('field'   => 'password','label'   => 'Password','rules'   => 'trim|required|xss_clean|min_length[4]|max_length[15]'),
+            array('field'   => 'confirmPassword','label'   => 'Password','rules'   => 'trim|required|xss_clean|matches[password]'),
+            array('field'   => 'firstName','label'   => 'First Name','rules'   => 'trim|required|xss_clean|min_length[3]|max_length[25]'),
+            array('field'   => 'lastName','label'   => 'Last Name','rules'   => 'trim|required|xss_clean|min_length[3]|max_length[25]'),
+            array('field'   => 'email','label'   => 'Email','rules'   => 'trim|required|xss_clean|valid_email'),
+            array('field'   => 'contactNo','label'   => 'Contact No','rules'   => 'trim|required|xss_clean|is_natural|min_length[7]|max_length[12]'),
+            array('field'   => 'mobile','label'   => 'Contact No','rules'   => 'trim|xss_clean|is_natural|min_length[7]|max_length[12]'),
+            array('field'   => 'address','label'   => 'Address','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'city','label'   => 'City','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'stateId','label'   => 'State Name','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'countryId','label'   => 'Country Name','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'zip','label'   => 'Zip','rules'   => 'trim|required|xss_clean|is_natural|min_length[5]|max_length[8]'),
+            array('field'   => 'secret','label'   => 'Security Code','rules'   => 'trim|required|xss_clean|callback_valid_security_code'),
+            array('field'   => 'agree','label'   => 'Agree for Terms and Condition','rules'   => 'trim|required|xss_clean')
          );
         //initialise the rules with validatiion helper
         $this->form_validation->set_rules($config); 
         //checking validation
         if($this->form_validation->run() == FALSE){
             //retun to login page with peroper error
-            echo json_encode(array('result'=>'bad','msg'=>validation_errors()));die;
+            echo json_encode(array('result'=>'bad','msg'=>str_replace('</p>','',str_replace('<p>','',validation_errors()))));die;
         }else{
             $userName=$this->input->post('userName',TRUE);
             $password=$this->input->post('password',TRUE);
