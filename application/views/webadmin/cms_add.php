@@ -42,7 +42,7 @@
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top" class="ListHeadingLable"> CMS Page title </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"><input name="title" type="text" id="title"  class="required" /></td>
+    <td align="left" valign="top"><input name="title" type="text" id="title"  class="required" maxlength="50"/></td>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>

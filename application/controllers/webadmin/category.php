@@ -93,13 +93,15 @@ class Category extends MY_Controller{
                 $parrentCategoryId=0;
             }
             $image='';
-            if($_FILES['EditcategoryImage']['name']!=""){
-                $categoryDetails=$this->Category_model->get_details_by_id($CategoryID);
-                $file=$_FILES['EditcategoryImage'];
-                $image=time().'.'.end(explode('.',$file['name']));
-                //move_uploaded_file($file['tmp_name'],$imagePath.$image);
-                $this->category_image_resize($file,$image);
-                 $this->delete_img($categoryDetails[0]->image);
+            if(array_key_exists('EditcategoryImage', $_FILES)){
+                if($_FILES['EditcategoryImage']['name']!=""){
+                    $categoryDetails=$this->Category_model->get_details_by_id($CategoryID);
+                    $file=$_FILES['EditcategoryImage'];
+                    $image=time().'.'.end(explode('.',$file['name']));
+                    //move_uploaded_file($file['tmp_name'],$imagePath.$image);
+                    $this->category_image_resize($file,$image);
+                     $this->delete_img($categoryDetails[0]->image);
+                }
             }
 
             $dataArr=array(
@@ -184,7 +186,7 @@ class Category extends MY_Controller{
 		$Data=$this->Category_model->get_parrent_by_category_id($CategoryIDArr[0]);
                 //echo '<pre>';print_r($Data);die;
 		$parrentCategoryId=$Data[0]->parrentCategoryId;
-		$this->session->set_flashdata('Message','Cateory/s activated successfully.');
+		$this->session->set_flashdata('Message','Category activated successfully.');
 		redirect(base_url().'webadmin/category/viewlist/'.$parrentCategoryId);
 	}
 	
@@ -201,7 +203,7 @@ class Category extends MY_Controller{
 		$Data=$this->Category_model->get_parrent_by_category_id($CategoryIDArr[0]);
                 //echo '<pre>';print_r($Data);die;
 		$parrentCategoryId=$Data[0]->parrentCategoryId;
-		$this->session->set_flashdata('Message','Cateory/s inactivated successfully.');
+		$this->session->set_flashdata('Message','Category inactivated successfully.');
 		redirect(base_url().'webadmin/category/viewlist/'.$parrentCategoryId);
 	}
 	

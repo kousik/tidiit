@@ -239,7 +239,8 @@ class Product extends MY_Controller{
                     }
                 }
                 //die($blank.' = rrr');
-                if($blank==1 || $blank==2){
+                //if($blank==1 || $blank==2){
+                if($blank==1){
                     @unlink($this->config->item('ResourcesPath').'product/original/'.$upload_files[0]);
                     $this->session->set_flashdata('Message','Please upload at least two image for this product.');
                     redirect(BASE_URL.'product/add_product/');

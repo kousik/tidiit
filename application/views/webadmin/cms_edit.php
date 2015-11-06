@@ -35,7 +35,7 @@
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top" class="ListHeadingLable"> CMS title </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"><input name="title" type="text" id="title"  class="required" value="<?php echo $dataArr[0]->title; ?>"/></td>
+    <td align="left" valign="top"><input name="title" type="text" id="title"  class="required" value="<?php echo $dataArr[0]->title; ?>" maxlength="50"/></td>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
