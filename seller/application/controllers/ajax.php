@@ -14,7 +14,7 @@ class Ajax extends MY_Controller{
         // sleep for 10 seconds
         //sleep(5);
         $config = array(
-            array('field'   => 'userName','label'   => 'User Name','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'userName','label'   => 'User Name','rules'   => 'trim|required|xss_clean|valid_email'),
             array('field'   => 'password','label'   => 'Password','rules'   => 'trim|required|xss_clean')
          );
         //initialise the rules with validatiion helper
@@ -41,6 +41,32 @@ class Ajax extends MY_Controller{
         }
     }
     
+    public function retribe_forgot_password(){
+        $config = array(
+            array('field'   => 'forgot_password_email','label'   => 'Forggot password email','rules'   => 'trim|required|xss_clean|valid_email')
+         );
+        //initialise the rules with validatiion helper
+        $this->form_validation->set_rules($config); 
+        //checking validation
+        if($this->form_validation->run() == FALSE){
+            //retun to login page with peroper error
+            echo json_encode(array('result'=>'bad','msg'=>validation_errors()));die;
+        }else{
+            $email=$this->input->post('forgot_password_email',TRUE);
+            $DataArr=$this->User_model->get_data_by_email($email);
+            //print_r($DataArr);die;
+            if(count($DataArr)>0){
+                $data=array();
+                $data['userDetails']=$DataArr;
+                $ret=$this->load->view('email_template',$data,TRUE);
+                echo json_encode(array('result'=>'good','url'=>BASE_URL.'index/'));die; 
+            }else{
+                echo json_encode(array('result'=>'bad','msg'=>'Please check your "email" and try again.'));die;     
+            }
+        }
+    }
+
+
     public function check_registration(){
         // sleep for 10 seconds
         //sleep(5);
