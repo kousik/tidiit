@@ -7,9 +7,9 @@ $.validator.addMethod("phoneno", function(value, element) {
 $.validator.addMethod("notEqual", function(value, element, param) {
   return this.optional(element) || value != param;
 }, "Please specify a different (non-default) value");
-
+pleaseWaitDiv = $('<div class="modal" id="myLoadingModal" tabindex="-1" role="dialog" aria-labelledby="myLoadingModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h1>Processing...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div><div class="modal-footer"></div></div></div></div>');
 // js utility function to submit formm using ajax 
-myJsMain.commonFunction = {
+myJsMain.commonFunction = {    
     ajaxSubmit: function($this, url, callback) {
         //alert(url);return false;
         var ajaxUrl =url,
@@ -109,6 +109,12 @@ myJsMain.commonFunction = {
            success: function(msg){ //alert(msg);
            }
          });
+    },
+    showPleaseWait: function() {
+        pleaseWaitDiv.modal('show');
+    },
+    hidePleaseWait: function () {
+        pleaseWaitDiv.modal('hide');
     }
 }
 

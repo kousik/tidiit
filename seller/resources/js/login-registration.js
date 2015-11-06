@@ -17,18 +17,20 @@ myJsMain.login=function(){
         validClass: "success"
     });
     $('#login_form').submit(function(e) {
+        myJsMain.commonFunction.showPleaseWait();
+        //$('#myLoadingModal').modal('show');
         e.preventDefault();
         if ($(this).valid()) {
-            $('#fade_background').fadeIn();
-            $('#LoadingDiv').fadeIn();
+            //$('#fade_background').fadeIn();
+            //$('#LoadingDiv').fadeIn();
             myJsMain.commonFunction.ajaxSubmit($(this),myJsMain.loginRequestURL, loginFormCallback);
         }
     });
         
         // this is just to show product list page
     function loginFormCallback(resultData){
-        $('#fade_background').fadeOut();
-        $('#LoadingDiv').fadeOut();
+        myJsMain.commonFunction.hidePleaseWait();
+        $('#myLoadingModal').modal('hide');
         if(resultData.result=='bad'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         }else if(resultData.result=='good'){
@@ -105,20 +107,22 @@ myJsMain.registration=function(){
         validClass: "success"
     });
     $('#registration_form').submit(function(e) {
+        myJsMain.commonFunction.showPleaseWait();
         e.preventDefault();
         if ($(this).valid()) {
             //alert(myJsMain.registrationRequestURL);return false;
-            $('#fade_background').fadeIn();
-            $('#LoadingDiv').fadeIn();
+            //$('#fade_background').fadeIn();
+            //$('#LoadingDiv').fadeIn();
             myJsMain.commonFunction.ajaxSubmit($(this),myJsMain.registrationRequestURL, registrationFormCallback);
         }
     });
         
         // this is just to show product list page
     function registrationFormCallback(resultData){
-        $('#fade_background').fadeOut();
-        $('#LoadingDiv').fadeOut();
+        //$('#fade_background').fadeOut();
+        //$('#LoadingDiv').fadeOut();
         //alert(resultData.result);
+        myJsMain.commonFunction.hidePleaseWait();
         if(resultData.result=='bad'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         }else if(resultData.result=='good'){

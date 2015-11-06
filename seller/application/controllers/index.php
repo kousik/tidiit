@@ -13,7 +13,7 @@ class Index extends MY_Controller {
 
     function index() {
         if ($this->_is_loged_in() == FALSE) {
-            $this->session->set_flashdata('Message', 'Please login to access admin section');
+            //$this->session->set_flashdata('Message', 'Please login to access admin section');
             redirect(base_url() . 'index/login');
         } else {
             redirect(base_url() . 'index/home');

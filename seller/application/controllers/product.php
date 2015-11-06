@@ -56,10 +56,15 @@ class Product extends MY_Controller{
                     }
                 }
                 //pre($productPageTypeArr[$categoryDetailsArr[0]->view]);die;
-               $viewPage='add_product_'.$templateName;
-               $data['productPageType']=substr($templateName,0,-4);
-               //echo $viewPage;die;
-                $this->load->view($viewPage,$data);
+                $viewPage='add_product_'.$templateName;
+                $data['productPageType']=substr($templateName,0,-4);
+                //echo $viewPage;die;
+                if (file_exists(APPPATH."views/$viewPage")){
+                    $this->load->view($viewPage,$data);
+                }else{
+                    $this->session->set_flashdata('Message',"Selected category has no product,Please select different category.");
+                    redirect(BASE_URL.'product/add_product/');
+                }
             }
         }
 

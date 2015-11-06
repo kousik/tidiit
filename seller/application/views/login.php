@@ -208,8 +208,6 @@
       </div>
     </div>
       <?php echo $footer;?>
-  </body>
-  </html>
       <script src="<?php echo SiteJSURL;?>login-registration.js"></script>
     <script type="text/javascript">
         myJsMain.login();
@@ -241,15 +239,7 @@
         });
       })(jQuery);
     </script>
+    <!-- Modal Waiting -->
     
-    
-    
-    <!-- Background  for popup start here -->
-    <div id="fade_background" class="lightbox_background"></div>
-    <!-- Background  for popup end here -->
-    <div class="logoinpanel lightbox_fourground" id="LoadingDiv">
-        <div><img src="<?php echo SiteImagesURL;?>bx_loader.gif" alt="loading"/></div>
-    </div>
-    <!--Popup Login pannel end -->
   </body>
 </html>

@@ -11,6 +11,8 @@ class Ajax extends MY_Controller{
    
     
     public function check_login(){
+        // sleep for 10 seconds
+        //sleep(5);
         $config = array(
             array('field'   => 'userName','label'   => 'User Name','rules'   => 'trim|required|xss_clean'),
             array('field'   => 'password','label'   => 'Password','rules'   => 'trim|required|xss_clean')
@@ -40,6 +42,8 @@ class Ajax extends MY_Controller{
     }
     
     public function check_registration(){
+        // sleep for 10 seconds
+        //sleep(5);
         //echo json_encode(array('result'=>'bad','msg'=>' cCode= '.$_POST['secret'].'  ==  server code'.$this->session->userdata('secret')));die;     
         $config = array(
             array('field'   => 'userName','label'   => 'User Name','rules'   => 'trim|required|xss_clean|min_length[8]|max_length[35]|valid_email|callback_username_check'),
