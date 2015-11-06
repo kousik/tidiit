@@ -58,7 +58,7 @@ class Ajax extends MY_Controller{
             if(count($DataArr)>0){
                 $data=array();
                 $data['userDetails']=$DataArr;
-                $ret=$this->load->view('email_template',$data,TRUE);
+                $ret=$this->load->view('email_template/retribe_user_password',$data,TRUE);
                 echo json_encode(array('result'=>'good','url'=>BASE_URL.'index/'));die; 
             }else{
                 echo json_encode(array('result'=>'bad','msg'=>'Please check your "email" and try again.'));die;     
