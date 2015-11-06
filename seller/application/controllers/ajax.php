@@ -59,7 +59,7 @@ class Ajax extends MY_Controller{
                 $data=array();
                 $data['userDetails']=$DataArr;
                 $ret=$this->load->view('email_template/retribe_user_password',$data,TRUE);
-                echo json_encode(array('result'=>'good','url'=>BASE_URL.'index/'));die; 
+                echo json_encode(array('result'=>'good','msg'=>'Your password has been sent to your register email address.'));die; 
             }else{
                 echo json_encode(array('result'=>'bad','msg'=>'Please check your "email" and try again.'));die;     
             }
