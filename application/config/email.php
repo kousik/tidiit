@@ -1,7 +1,11 @@
 <?php
 $config['useragent'] = 'CodeIgniter';
 $config['protocol'] = 'sendmail';
-$config['mailpath'] = '/usr/sbin/sendmail';
+//print_r($_SERVER);die;
+if($_SERVER['HTTP_HOST']=='tidiit-local.com')
+    $config['mailpath'] = 'D:/xampp/sendmail/sendmail.exe';
+else
+    $config['mailpath'] = '/usr/sbin/sendmail';
 //$config['smtp_host'] = 'ssl://smtp.googlemail.com';
 //'smtpout.secureserver.net';
 ////ssl://smtp.googlemail.com

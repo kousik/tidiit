@@ -57,8 +57,16 @@ class Ajax extends MY_Controller{
             //print_r($DataArr);die;
             if(count($DataArr)>0){
                 $data=array();
+                $this->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
+                $this->email->to($DataArr[0]->email,$DataArr[0]->firstName.' '.$DataArr[0]->lastName);
+                $this->email->subject('Your password at Tidiit Inc. Ltd.');
+                $data=array();
+                //pre($DataArr);die;
                 $data['userDetails']=$DataArr;
                 $ret=$this->load->view('email_template/retribe_user_password',$data,TRUE);
+                //echo $msg;die;
+                $this->email->message($ret);
+                $this->email->send();
                 echo json_encode(array('result'=>'good','msg'=>'Your password has been sent to your register email address.'));die; 
             }else{
                 echo json_encode(array('result'=>'bad','msg'=>'Please check your "email" and try again.'));die;     
