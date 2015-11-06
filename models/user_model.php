@@ -385,4 +385,8 @@ class User_model extends CI_Model {
         $this->db->insert($this->_bill_address,$dataArr);
         return $this->db->insert_id();
     }
+    
+    function get_data_by_email($email){
+        return $this->db->get_where('user',array('email'=>$email))->result();
+    }
 }

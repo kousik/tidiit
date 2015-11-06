@@ -30,7 +30,7 @@ myJsMain.login=function(){
         // this is just to show product list page
     function loginFormCallback(resultData){
         myJsMain.commonFunction.hidePleaseWait();
-        $('#myLoadingModal').modal('hide');
+        //$('#myLoadingModal').modal('hide');
         if(resultData.result=='bad'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         }else if(resultData.result=='good'){
@@ -42,6 +42,45 @@ myJsMain.login=function(){
     
         
 }
+
+
+myJsMain.forgot_password=function(){
+    var validationRules = {
+        forgot_password_email: {
+            required: true,
+            email:true
+        }
+    };
+    $('#forgot_password_form').validate({
+        rules: validationRules,
+        onsubmit: true,
+        errorElement: "nothing",
+        errorClass: "invalid",
+        validClass: "success"
+    });
+    $('#forgot_password_form').submit(function(e) {
+        var url=myJsMain.baseURL+'ajax/retribe_forgot_password/';
+        myJsMain.commonFunction.showPleaseWait();
+        //$('#myLoadingModal').modal('show');
+        e.preventDefault();
+        if ($(this).valid()) {
+            //$('#fade_background').fadeIn();
+            //$('#LoadingDiv').fadeIn();
+            myJsMain.commonFunction.ajaxSubmit($(this),url, forggotPasswordFormCallback);
+        }
+    });
+        
+        // this is just to show product list page
+    function forggotPasswordFormCallback(resultData){
+        myJsMain.commonFunction.hidePleaseWait();
+        //$('#myLoadingModal').modal('hide');
+        myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
+    }
+    
+    
+        
+}
+
 
 myJsMain.registration=function(){
     $(document).ready(function(){

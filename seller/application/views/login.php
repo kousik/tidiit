@@ -42,10 +42,10 @@
           </form>
         </div>
         <div id="forgot" class="tab-pane">
-            <form name="forgot_password_form" id="forgot_password_form">
+            <form name="forgot_password_form" id="forgot_password_form" class="contact_form">
                 <p class="text-muted text-center"><h1 style="font-size: 26px;color:#474646;font-family:controllerfive !important;" class="text-center">Forgot Password</h1></p>
              <div class="col-md-12">
-                 <input type="email" name="userName" id="userName" placeholder="mail@domain.com" class="form-control">
+                 <input type="email" name="forgot_password_email" id="forgot_password_email" placeholder="mail@domain.com" class="form-control">
             <br>
             <button class="btn btn-lg btn-danger btn-block" type="submit">Recover Password</button>
             </div>
@@ -212,6 +212,7 @@
     <script type="text/javascript">
         myJsMain.login();
         myJsMain.registration();
+        myJsMain.forgot_password();
       (function($) {
         $(document).ready(function() {
           $('.list-inline li > a').click(function() {

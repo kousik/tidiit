@@ -206,6 +206,8 @@ class Product extends MY_Controller{
                     $config['allowed_types'] = 'gif|jpg|png|jpeg';
                     $config['file_name']	= time();
                     $config['max_size']	= '2047';
+                    $config['max_width'] = '850';
+                    $config['max_height'] = '850';
                     //$config['max_width']  = '1024';
                     //$config['max_height']  = '1024';
                     $upload_files=array();
