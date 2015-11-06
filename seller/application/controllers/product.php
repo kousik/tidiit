@@ -233,7 +233,7 @@ class Product extends MY_Controller{
                                 $upload_files[]=$data['file_name'];
                             }
                         }else{                            
-                            if(substr($fieldname,-1)<3)
+                            if(substr($fieldname,-1)==1)
                                 $blank++;
                         }
                     }
