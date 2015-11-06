@@ -268,7 +268,7 @@ class User_model extends CI_Model {
         return $group;
     }
 
-    public function get_my_groups(){
+    public function get_my_groups($df = false){
         $this->db->order_by('groupId','desc');
         $datas = $this->db->from($this->_group)->where('groupAdminId =',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
         if($datas):
@@ -292,7 +292,7 @@ class User_model extends CI_Model {
             endforeach;
 
             $in_groups = $this->get_my_on_groups();
-            if($in_groups):
+            if($in_groups && !$df):
                 $result = array_merge($groups, $in_groups);
             else:
                 $result = $groups;

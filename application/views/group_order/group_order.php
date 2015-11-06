@@ -32,7 +32,7 @@ echo $html_heading; echo $header;?>
 
                                 <div class="active row grouporder_id">
                                    <form action="#" method="post" name="start_groups_order" id="start_groups_order"> 
-                                    <input type="hidden" id="js-order-info" name="orderId" value="<?=$orderId?>" data-groupid="" data-userid="<?=$user->userId?>" >
+                                    <input type="hidden" id="js-order-info" name="orderId" value="<?=$orderId?>" data-groupid="<?=$groupId?>" data-userid="<?=$user->userId?>" >
                                     
                                     <div class="col-md-12 col-sm-12">
 
@@ -44,6 +44,43 @@ echo $html_heading; echo $header;?>
 
 
                                         <div class="group-selection js-display-selected-group">
+                                            <?php if($group):?>
+                                            <div class="container-fluid">
+                                                <div class="col-md-3 col-sm-3 grp_dashboard" style="margin:0;">
+                                                <div class="<?= $group->groupColor ?>">
+                                                    <span><i class="fa  fa-group fa-5x"></i></span>
+                                                </div>
+                                                <div class="grp_title"><?= $group->groupTitle ?></div>
+                                            </div>        
+                                            <div class="col-md-6">
+                                                <h5><strong>Group Admin</strong></h5>
+                                                <p class="text-left"><?= $group->admin->firstName ?> <?= $group->admin->lastName ?></p>
+                                                <?php if ($group->users): ?>
+                                                    <h5><strong>Group Users</strong></h5><?php foreach ($group->users as $ukey => $usr): ?>
+                                                        <p class="text-left"><?= $usr->firstName ?> <?= $usr->lastName ?></p>
+                                                    <?php endforeach;
+                                                endif;
+                                                ?>
+                                            </div>
+                                            </div>
+                                            
+                                            <div class="clearfix"></div>
+                                            <label class="input-group">
+                                                <span class="input-group-addon">
+                                                    <input type="radio"  name="selectgroup" id="optionsRadios1" class="js-order-group" value="exists">
+                                                </span>
+                                                <span class="group-label">Want to change above group from your existing groups.</span>
+                                            </label><!-- /input-group -->
+
+
+                                            <label class="input-group">
+                                                <span class="input-group-addon">
+                                                    <input type="radio"  name="selectgroup" id="optionsRadios2" class="js-order-group" value="new">
+                                                </span>
+                                                <span class="group-label">Want to create a new group.
+                                                </span>
+                                            </label><!-- /input-group -->
+                                            <?php else: ?>
                                             <label class="input-group">
                                                 <span class="input-group-addon">
                                                     <input type="radio"  name="selectgroup" id="optionsRadios1" class="js-order-group" value="exists">
@@ -59,7 +96,7 @@ echo $html_heading; echo $header;?>
                                                 <span class="group-label">Please create a new group.
                                                 </span>
                                             </label><!-- /input-group -->
-
+                                            <?php endif;?>
                                         </div>
                                         <div class="clearfix"></div>
                                         <div class="panel js-display-exisit-group"></div>
@@ -67,10 +104,10 @@ echo $html_heading; echo $header;?>
                                             <div class="panel-body">
 
                                                 <div class="form-horizontal">
-                                                    <label for="input3" class="col-sm-7 control-label">Please enter your no of Quantity of this Order<br>Available quantity : ( <?=$priceInfo->qty?> ) </label>
+                                                    <label for="input3" class="col-sm-7 control-label">Please enter your no of Quantity of this Order<br>Available Qty : ( <?=$availQty?> ). Total Qty : ( <?=$totalQty?>) </label>
                                                     <div class="col-sm-5">
-                                                        <input type="text" class="form-control" id="js-estd-qty" placeholder="">
-                                                        <input type="hidden" class="form-control" id="js-avail-qty" value="<?=$priceInfo->qty?>">
+                                                        <input type="text" class="form-control" id="js-estd-qty" placeholder="" value="<?=$dftQty?>">
+                                                        <input type="hidden" class="form-control" id="js-avail-qty" value="<?=$availQty?>">
                                                     </div>
 
 
@@ -334,7 +371,8 @@ echo $html_heading; echo $header;?>
             var groupId = $(this).attr('data-groupid');
             var jqout = $(this);
             $.post( myJsMain.baseURL+'ajax/get_single_group/', {
-                groupId: groupId
+                groupId: groupId,
+                orderId: $(this).val()
             },
             function(data){ 
                 if(data.contents){
@@ -368,8 +406,8 @@ echo $html_heading; echo $header;?>
             console.log($('#js-estd-qty').val()+'==='+$('#js-avail-qty').val());
             var estd = $('#js-estd-qty').val();
             var avail = $('#js-avail-qty').val();
-            if(parseInt(estd) > parseInt(avail)){
-                $('div.js-message').html("Quantity can't exceed from available quantity!");
+            if(parseInt(estd) > parseInt(avail) || parseInt(estd) == 0){
+                $('div.js-message').html("Please enter valid quantity!");
                 //$('div.js-message').show();
                 $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
                   

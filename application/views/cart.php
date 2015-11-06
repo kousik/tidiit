@@ -1,3 +1,7 @@
+<?php 
+$CI =& get_instance();
+$CI->load->model('Product_model')
+?>
 <div class="modal fade shoppingcart-popup" id="shoppingcart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg">
     <div class="modal-content cart-container">
@@ -6,7 +10,7 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <div class="cart-heading clearfix">
                         <h3>
-                            Shopping Cart <span>(<?=$this->cart->total_items()?> Item<?php if($this->cart->total_items() > 1): echo 's';endif;?>)</span>
+                            Shopping Cart <span class="js-cart-item">(<?=count($this->cart->contents())?> Item<?php if(count($this->cart->contents()) > 1): echo 's';endif;?>)</span>
                         </h3>
                         
                     </div>
@@ -14,6 +18,13 @@
 <?php 
 //print_r($this->cart->contents());
 $cart = $this->cart->contents();
+$is_single = false;
+foreach($cart as $item):
+    if(isset($item['options']['orderType']) && $item['options']['orderType'] == 'SINGLE'):
+        $is_single = true; continue;
+    endif;
+endforeach;
+
 $is_group = false;
 foreach($cart as $item):
     if(isset($item['options']['orderType']) && $item['options']['orderType'] == 'GROUP'):
@@ -24,6 +35,9 @@ endforeach;
     
                     
         <div class="cart-container-table">
+            <?php if($is_single):?>
+            <br>
+            <h4>Single Order</h4><br>
             <table id="cart" class="table table-hover table-condensed">
                 <thead>
                     <tr>
@@ -35,43 +49,53 @@ endforeach;
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                     <?php 
+                     $total = 0;
+                foreach($cart as $item):
+                    if(isset($item['options']['orderType']) && $item['options']['orderType'] == 'SINGLE'):
+                        $productDetailsArr =  $this->Product_model->details($item['options']['productId']);
+                        $productImageArr =$this->Product_model->get_products_images($item['options']['productId']);
+                    ?>
+                    <tr id="<?=$item['rowid']?>">
                         <td data-th="Product">
                             <div class="row">
-                                <div class="col-sm-3 product-img"><img src="http://placehold.it/100x100" alt="..." class="img-responsive"/></div>
+                                <div class="col-sm-3 product-img"><img src="<?=PRODUCT_DEAILS_SMALL.$productImageArr[0]->image?>" alt="..." class="img-responsive"/></div>
                                 <div class="col-sm-9 product-details">
-                                    <h4 class="nomargin">Product 1</h4>
-                                    <p>Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Lorem ipsum dolor sit amet.</p>
+                                    <h4 class="nomargin"><?=$item['name']?></h4>
+                                    <p><?=$productDetailsArr[0]->shortDescription?></p>
                                 </div>
                             </div>
                         </td>
-                        <td data-th="Price">$1.99</td>
+                        <td data-th="Price"><?=$item['price']?></td>
 
                         <td data-th="Quantity">
-                            <input type="number" class="form-control text-center" value="1">
+                            <?=$item['qty']?>
                         </td>
-                        <td data-th="Subtotal" class="text-center">1.99</td>
+                        <td data-th="Subtotal" class="text-center"><?=number_format($item['subtotal'])?>.00</td>
                         <td class="actions" data-th="" align="right">
-                            <button class="btn btn-info btn-sm"><i class="fa fa-refresh"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></button>								
+                            <button class="btn btn-danger btn-sm js-group-cart-remove" data-cartid="<?=$item['rowid']?>"><i class="fa fa-trash-o"></i></button>
+                            <button class="btn btn-success btn-sm">Checkout <i class="fa fa-angle-right"></i></button>
                         </td>
                     </tr>
+                    <?php 
+                    $total .= $item['subtotal'];
+                    endif;
+                    endforeach;?>
                 </tbody>
 
                 <tfoot>
-                    <tr class="visible-xs">
-                        <td class="text-center"><strong>Total 1.99</strong></td>
-                    </tr>
                     <tr>
-                        <td><a href="#" class="btn btn-warning"><i class="fa fa-angle-left"></i> Continue Shopping</a></td>
+                        <td><!--<a href="#" class="btn btn-warning"><i class="fa fa-angle-left"></i> Continue Shopping</a>--></td>
                         <td colspan="2" class="hidden-xs"></td>
-                        <td class="hidden-xs text-center"><strong>Total $1.99</strong></td>
-                        <td><a href="#" class="btn btn-success btn-block">Checkout <i class="fa fa-angle-right"></i></a></td>
+                        <td class="hidden-xs text-center"><strong>Total <?=$total?></strong></td>
+                        <td>
+                            <?php if($total > 1):?><a href="#" class="btn btn-success btn-block">Checkout <i class="fa fa-angle-right"></i></a><?php endif;?></td>
                     </tr>
                 </tfoot>
             </table>
+            <?php endif;?>
             <?php if($is_group):?>
-            <h4>Group Order</h4>
+            <h4>Group Order</h4><br>
             <table id="cart" class="table table-hover table-condensed">
                 <thead>
                     <tr>
@@ -85,13 +109,17 @@ endforeach;
                 <tbody>
                     <?php 
                 foreach($cart as $item):
-                    if(isset($item['options']['orderType']) && $item['options']['orderType'] == 'GROUP'):?>
-                    <tr>
+                    if(isset($item['options']['orderType']) && $item['options']['orderType'] == 'GROUP'):
+                        $productDetailsArr =  $this->Product_model->details($item['options']['productId']);
+                        $productImageArr =$this->Product_model->get_products_images($item['options']['productId']);
+                    ?>
+                    <tr id="<?=$item['rowid']?>">
                         <td data-th="Product">
                             <div class="row">
-                                <div class="col-sm-3 product-img"><img src="http://placehold.it/100x100" alt="..." class="img-responsive"/></div>
+                                <div class="col-sm-3 product-img"><img src="<?=PRODUCT_DEAILS_SMALL.$productImageArr[0]->image?>" alt="..." class="img-responsive"/></div>
                                 <div class="col-sm-9 product-details">
                                     <h4 class="nomargin"><?=$item['name']?></h4>
+                                    <p><?=$productDetailsArr[0]->shortDescription?></p>
                                 </div>
                             </div>
                         </td>
@@ -100,9 +128,9 @@ endforeach;
                         <td data-th="Quantity">
                             <?=$item['qty']?>
                         </td>
-                        <td data-th="Subtotal" class="text-center"><?=$item['subtotal']?></td>
+                        <td data-th="Subtotal" class="text-center"><?=number_format($item['subtotal'])?>.00</td>
                         <td class="actions" data-th="" align="right">
-                            <button class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></button>
+                            <button class="btn btn-danger btn-sm js-group-cart-remove" data-cartid="<?=$item['rowid']?>" data-orderid="<?=$item['options']['orderId']?>"><i class="fa fa-trash-o"></i></button>
                             <button class="btn btn-success btn-sm">Checkout <i class="fa fa-angle-right"></i></button>
                         </td>
                     </tr>
@@ -114,7 +142,7 @@ endforeach;
                     <tr class="visible-xs">
                     </tr>
                     <tr>
-                        <td><a href="#" class="btn btn-warning"><i class="fa fa-angle-left"></i> Continue Shopping</a></td>
+                        <td><a href="<?=BASE_URL;?>" class="btn btn-warning"><i class="fa fa-angle-left"></i> Continue Shopping</a></td>
                         <td colspan="2" class="hidden-xs"></td>
                         <td class="hidden-xs text-center"></td>
                         <td></td>
@@ -131,5 +159,23 @@ endforeach;
 <script type="text/javascript">
     jQuery(document).ready(function(){
         jQuery('#shoppingcart').modal('show');
+        
+        jQuery("body").delegate('.js-group-cart-remove', "click", function(e){
+            e.preventDefault();
+                         
+            var cartId = jQuery(this).attr('data-cartid');
+            var orderId = jQuery(this).attr('data-orderid');
+            jQuery.post( myJsMain.baseURL+'shopping/remove_group_cart/', {
+                cartId: cartId,
+                orderId: orderId
+            },
+            function(data){ 
+                if(data.contents){
+                    jQuery('tr#'+cartId).remove();
+                    var item = "(<?=count($this->cart->contents())-1?> Item<?php if(count($this->cart->contents())-1 > 1): echo 's';endif;?>)";
+                    jQuery('span.js-cart-item').text(item);
+                }
+            }, 'json' );
+        }); 
     });
 </script>

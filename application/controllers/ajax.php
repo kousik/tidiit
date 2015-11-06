@@ -416,8 +416,12 @@ class Ajax extends MY_Controller{
     }
     
     function get_single_group(){
+        $this->load->model('Order_model');
         $groupId = $this->input->post('groupId',TRUE);
+        $orderId = $this->input->post('orderId',TRUE);
         $group = $this->User_model->get_group_by_id($groupId);
+        $data['groupId'] = $groupId;
+        $this->Order_model->update($data, $orderId);
         ob_start();?>
         <div class="container-fluid">
             <div class="alert alert-success" role="alert">
@@ -450,7 +454,7 @@ class Ajax extends MY_Controller{
     
     function get_my_groups(){
         $me = $this->input->post('userId',TRUE);
-        $groups = $this->User_model->get_my_groups();
+        $groups = $this->User_model->get_my_groups(true);
         ob_start();
         if($groups):?>
         <div class="alert alert-success" role="alert">
