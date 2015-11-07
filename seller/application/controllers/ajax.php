@@ -22,7 +22,7 @@ class Ajax extends MY_Controller{
         //checking validation
         if($this->form_validation->run() == FALSE){
             //retun to login page with peroper error
-            echo json_encode(array('result'=>'bad','msg'=>validation_errors()));die;
+            echo json_encode(array('result'=>'bad','msg'=>str_replace('</p>','',str_replace('<p>','',validation_errors()))));die;
         }else{
             $UserName=$this->input->post('userName',TRUE);
             $Password=$this->input->post('password',TRUE);
@@ -50,7 +50,7 @@ class Ajax extends MY_Controller{
         //checking validation
         if($this->form_validation->run() == FALSE){
             //retun to login page with peroper error
-            echo json_encode(array('result'=>'bad','msg'=>validation_errors()));die;
+            echo json_encode(array('result'=>'bad','msg'=>str_replace('</p>','',str_replace('<p>','',validation_errors()))));die;
         }else{
             $email=$this->input->post('forgot_password_email',TRUE);
             $DataArr=$this->User_model->get_data_by_email($email);

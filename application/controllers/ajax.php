@@ -36,7 +36,7 @@ class Ajax extends MY_Controller{
         //checking validation
         if($this->form_validation->run() == FALSE){
             //retun to login page with peroper error
-            echo json_encode(array('result'=>'bad','msg'=>validation_errors()));die;
+            echo json_encode(array('result'=>'bad','msg'=>str_replace('</p>','',str_replace('<p>','',validation_errors()))));die;
         }else{
             //$userName=$this->input->post('userName',TRUE);
             $password=$this->input->post('password',TRUE);
@@ -73,7 +73,7 @@ class Ajax extends MY_Controller{
     
     public function check_login(){
         $config = array(
-            array('field'   => 'userName','label'   => 'User Name','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'userName','label'   => 'User Name','rules'   => 'trim|required|xss_clean|valid_email'),
             array('field'   => 'loginPassword','label'   => 'Password','rules'   => 'trim|required|xss_clean')
          );
         //initialise the rules with validatiion helper
@@ -81,7 +81,7 @@ class Ajax extends MY_Controller{
         //checking validation
         if($this->form_validation->run() == FALSE){
                 //retun to login page with peroper error
-                echo json_encode(array('result'=>'bad','msg'=>validation_errors()));die;
+                echo json_encode(array('result'=>'bad','msg'=>str_replace('</p>','',str_replace('<p>','',validation_errors()))));die;
         }else{
             $UserName=$this->input->post('userName',TRUE);
             $Password=$this->input->post('loginPassword',TRUE);
@@ -687,6 +687,40 @@ class Ajax extends MY_Controller{
                 $this->User_model->edit(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo,
                     'email'=>$email,'DOB'=>$DOB,'mobile'=>$mobile,'fax'=>$fax,'aboutMe'=>$aboutMe),$userId);
                 echo json_encode(array('result'=>'good'));die; 
+            }
+        }
+    }
+    
+    public function retribe_forgot_password(){
+        $config = array(
+            array('field'   => 'userForgotPasswordEmail','label'   => 'Forggot password email','rules'   => 'trim|required|xss_clean|valid_email')
+         );
+        //initialise the rules with validatiion helper
+        $this->form_validation->set_rules($config); 
+        //checking validation
+        if($this->form_validation->run() == FALSE){
+            //retun to login page with peroper error
+            echo json_encode(array('result'=>'bad','msg'=>str_replace('</p>','',str_replace('<p>','',validation_errors()))));die;
+        }else{
+            $email=$this->input->post('userForgotPasswordEmail',TRUE);
+            $DataArr=$this->User_model->get_data_by_email($email);
+            //print_r($DataArr);die;
+            if(count($DataArr)>0){
+                $data=array();
+                $this->load->library('email');
+                $this->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
+                $this->email->to($DataArr[0]->email,$DataArr[0]->firstName.' '.$DataArr[0]->lastName);
+                $this->email->subject('Your password at Tidiit Inc. Ltd.');
+                $data=array();
+                //pre($DataArr);//die;
+                $data['userDetails']=$DataArr;
+                $ret=$this->load->view('email_template/retribe_user_password',$data,TRUE);
+                $this->email->message($ret);
+                $this->email->send();
+                //echo $ret;die;
+                echo json_encode(array('result'=>'good','msg'=>'Your password has been sent to your register email address.'));die; 
+            }else{
+                echo json_encode(array('result'=>'bad','msg'=>'Please check your "email" and try again.'));die;     
             }
         }
     }

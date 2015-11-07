@@ -166,10 +166,10 @@
 
                         <div id="forgot_form" style="display:none;">
                             <form class="contact_form" action="#" method="post" name="tidiit_user_forgot_form" id="tidiit_user_forgot_form">
-                                <h1>Send Password Reset Link</h1>
+                                <h1>Forgot Password</h1>
                                 <div class="form-group has-error">
                                     <div class="input-group col-md-8"> 
-                                        <input id="userEmail" name="userEmail" type="email" placeholder="user@tidiit.com" class="form-control email" required >
+                                        <input id="userForgotPasswordEmail" name="userForgotPasswordEmail" type="email" placeholder="user@tidiit.com" class="form-control email" required >
                                         <span class="input-group-addon"><i class="fa fa-user"></i></span>
                                     </div>
                                     <label id="userEmail-error" class="error" for="userEmail"></label>
@@ -354,6 +354,7 @@
 
     myJsMain.login();
     myJsMain.registration();
+    myJsMain.forgot_password();
     $(document).ready(function () {
         //alert(myJsMain.baseURL);
         //myJsMain.commonFunction.tidiitConfirm('Tidiit System','Are you sure  ?','silent','',180);
