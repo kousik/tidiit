@@ -131,7 +131,7 @@ class Category extends MY_Controller{
             $retArr[]=$categoryId;
             $this->Category_model->change_category_status($retArr,$Action);
             
-            $Data=$this->Category_model->get_parrent_by_category_id($CategoryID);
+            $Data=$this->Category_model->get_parrent_by_category_id($categoryId);
             //echo '<pre>';print_r($Data);die;
             $parrentCategoryId=$Data[0]->parrentCategoryId;
             //echo $parrentCategoryId;die;
