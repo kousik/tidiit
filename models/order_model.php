@@ -22,6 +22,28 @@ class Order_model extends CI_Model {
 		return $this->db->insert_id();
 	}
 	
+        public function update($DataArr,$orderId){
+            $this->db->where('orderId',$orderId);
+            $this->db->update($this->_table,$DataArr);
+            return TRUE;		
+	}
+        
+        
+        public function get_single_order_by_id($orderId){
+            $this->db->limit(1);
+            $orderData = $this->db->select('*')->from($this->_table)->where('orderId',$orderId)->get()->result();            
+            $order = $orderData[0];
+            return $order;
+        }
+        
+        public function get_available_order_quantity($orderId){
+            $this->db->select_sum('productQty');
+            $this->db->where('orderId',$orderId);
+            $this->db->or_where('parrentOrderID',$orderId);
+            $query = $this->db->get($this->_table);
+            return $query->result();
+        }
+        
 	public function add_paypal_data($dataArray){
 		$this->db->insert($this->_paypal,$dataArray);
 		return $this->db->insert_id();

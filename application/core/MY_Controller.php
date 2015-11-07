@@ -102,14 +102,15 @@ class MY_Controller extends CI_Controller {
     }
     
     public function _get_logedin_template($SEODataArr=array()){
-            $data=array();
-            $data=$this->html_heading($SEODataArr);
-            //$AboutUsData=$this->Cms_model->get_content('about_daily_plaza');
-            //$data['AboutUSShortData']=$AboutUsData[0]->ShortBody;
-            $data['header']=$this->load->view('header1',$data,true);
-            $data['footer']=$this->load->view('footer',$data,true);
-            $data['main_menu']=$this->load->view('main_menu',$data,true);
-            return $data;
+        $this->load->library('cart');
+        $data=array();
+        $data=$this->html_heading($SEODataArr);
+        //$AboutUsData=$this->Cms_model->get_content('about_daily_plaza');
+        //$data['AboutUSShortData']=$AboutUsData[0]->ShortBody;
+        $data['header']=$this->load->view('header1',$data,true);
+        $data['footer']=$this->load->view('footer',$data,true);
+        $data['main_menu']=$this->load->view('main_menu',$data,true);
+        return $data;
     }
 
     public function _get_tobe_login_template($SEODataArr=array()){
