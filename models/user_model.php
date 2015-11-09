@@ -398,7 +398,7 @@ class User_model extends CI_Model {
     
     function get_last_login(){
         if($this->session->userdata('FE_SESSION_VAR')!="")
-            return $this->db->order_by('loginHistoryId','DESC')->get_where($this->_login_history,array('userId'=>$this->session->userdata('FE_SESSION_VAR')),1,0)->result();
+            return $this->db->order_by('loginHistoryId','DESC')->get_where($this->_login_history,array('userId'=>$this->session->userdata('FE_SESSION_VAR')),2,1)->result();
         else
             return FALSE;
     }
