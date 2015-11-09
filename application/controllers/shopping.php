@@ -47,6 +47,7 @@ class Shopping extends MY_Controller{
         $order_data['productId'] = $productId;
         $order_data['productPriceId'] = $prorductPriceId;
         $order_data['orderDate'] = date('Y-m-d H:i:s');
+        $order_data['status'] = 0;
         
         //Cart first step
         $cart_data = array();
@@ -147,6 +148,11 @@ class Shopping extends MY_Controller{
     
     
     function process_my_group_orders_by_id($orderId){
+        if(!$orderId):
+            redirect(BASE_URL.'404_override');
+        endif;
+        $orderId = base64_decode($orderId);
+        $orderId = $orderId/226201;
         
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
@@ -182,6 +188,7 @@ class Shopping extends MY_Controller{
         $order_data['productId'] = $productId;
         $order_data['productPriceId'] = $prorductPriceId;
         $order_data['orderDate'] = date('Y-m-d H:i:s');
+        $order_data['status'] = 0;
         
         //Cart first step
         $cart_data = array();
@@ -255,6 +262,55 @@ class Shopping extends MY_Controller{
         $data['user']=$user;
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
         $this->load->view('group_order/group_order',$data);
+    }
+    
+    function process_checkout($orderId){
+        
+        if(!$orderId):
+            redirect(BASE_URL.'404_override');
+        endif;
+        $orderId = base64_decode($orderId);
+        $orderId = $orderId/226201;
+        
+        $SEODataArr=array();
+        $data=$this->_get_logedin_template($SEODataArr);
+        $order = $this->Order_model->get_single_order_by_id($orderId);
+        if(!$order):
+            redirect(BASE_URL.'404_override');
+        endif;
+       /* if($order->orderType == "GROUP" && $order->productQty == 0):
+            redirect(BASE_URL.'shopping/mod-group-order/'.base64_encode($orderId*226201));
+        elseif($order->orderType == "SINGLE" && $order->productQty == 0):
+            
+        endif;*/
+        
+        $userShippingDataDetails=$this->User_model->get_user_shipping_information();
+        if(empty($userShippingDataDetails)){
+            $userShippingDataDetails[0]=new stdClass();
+            $userShippingDataDetails[0]->firstName="";
+            $userShippingDataDetails[0]->lastName="";
+            $userShippingDataDetails[0]->countryId="";
+            $userShippingDataDetails[0]->cityId="";
+            $userShippingDataDetails[0]->zipId="";
+            $userShippingDataDetails[0]->localityId="";
+            $userShippingDataDetails[0]->phone="";
+            $userShippingDataDetails[0]->address="";
+            $userShippingDataDetails[0]->contactNo="";
+            $userShippingDataDetails[0]->landmark="";
+        }
+        if($userShippingDataDetails[0]->countryId!=""){
+            $data['cityDataArr']=  $this->Country->get_all_city1($userShippingDataDetails[0]->countryId);
+        }
+        if($userShippingDataDetails[0]->zipId!=""){
+            $data['zipDataArr']=  $this->Country->get_all_zip1($userShippingDataDetails[0]->cityId);
+        }
+        if($userShippingDataDetails[0]->localityId!=""){
+            $data['localityDataArr']=  $this->Country->get_all_locality($userShippingDataDetails[0]->zipId);
+        }
+        $data['countryDataArr']=$this->Country->get_all1();
+        $data['userShippingDataDetails']=$userShippingDataDetails[0];
+        
+        $this->load->view('group_order/checkout',$data);
     }
     
     function _get_available_order_quantity($orderId){

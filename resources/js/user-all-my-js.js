@@ -33,7 +33,9 @@ myJsMain.my_billing_address=function(){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Billing address updated successfully.",200);
         }
     }
-}
+};
+
+
 
 myJsMain.my_profile=function(){ 
     var myProfileValidationRules = {
@@ -131,7 +133,7 @@ myJsMain.my_finance=function(){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Finance data updated successfully.",200);
         }
     }
-}
+};
 
 
 
@@ -206,4 +208,45 @@ myJsMain.my_create_groups=function(){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Group has been updated successfully.",200);
         }
     };
+};
+
+
+
+myJsMain.my_checkout_shipping_address=function(){ 
+    var shippingValidationRules = {
+        firstName: {required: true},
+        lastName: {required: true},
+        phone: {required: true},
+        address: {required: true},
+        countryId: {required: true},
+        cityId: {required: true},
+        zipId: {required: true},
+        localityId: {required: true}
+    };
+    $('#my_checkout_shipping_address').validate({rules: shippingValidationRules,onsubmit: true});
+    $('#my_checkout_shipping_address').submit(function(e) { 
+        e.preventDefault();
+        if ($(this).valid()) { 
+            $('#shippingCheckoutAddress').prop('disabled',true);
+            //$('#fade_background').fadeIn();
+            //$('#LoadingDiv').fadeIn();
+            myJsMain.commonFunction.ajaxSubmit($(this),myJsMain.baseURL+'ajax/submit_my_checkout_shipping_address', shippingCheckAddressFormCallback);
+        }
+    });
+        
+        // this is just to show product list page
+    function shippingCheckAddressFormCallback(resultData){
+        $('#shippingCheckoutAddress').prop('disabled',false);
+        if(resultData.result=='bad'){
+            //alert alert-danger 
+            $('div.js-message').html('<div class="alert alert-danger">Shipping address not updated. Please try again!</div>');
+             $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
+        }else if(resultData.result=='good'){
+            $('.js-right-panel').html(resultData.html);
+            $('div.js-message').html('<div class="alert alert-success">Shipping address has been updated successfully. Please continue!</div>');
+             $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
+             $('.shipping-continue').attr('data-shipping', 'true');
+             $('a.js-shipping').attr('data-shipping', 'true');
+        }
+    }
 };

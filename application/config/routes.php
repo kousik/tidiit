@@ -61,7 +61,7 @@ $route['webadmin/index']="webadmin/index/login";
 //Order
 $route['shopping/add-group-order']="shopping/process_my_group_orders";
 $route['shopping/mod-group-order/(:any)']="shopping/process_my_group_orders_by_id/$1";
-
+$route['shopping/checkout/(:any)']="shopping/process_checkout/$1";
 
 //Logout
 $route['logout']="index/logout";

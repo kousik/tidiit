@@ -627,6 +627,60 @@ class Ajax extends MY_Controller{
         }
     }
     
+    function submit_my_checkout_shipping_address(){
+        $config = array(
+            array('field'   => 'firstName','label'   => 'First Name','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'lastName','label'   => 'Last Name','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'phone','label'   => 'Phone','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'address','label'   => 'Address','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'countryId','label'   => 'Country','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'cityId','label'   => 'City','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'zipId','label'   => 'Zip','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'localityId','label'   => 'Locality','rules'   => 'trim|required|xss_clean')
+         );
+        //initialise the rules with validatiion helper
+        $this->form_validation->set_rules($config); 
+        //checking validation
+        if($this->form_validation->run() == FALSE){
+                //retun to login page with peroper error
+                echo json_encode(array('result'=>'bad','msg'=>validation_errors()));die;
+        }else{
+            $userId=$this->session->userdata('FE_SESSION_VAR');
+            if($userId==""){
+                echo json_encode(array('result'=>'bad','msg'=>'Please login before update changes.'));die;
+            }else{
+                $firstName=$this->input->post('firstName',TRUE);
+                $lastName=$this->input->post('lastName',TRUE);
+                $phone=$this->input->post('phone',TRUE);
+                $countryId=$this->input->post('countryId',TRUE);
+                $cityId=$this->input->post('cityId',TRUE);
+                $zipId=$this->input->post('zipId',TRUE);
+                $localityId=$this->input->post('localityId',TRUE);
+                $address = $this->input->post('address',TRUE);
+                $landmark = $this->input->post('landmark',TRUE);
+                
+                $this->load->model('Country');
+                $rs=$this->Country->city_details($cityId);
+                
+                $isAdded=$this->User_model->is_shipping_address_added();
+                if(empty($isAdded)){
+                    $this->User_model->add_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'userId'=>$userId,'address'=>$address,'stateId'=>$rs[0]->stateId, 'landmark' => $landmark));
+                }else{
+                    $this->User_model->edit_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'address'=>$address,'stateId'=>$rs[0]->stateId, 'landmark' => $landmark),$userId);
+                }
+                $html = '';
+                $html .= '<p>'.$firstName.' '.$lastName.'<br>';
+                $html .= nl2br($address).'<br>';
+                $html .= $phone.'<br>';
+                if( $landmark ){
+                    $html .= '<b>Landmark:</b>'.$landmark.'<br>';
+                }
+                echo json_encode(array('result'=>'good', 'html' => $html));die; 
+            }
+            
+        }
+    }
+    
     function submit_finance(){
         $config = array(
             array('field'   => 'mpesaFullName','label'   => 'Full Name in m-Pesa Account','rules'   => 'trim|required|xss_clean'),
