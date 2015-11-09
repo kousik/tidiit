@@ -630,7 +630,7 @@ jQuery(document).ready(function(){
                                 <td><?php $connectivityArr= explode(',', $productDetailsArr[0]->mobileConnectivity);
                                 $connectionStr='';
                                 foreach($connectivityArr AS $k =>$v){
-                                    $connectionStr.=$mobileConnectivity[$v].',';
+                                    $connectionStr.=$mobileConnectivity[$v].', ';
                                 }
                                 echo substr($connectionStr,0,-1);?></td>
                               </tr>
