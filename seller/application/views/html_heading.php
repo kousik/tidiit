@@ -44,7 +44,10 @@
   </head>
   <script>
       $(document).ready(function(){
-        var message='<?php echo $this->session->flashdata('Message');?>';
+          var message='';
+        <?php if($this->uri->segment(1)!='product'){?>  
+            message='<?php echo $this->session->flashdata('Message');?>';
+        <?php }?>
         if(message!=""){myJsMain.commonFunction.tidiitAlert('Tidiit System Message',message,200);}
       });
   </script>
