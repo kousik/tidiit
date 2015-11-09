@@ -99,6 +99,8 @@ class MY_Controller extends CI_Controller {
                 
                 
                 //echo $this->uri->segment(1).' = '.$this->uri->segment(2);die;
+
+                $data['last_login']=$this->User_model->get_last_login();
 		$data['html_heading']=$this->load->view('html_heading',$data,true);
                 $data['top']=$this->load->view('top',$data,TRUE);
                 $data['left']=$this->load->view('left',$data,TRUE);

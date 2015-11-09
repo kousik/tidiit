@@ -47,6 +47,7 @@ class Index extends MY_Controller {
                         $this->session->set_userdata('ADMIN_SESSION_USERNAME_VAR',$UserName);
                         $this->session->set_userdata('ADMIN_SESSION_USER_VAR_TYPE',$DataArr[0]->userType);
                         $this->session->set_flashdata('Message','You have loged successfully.');
+                        $this->User_model->add_login_history(array('userId'=>$DataArr[0]->userId));
                         redirect(base_url().'webadmin/index/admin_home');
                     }else{
                         $this->session->set_flashdata('Message','You have no access for this section,Please contact administrator.');

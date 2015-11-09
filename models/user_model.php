@@ -11,6 +11,7 @@ class User_model extends CI_Model {
     private $_notification ="notifications";
     private $_finance ="user_m_pesa";
     private $_user_product_type_category ="user_product_type_category";
+    private $_login_history ="user_login_history";
 
 
     public $result=NULL;
@@ -388,5 +389,17 @@ class User_model extends CI_Model {
     
     function get_data_by_email($email){
         return $this->db->get_where('user',array('email'=>$email))->result();
+    }
+    
+    function add_login_history($dataArray){
+        $this->db->insert($this->_login_history,$dataArray);
+        return $this->db->insert_id();
+    }
+    
+    function get_last_login(){
+        if($this->session->userdata('FE_SESSION_VAR')!="")
+            return $this->db->order_by('loginHistoryId','DESC')->get_where($this->_login_history,array('userId'=>$this->session->userdata('FE_SESSION_VAR')),1,0)->result();
+        else
+            return FALSE;
     }
 }

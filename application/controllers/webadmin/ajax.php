@@ -108,4 +108,25 @@ class Ajax extends MY_Controller{
             echo 0;die;
         }
     }
+    
+    public function check_category_name(){
+        $this->load->model('Category_model');
+        $categoryName=$this->input->post('categoryName',TRUE);
+        if($this->Category_model->check_category_name_exists($categoryName)){
+            echo 1;die;
+        }else{
+            echo 0;die;
+        }
+    }
+    
+    public function check_edit_category_name(){
+        $this->load->model('Category_model');
+        $categoryName=$this->input->post('categoryName',TRUE);
+        $categoryId=$this->input->post('categoryId',TRUE);
+        if($this->Category_model->check_edit_category_name_exists($categoryName,$categoryId)){
+                echo 1;die;
+        }else{
+                echo 0;die;
+        }
+    }
 }

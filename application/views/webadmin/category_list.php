@@ -557,45 +557,45 @@ $(document).ready(function(){
             $('#EditcategoryImage').fadeIn('slow');
             $(this).fadeOut();
         });
-	/*$('#categoryName').on('blur',function(){
-		var CheckUserNameAjaxURL='<?php //echo ADMIN_BASE_URL.'ajax/check_category_name/'?>';
-		var CheckUserNameAjaxData='categoryName='+$(this).val();
-		$.ajax({
-		   type: "POST",
-		   url: CheckUserNameAjaxURL,
-		   data: CheckUserNameAjaxData,
-		   success: function(msg){
-		   	if(msg=='1'){
-				alert($('#categoryName').val()+' has already used,Please enter a new one.');
-				$('#categoryName').val('');
-				return false;
-			}else{
-				return true;
-			}
-		   }
-		 });
-	}); */
+	$('#categoryName').on('blur',function(){
+            var CheckUserNameAjaxURL='<?php echo ADMIN_BASE_URL.'ajax/check_category_name/'?>';
+            var CheckUserNameAjaxData='categoryName='+$(this).val();
+            $.ajax({
+               type: "POST",
+               url: CheckUserNameAjaxURL,
+               data: CheckUserNameAjaxData,
+               success: function(msg){
+                    if(msg=='1'){
+                        alert($('#categoryName').val()+' has already used,Please enter a new one.');
+                        $('#categoryName').val('');
+                        return false;
+                    }else{
+                        return true;
+                    }
+               }
+             });
+	});
 	
 	
 	
-	/*$('#EditcategoryName').on('blur',function(){
-		var CheckEditUserNameAjaxURL='<?php echo ADMIN_BASE_URL.'ajax/check_edit_category_name/'?>';
-		var CheckEditUserNameAjaxData='categoryName='+$(this).val()+'&categoryId='+$('#categoryId').val();
-		$.ajax({
-		   type: "POST",
-		   url: CheckEditUserNameAjaxURL,
-		   data: CheckEditUserNameAjaxData,
-		   success: function(msg){ 
-		   	if(msg=='1'){
-				alert($('#EditcategoryName').val()+' has already used,Please enter a new one.');
-				$('#EditcategoryName').val('');
-				return false;
-			}else{
-				return true;
-			}
-		   }
-		 });
-	}); */
+	$('#EditcategoryName').on('blur',function(){
+            var CheckEditUserNameAjaxURL='<?php echo ADMIN_BASE_URL.'ajax/check_edit_category_name/'?>';
+            var CheckEditUserNameAjaxData='categoryName='+$(this).val()+'&categoryId='+$('#categoryId').val();
+            $.ajax({
+               type: "POST",
+               url: CheckEditUserNameAjaxURL,
+               data: CheckEditUserNameAjaxData,
+               success: function(msg){ 
+                    if(msg=='1'){
+                        alert($('#EditcategoryName').val()+' has already used,Please enter a new one.');
+                        $('#EditcategoryName').val('');
+                        return false;
+                    }else{
+                        return true;
+                    }
+               }
+             });
+	}); 
 	
 	
 	$('#CheckAll').on('click',function(){

@@ -31,7 +31,7 @@ class Category_model extends CI_Model {
 	
 	public function check_category_name_exists($categoryName){
 		$dataArr=$this->db->select("categoryId")->from($this->_table)->where('categoryName',$categoryName)->get()->result();
-		if(count($dataArr)>0){
+                if(count($dataArr)>0){
 			return TRUE;
 		}else{
 			return FALSE;

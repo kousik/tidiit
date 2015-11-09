@@ -9,13 +9,13 @@
               <span class="label label-danger user-label">16</span> 
             </a> 
             <div class="media-body">
-              <h5 class="media-heading">Archie</h5>
+              <h5 class="media-heading"><?php echo $this->session->userdata('FE_SESSION_VAR_FNAME');?></h5>
               <ul class="list-unstyled user-info">
-                <li> <a href="">Administrator</a>  </li>
+                <!--<li> <a href="">Administrator</a>  </li> -->
                 <li>Last Access :
                   <br>
                   <small>
-                    <i class="fa fa-calendar"></i>&nbsp;16 Mar 16:32</small> 
+                      <i class="fa fa-calendar"></i>&nbsp;<?php echo date('d M H:i',  strtotime($last_login[0]->logedInTime));?></small> 
                 </li>
               </ul>
             </div>

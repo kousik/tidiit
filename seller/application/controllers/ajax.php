@@ -32,8 +32,10 @@ class Ajax extends MY_Controller{
                 //$roleArr=$this->User_model->get_roles_for_user($DataArr[0]->userId);
                 $this->session->set_userdata('FE_SESSION_VAR',$DataArr[0]->userId);
                 $this->session->set_userdata('FE_SESSION_USERNAME_VAR',$UserName);
+                $this->session->set_userdata('FE_SESSION_VAR_FNAME',$DataArr[0]->firstName);
                 //$this->session->set_userdata('FE_SESSION_USERNAME_VAR',$UserName);
                 $this->session->set_userdata('FE_SESSION_VAR_TYPE','seller');
+                $this->User_model->add_login_history(array('userId'=>$DataArr[0]->userId));
                 echo json_encode(array('result'=>'good','url'=>BASE_URL.'index/home/'));die; 
             }else{
                 echo json_encode(array('result'=>'bad','msg'=>'Please check your "Username" and "Password" and try again.'));die;     
