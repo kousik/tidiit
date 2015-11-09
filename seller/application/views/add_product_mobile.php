@@ -14,6 +14,15 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
 <link rel="stylesheet" href="<?php echo SiteCSSURL;?>normalize.css"> 
 <!--<link rel="stylesheet" href="http://necolas.github.io/normalize.css/2.1.3/normalize.css">-->
 <link rel="stylesheet" href="<?php echo SiteCSSURL;?>jquery.idealforms.css">
+<style>
+.main_head {
+    border-bottom: 1px solid #000;
+    color: #1ab7be;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 15px 0 15px 15px;
+}
+</style>
 <script type="text/javascript">
     priceOption='';
     <?php for($i=$priceRangeSettingsDataArr['start'];$i<$priceRangeSettingsDataArr['end'];$i=$i+$priceRangeSettingsDataArr['consistencyNo']){?>
@@ -50,7 +59,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
           <section class="idealsteps-step">
           
           <div class="form-group field required field">
-                    <div class="row">
+                    <!--<div class="row">
                     <div class="col-sm-4">
                     <label class="control-label main">Product Name</label>                     
                     </div>
@@ -58,7 +67,12 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                          <input type="text" class="form-control" id="title" placeholder="Product Name" value="" name="title" >
               <span class="error"></span>
                       </div>
-                      </div>
+                      </div> -->
+                   <div class="field">
+               <label class="main">Product Name</label>
+              <input type="text" class="form-control" id="title" placeholder="Product Name" value="" name="title">
+              <span class="error"></span>
+            </div> 
                     </div>
 
            <div class="form-group field required field">
@@ -926,6 +940,12 @@ No</label>
               var currentPriceRow=jQuery(this).attr('alt');
               jQuery('#remove_price_quantity_for_product_'+jQuery(this).attr('alt')).remove();
           });
+          
+          jQuery('#bulkQty').on('change',function(){
+              if($.trim(jQuery('#price').val())== ""){
+                  //
+              }
+          });
     });
     
 var price_row = 0;
@@ -961,7 +981,7 @@ jQuery(document).ready(function(){
     jQuery('form.idealforms').idealforms({
       silentLoad: false,
       rules: {
-        'title': 'required',
+        'title': 'required minmax:5:30',
         'shortDescription':'required minmax:10:200',
         'metaTitle': 'required',
         'metaDescription': 'required',
