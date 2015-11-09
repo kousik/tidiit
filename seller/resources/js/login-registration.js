@@ -17,12 +17,9 @@ myJsMain.login=function(){
         validClass: "success"
     });
     $('#login_form').submit(function(e) {
-        myJsMain.commonFunction.showPleaseWait();
-        //$('#myLoadingModal').modal('show');
         e.preventDefault();
         if ($(this).valid()) {
-            //$('#fade_background').fadeIn();
-            //$('#LoadingDiv').fadeIn();
+            myJsMain.commonFunction.showPleaseWait();
             myJsMain.commonFunction.ajaxSubmit($(this),myJsMain.loginRequestURL, loginFormCallback);
         }
     });
@@ -30,7 +27,6 @@ myJsMain.login=function(){
         // this is just to show product list page
     function loginFormCallback(resultData){
         myJsMain.commonFunction.hidePleaseWait();
-        //$('#myLoadingModal').modal('hide');
         if(resultData.result=='bad'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         }else if(resultData.result=='good'){
@@ -60,12 +56,9 @@ myJsMain.forgot_password=function(){
     });
     $('#forgot_password_form').submit(function(e) {
         var url=myJsMain.baseURL+'ajax/retribe_forgot_password/';
-        myJsMain.commonFunction.showPleaseWait();
-        //$('#myLoadingModal').modal('show');
         e.preventDefault();
         if ($(this).valid()) {
-            //$('#fade_background').fadeIn();
-            //$('#LoadingDiv').fadeIn();
+            myJsMain.commonFunction.showPleaseWait();
             myJsMain.commonFunction.ajaxSubmit($(this),url, forggotPasswordFormCallback);
         }
     });
@@ -73,7 +66,6 @@ myJsMain.forgot_password=function(){
         // this is just to show product list page
     function forggotPasswordFormCallback(resultData){
         myJsMain.commonFunction.hidePleaseWait();
-        //$('#myLoadingModal').modal('hide');
         myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
     }
     
@@ -146,28 +138,19 @@ myJsMain.registration=function(){
         validClass: "success"
     });
     $('#registration_form').submit(function(e) {
-        myJsMain.commonFunction.showPleaseWait();
         e.preventDefault();
         if ($(this).valid()) {
-            //alert(myJsMain.registrationRequestURL);return false;
-            //$('#fade_background').fadeIn();
-            //$('#LoadingDiv').fadeIn();
+            myJsMain.commonFunction.showPleaseWait();
             myJsMain.commonFunction.ajaxSubmit($(this),myJsMain.registrationRequestURL, registrationFormCallback);
         }
     });
         
         // this is just to show product list page
     function registrationFormCallback(resultData){
-        //$('#fade_background').fadeOut();
-        //$('#LoadingDiv').fadeOut();
-        //alert(resultData.result);
         myJsMain.commonFunction.hidePleaseWait();
-        if(resultData.result=='bad'){
-            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
-        }else if(resultData.result=='good'){
-            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
+        myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
+        if(resultData.result=='good'){
             location.href=resultData.url;
-            //myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.url,200);
         }
     }
 }

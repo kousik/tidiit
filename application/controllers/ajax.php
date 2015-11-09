@@ -108,7 +108,8 @@ class Ajax extends MY_Controller{
         if($userName!=''){
             $str=$userName;
         }
-        if($this->User_model->check_username_exists($str,'buyer')==TRUE){
+        //if($this->User_model->check_username_exists($str,'buyer')==TRUE){
+        if($this->User_model->check_username_exists_without_type($str)==TRUE){
             $this->form_validation->set_message('username_check', 'This User Name already registered.Please try a new one.');
             return FALSE;
         }else{

@@ -593,7 +593,7 @@ No</label>
                       </div>
                     </div>
                     
-                     <div class="form-group field required field">
+                    <div class="form-group field required field">
                     <div class="row">
                     <p class="main_head">Warranty</p>
                     <div class="col-sm-4">
@@ -648,18 +648,22 @@ No</label>
                     </div>
                     <div class="col-sm-8">
                         <div class="col-sm-12"  style="padding:0;">
-                            <div class="col-sm-3" style="padding:0;"><label style="margin-top:8px;" for="bulkQty">Quantity</label></div>
-                            <div class="col-sm-3"  style="padding:0;">
-                                <select class="" id="bulkQty" name="bulkQty" style="width:auto; float:right;">
-                                      <option value=""> -- Select -- </option>
-                                      <?php for($i=$priceRangeSettingsDataArr['start'];$i<$priceRangeSettingsDataArr['end'];$i+=5){?>
-                                      <option value="<?php echo $i;?>"><?php echo $i;?></option>
-                                      <?php }?>
-                                </select>
+                            <div class="col-sm-12 form-group field required field"  style="padding:0;">
+                                <div class="col-sm-6" style="padding:0;"><label style="margin-top:8px;" for="bulkQty">Quantity</label></div>
+                                <div class="col-sm-6"  style="padding:0;">
+                                    <select class="" id="bulkQty" name="bulkQty" style="width:auto;">
+                                          <option value=""> -- Select -- </option>
+                                          <?php for($i=$priceRangeSettingsDataArr['start'];$i<$priceRangeSettingsDataArr['end'];$i+=5){?>
+                                          <option value="<?php echo $i;?>"><?php echo $i;?></option>
+                                          <?php }?>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-sm-2" style="padding:0;"><label style="margin:8px 0 0 10px;" for="price">Price</label></div>
-                            <div class="col-sm-3" style="padding:0;"><input type="text" class="form-control" id="price" placeholder="Price" value="" name="price"  style="width:auto;"></div>
-                            <div class="col-sm-2" style="padding:0;">&nbsp;</div>
+                            <div class="col-sm-12"  style="padding:0;height: 5px;"></div>
+                            <div class="col-sm-12 form-group field required field"  style="padding:0;">
+                                <div class="col-sm-6" style="padding:0;"><label for="price">Price</label></div>
+                                <div class="col-sm-6" style="padding:0;"><input type="text" class="form-control" id="price" placeholder="Price" value="" name="price"  style="width:auto;"></div>
+                            </div>
                         </div>
                         <div class="col-sm-12 more_price_quantity_for_product"  style="padding:0;"></div>
                         <div class="col-sm-12"  style="padding:0;"><button class="addRow" type="button" onClick="addPrice();">Add Another Row</button>
@@ -939,6 +943,7 @@ No</label>
           jQuery('.more_price_quantity_for_product').on('click','.removePriceRow',function(){
               var currentPriceRow=jQuery(this).attr('alt');
               jQuery('#remove_price_quantity_for_product_'+jQuery(this).attr('alt')).remove();
+              if(jQuery('.more_price_quantity_for_product').html()==''){price_row=0;}
           });
           
           jQuery('#bulkQty').on('change',function(){
@@ -954,19 +959,28 @@ function addPrice() {
 	price_row++;
         
 	tabRow = '';
-	tabRow += '<div class="col-sm-12"  style="padding:0;"></div>';
-	tabRow += '<div class="col-sm-12"  style="padding:0;" id="remove_price_quantity_for_product_'+price_row+'">';
-	tabRow += '<div class="col-sm-3" style="padding:0;"><label style="margin-top:8px;" for="bulkQty_' + price_row + '">Quantity ' + price_row + '</label></div>';
-	tabRow += '<div class="col-sm-3"  style="padding:0;">';
-	tabRow += '<select class="required" id="bulkQty_' + price_row + '" name="bulkQty_' + price_row + '" style="width:auto; float:right;">';
+        //tabRow += '';
+        //tabRow += '<div class="col-sm-12"  style="padding:0;"></div>';
+        tabRow += '<div class="col-sm-12"  style="padding:0;margin-top:5px;" id="remove_price_quantity_for_product_'+price_row+'">';
+
+        tabRow += '<div class="col-sm-12" style="padding:0;">';
+        tabRow += '<div class="col-sm-6" style="padding:0;"><label style="margin-top:8px;" for="bulkQty_' + price_row + '">Quantity ' + price_row + '</label></div>';
+        tabRow += '<div class="col-sm-6"  style="padding:0;">';
+        tabRow += '<select class="required" id="bulkQty_' + price_row + '" name="bulkQty_' + price_row + '" style="width:auto;">';
         tabRow += '<option value="">-- Select --</option>';
         tabRow += priceOption;
-        tabRow += '</select></div>';
-	tabRow += '<div class="col-sm-2" style="padding:0;"><label style="margin:8px 0 0 10px;" for="price">Price ' + price_row + '</label></div>';
+        tabRow += '</select>';
+        tabRow += '</div>';
+        tabRow += '</div>';
+
+        tabRow += '<div class="col-sm-12"  style="padding:0;height: 5px;"></div>';
+        tabRow += '<div class="col-sm-12" style="padding:0;">';
+        tabRow += '<div class="col-sm-6" style="padding:0;"><label for="price_' + price_row + '">Price ' + price_row + '</label></div>';
         tabRow += '<div class="col-sm-3" style="padding:0;"><input type="text" class="form-control required" id="price_' + price_row + '" placeholder="Price" value="" name="price_' + price_row + '"  style="width:auto;"></div>';
+        tabRow += '<div class="col-sm-1" style="padding:0;"></div>';
         tabRow += '<div class="col-sm-2" style="padding:0;"><button class="removePriceRow" type="button" alt="' + price_row + '">Remove Row</button></div>';
-	tabRow += '</div>';
-	tabRow += '</div>';
+        tabRow += '</div>';
+        tabRow += '</div>';
         //alert(tabRow);
         jQuery('#total_price_row_added').val(price_row+1);
         //alert(tabRow);

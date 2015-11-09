@@ -44,11 +44,20 @@
         <div id="forgot" class="tab-pane">
             <form name="forgot_password_form" id="forgot_password_form" class="contact_form">
                 <p class="text-muted text-center"><h1 style="font-size: 26px;color:#474646;font-family:controllerfive !important;" class="text-center">Forgot Password</h1></p>
+                <div class="col-md-12" style=" height: 20px;"></div>
+                <div class="form-group has-error col-md-12" style="text-align: center;">
+                    <div class="col-md-2"></div>
+                    <div class="input-group col-md-6" style="text-align: center;"> 
+                      <input id="forgot_password_email" name="forgot_password_email" type="email" placeholder="enter your email for retribe password" class="form-control email required">
+                      <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
+                <div class="col-md-12" style=" height: 20px;"></div>
              <div class="col-md-12">
-                 <input type="email" name="forgot_password_email" id="forgot_password_email" placeholder="mail@domain.com" class="form-control">
-            <br>
-            <button class="btn btn-lg btn-danger btn-block" type="submit">Recover Password</button>
-            </div>
+                <button class="btn btn-lg btn-danger btn-block" type="submit">Recover Password</button>
+                </div>
+                <div class="col-md-12" style=" height: 20px;"></div>
           </form>
         </div>
         
@@ -73,7 +82,7 @@
                 <div class="form-group has-error">
                     <div class="input-group  col-md-8"> 
                       <input id="confirmPassword" name="confirmPassword" type="password" placeholder="enter your  confirm password" class="form-control" required >
-                      <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                      <span class="input-group-addon"><i class="fa fa-user"></i></span>
                     </div>
                     
                 </div>
@@ -94,14 +103,14 @@
                 <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                       <input id="email" name="email" type="email" placeholder="enter your email" class="form-control email" required >
-                      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                      <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
                       
                     </div>
                 </div>
                 <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                       <input id="mobile" name="mobile" type="phone" placeholder="enter your mobile no" class="form-control " required >
-                      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                      <span class="input-group-addon"><i class="fa fa-mobile"></i></span>
                     </div>
                 </div>
                 <div class="form-group has-error">
@@ -121,28 +130,28 @@
               <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                       <input id="contactNo" name="contactNo" type="phone" placeholder="enter your contact number" class="form-control " required >
-                      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                      <span class="input-group-addon"><i class="fa fa-phone"></i></span>
                     </div>
                   
                 </div>
               <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                       <input id="fax" name="fax" type="phone" placeholder="enter your fax" class="form-control " >
-                      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                      <span class="input-group-addon"><i class="fa fa-fax"></i></span>
                     </div>
                   
                 </div>
               <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                       <input id="address" name="address" type="text" placeholder="enter your address" class="form-control " required >
-                      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                      <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
                     </div>
                   
                 </div>
               <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                       <input id="city" name="city" type="text" placeholder="enter your city" class="form-control " required >
-                      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                      <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
                     </div>
                   
                 </div>
@@ -169,14 +178,14 @@
               <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                       <input id="zip" name="zip" type="text" placeholder="enter your zip" class="form-control " required >
-                      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                      <span class="input-group-addon"><i class="fa fa-area-chart"></i></span>
                     </div>
                   
                 </div>
             <div class="form-group has-error">
                     <div class="input-group col-md-8"> 
                     <input type="text" class="form-control bottom" placeholder="Security Code Shown on Left Side" name="secret" id="secret">
-                    <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                     </div>
                 
             </div>
