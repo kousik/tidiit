@@ -36,16 +36,29 @@ echo $html_heading; echo $header;?>
                                         <h3 class="log-title">My Notifications</h3>
                                         <div class="list-group">
                                             <?php if($notifications):?>
+                                            <table class="table table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Notification</th>
+                                                    <th>Type</th>
+                                                    <th style="text-align: center;">Action</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+            
                                             <?php foreach($notifications as $key => $nfn): ?>
-                                            <div class="list-group-item <?php if($nfn->isRead == 0):?>list-group-item-warning<?php endif;?>" id="not-<?=$nfn->id;?>">
-                                                <div class="col-md-2"><span class="label label-primary"><?=$nfn->nType;?></span></div>
-                                                <a href="javascript://" class="js-notfy-view" data-nd="<?=base64_encode($nfn->id*226201);?>" data-tp="<?=$nfn->nType;?>"><?=$nfn->nTitle;?></a>
-                                                <div class="col-md-offset-1 pull-right">
-                                                <a type="button" class="btn btn-info btn-xs js-notfy-view" data-nd="<?=base64_encode($nfn->id*226201);?>" data-tp="<?=$nfn->nType;?>"><i class="fa fa-info-circle"></i></a>
-                                                <a type="button" class="btn btn-danger btn-xs js-notfy-delete" data-nd="<?=base64_encode($nfn->id*226201);?>"><i class="fa fa-trash"></i></a>
-                                                </div>
-                                            </div>
+                                                <tr class="<?php if($nfn->isRead == 0):?>warning<?php else:?>info<?php endif;?>" id="not-<?=$nfn->id;?>">
+                                                    <td scope="row"><?=$key+1?></td>
+                                                    <td><a href="javascript://" class="js-notfy-view" data-nd="<?=base64_encode($nfn->id*226201);?>" data-tp="<?=$nfn->nType;?>"><?=$nfn->nTitle;?></a></td>
+                                                    <td><span class="label label-primary"><?=$nfn->nType;?></span></td>
+                                                    <td align="center"><a type="button" class="btn btn-info btn-xs js-notfy-view" data-nd="<?=base64_encode($nfn->id*226201);?>" data-tp="<?=$nfn->nType;?>"><i class="fa fa-info-circle"></i></a>
+                                                <a type="button" class="btn btn-danger btn-xs js-notfy-delete" data-nd="<?=base64_encode($nfn->id*226201);?>"><i class="fa fa-trash"></i></a></td>
+                                                </tr>
+                                            
                                             <?php endforeach;?>
+                                            </tbody>
+                                            </table>
                                             <?php else:?>
                                             <div class="list-group-item list-group-item-info">
                                                 <h4>You have no any notification!</h4>

@@ -22,7 +22,7 @@ class Notification extends MY_Controller{
         
 	$config = array();
         $cond = array('status'=>'1', 'receiverId'=>$user->userId, 'isRead' => '0');
-        $config['per_page'] = '5';
+        $config['per_page'] = '8';
         $config['uri_segment'] = '2';
         $notifications = $this->User_model->notification_all_my($rid,(int)$config['per_page'],$cond);
         $data['notifications'] = $notifications;
