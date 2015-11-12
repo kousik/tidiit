@@ -33,8 +33,9 @@ echo $html_heading; echo $header;?>
                                 <div class="active row">
                                     
                                     <div class="col-md-12 col-sm-12">
-                                        <h3 class="log-title">My Notifications</h3>
-                                        <div class="list-group">
+                                        
+                                        <div class="list-group gen_infmtn">
+                                            <h6>MY NOTIFICATIONS</h6>
                                             <?php if($notifications):?>
                                             <table class="table table-striped">
                                                 <thead>
