@@ -32,7 +32,7 @@ echo $html_heading; echo $header;?>
 
                                 <div class="active row grouporder_id">
                                    <form action="#" method="post" name="start_groups_order" id="start_groups_order"> 
-                                    <input type="hidden" id="js-order-info" name="orderId" value="<?=$orderId?>" data-groupid="<?=$groupId?>" data-userid="<?=$user->userId?>" >
+                                    <input type="hidden" id="js-order-info" name="orderId" value="<?=$orderId?>" data-groupid="<?=$groupId?>" data-userid="<?=$user->userId?>" data-rowid="<?=$rowid?>" >
                                     
                                     <div class="col-md-12 col-sm-12">
 
@@ -106,7 +106,7 @@ echo $html_heading; echo $header;?>
                                                 <div class="form-horizontal">
                                                     <label for="input3" class="col-sm-7 control-label">Please enter your no of Quantity of this Order<br>Available Qty : ( <?=$availQty?> ). Total Qty : ( <?=$totalQty?>) </label>
                                                     <div class="col-sm-5">
-                                                        <input type="text" class="form-control" id="js-estd-qty" placeholder="" value="<?=$dftQty?>">
+                                                        <input type="text" class="form-control" id="js-estd-qty" placeholder="<?=$dftQty?>" value="">
                                                         <input type="hidden" class="form-control" id="js-avail-qty" value="<?=$availQty?>">
                                                     </div>
 
@@ -115,6 +115,7 @@ echo $html_heading; echo $header;?>
                                             </div>
                                         </div>
                                         <div class="alert alert-danger js-message" role="alert" style="display: none;"></div>
+                                        
                                         <div class="clearfix"></div>
 
                                         <button type="button" class="btn btn-primary pull-right js-group-order-process">Invite Group User to Process the Order</button>
@@ -342,7 +343,10 @@ echo $html_heading; echo $header;?>
         }); 
         
         
-        
+        <?php if($this->session->flashdata('error')): ?>
+                $('div.js-message').html('<?=$this->session->flashdata('error')?>');
+                $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });                         
+        <?php endif;?>
     });
     jQuery(document).ready( function() {
         $('.js-group-popover').popover({html:true,container: 'body'});
@@ -413,6 +417,17 @@ echo $html_heading; echo $header;?>
                   
                 return;
             }
+            
+            $.post( myJsMain.baseURL+'shopping/ajax_update_group_order/', {
+                orderId: obj.val(),
+                cartid: obj.attr('data-rowid'),
+                qty: estd
+            },
+            function(data){ 
+                if(data.contents){
+                    window.location.href = data.contents;
+                }
+            }, 'json' );
         });
     });
 </script>

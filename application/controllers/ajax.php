@@ -554,7 +554,7 @@ class Ajax extends MY_Controller{
             unset($data['isEmail']);
         endif;
         
-    $this->User_model->notification_add($data);
+        $this->User_model->notification_add($data);
     
     }
     
