@@ -64,6 +64,11 @@ $route['shopping/mod-group-order/(:any)']="shopping/process_my_group_orders_by_i
 $route['shopping/checkout/(:any)']="shopping/process_checkout/$1";
 $route['shopping/success']="shopping/oredr_process_success";
 
+
+//Notification
+$route['my-notifications']="notification/get_my_notifications";
+$route['my-notifications/(:num)']="notification/get_my_notifications/$1";
+
 //Logout
 $route['logout']="index/logout";
 

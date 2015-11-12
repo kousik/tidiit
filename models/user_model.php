@@ -232,25 +232,43 @@ class User_model extends CI_Model {
         endif;
     }
 
-
+    /**
+     * 
+     * @param type $dataArray
+     * @return type
+     */
     public function group_add($dataArray){
         $this->db->insert($this->_group,$dataArray);
         return $this->db->insert_id();
     }
 
-
+    /**
+     * 
+     * @param type $DataArr
+     * @param type $groupId
+     * @return boolean
+     */
     public function group_update($DataArr,$groupId){
         $this->db->where('groupId',$groupId);
         $this->db->update($this->_group,$DataArr);
         return TRUE;		
     }
 
-
+    /**
+     * 
+     * @param type $groupId
+     * @return boolean
+     */
     public function group_delete($groupId){
         $this->db->delete($this->_group, array('groupId' => $groupId)); 
         return TRUE;
     }
-
+    
+    /**
+     * 
+     * @param type $groupId
+     * @return type
+     */
     public function get_group_by_id($groupId){
         $this->db->limit(1);
         $groupData = $this->db->select('*')->from($this->_group)->where('groupId',$groupId)->get()->result();            
@@ -268,7 +286,12 @@ class User_model extends CI_Model {
         $group->admin = $getgpadmin[0];
         return $group;
     }
-
+    
+    /**
+     * 
+     * @param type $df
+     * @return boolean
+     */
     public function get_my_groups($df = false){
         $this->db->order_by('groupId','desc');
         $datas = $this->db->from($this->_group)->where('groupAdminId =',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
@@ -303,7 +326,11 @@ class User_model extends CI_Model {
             return false;
         endif;
     }
-
+    
+    /**
+     * 
+     * @return boolean
+     */
     public function get_my_on_groups(){
         $query = $this->db->query("SELECT *  FROM `{$this->_group}` WHERE FIND_IN_SET('{$this->session->userdata('FE_SESSION_VAR')}',groupUsers) > 0 ORDER BY `groupId` DESC  ");
         $datas = $query->result();
@@ -332,12 +359,48 @@ class User_model extends CI_Model {
         endif;
     }
 
-
+    /**
+     * 
+     * @param type $dataArray
+     * @return type
+     */
     public function notification_add($dataArray){
         $this->db->insert($this->_notification,$dataArray);
         return $this->db->insert_id();
     }
+    
+    /**
+     * 
+     * @param type $receiverId
+     * @return type
+     */
+    public function notification_all_my($offset = null, $limit = null, $cond){
+        $this->db->from($this->_notification);
+        foreach($cond as $key=>$val){
+                $this->db->where($key,$val);
+        }
+        
+        if($limit != null){
+            $this->db->limit($limit, $offset);
+        }
+        $this->db->order_by('createDate','desc');
+        $query = $this->db->get();
+        $this->result = $query->result();
+        //echo $str = $this->db->last_query();
+        return $this->result;
+    }
+    
+    
+    public function notification_my_unread($receiverId){
+        $this->db->order_by('createDate','desc');
+        return $this->db->get_where($this->_notification,array('status'=>1, 'receiverId'=>$receiverId, 'isRead' => 0))->result();
+    }
+    
 
+    /**
+     * 
+     * @return type
+     */
     function is_shipping_address_added(){
         return $this->db->get_where($this->_shipping_address,array('userId'=>$this->session->userdata('FE_SESSION_VAR')))->result();
     }
