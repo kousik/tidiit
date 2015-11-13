@@ -333,7 +333,7 @@ class Ajax extends MY_Controller{
         $groupColor = $colors[$rand_keys];
         $notify = array();
         
-        if($groupUsersArr):
+        if(!$groupUsersArr):
             echo json_encode(array('result'=>'bad','msg'=>'Please select the at lease one group member!'));die;
         endif;
         
