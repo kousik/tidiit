@@ -334,7 +334,7 @@ class Ajax extends MY_Controller{
         $notify = array();
         
         if(!$groupUsersArr):
-            echo json_encode(array('result'=>'bad','msg'=>'Please select the at lease one group member!'));die;
+            echo json_encode(array('result'=>'bad','msg'=>'Please select the at least one group member!'));die;
         endif;
         
         $groupId = $this->User_model->group_add(array('groupAdminId'=>$groupAdminId,'groupTitle'=>$groupTitle,'productType'=>$productType,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor));
