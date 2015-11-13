@@ -129,6 +129,8 @@ myJsMain.my_finance=function(){
         //$('#LoadingDiv').fadeOut();
         if(resultData.result=='bad'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
+            $('div.js-message').html('<div class="alert alert-danger" role="alert">'+resultData.msg+'</div>');
+            $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
         }else if(resultData.result=='good'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Finance data updated successfully.",200);
         }
