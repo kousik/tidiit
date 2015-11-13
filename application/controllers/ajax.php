@@ -327,7 +327,7 @@ class Ajax extends MY_Controller{
         $groupTitle = $this->input->post('groupTitle',TRUE);
         $productType = $this->input->post('productType',TRUE);
         $groupUsersArr = $this->input->post('groupUsers',TRUE);
-        $groupUsers = implode(",", $groupUsersArr);
+        $groupUsers = $groupUsersArr?implode(",", $groupUsersArr):0;
         $colors = array('red','maroon','purple','green','blue');
         $rand_keys = array_rand($colors, 1);
         $groupColor = $colors[$rand_keys];
