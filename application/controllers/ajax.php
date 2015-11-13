@@ -333,15 +333,21 @@ class Ajax extends MY_Controller{
         $groupColor = $colors[$rand_keys];
         $notify = array();
         
+        if($groupUsers):
+            echo json_encode(array('result'=>'bad','msg'=>'Please select the at lease one group member!'));die;
+        endif;
+        
         $groupId = $this->User_model->group_add(array('groupAdminId'=>$groupAdminId,'groupTitle'=>$groupTitle,'productType'=>$productType,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor));
         if($groupId):
-            foreach($groupUsersArr as $guser):
-                $notify['senderId'] = $groupAdminId;
-                $notify['receiverId'] = $guser;
-                $notify['nType'] = "GROUP-ADD";
-                $notify['nTitle'] = $groupTitle;
-                $this->send_notification($notify);
-            endforeach;
+            if($groupUsersArr):
+                foreach($groupUsersArr as $guser):
+                    $notify['senderId'] = $groupAdminId;
+                    $notify['receiverId'] = $guser;
+                    $notify['nType'] = "GROUP-ADD";
+                    $notify['nTitle'] = $groupTitle;
+                    $this->send_notification($notify);
+                endforeach;
+            endif;
             echo json_encode(array('result'=>'good','gid'=>$groupId));die; 
         else:    
             echo json_encode(array('result'=>'bad','msg'=>'Some error happen. Please try again!'));die;
