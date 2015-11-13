@@ -31,7 +31,7 @@ $cart = $this->cart->contents();
                         <div class="container">
 
                             <ul id="myTab" class="nav nav-tabs col-md-2 col-sm-4"> 
-                                <li  class="active"><a href="#Confirm" data-toggle="tab" class="js-active-shipping"><span class="number">1 </span>Confirm Address</a></li>
+                                <li  class="active"><a href="#Confirm" data-toggle="tab" class="js-active-shipping js-shipping"  data-shipping="<?php if ($userShippingDataDetails->address): ?>true<?php endif; ?>"><span class="number">1 </span>Confirm Address</a></li>
                                 <li><a href="#Review" data-toggle="tab" data-shipping="<?php if ($userShippingDataDetails->address): ?>true<?php endif; ?>" class="js-shipping"><span class="number">2 </span>Review Order</a></li>
                                 <li><a href="#Payment" data-toggle="tab" data-shipping="<?php if ($userShippingDataDetails->address): ?>true<?php endif; ?>" class="js-shipping"><span class="number">3 </span>Make Payment</a></li>
                             </ul>
@@ -380,7 +380,7 @@ endif;?>
        jQuery('a[data-toggle="tab"]').on('hidden.bs.tab', function (e) {
             e.target // newly activated tab
             e.relatedTarget // previous active tab
-            if(!$(e.relatedTarget).data('shipping')){
+            if(!$(e.relatedTarget).attr('data-shipping')){
                 $('.nav-tabs a[href="#Confirm"]').trigger( "click" );
             }
       });

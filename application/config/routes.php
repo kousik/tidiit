@@ -61,9 +61,11 @@ $route['webadmin/index']="webadmin/index/login";
 //Order
 $route['shopping/add-group-order']="shopping/process_my_group_orders";
 $route['shopping/mod-group-order/(:any)']="shopping/process_my_group_orders_by_id/$1";
+$route['shopping/mod-pt-group-order/(:any)']="shopping/process_my_parent_group_orders_by_id/$1";
 $route['shopping/checkout/(:any)']="shopping/process_checkout/$1";
 $route['shopping/success']="shopping/oredr_process_success";
-
+$route['shopping/group-order-accept-process/(:any)']="shopping/process_group_parent_order/$1";
+$route['shopping/ord-message']="shopping/oredr_default_message";
 
 //Notification
 $route['my-notifications']="notification/get_my_notifications";

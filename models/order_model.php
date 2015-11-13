@@ -55,6 +55,19 @@ class Order_model extends CI_Model {
             return $query->result();
         }
         
+        public function is_parent_group_order_available($orderId, $userId){
+            $this->db->select('*');
+            $this->db->where('userId',$userId);
+            $this->db->where('parrentOrderID',$orderId);
+            $this->db->limit(1);
+            $query = $this->db->get($this->_table);
+            $result = $query->result();
+            if($result):
+                return $result[0];
+            endif;
+            return false;
+        }
+        
 	public function add_paypal_data($dataArray){
 		$this->db->insert($this->_paypal,$dataArray);
 		return $this->db->insert_id();

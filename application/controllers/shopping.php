@@ -286,6 +286,8 @@ class Shopping extends MY_Controller{
         $this->load->view('group_order/group_order',$data);
     }
     
+    
+    
     /**
      * 
      */
@@ -371,29 +373,57 @@ class Shopping extends MY_Controller{
             $order = $this->Order_model->get_single_order_by_id($orderId);
             
             $group = $this->User_model->get_group_by_id($order->groupId);
-            
-            foreach($group->users as $key => $usr):
-                $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
-                $data['receiverId'] = $usr->userId;
-                $data['nType'] = 'GROUP-ORDER';
-                $data['nTitle'] = 'New Group oreder running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
-                $data['nMessage'] = "Hi, <br> You have requested to buy group order product.<br>";
-                $data['nMessage'] .= "Product is <a href=''></a><br>";
-                $data['nMessage'] .= "Want to process the order ? <br>";
-                $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
-                $data['nMessage'] .= "Thanks <br> Tidiit Team.";
-                
-                $data['isRead'] = 0;
-                $data['status'] = 1;
-                $data['createDate'] = date('Y-m-d H:i:s');
-                
+            if($order->parrentOrderID == 0):
+                foreach($group->users as $key => $usr):
+                    $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                    $data['receiverId'] = $usr->userId;
+                    $data['nType'] = 'GROUP-ORDER';
+                    $data['nTitle'] = 'New Group oreder running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+                    $data['nMessage'] = "Hi, <br> You have requested to buy group order product.<br>";
+                    $data['nMessage'] .= "Product is <a href=''></a><br>";
+                    $data['nMessage'] .= "Want to process the order ? <br>";
+                    $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
+                    $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+
+                    $data['isRead'] = 0;
+                    $data['status'] = 1;
+                    $data['createDate'] = date('Y-m-d H:i:s');
+
+                    //Send Email message
+                    $recv_email = $usr->email;
+                    $sender_email = $group->admin->email;
+
+                    $this->User_model->notification_add($data);
+                endforeach;
+            else:
+                $me = $this->_get_current_user_details();
+                foreach($group->users as $key => $usr):
+                    if($me->userId != $usr->userId):
+                        $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                        $data['receiverId'] = $usr->userId;
+                        $data['nType'] = 'GROUP-ORDER';
+                        $data['nTitle'] = 'Group oreder running by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+                        $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this group order.<br>";
+                        $data['nMessage'] .= "";
+                        $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+
+                        $data['isRead'] = 0;
+                        $data['status'] = 1;
+                        $data['createDate'] = date('Y-m-d H:i:s');
+
+                        //Send Email message
+                        $recv_email = $usr->email;
+                        $sender_email = $me->email;
+
+                        $this->User_model->notification_add($data);
+                    endif;
+                endforeach;
+                $data['receiverId'] = $group->admin->userId;
                 //Send Email message
-                $recv_email = $usr->email;
-                $sender_email = $group->admin->email;
-                
+                $recv_email = $group->admin->email;
+                $sender_email = $me->email;
                 $this->User_model->notification_add($data);
-            endforeach;
-            
+            endif;
             
             $this->_remove_cart($cartId);
             $result['url'] = BASE_URL.'shopping/success/';
@@ -416,6 +446,17 @@ class Shopping extends MY_Controller{
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
         $this->load->view('group_order/group_order_success',$data);
     }
+    
+    /**
+     * 
+     */
+    function oredr_default_message(){
+        $SEODataArr=array();
+        $data=$this->_get_logedin_template($SEODataArr);
+        $data['userMenuActive']= '';
+        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $this->load->view('group_order/order_default_message',$data);
+    }
 
 
     /**
@@ -437,8 +478,12 @@ class Shopping extends MY_Controller{
             redirect(BASE_URL.'404_override');
         endif;
         if($order->orderType == "GROUP" && $order->productQty == 0):
-            redirect(BASE_URL.'shopping/mod-group-order/'.base64_encode($orderId*226201));
             $this->session->set_flashdata('error', 'Please set your quantity!');
+            if($order->parrentOrderID == 0):
+                redirect(BASE_URL.'shopping/mod-group-order/'.base64_encode($orderId*226201));
+            else:
+                redirect(BASE_URL.'shopping/mod-pt-group-order/'.base64_encode($orderId*226201));
+            endif;            
         elseif($order->orderType == "SINGLE" && $order->productQty == 0):
             $this->session->set_flashdata('error', 'Please set your quantity!');
         endif;
@@ -574,5 +619,190 @@ class Shopping extends MY_Controller{
             // Update cart data, after cancel.
             $this->cart->update($data);
         }
+    }
+    
+    
+    
+    function process_group_parent_order($orderId){
+        if(!$orderId):
+            redirect(BASE_URL.'404_override');
+        endif;
+        $orderId = base64_decode($orderId);
+        $orderId = $orderId/226201;
+        
+                
+        $SEODataArr=array();
+        $data=$this->_get_logedin_template($SEODataArr);
+        $user = $this->_get_current_user_details(); 
+        
+        $data['order'] = $this->Order_model->get_single_order_by_id($orderId);
+        
+        $productId = $data['order']->productId;
+        $prorductPriceId = $data['order']->productPriceId;
+        if((isset($productId) && !$productId) && (isset($prorductPriceId) && !$prorductPriceId)):
+            redirect(BASE_URL.'404_override');
+        endif;
+        $product = $this->Product_model->details($productId);
+        $product = $product[0];
+        $prod_price_info = $this->Product_model->get_products_price_details_by_id($prorductPriceId);
+        
+        
+        $a = $this->_get_available_order_quantity($orderId);
+        $availQty = $prod_price_info->qty - $a[0]->productQty;
+        
+        if($prod_price_info->qty == $availQty):
+            $this->session->set_flashdata('error', 'This Group order process already done. There is no available quantity for you. Please contact your group administrator!');
+            redirect(BASE_URL.'shopping/ord-message');
+        endif;
+        
+        //Order first step
+        $order_data = array();
+        $order_data['orderType'] = 'GROUP';
+        $order_data['productId'] = $productId;
+        $order_data['productPriceId'] = $prorductPriceId;
+        $order_data['orderDate'] = date('Y-m-d H:i:s');
+        $order_data['status'] = 0;
+        $order_data['parrentOrderID'] = $data['order']->orderId;
+        $order_data['groupId'] = $data['order']->groupId;
+        $order_data['productQty'] = 0;
+        $order_data['userId'] = $this->session->userdata('FE_SESSION_VAR');
+        
+        $exists_order = $this->Order_model->is_parent_group_order_available($data['order']->orderId, $this->session->userdata('FE_SESSION_VAR'));
+        
+        
+        if(!$exists_order):
+            $parentOrderId = $this->Order_model->add($order_data);        
+        elseif($exists_order && $exists_order->status == 0):
+            $this->Order_model->update($order_data,$exists_order->orderId);
+            $parentOrderId = $exists_order->orderId;
+        else:
+            $this->session->set_flashdata('error', 'This Group order process already done. Please try to process for new order!');
+            redirect(BASE_URL.'shopping/ord-message');
+        endif;
+        
+        
+        //Cart first step        
+        $is_cart_update = false;
+        $cart = $this->cart->contents();
+        if($cart): 
+            foreach ($cart as $item):            
+                if(($item['id'] == $productId)):
+                    $is_cart_update = $item['rowid'];                    
+                endif;
+            endforeach;
+        endif;
+        
+        $cart_data = array();
+        $cart_data['id'] = $productId;
+        $cart_data['name'] = $product->title;
+        $single_price = ($prod_price_info->price/$prod_price_info->qty);
+        $cart_data['price'] = number_format($single_price, 2, '.', '');        
+        $cart_data['qty'] = $prod_price_info->qty;        
+        $order_data['orderId'] = $parentOrderId;
+        $order_data['productPriceId'] = $prorductPriceId;
+        $cart_data['options'] = $order_data;
+        
+        if($is_cart_update):
+            $this->_remove_cart($is_cart_update); //echo $is_cart_update;
+            $this->_add_to_cart($cart_data);
+        else:
+            $this->_add_to_cart($cart_data);
+        endif;
+        
+        redirect(BASE_URL.'shopping/mod-pt-group-order/'.base64_encode($parentOrderId*226201));
+    }
+    
+    /**
+     * 
+     * @param type $orderId
+     */
+    function process_my_parent_group_orders_by_id($orderId){
+        if(!$orderId):
+            redirect(BASE_URL.'404_override');
+        endif;
+        $orderId = base64_decode($orderId);
+        $orderId = $orderId/226201;
+        
+        $SEODataArr=array();
+        $data=$this->_get_logedin_template($SEODataArr);
+        $user = $this->_get_current_user_details(); 
+        
+        $data['order'] = $this->Order_model->get_single_order_by_id($orderId);
+        
+        $productId = $data['order']->productId;
+        $prorductPriceId = $data['order']->productPriceId;
+        if((isset($productId) && !$productId) && (isset($prorductPriceId) && !$prorductPriceId)):
+            redirect(BASE_URL.'404_override');
+        endif;
+        $product = $this->Product_model->details($productId);
+        $product = $product[0];
+        $prod_price_info = $this->Product_model->get_products_price_details_by_id($prorductPriceId);
+        $is_cart_update = false;
+        $cart = $this->cart->contents();
+        if($cart): 
+            foreach ($cart as $item):            
+                if(($item['id'] == $productId)):
+                    $data['orderId'] = $item['options']['orderId'];
+                    $is_cart_update = $item['rowid'];                    
+                endif;
+            endforeach;
+        endif;
+        
+        //Order first step
+        $order_data = array();
+        $order_data['orderType'] = 'GROUP';
+        $order_data['productId'] = $productId;
+        $order_data['productPriceId'] = $prorductPriceId;
+        $order_data['orderDate'] = date('Y-m-d H:i:s');
+        $order_data['status'] = 0;
+        
+        //Cart first step
+        $cart_data = array();
+        $cart_data['id'] = $productId;
+        $cart_data['name'] = $product->title;
+        $single_price = ($prod_price_info->price/$prod_price_info->qty);
+        $cart_data['price'] = number_format($single_price, 2, '.', '');
+        $cart_data['qty'] = $prod_price_info->qty;
+        
+        if(!isset($data['orderId'])):
+            $order_data['productQty'] = 0;
+            $data['orderId']=$this->Order_model->add($order_data);
+        endif;
+        
+        //$data['orderId'] = 0;
+        $order_data['orderId'] = $data['orderId'];
+        $order_data['productPriceId'] = $prorductPriceId;
+        $cart_data['options'] = $order_data;
+        
+        //==============================================//
+        
+        $cart = $this->cart->contents();
+        $data['rowid'] = false; 
+        if($cart): 
+            foreach ($cart as $item):            
+                if(($data['orderId'] == $item['options']['orderId'])):
+                    $data['rowid'] = $item['rowid'];                    
+                endif;
+            endforeach;
+        endif;
+        $a = $this->_get_available_order_quantity($data['order']->parrentOrderID);
+        $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
+        
+        //=============================================//
+        if($data['order']->groupId):
+            $data['group'] = $this->User_model->get_group_by_id($data['order']->groupId);
+            $data['groupId'] = $data['order']->groupId;
+        else:
+            $data['group'] = false;
+            $data['groupId'] = 0;
+        endif;
+        
+        $data['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
+        $data['totalQty'] = $prod_price_info->qty;
+        $data['priceInfo'] = $prod_price_info;
+        $data['userMenuActive']=7;        
+        $data['user']=$user;
+        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $this->load->view('group_order/group_order_parent',$data);
     }
 }
