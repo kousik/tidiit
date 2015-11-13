@@ -380,7 +380,7 @@ class Shopping extends MY_Controller{
                 $data['nMessage'] = "Hi, <br> You have requested to buy group order product.<br>";
                 $data['nMessage'] .= "Product is <a href=''></a><br>";
                 $data['nMessage'] .= "Want to process the order ? <br>";
-                $data['nMessage'] .= "<a href='".BASE_URL."'shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-block'>Decline</a>  or <a href='".BASE_URL."'shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-block'>Accept</a><br>";
+                $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
                 $data['nMessage'] .= "Thanks <br> Tidiit Team.";
                 
                 $data['isRead'] = 0;

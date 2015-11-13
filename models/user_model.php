@@ -390,12 +390,42 @@ class User_model extends CI_Model {
         return $this->result;
     }
     
-    
+    /**
+     * 
+     * @param type $receiverId
+     * @return type
+     */
     public function notification_my_unread($receiverId){
         $this->db->order_by('createDate','desc');
         return $this->db->get_where($this->_notification,array('status'=>1, 'receiverId'=>$receiverId, 'isRead' => 0))->result();
     }
     
+    /**
+     * 
+     * @param type $id
+     * @return boolean
+     */
+    function notification_delete($id){
+        if($this->db->delete($this->_notification, array('id' => $id))){
+         return true;
+        } else {
+            return false;
+        }
+    }
+    
+    function notification_single($id){
+        $query = $this->db->get_where($this->_notification,array('id'=>$id));
+        $result = $query->result();
+	return $result?$result[0]:false;
+    }
+    
+    function notification_update($cond, $data) {
+        if($this->db->update($this->_notification, $data, $cond)){
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * 
