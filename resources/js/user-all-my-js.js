@@ -129,8 +129,6 @@ myJsMain.my_finance=function(){
         //$('#LoadingDiv').fadeOut();
         if(resultData.result=='bad'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
-            $('div.js-message').html('<div class="alert alert-danger" role="alert">'+resultData.msg+'</div>');
-            $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
         }else if(resultData.result=='good'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Finance data updated successfully.",200);
         }
@@ -149,7 +147,7 @@ myJsMain.my_create_groups=function(){
         submitHandler: function (form) {
             
             $('#grpButton').prop('disabled',true);            
-           // myJsMain.commonFunction.ajaxSubmit($(form),myJsMain.baseURL+'ajax/add_new_group', groupCreateCallback);
+            myJsMain.commonFunction.ajaxSubmit($(form),myJsMain.baseURL+'ajax/add_new_group', groupCreateCallback);
     //});
         }
     });
@@ -179,7 +177,9 @@ myJsMain.my_create_groups=function(){
     function groupCreateCallback(resultData){
         $('#grpButton').prop('disabled',false);
         if(resultData.result=='bad'){
-            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
+            //myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
+            $('div.js-message').html('<div class="alert alert-danger" role="alert">'+resultData.msg+'</div>');
+            $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
         } else if(resultData.result=='good') {
             $( "#myModalLogin .close" ).trigger( "click" );
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Group has been added successfully.",200);
@@ -191,7 +191,9 @@ myJsMain.my_create_groups=function(){
     function groupCreateForOrderCallback(resultData){
         $('#grpButton').prop('disabled',false);
         if(resultData.result=='bad'){
-            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
+           // myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
+            $('div.js-message').html('<div class="alert alert-danger" role="alert">'+resultData.msg+'</div>');
+            $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
         } else if(resultData.result=='good') {
             $('input[id="js-order-info"]').attr('data-groupid', resultData.gid);
             $('input[id="js-order-info"]').trigger( "click" );

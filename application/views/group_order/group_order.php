@@ -156,11 +156,12 @@ echo $html_heading; echo $header;?>
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Create New Group</h4>
-        <div class="js-message" style="display:none;"></div>
+        
       </div>
       <form action="#" method="post" name="add_groups_for_order" class="form-horizontal" id="add_groups_for_order"> 
           <input type="hidden" name="groupAdminId" value="<?=$user->userId?>">
-      <div class="modal-body">          
+      <div class="modal-body">      
+          <div class="js-message" style="display:none;"></div>
               <div class="form-group">
                   <label for="groupTitle" class="col-sm-3 control-label">Group Title</label>
                   <div class="col-sm-7">
