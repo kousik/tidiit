@@ -16,6 +16,7 @@ class Banner extends MY_Controller{
 	}
 	
 	public function add(){
+            die('rrrrrrrrrrrrr');
             if($_FILES['Banner']['name']!=""){
                 //$imagePath=$this->config->item('ResourcesPath').'banner/';
                 $file=$_FILES['Banner'];

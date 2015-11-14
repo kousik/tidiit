@@ -226,18 +226,10 @@
             <div class="brand_zne">
                 <div id="demo">
                     <div id="owl-demo3" class="owl-carousel">
-                        <div class="item"><a href="#"><img src="<?php echo SiteImagesURL;?>brand_img.jpg" /></a></div>
-                        <div class="item"><a href="#"><img src="<?php echo SiteImagesURL;?>brand_img1.jpg" /></a></div>
-                        <div class="item"><a href="#"><img src="<?php echo SiteImagesURL;?>brand_img2.jpg" /></a></div>
-                        <div class="item"><a href="#"><img src="<?php echo SiteImagesURL;?>brand_img3.jpg" /></a></div>
-                        <div class="item"><a href="#"><img src="<?php echo SiteImagesURL;?>brand_img4.jpg" /></a></div>
-                        <div class="item"><a href="#"><img src="<?php echo SiteImagesURL;?>brand_img5.jpg" /></a></div>
-                        <div class="item"><a href="#"><img src="<?php echo SiteImagesURL;?>brand_img.jpg" /></a></div>
-                        <div class="item"><a href="#"><img src="<?php echo SiteImagesURL;?>brand_img1.jpg" /></a></div>
-                        <div class="item"><a href="#"><img src="<?php echo SiteImagesURL;?>brand_img2.jpg" /></a></div>
-                        <div class="item"><a href="#"><img src="<?php echo SiteImagesURL;?>brand_img3.jpg" /></a></div>
-                        <div class="item"><a href="#"><img src="<?php echo SiteImagesURL;?>brand_img4.jpg" /></a></div>
-                        <div class="item"><a href="#"><img src="<?php echo SiteImagesURL;?>brand_img5.jpg" /></a></div>
+                        <?php foreach($brandZoneArr AS $k){
+                            if($k->brandImage==""){$src=SiteImagesURL.'no-image.png';}else{$src=SiteResourcesURL.'brand/original/'.$k->brandImage;}?>
+                        <div class="item"><a href="#"><img src="<?php echo $src;?>" alt="<?php echo $k->title;?>" title="<?php echo $k->title;?>" /></a></div>
+                        <?php }?>
                     </div>
                     <div class="customNavigation">
                         <a class="btn prev"><i class="fa fa-angle-left"></i></a>

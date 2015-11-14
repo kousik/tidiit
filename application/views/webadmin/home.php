@@ -78,9 +78,9 @@
             <tr height="20" bgcolor="#DFDFDF">
               <td style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/cms/viewlist/'?>">Manage Static Pages Content</a> </td>
             </tr>
-			<?php /*<tr height="20" bgcolor="#DFDFDF">
+            <tr height="20" bgcolor="#DFDFDF">
               <td style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/banner/viewlist/'?>">Banner Manager</a> </td>
-            </tr>*/?>
+            </tr>
             <tr height="20" bgcolor="#DFDFDF">
               <td style="padding-left:10px;">
                   <img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>

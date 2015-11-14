@@ -164,5 +164,14 @@ WHERE c.categoryId =".$categoryId;
     function get_page_template(){
         return $this->db->from($this->_table_template)->get()->result();
     }
+    
+    function has_chield($categroyId){
+        $rs=$this->get_subcategory_by_category_id($categroyId);
+        if(count($rs)>0){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
 }
 ?>

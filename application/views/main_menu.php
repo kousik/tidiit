@@ -7,16 +7,16 @@
             <?php 
             foreach($subCategoryArr As $kk =>$vv): //pre($v);die;?>
             <li>
-                <a href="#"><?php echo $vv->categoryName;?> &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
+                <a href="<?php echo BASE_URL.'category/details/'.$vv->categoryName.'/'.  base64_encode($vv->categoryId).'~'.md5('tidiit');?>"><?php echo $vv->categoryName;?> &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
                 <?php if(property_exists($vv, 'SubCategory')): $subSubCategory=$vv->SubCategory;?>
                 <ul class="sub_sub_ctgrs">
                     <?php foreach($subSubCategory AS $kkk => $vvv):?>
                     <li>
-                        <a href="#"><?php echo $vvv->categoryName;?>&nbsp;<i class="fa fa-angle-down mobl_vrsn"></i></a>
+                        <a href="<?php echo BASE_URL.'category/details/'.$vvv->categoryName.'/'.  base64_encode($vvv->categoryId).'~'.md5('tidiit');?>"><?php echo $vvv->categoryName;?>&nbsp;<i class="fa fa-angle-down mobl_vrsn"></i></a>
                         <?php if(property_exists($vvv, 'SubCategory')):?>
                         <ul class="sub_sub_ctgrs">
                             <?php foreach($vvv->SubCategory AS $j =>$l):?>
-                            <li><a href="#"><?php echo $l->categoryName;?></a></li>
+                            <li><a href="<?php echo BASE_URL.'category/details/'.$l->categoryName.'/'.  base64_encode($l->categoryId).'~'.md5('tidiit');?>"><?php echo $l->categoryName;?></a></li>
                             <?php endforeach;?>
                         </ul>
                         <?php endif;?>
