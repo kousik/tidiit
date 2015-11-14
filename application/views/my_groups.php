@@ -275,5 +275,11 @@
     jQuery(function () {
         $('.js-group-popover').popover({html:true,container: 'body'});
     });
+    jQuery('#productType').on('change',function(){
+        
+    });
+    jQuery('#myModalLogin').on('hidden.bs.modal', function () {
+        jQuery('#add_groups')[0].reset();
+    })
 </script>
 <?php echo $footer;?>

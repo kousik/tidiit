@@ -1,4 +1,4 @@
-<?php echo $html_heading; echo $header;?>
+<?php echo $html_heading; echo $header; //pre($userDataArr);?>
 <script src="<?php echo SiteJSURL;?>user-all-my-js.js" type="text/javascript"></script>
 </div>
 </header>
@@ -54,7 +54,7 @@
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label>Date of Birth</label>
-                                                        <input type="date" name="DOB" id="DOB" class="form-control" value="<?php echo ($userDataArr[0]->DOB!="") ? date('d-m-Y',strtotime($userDataArr[0]->DOB)) :"";?>" data-date-format="dd-mm-yyyy">
+                                                        <input type="date" name="DOB" id="DOB" class="form-control" value="<?php echo ($userDataArr[0]->DOB!="") ? date('m/d/Y',strtotime($userDataArr[0]->DOB)) :"";?>" data-date-format="dd-mm-yy">
                                                     </div>
                                                 </div>
                                             </div>

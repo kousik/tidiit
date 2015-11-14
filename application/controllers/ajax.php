@@ -744,15 +744,16 @@ class Ajax extends MY_Controller{
                 $lastName=$this->input->post('lastName',TRUE);
                 $contactNo=$this->input->post('contactNo',TRUE);
                 $email=$this->input->post('email',TRUE);
-                $DOB=$this->input->post('DOB',TRUE);
+                $rowDOB=$this->input->post('DOB',TRUE);
+                $dobArr=  explode('/', $rowDOB);
+                $DOB=$dobArr[2].'-'.$dobArr[0].'-'.$dobArr[1];
                 $mobile=$this->input->post('mobile',TRUE);
                 $fax=$this->input->post('fax',TRUE);
                 $aboutMe=$this->input->post('aboutMe',TRUE);
                 
-                //echo json_encode(array('result'=>'bad','msg'=>$DOB));die;
-                
-                $this->User_model->edit(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo,
-                    'email'=>$email,'DOB'=>$DOB,'mobile'=>$mobile,'fax'=>$fax,'aboutMe'=>$aboutMe),$userId);
+                $myProfileDataArr=array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo,
+                    'email'=>$email,'DOB'=>$DOB,'mobile'=>$mobile,'fax'=>$fax,'aboutMe'=>$aboutMe);
+                $this->User_model->edit($myProfileDataArr,$userId);
                 echo json_encode(array('result'=>'good'));die; 
             }
         }

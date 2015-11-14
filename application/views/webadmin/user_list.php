@@ -92,7 +92,7 @@ function RetirbePassword(id){
 	<a href="#" id="UnCheckAll" style="display: none;text-decoration: underline;">UnCheckAll</a>
     </td>
     <td width="15%">User Name</td>
-    <td width="15%">Eamil</td>
+    <td width="15%">Email</td>
     <td width="10%">First Name</td>
     <td width="10%">Last Name</td>
     <td width="10%">Contact No</td>
@@ -128,7 +128,7 @@ function RetirbePassword(id){
 	<a href="javascript:void(0);" onclick="ShowEditBox('<?php echo $InerArr->userId;?>');" class="AdminDashBoardLinkText"><img src="<?php echo $SiteImagesURL.'webadmin/';?>edit.png" width="15" height="15" title="Edit"/></a>
         <?php }?>
         &nbsp;&nbsp;
-	<a href="javascript:void(0);" onclick="RetirbePassword('<?php echo $InerArr->userId;?>');" class="AdminDashBoardLinkText"><img src="<?php echo $SiteImagesURL.'webadmin/';?>reset-pass.jpg" width="15" height="15" title="Retirbe Password"/></a>
+	<a href="javascript:void(0);" onclick="RetirbePassword('<?php echo $InerArr->userId;?>');" class="AdminDashBoardLinkText"><img src="<?php echo $SiteImagesURL.'webadmin/';?>reset-pass.jpg" width="15" height="15" title="Retrieve Password"/></a>
         <?php //}?>
         <?php if($InerArr->userName!='webadmin'){?>
             <?php if($InerArr->status=='1'){$action=0;}else{$action=1;}?>

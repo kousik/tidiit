@@ -224,7 +224,8 @@ class User_model extends CI_Model {
             $udata = array();
             foreach($data as $key => $usr):
                 $udatas = $this->get_details_by_id($usr->userId);
-                $udata[] = $udatas[0];
+                if(!empty($udatas))
+                    $udata[] = $udatas[0];
             endforeach;
             return $udata;
         else:    

@@ -162,7 +162,7 @@ class User extends My_Controller {
         $Action='active';
         $this->User_model->change_status($userIds ,$Action);
 
-        $this->session->set_flashdata('Message','User/s activated successfully.');
+        $this->session->set_flashdata('Message','User activated successfully.');
         redirect(base_url().'webadmin/user/viewlist');
     }
 
@@ -170,7 +170,7 @@ class User extends My_Controller {
         $Action='inactive';
         $this->User_model->change_status($userIds ,$Action);
 
-        $this->session->set_flashdata('Message','User/s inactivated successfully.');
+        $this->session->set_flashdata('Message','User inactivated successfully.');
         redirect(base_url().'webadmin/user/viewlist');
     }
 
@@ -180,7 +180,7 @@ class User extends My_Controller {
         /*foreach($ProductImages as $k){
                 $this->delete_product_file($k->Image);
         }*/
-        $this->session->set_flashdata('Message','Selected User/s deleted successfully.');
+        $this->session->set_flashdata('Message','Selected User deleted successfully.');
         redirect(base_url().'webadmin/user/viewlist');
     }
     
@@ -195,7 +195,7 @@ class User extends My_Controller {
         //echo $msg;die;
         $this->email->message($msg);
         $this->email->send();
-        $this->session->set_flashdata('Message','Passwrod send user registered email address successfully.');
+        $this->session->set_flashdata('Message','Password send user registered email address successfully.');
         redirect(base_url().'webadmin/user/viewlist');
     }
     

@@ -113,7 +113,7 @@
 <!-- Modal -->
 <div class="modal fade" id="myModalLogin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg opn_box" style='padding:10px; background:#fff; border-radius:10px;'>
-        <button aria-label="Close" data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span></button>
+        <button aria-label="Close" data-dismiss="modal" class="close" type="button" id="closemodal"><span aria-hidden="true">×</span></button>
 
         <div class="container">
             <div class="row">
@@ -138,7 +138,6 @@
                                     </div>
                                     <label id="loginPassword-error" class="error" for="loginPassword"></label>
                                 </div>
-                                <label id="loginPassword-error" class="error" for="loginPassword"></label>
                                 <input type="hidden" name="webIdLogin" id="webIdLogin" value="">
 
                                 <div class="clear"></div>
@@ -272,10 +271,6 @@
         });
 
 
-        jQuery('#closemodal').click(function () {
-            jQuery('#myModalLogin').modal('hide');
-        });
-
         jQuery('#demo2').skdslider({'delay': 3000, 'animationSpeed': 2000, 'showNextPrev': true, 'showPlayButton': true, 'autoSlide': true, 'animationType': 'sliding'});
 
         jQuery('#responsive').change(function () {
@@ -347,9 +342,11 @@
             $('#login_form').hide();
             $('#forgot_form').show();
         });
-        jQuery('#closemodal').click(function () {
-            jQuery('#myModalLogin').modal('hide');
-        });
+        
+        jQuery('#myModalLogin').on('hidden.bs.modal', function () {
+            $('#login_form').show();
+            $('#forgot_form').hide();
+        })
     });
 
     myJsMain.login();
