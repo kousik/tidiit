@@ -328,21 +328,27 @@ class Ajax extends MY_Controller{
         $groupTitle = $this->input->post('groupTitle',TRUE);
         $productType = $this->input->post('productType',TRUE);
         $groupUsersArr = $this->input->post('groupUsers',TRUE);
-        $groupUsers = implode(",", $groupUsersArr);
+        $groupUsers = $groupUsersArr?implode(",", $groupUsersArr):0;
         $colors = array('red','maroon','purple','green','blue');
         $rand_keys = array_rand($colors, 1);
         $groupColor = $colors[$rand_keys];
         $notify = array();
         
+        if(!$groupUsersArr):
+            echo json_encode(array('result'=>'bad','msg'=>'Please select the at least one group member!'));die;
+        endif;
+        
         $groupId = $this->User_model->group_add(array('groupAdminId'=>$groupAdminId,'groupTitle'=>$groupTitle,'productType'=>$productType,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor));
         if($groupId):
-            foreach($groupUsersArr as $guser):
-                $notify['senderId'] = $groupAdminId;
-                $notify['receiverId'] = $guser;
-                $notify['nType'] = "GROUP-ADD";
-                $notify['nTitle'] = $groupTitle;
-                $this->send_notification($notify);
-            endforeach;
+            if($groupUsersArr):
+                foreach($groupUsersArr as $guser):
+                    $notify['senderId'] = $groupAdminId;
+                    $notify['receiverId'] = $guser;
+                    $notify['nType'] = "GROUP-ADD";
+                    $notify['nTitle'] = $groupTitle;
+                    $this->send_notification($notify);
+                endforeach;
+            endif;
             echo json_encode(array('result'=>'good','gid'=>$groupId));die; 
         else:    
             echo json_encode(array('result'=>'bad','msg'=>'Some error happen. Please try again!'));die;
@@ -555,7 +561,7 @@ class Ajax extends MY_Controller{
             unset($data['isEmail']);
         endif;
         
-    $this->User_model->notification_add($data);
+        $this->User_model->notification_add($data);
     
     }
     
@@ -624,6 +630,60 @@ class Ajax extends MY_Controller{
                     $this->User_model->edit_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'address'=>$address,'stateId'=>$rs[0]->stateId),$userId);
                 }
                 echo json_encode(array('result'=>'good'));die; 
+            }
+            
+        }
+    }
+    
+    function submit_my_checkout_shipping_address(){
+        $config = array(
+            array('field'   => 'firstName','label'   => 'First Name','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'lastName','label'   => 'Last Name','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'phone','label'   => 'Phone','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'address','label'   => 'Address','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'countryId','label'   => 'Country','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'cityId','label'   => 'City','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'zipId','label'   => 'Zip','rules'   => 'trim|required|xss_clean'),
+           array('field'   => 'localityId','label'   => 'Locality','rules'   => 'trim|required|xss_clean')
+         );
+        //initialise the rules with validatiion helper
+        $this->form_validation->set_rules($config); 
+        //checking validation
+        if($this->form_validation->run() == FALSE){
+                //retun to login page with peroper error
+                echo json_encode(array('result'=>'bad','msg'=>validation_errors()));die;
+        }else{
+            $userId=$this->session->userdata('FE_SESSION_VAR');
+            if($userId==""){
+                echo json_encode(array('result'=>'bad','msg'=>'Please login before update changes.'));die;
+            }else{
+                $firstName=$this->input->post('firstName',TRUE);
+                $lastName=$this->input->post('lastName',TRUE);
+                $phone=$this->input->post('phone',TRUE);
+                $countryId=$this->input->post('countryId',TRUE);
+                $cityId=$this->input->post('cityId',TRUE);
+                $zipId=$this->input->post('zipId',TRUE);
+                $localityId=$this->input->post('localityId',TRUE);
+                $address = $this->input->post('address',TRUE);
+                $landmark = $this->input->post('landmark',TRUE);
+                
+                $this->load->model('Country');
+                $rs=$this->Country->city_details($cityId);
+                
+                $isAdded=$this->User_model->is_shipping_address_added();
+                if(empty($isAdded)){
+                    $this->User_model->add_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'userId'=>$userId,'address'=>$address,'stateId'=>$rs[0]->stateId, 'landmark' => $landmark));
+                }else{
+                    $this->User_model->edit_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'address'=>$address,'stateId'=>$rs[0]->stateId, 'landmark' => $landmark),$userId);
+                }
+                $html = '';
+                $html .= '<p>'.$firstName.' '.$lastName.'<br>';
+                $html .= nl2br($address).'<br>';
+                $html .= $phone.'<br>';
+                if( $landmark ){
+                    $html .= '<b>Landmark:</b>'.$landmark.'<br>';
+                }
+                echo json_encode(array('result'=>'good', 'html' => $html));die; 
             }
             
         }

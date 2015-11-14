@@ -12,6 +12,7 @@
           <?php }?>
           <li <?php if($userMenuActive==6){?>class="active"<?php }?>><a href="<?php echo BASE_URL.'my-finance-info';?>">Finance Info <span><i class="fa  fa-credit-card"></i></span></a></li>
           <li <?php if($userMenuActive==8){?>class="active"<?php }?>><a href="<?php echo BASE_URL.'my-profile';?>">Update Profile <span><i class="fa  fa-user"></i></span></a></li>
+          <li <?php if($userMenuActive==9){?>class="active"<?php }?>><a href="<?php echo BASE_URL.'my-notifications';?>">Notifications <span class="pull-right"><i class="fa  fa-bell"></i></span> <span class="label label-danger label-as-badge" style="border-radius: 1.25em;"><?=$tot_notfy?></span> </a></li>
         </ul>
     </div>
 </div>

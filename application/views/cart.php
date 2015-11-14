@@ -1,6 +1,6 @@
 <?php 
 $CI =& get_instance();
-$CI->load->model('Product_model')
+$CI->load->model('Product_model');
 ?>
 <div class="modal fade shoppingcart-popup" id="shoppingcart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg">
@@ -71,7 +71,7 @@ endforeach;
                         <td data-th="Quantity">
                             <?=$item['qty']?>
                         </td>
-                        <td data-th="Subtotal" class="text-center"><?=number_format($item['subtotal'])?>.00</td>
+                        <td data-th="Subtotal" class="text-center"><?=number_format($item['subtotal'])?></td>
                         <td class="actions" data-th="" align="right">
                             <button class="btn btn-danger btn-sm js-group-cart-remove" data-cartid="<?=$item['rowid']?>"><i class="fa fa-trash-o"></i></button>
                             <button class="btn btn-success btn-sm">Checkout <i class="fa fa-angle-right"></i></button>
@@ -128,10 +128,10 @@ endforeach;
                         <td data-th="Quantity">
                             <?=$item['qty']?>
                         </td>
-                        <td data-th="Subtotal" class="text-center"><?=number_format($item['subtotal'])?>.00</td>
+                        <td data-th="Subtotal" class="text-center"><?=number_format($item['subtotal'])?></td>
                         <td class="actions" data-th="" align="right">
                             <button class="btn btn-danger btn-sm js-group-cart-remove" data-cartid="<?=$item['rowid']?>" data-orderid="<?=$item['options']['orderId']?>"><i class="fa fa-trash-o"></i></button>
-                            <button class="btn btn-success btn-sm">Checkout <i class="fa fa-angle-right"></i></button>
+                            <a href="<?=BASE_URL;?>shopping/checkout/<?=base64_encode($item['options']['orderId']*226201)?>" class="btn btn-success btn-sm"> Checkout <i class="fa fa-angle-right"></i></a>
                         </td>
                     </tr>
                     <?php endif;

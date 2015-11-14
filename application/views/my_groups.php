@@ -69,7 +69,8 @@
       </div>
       <form action="#" method="post" name="add_groups" class="form-horizontal" id="add_groups"> 
           <input type="hidden" name="groupAdminId" value="<?=$user->userId?>">
-      <div class="modal-body">          
+      <div class="modal-body">  
+          <div class="js-message" style="display:none;"></div>
               <div class="form-group">
                   <label for="groupTitle" class="col-sm-3 control-label">Group Title</label>
                   <div class="col-sm-7">

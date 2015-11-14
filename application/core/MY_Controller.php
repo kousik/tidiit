@@ -110,6 +110,13 @@ class MY_Controller extends CI_Controller {
         $data['header']=$this->load->view('header1',$data,true);
         $data['footer']=$this->load->view('footer',$data,true);
         $data['main_menu']=$this->load->view('main_menu',$data,true);
+        $user = $this->_get_current_user_details();
+        $mynotification = $this->User_model->notification_my_unread($user->userId);
+        if(!empty($mynotification)):
+            $data['tot_notfy'] = count($mynotification);
+        else:
+            $data['tot_notfy'] = 0;
+        endif;
         return $data;
     }
 
@@ -431,5 +438,30 @@ class MY_Controller extends CI_Controller {
     function _get_current_user_details(){        
         $user = $this->session->userdata('FE_SESSION_UDATA');
         return $user;
+    }
+    
+    function global_pagination($page,$config) {
+	$this->load->library('pagination');
+	$config['base_url'] = base_url().$page;
+        
+        $config['full_tag_open'] = "<ul class='pagination'>";
+        $config['full_tag_close'] ="</ul>";
+        $config['num_tag_open'] = '<li>';
+        $config['num_tag_close'] = '</li>';
+        $config['cur_tag_open'] = "<li class='disabled'><li class='active'><a href='#'>";
+        $config['cur_tag_close'] = "<span class='sr-only'></span></a></li>";
+        $config['next_tag_open'] = "<li>";
+        $config['next_tagl_close'] = "</li>";
+        $config['prev_tag_open'] = "<li>";
+        $config['prev_tagl_close'] = "</li>";
+        $config['first_tag_open'] = "<li>";
+        $config['first_tagl_close'] = "</li>";
+        $config['last_tag_open'] = "<li>";
+        $config['last_tagl_close'] = "</li>";
+
+        
+        $this->pagination->initialize($config);
+	return $this->pagination->create_links();
+
     }
 }
