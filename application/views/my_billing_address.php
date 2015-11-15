@@ -118,7 +118,7 @@
                                                 <label id="productTypeId[]-error" class="error" for="productTypeId[]" style="display: none;"></label>
                                                 <?php foreach($topCategoryDataArr AS $k):?>
                                                 <div class="col-md-12">
-                                                    <a class="showInerCategoryData" href="javascript://" data-catdivid="<?php echo $k->categoryId;?>"><?php echo $k->categoryName;?></a>
+                                                    <a class="showInerCategoryData" href="javascript://" data-catdivid="<?php echo $k->categoryId;?>" data-isRoot="yes"><?php echo $k->categoryName;?></a>
                                                 </div>
                                                 <div class="col-md-12" style="height: 10px;"></div>
                                                 <?php endforeach;?>
@@ -209,7 +209,11 @@
             var oldHtmlContent=$(this).html();
             //return false;
             var catId = $(this).data('catdivid');
+            var isRoot = $(this).data('isroot');
             var jqout = $(this);
+            if($(this).parent().children().length>1 && isRoot=='yes'){
+                return false;
+            }
             if($(this).parent().children().length>2){
                 return false;
             }
