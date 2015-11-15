@@ -68,6 +68,68 @@ class Order_model extends CI_Model {
             return false;
         }
         
+        public function get_my_all_orders_with_parent($offset = null, $limit = null, $cond){
+            //$this->db->select('a.*, count(c.parrentOrderId) as pid, pd.*, bd.title AS brandTitle, pi.image');
+            $this->db->select('a.*, pd.title, bd.title AS brandTitle, pi.image');
+            $this->db->from($this->_table.' as a');
+            //$this->db->join($this->_table.' as c', 'c.parrentOrderId = a.orderId', 'LEFT OUTER');
+            
+            $this->db->join('product as pd', 'pd.productId = a.productId', 'LEFT');
+            $this->db->join('product_brand as pb', 'pd.productId = pb.productId', 'LEFT');
+            $this->db->join('brand as bd', 'pb.brandId = bd.brandId', 'LEFT');
+            $this->db->join('product_image as pi', 'pd.productId = pi.productId', 'LEFT');
+            
+            
+            foreach($cond as $key=>$val){
+                    $this->db->where($key,$val);
+            }
+            
+            $this->db->where('a.status !=',0);
+            //$this->db->where('c.status !=',0);
+            if($limit != null){
+                $this->db->limit($limit, $offset);
+            }    
+            
+            $this->db->group_by('a.orderId');
+            $this->db->order_by('a.orderId','DESC');
+            $query = $this->db->get();
+            $this->result = $query->result();
+            //echo $str = $this->db->last_query();
+            return $this->result;
+            
+        }
+        
+               
+        public function get_parent_order($orderId){
+            $this->db->select('*');
+            $this->db->where('parrentOrderID',$orderId);
+            $this->db->where('status !=',0);
+            $query = $this->db->get($this->_table);
+            $result = $query->result();
+            if($result):
+                return $result;
+            else:
+                return false;
+            endif;
+        }
+        
+        
+        public function order_group_status_update($orderId, $status, $parrentOrderID){          
+            if($parrentOrderID):
+                $this->db->where('orderId',$parrentOrderID);
+                $this->db->update($this->_table,array('status' => $status));
+                
+                $this->db->where('parrentOrderID',$parrentOrderID);
+                $this->db->update($this->_table,array('status' => $status));
+            else:
+                $this->db->where('orderId',$orderId);
+                $this->db->update($this->_table,array('status' => $status));
+                
+                $this->db->where('parrentOrderID',$orderId);
+                $this->db->update($this->_table,array('status' => $status));
+            endif;            
+        }
+        
 	public function add_paypal_data($dataArray){
 		$this->db->insert($this->_paypal,$dataArray);
 		return $this->db->insert_id();

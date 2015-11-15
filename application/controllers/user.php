@@ -98,12 +98,27 @@ class User extends MY_Controller{
         $this->load->view('my_billing_address',$data);
     }
     
-    function my_orders(){
+    function my_orders($rid = 0){
         $this->load->model('Country');
+        $this->load->model('Order_model');
         
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
-        $data['countryDataArr']=$this->Country->get_all1();
+        $user = $this->_get_current_user_details();
+        
+        $config = array();
+        $cond = array('a.userId'=>$user->userId);
+        $config['per_page'] = '5';
+        $config['uri_segment'] = '2';
+        $orders = $this->Order_model->get_my_all_orders_with_parent($rid,(int)$config['per_page'],$cond);
+        $data['orders'] = $orders;
+        $total_rows = $this->Order_model->get_my_all_orders_with_parent($rid,null,$cond);
+        $config['total_rows'] = (!empty($total_rows)?count($total_rows):0); 
+        $data['pagignation'] = $this->global_pagination('my-orders',$config);
+        $data['rid'] = $rid;
+        $data['per_page'] = '5';
+        
+        
         
         $data['userMenuActive']=4;
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);

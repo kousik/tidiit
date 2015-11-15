@@ -46,6 +46,7 @@ $route['my-billing-address']="user/my_billing_address";
 $route['my-shipping-address']="user/my_shipping_address";
 $route['myaccount']="user/my_account";
 $route['my-orders']="user/my_orders";
+$route['my-orders/(:num)']="user/my_orders/$1";
 $route['my-groups']="user/my_groups";
 $route['my-groups-orders']="user/my_group_orders";
 $route['edit_groups/(:any)']="user/edit_groups/$1";
