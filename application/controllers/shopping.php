@@ -24,13 +24,13 @@ class Shopping extends MY_Controller{
         $data=$this->_get_logedin_template($SEODataArr);
         $user = $this->_get_current_user_details(); 
         $productId = $this->input->post('productId');
-        $prorductPriceId = $this->input->post('prorductPriceId');
-        if((isset($productId) && !$productId) && (isset($prorductPriceId) && !$prorductPriceId)):
+        $productPriceId = $this->input->post('productPriceId');
+        if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
             redirect(BASE_URL.'404_override');
         endif;
         $product = $this->Product_model->details($productId);
         $product = $product[0];
-        $prod_price_info = $this->Product_model->get_products_price_details_by_id($prorductPriceId);
+        $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
         $is_cart_update = false;
         $cart = $this->cart->contents();
         
@@ -49,7 +49,7 @@ class Shopping extends MY_Controller{
         $order_data = array();
         $order_data['orderType'] = 'GROUP';
         $order_data['productId'] = $productId;
-        $order_data['productPriceId'] = $prorductPriceId;
+        $order_data['productPriceId'] = $productPriceId;
         $order_data['orderDate'] = date('Y-m-d H:i:s');
         $order_data['status'] = 0;
         
@@ -70,7 +70,7 @@ class Shopping extends MY_Controller{
         
         //$data['orderId'] = 0;
         $order_data['orderId'] = $data['orderId'];
-        $order_data['productPriceId'] = $prorductPriceId;
+        $order_data['productPriceId'] = $productPriceId;
         $cart_data['options'] = $order_data;
         
         
@@ -176,13 +176,13 @@ class Shopping extends MY_Controller{
         $data['order'] = $this->Order_model->get_single_order_by_id($orderId);
         
         $productId = $data['order']->productId;
-        $prorductPriceId = $data['order']->productPriceId;
-        if((isset($productId) && !$productId) && (isset($prorductPriceId) && !$prorductPriceId)):
+        $productPriceId = $data['order']->productPriceId;
+        if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
             redirect(BASE_URL.'404_override');
         endif;
         $product = $this->Product_model->details($productId);
         $product = $product[0];
-        $prod_price_info = $this->Product_model->get_products_price_details_by_id($prorductPriceId);
+        $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
         $is_cart_update = false;
         $cart = $this->cart->contents();
         
@@ -201,7 +201,7 @@ class Shopping extends MY_Controller{
         $order_data = array();
         $order_data['orderType'] = 'GROUP';
         $order_data['productId'] = $productId;
-        $order_data['productPriceId'] = $prorductPriceId;
+        $order_data['productPriceId'] = $productPriceId;
         $order_data['orderDate'] = date('Y-m-d H:i:s');
         $order_data['status'] = 0;
         
@@ -220,7 +220,7 @@ class Shopping extends MY_Controller{
         
         //$data['orderId'] = 0;
         $order_data['orderId'] = $data['orderId'];
-        $order_data['productPriceId'] = $prorductPriceId;
+        $order_data['productPriceId'] = $productPriceId;
         $cart_data['options'] = $order_data;
         
         //==============================================//
@@ -365,13 +365,40 @@ class Shopping extends MY_Controller{
         $orderId = $this->input->post('orderId',TRUE);
         $cartId = $this->input->post('cartId',TRUE);
         
-        $order_update['status'] = 1;        
+        $pevorder = $this->Order_model->get_single_order_by_id($orderId);
+        $a = $this->_get_available_order_quantity($orderId);
+        
+        $prod_price_info = $this->Product_model->get_products_price_details_by_id($pevorder->productPriceId);
+        
+        if($prod_price_info->qty == $a[0]->productQty):
+            $order_update['status'] = 2;   
+        else:
+            $order_update['status'] = 1;   
+        endif;
+        
         $update = $this->Order_model->update($order_update,$orderId);
         if($update):
+            $this->Order_model->order_group_status_update($orderId, $order_update['status'],$pevorder->parrentOrderID);
             
             //Notification
             $order = $this->Order_model->get_single_order_by_id($orderId);
             
+            $orderinfo = array();
+            $pro = $this->Product_model->details($order->productId);
+            $orderinfo['pdetail'] = $pro[0];
+            $orderinfo['priceinfo'] = $this->Product_model->get_products_price_details_by_id($order->productPriceId);
+            $productImageArr =$this->Product_model->get_products_images($order->productId);
+            $orderinfo['pimage'] = $productImageArr[0];            
+            
+            $userShippingDataDetails = $this->User_model->get_user_shipping_information();
+            $orderinfo['shipping'] = $userShippingDataDetails[0];
+            $userBillingDataDetails=$this->User_model->get_billing_address();
+            $orderinfo['billing'] = $userBillingDataDetails[0];
+            
+            $info['orderInfo'] = base64_encode(serialize($orderinfo));
+            $this->Order_model->update($info, $orderId);
+            
+        
             $group = $this->User_model->get_group_by_id($order->groupId);
             if($order->parrentOrderID == 0):
                 foreach($group->users as $key => $usr):
@@ -402,7 +429,7 @@ class Shopping extends MY_Controller{
                         $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                         $data['receiverId'] = $usr->userId;
                         $data['nType'] = 'GROUP-ORDER';
-                        $data['nTitle'] = 'Group oreder running by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+                        $data['nTitle'] = 'Group oreder continue by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
                         $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this group order.<br>";
                         $data['nMessage'] .= "";
                         $data['nMessage'] .= "Thanks <br> Tidiit Team.";
@@ -536,7 +563,12 @@ class Shopping extends MY_Controller{
     }
     
     function _get_available_order_quantity($orderId){
-        $availQty = $this->Order_model->get_available_order_quantity($orderId);
+        $pevorder = $this->Order_model->get_single_order_by_id($orderId);
+        if($pevorder->parrentOrderID):
+            $availQty = $this->Order_model->get_available_order_quantity($pevorder->parrentOrderID);
+        else:
+            $availQty = $this->Order_model->get_available_order_quantity($orderId);
+        endif;
         return $availQty;
     }
     
@@ -638,13 +670,13 @@ class Shopping extends MY_Controller{
         $data['order'] = $this->Order_model->get_single_order_by_id($orderId);
         
         $productId = $data['order']->productId;
-        $prorductPriceId = $data['order']->productPriceId;
-        if((isset($productId) && !$productId) && (isset($prorductPriceId) && !$prorductPriceId)):
+        $productPriceId = $data['order']->productPriceId;
+        if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
             redirect(BASE_URL.'404_override');
         endif;
         $product = $this->Product_model->details($productId);
         $product = $product[0];
-        $prod_price_info = $this->Product_model->get_products_price_details_by_id($prorductPriceId);
+        $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
         
         
         $a = $this->_get_available_order_quantity($orderId);
@@ -659,7 +691,7 @@ class Shopping extends MY_Controller{
         $order_data = array();
         $order_data['orderType'] = 'GROUP';
         $order_data['productId'] = $productId;
-        $order_data['productPriceId'] = $prorductPriceId;
+        $order_data['productPriceId'] = $productPriceId;
         $order_data['orderDate'] = date('Y-m-d H:i:s');
         $order_data['status'] = 0;
         $order_data['parrentOrderID'] = $data['order']->orderId;
@@ -699,7 +731,7 @@ class Shopping extends MY_Controller{
         $cart_data['price'] = number_format($single_price, 2, '.', '');        
         $cart_data['qty'] = $prod_price_info->qty;        
         $order_data['orderId'] = $parentOrderId;
-        $order_data['productPriceId'] = $prorductPriceId;
+        $order_data['productPriceId'] = $productPriceId;
         $cart_data['options'] = $order_data;
         
         if($is_cart_update):
@@ -730,13 +762,13 @@ class Shopping extends MY_Controller{
         $data['order'] = $this->Order_model->get_single_order_by_id($orderId);
         
         $productId = $data['order']->productId;
-        $prorductPriceId = $data['order']->productPriceId;
-        if((isset($productId) && !$productId) && (isset($prorductPriceId) && !$prorductPriceId)):
+        $productPriceId = $data['order']->productPriceId;
+        if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
             redirect(BASE_URL.'404_override');
         endif;
         $product = $this->Product_model->details($productId);
         $product = $product[0];
-        $prod_price_info = $this->Product_model->get_products_price_details_by_id($prorductPriceId);
+        $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
         $is_cart_update = false;
         $cart = $this->cart->contents();
         if($cart): 
@@ -752,7 +784,7 @@ class Shopping extends MY_Controller{
         $order_data = array();
         $order_data['orderType'] = 'GROUP';
         $order_data['productId'] = $productId;
-        $order_data['productPriceId'] = $prorductPriceId;
+        $order_data['productPriceId'] = $productPriceId;
         $order_data['orderDate'] = date('Y-m-d H:i:s');
         $order_data['status'] = 0;
         
@@ -771,7 +803,7 @@ class Shopping extends MY_Controller{
         
         //$data['orderId'] = 0;
         $order_data['orderId'] = $data['orderId'];
-        $order_data['productPriceId'] = $prorductPriceId;
+        $order_data['productPriceId'] = $productPriceId;
         $cart_data['options'] = $order_data;
         
         //==============================================//
