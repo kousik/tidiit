@@ -5,6 +5,7 @@ class User extends MY_Controller{
         parent::__construct();
         $this->_isLoggedIn();
         $this->load->model('User_model');
+        $this->load->model('Order_model');
         $this->db->cache_off();
     }
     
@@ -169,6 +170,9 @@ class User extends MY_Controller{
     
     
     function edit_groups($groupId){
+        if(!$groupId):
+            redirect(BASE_URL.'404_override');
+        endif;
         $groupId = base64_decode($groupId)/987654321;
         $this->load->model('Category_model');
         $this->load->model('Country');
@@ -178,8 +182,42 @@ class User extends MY_Controller{
         $data['CatArr']=$this->Category_model->get_all(0);
         $user = $this->_get_current_user_details();
         $group = $this->User_model->get_group_by_id($groupId);
+        if(!$group):
+            redirect(BASE_URL.'404_override');
+        endif;
+        
+        $data['group']=$group;
+        $data['orderId']=0;
+        $data['reorder'] = 1;
+        $data['user']=$user;
+        $data['userMenuActive']=5;
+        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $this->load->view('my_group_edit',$data);
+    }
+    
+    function edit_groups_re_order($groupId, $orderId){
+        if(!$groupId):
+            redirect(BASE_URL.'404_override');
+        endif;
+        $groupId = base64_decode($groupId)/987654321;
+        $this->load->model('Category_model');
+        $this->load->model('Country');
+        $SEODataArr=array();
+        $data=$this->_get_logedin_template($SEODataArr);
+        $data['countryDataArr']=$this->Country->get_all1();
+        $data['CatArr']=$this->Category_model->get_all(0);
+        $user = $this->_get_current_user_details();
+        $group = $this->User_model->get_group_by_id($groupId);
+        $orderId = base64_decode($orderId);
+        $order = $this->Order_model->get_single_order_by_id($orderId);
+        if(!$group || !$order):
+            redirect(BASE_URL.'404_override');
+        endif;
+        
+        $data['orderId']=$orderId;
         $data['group']=$group;
         $data['user']=$user;
+        $data['reorder'] = 1;
         $data['userMenuActive']=5;
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
         $this->load->view('my_group_edit',$data);

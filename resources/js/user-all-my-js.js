@@ -183,7 +183,7 @@ myJsMain.my_create_groups=function(){
         } else if(resultData.result=='good') {
             $( "#myModalLogin .close" ).trigger( "click" );
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Group has been added successfully.",200);
-            window.setTimeout(function(){location.reload()},3000);
+            window.setTimeout(function(){location.reload();},3000);
         }
     }
     
@@ -207,9 +207,13 @@ myJsMain.my_create_groups=function(){
     function groupUpdateCallback(resultData){
         $('#grpButton').prop('disabled',false);
         if(resultData.result == 'bad'){
-            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
+            //myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
+            $('div.js-message').html('<div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle"></i> '+resultData.msg+'</div>');
+            $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
         } else if(resultData.result == 'good') {
-            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Group has been updated successfully.",200);
+            //myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Group has been updated successfully.",200);
+            $('div.js-message').html('<div class="alert alert-success" role="alert"><i class="fa fa-check"></i> Group has been updated successfully.</div>');
+            $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
         }
     };
 };

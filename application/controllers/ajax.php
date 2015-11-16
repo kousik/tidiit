@@ -327,7 +327,7 @@ class Ajax extends MY_Controller{
         $groupAdminId = $this->input->post('groupAdminId',TRUE);
         $groupTitle = $this->input->post('groupTitle',TRUE);
         $productType = $this->input->post('productType',TRUE);
-        $groupUsersArr = $this->input->post('groupUsers',TRUE);
+        $groupUsersArr = $this->input->post('groupUsers',TRUE);        
         $groupUsers = $groupUsersArr?implode(",", $groupUsersArr):0;
         $colors = array('red','maroon','purple','green','blue');
         $rand_keys = array_rand($colors, 1);
@@ -358,13 +358,18 @@ class Ajax extends MY_Controller{
     function update_group(){
         $groupId = $this->input->post('groupId',TRUE);
         $groupTitle = $this->input->post('groupTitle',TRUE);
-        $productType = $this->input->post('productType',TRUE);
+        //$productType = $this->input->post('productType',TRUE);
         $groupUsersArr = $this->input->post('groupUsers',TRUE);
-        $groupUsers = implode(",", $groupUsersArr);
+        
         $colors = array('red','maroon','purple','green','blue');
         $rand_keys = array_rand($colors, 1);
         $groupColor = $colors[$rand_keys];
         
+        if(!$groupUsersArr):
+            echo json_encode(array('result'=>'bad','msg'=>'Please select the at least one group member!'));die;
+        endif;
+        
+        $groupUsers = implode(",", $groupUsersArr);
         $bfrUpdateGroup = $this->User_model->get_group_by_id($groupId);
         $bfrUsers = explode(",", $bfrUpdateGroup->groupUsers);
         $olduser = array();
@@ -383,8 +388,8 @@ class Ajax extends MY_Controller{
             endif;
         endforeach;        
         
-        $groupId = $this->User_model->group_update(array('groupTitle'=>$groupTitle,'productType'=>$productType,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor), $groupId);
-        if($groupId):
+        $groupIdUpdate = $this->User_model->group_update(array('groupTitle'=>$groupTitle,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor), $groupId);
+        if($groupIdUpdate):
             foreach($olduser as $ouser):
                 $notify['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                 $notify['receiverId'] = $ouser;
@@ -408,6 +413,39 @@ class Ajax extends MY_Controller{
                 $notify['nTitle'] = $groupTitle;
                 $this->send_notification($notify);
             endforeach;
+            $reorder = $this->input->post('reorder',TRUE);
+            
+            if($reorder):
+                $this->load->model('Order_model');
+                $this->load->model('Product_model');
+                $orderId = $this->input->post('orderId',TRUE);
+                $order = $this->Order_model->get_single_order_by_id($orderId);
+                $pro = $this->Product_model->details($order->productId);
+                $orderinfo['pdetail'] = $pro[0];
+                $group = $this->User_model->get_group_by_id($groupId);
+                foreach($group->users as $key => $usr):
+                    $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                    $data['receiverId'] = $usr->userId;
+                    $data['nType'] = 'GROUP-ORDER';
+                    $data['nTitle'] = 'Group Re-order [TIDIIT-OD'.$order->orderId.'] running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+                    $data['nMessage'] = "Hi, <br> You have requested to buy group order product.<br>";
+                    $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
+                    $data['nMessage'] .= "Want to process the order ? <br>";
+                    $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-re-order-accept-process/".base64_encode($orderId*226201)."/".base64_encode(100)."' class='btn btn-success btn-lg'>Accept</a><br>";
+                    $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+
+                    $data['isRead'] = 0;
+                    $data['status'] = 1;
+                    $data['createDate'] = date('Y-m-d H:i:s');
+
+                    //Send Email message
+                    $recv_email = $usr->email;
+                    $sender_email = $group->admin->email;
+
+                    $this->User_model->notification_add($data);
+                endforeach;
+            endif;
+            
             echo json_encode(array('result'=>'good'));die; 
         else:    
             echo json_encode(array('result'=>'bad','msg'=>'Some error happen. Please try again!'));die;

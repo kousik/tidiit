@@ -67,6 +67,12 @@ $route['shopping/checkout/(:any)']="shopping/process_checkout/$1";
 $route['shopping/success']="shopping/oredr_process_success";
 $route['shopping/group-order-accept-process/(:any)']="shopping/process_group_parent_order/$1";
 $route['shopping/ord-message']="shopping/oredr_default_message";
+$route['shopping/group-order-decline/(:any)']="shopping/order_group_decline_process/$1";
+
+$route['shopping/group-re-order-process/(:any)']="shopping/order_group_re_order_process/$1";
+
+$route['shopping/group-re-order-accept-process/(:any)/(:any)']="shopping/process_group_parent_re_order/$1/$2";
+$route['edit_groups_re_order/(:any)/(:any)']="user/edit_groups_re_order/$1/$2";
 
 //Notification
 $route['my-notifications']="notification/get_my_notifications";
