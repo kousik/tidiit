@@ -188,7 +188,7 @@ jQuery(document).ready(function(){
               </ul>
             </div>
          <hr class="divider-horizontal">
-             <?php foreach ($productPriceArr As $k){ //pre($k);die;?>
+             <?php foreach ($productPriceArr As $k){?>
             <div class="row pdp-e-i-MRP  ">            	
                 <div class="col-xs-3  pdp-e-i-MRP-l"><input type="radio" name="selectPackege" value="<?php echo $k->productPriceId;?>" > Packege of <?php echo $k->qty;?> </div>
                 <!--<div class="col-xs-3  pdp-e-i-MRP-r reset-padding"><span class="rsDiv">Rs</span>&nbsp;<s><span>12,290</span></s> [<span class="pdp-e-i-MRP-r-dis">27</span>% OFF]</div> -->

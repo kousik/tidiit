@@ -315,5 +315,8 @@ echo $html_heading; echo $header;?>
             }, 'json' );
         });
     });
+    function isInteger(n) {
+        return (typeof n == 'number' && /^[0-9]+$/.test());
+    }
 </script>
 <?php echo $footer;?>
