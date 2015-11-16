@@ -792,4 +792,32 @@ class Ajax extends MY_Controller{
             }
         }
     }
+    
+    function show_locality_all_users_with_product_type(){
+        $localityId=$this->input->post('localityId',TRUE);
+        $productType=$this->input->post('productType',TRUE);
+        if($localityId=="" || $productType==""){
+            echo '';die;
+        }else{
+            $this->load->model('User_model');
+            $UsersDataArr=$this->User_model->get_all_users_by_locality($localityId);
+            if(empty($UsersDataArr)){
+                echo '';die;
+            }else{
+                echo '';die;
+                $html ='<label class="col-sm-3 control-label">Select Group Users :</label>';
+                $html .='<div class="boxes">';
+                foreach($UsersDataArr as $user):
+                $html.='<div class="checkbox-'.$user->userId.'"><div class="checkbox">
+                           <label>
+                               <input type="checkbox" class="tags-group" name="" value="'.$user->userId.'" data-name="'.$user->firstName.' '.$user->lastName.' ('.$user->email.')"> '.$user->firstName.' '.$user->lastName.' ('.$user->email.')
+                           </label>
+                      </div></div>';
+                $html .='';
+                endforeach;
+                $html .='</div>';
+                echo $html;die;
+            }
+        }
+    }
 }

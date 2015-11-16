@@ -240,7 +240,6 @@
            }
         });
         
-        
        jQuery("body").delegate('.tags-group', "click", function(e){
 		e.preventDefault();
                 var gname = jQuery(this).data('name');
@@ -263,7 +262,6 @@
                 
         }); 
         
-        
         jQuery("body").delegate('.checkbox-close', "click", function(e){
 		e.preventDefault();
                 var gid = jQuery(this).data('id');
@@ -276,7 +274,18 @@
         $('.js-group-popover').popover({html:true,container: 'body'});
     });
     jQuery('#productType').on('change',function(){
-        
+        var ajaxData='localityId='+jQuery(this).val()+'&productType='+jQuery('#localityId').val();
+        console.log(ajaxData);
+        jQuery.ajax({
+            type:"POST",
+            url:'<?php echo BASE_URL.'ajax/show_locality_all_users_with_product_type/'?>',
+            data:ajaxData,
+            success:function(msg){
+                if(msg!=""){
+                    jQuery('.js-show-group-locality-users').html(msg);
+                }
+            }
+        });
     });
     jQuery('#myModalLogin').on('hidden.bs.modal', function () {
         jQuery('#add_groups')[0].reset();
