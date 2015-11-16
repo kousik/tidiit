@@ -3,127 +3,116 @@
 </div>
 </header>
 <article>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12 col-sm-12 productInner">
-        <div class="page_content">
-            <div class="row">
-                <?php echo $userMenu;?>
-                <div class="col-md-9 wht_bg">
-                    <!-- Tab panes -->
-                    <div class="tab_dashbord">
-                    	<div class="active row">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 productInner">
+                <div class="page_content">
+                    <div class="row">
+                        <?php echo $userMenu; ?>
+                        <div class="col-md-9 wht_bg">
                             <div class="col-md-12 col-sm-12">
-                                    
                                 <form action="#" method="post" name="update_groups" class="form-inline" id="update_groups">
-                 <div class="row">
-                     <div class="col-md-12 col-sm-12">
-                         <div class="gen_infmtn">
-                            	<h6>Edit Group: <?=$group->groupTitle?> </h6>
-                                </div>
-                         <div class="create_grp">
-                             <div id="login_form">
-                                 <form class="contact_form" action="#" method="post" name="contact_form"  novalidate="novalidate">
-                                     <input type="hidden" name="groupId" value="<?=$group->groupId?>">
-                                     <div class="row">
-                                         <div class="col-md-12">
-                                            <label for="groupTitle">Group Title</label>
-                                            <input type="text" class="form-control" id="groupTitle" name="groupTitle" placeholder="Jane Doe" value='<?=$group->groupTitle?>' required>
-                                          </div>
-                                         <div class="col-md-4">
-                                             <label for="locality" class="col-md-6 pad_none">Select Country :</label>
-                                             <div class="col-md-6 pad_none">
-                                                 <select name="countryId" class="form-control nova heght_cntrl" id="countryId">
-                                                     <option value="">Select</option>
-                                                     <?php foreach ($countryDataArr AS $k): ?>
-                                                         <option value="<?= $k->countryId ?>"><?= $k->countryName ?></option>
-                                                     <?php endforeach; ?>
-                                                 </select>
-                                             </div>
-                                         </div>
-                                         <div class="col-md-4">
-                                             <label for="locality" class="col-md-6 pad_none">Select City :</label>
-                                             <div class="col-md-6 pad_none cityElementPara">
-                                                 <select name="cityId" class="form-control nova heght_cntrl" id="cityId">
-                                                     <option>Select City</option>
-                                                 </select>
-                                             </div>
-                                         </div>
-                                         <div class="col-md-4">
-                                             <label for="locality" class="col-md-6 pad_none">Select Zip :</label>
-                                             <div class="col-md-6 pad_none zipElementPara">
-                                                 <select name="zipId" class="form-control nova heght_cntrl" id="zipId">
-                                                     <option>Select Zip</option>
-                                                 </select>
-                                             </div>
-                                         </div> 
-                                         <div class="col-md-4">
-                                             <label for="locality" class="col-md-6 pad_none">Select Locality :</label>
-                                             <div class="col-md-6 pad_none localityElementPara">
-                                                 <select name="localityId" class="form-control nova heght_cntrl" id="localityId">
-                                                     <option>Select Locality</option>
-                                                 </select>
-                                             </div>
-                                         </div> 
-                                         <div class="col-md-4">
-                                             <label for="locality" class="col-md-6 pad_none">Select Product Type :</label>
-                                             <div class="col-md-6 pad_none">
-                                                 <select name="productType" class="form-control nova heght_cntrl" id="productType" required>
-                                                     <option value="">Select</option>
-                                                     <?php foreach ($CatArr AS $cat): ?>
-                                                         <option value="<?= $cat->categoryId ?>" <?php if($cat->categoryId == $group->productType):?> selected<?php endif;?>><?= $cat->categoryName ?></option>
-                                                     <?php endforeach; ?>
-                                                 </select>
-                                             </div>
-                                         </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12">
+                                            <div class="js-message" style="display:none;"></div>
+                                            <div class="gen_infmtn"><h6>Edit Group: <?= $group->groupTitle ?> </h6></div>
+                                            <div class="create_grp">
+                                                <input type="hidden" name="reorder" value="<?=$reorder?>">
+                                                <input type="hidden" name="groupId" value="<?=$group->groupId?>">
+                                                <input type="hidden" name="orderId" value="<?=$orderId?>">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <label for="groupTitle">Group Title</label>
+                                                        <input type="text" class="form-control" id="groupTitle" name="groupTitle" placeholder="Jane Doe" value='<?= $group->groupTitle ?>' required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="locality" class="col-md-6 pad_none">Select Country :</label>
+                                                        <div class="col-md-6 pad_none">
+                                                            <select name="countryId" class="form-control nova heght_cntrl" id="countryId">
+                                                                <option value="">Select</option>
+                                                                <?php foreach ($countryDataArr AS $k): ?>
+                                                                    <option value="<?= $k->countryId ?>"><?= $k->countryName ?></option>
+                                                                <?php endforeach; ?>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="locality" class="col-md-6 pad_none">Select City :</label>
+                                                        <div class="col-md-6 pad_none cityElementPara">
+                                                            <select name="cityId" class="form-control nova heght_cntrl" id="cityId">
+                                                                <option>Select City</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="locality" class="col-md-6 pad_none">Select Zip :</label>
+                                                        <div class="col-md-6 pad_none zipElementPara">
+                                                            <select name="zipId" class="form-control nova heght_cntrl" id="zipId">
+                                                                <option>Select Zip</option>
+                                                            </select>
+                                                        </div>
+                                                    </div> 
+                                                    <div class="col-md-6">
+                                                        <label for="locality" class="col-md-6 pad_none">Select Locality :</label>
+                                                        <div class="col-md-6 pad_none localityElementPara">
+                                                            <select name="localityId" class="form-control nova heght_cntrl" id="localityId">
+                                                                <option>Select Locality</option>
+                                                            </select>
+                                                        </div>
+                                                    </div> 
+                                                    <div class="col-md-6">
+                                                        <label for="locality" class="col-md-6 pad_none">Select Product Type :</label>
+                                                        <div class="col-md-6 pad_none">
+                                                            <select name="productType" class="form-control nova heght_cntrl" id="productType" required>
+                                                                <option value="">Select</option>
+                                                                <?php foreach ($CatArr AS $cat): ?>
+                                                                    <option value="<?= $cat->categoryId ?>" <?php if ($cat->categoryId == $group->productType): ?> selected<?php endif; ?>><?= $cat->categoryName ?></option>
+                                                                <?php endforeach; ?>
+                                                            </select>
+                                                        </div>
+                                                    </div>
 
-                                     </div>
-                                     <div class="row">
-                                         <div class="col-xs-12 col-sm-6 col-md-3 js-show-group-locality-users">
-                                         </div>
-                                     </div>
-                                     <div class="row">
-                                         <div class="col-xs-12 col-sm-6 col-md-6 js-show-group-users-tags">
-                                             <div class="form-group"><label>Selected Users :</label></div>
-                                             <?php foreach($group->users as $ukey => $usr):?>
-                                             <input type="hidden" name="groupUsers[]" value="<?=$usr->userId?>" class="checkbox-close-<?=$usr->userId?>">
-                                             <button type="button" class="btn btn-info btn-xs checkbox-close-<?=$usr->userId?>"><?=$usr->firstName?> <?=$usr->lastName?> | <span aria-hidden="true" class="checkbox-close" data-id="<?=$usr->userId?>">&times;</span></button>
-                                             <?php endforeach;?>
-                                         </div>
-                                     </div>
-                                     <div class="row">
-                                         <div class="col-md-3 pull-right">
-                                             <input type="submit"  class="grpButton" name="creatGrp" id="grpButton" value="Modify Group" />
-                                         </div>
-                                     </div>
-                                     <div class="clear"></div>	
-                                 </form>
+                                                </div>
 
-                                 <div class="contact_form">
-                                     <hr />
-                                 </div> 
+                                                <div class="row" style="margin-top:10px;">
+                                                    <div class="col-xs-12 col-sm-6 col-md-8 js-show-group-locality-users">
+                                                    </div>
+                                                </div>
 
-                             </div>
-                         </div>
-                     </div>
+                                                <div class="row" style="margin-top:10px;">
+                                                    <div class="col-xs-12 col-sm-6 col-md-10 js-show-group-users-tags">
+                                                        <div class="form-group"><label>Selected Users :</label></div>
+                                                        <?php foreach ($group->users as $ukey => $usr): ?>
+                                                            <input type="hidden" name="groupUsers[]" value="<?= $usr->userId ?>" class="checkbox-close-<?= $usr->userId ?>">
+                                                            <button type="button" class="btn btn-info btn-xs checkbox-close-<?= $usr->userId ?>"><i class="fa fa-user"></i><?= $usr->firstName ?> <?= $usr->lastName ?> | <i class="fa fa-times-circle checkbox-close" data-id="<?= $usr->userId ?>"></i></button>
+                                                        <?php endforeach; ?>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-3 pull-right">
+                                                        <input type="submit"  class="grpButton" name="creatGrp" id="grpButton" value="Modify Group" />
+                                                    </div>
+                                                </div>
+                                                <div class="clear"></div>	
+                                                <div class="contact_form">
+                                                    <hr />
+                                                </div>
+                                            </div>
+                                        </div>
 
 
-                     <!-- start-form -->
+                                        <!-- start-form -->
 
 
-                 </div>
-             </form>    
+                                    </div>
+                                </form>    
                             </div>
-                            
-                            
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-      </div>
     </div>
-  </div>
 </article>
 
 <script type="text/javascript">
@@ -240,7 +229,7 @@
                 });
                 
                 if(!existGid){
-                var html = "<input type=\"hidden\" name=\"groupUsers[]\" value=\""+gid+"\" class=\"checkbox-close-"+gid+"\">  <button type=\"button\" class=\"btn btn-info btn-xs checkbox-close-"+gid+"\">"+gname+" | <span aria-hidden=\"true\" class=\"checkbox-close\" data-id=\""+gid+"\">&times;</span></button>";
+                var html = "<input type=\"hidden\" name=\"groupUsers[]\" value=\""+gid+"\" class=\"checkbox-close-"+gid+"\">  <button type=\"button\" class=\"btn btn-info btn-xs checkbox-close-"+gid+"\"><i class=\"fa fa-user\"></i>"+gname+" | <i class=\"fa fa-times-circle checkbox-close\" data-id=\""+gid+"\"></i></button>";
                 $('.js-show-group-users-tags').append(html);
                 $('.checkbox-'+gid).hide();
             } else {

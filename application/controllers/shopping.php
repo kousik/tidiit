@@ -375,6 +375,7 @@ class Shopping extends MY_Controller{
         else:
             $order_update['status'] = 1;   
         endif;
+        $order_update['orderDate'] = date('Y-m-d H:i:s');
         
         $update = $this->Order_model->update($order_update,$orderId);
         if($update):
@@ -405,9 +406,10 @@ class Shopping extends MY_Controller{
                     $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                     $data['receiverId'] = $usr->userId;
                     $data['nType'] = 'GROUP-ORDER';
+
                     $data['nTitle'] = 'New Group order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
                     $data['nMessage'] = "Hi, <br> You have requested to buy group order product.<br>";
-                    $data['nMessage'] .= "Product is <a href=''></a><br>";
+                    $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
                     $data['nMessage'] .= "Want to process the order ? <br>";
                     $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
                     $data['nMessage'] .= "Thanks <br> Tidiit Team.";
@@ -429,7 +431,9 @@ class Shopping extends MY_Controller{
                         $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                         $data['receiverId'] = $usr->userId;
                         $data['nType'] = 'GROUP-ORDER';
+
                         $data['nTitle'] = 'Group order continue by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+
                         $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this group order.<br>";
                         $data['nMessage'] .= "";
                         $data['nMessage'] .= "Thanks <br> Tidiit Team.";
@@ -655,7 +659,7 @@ class Shopping extends MY_Controller{
     
     
     
-    function process_group_parent_order($orderId){
+    function process_group_parent_order($orderId, $reorder = false){
         if(!$orderId):
             redirect(BASE_URL.'404_override');
         endif;
@@ -701,15 +705,24 @@ class Shopping extends MY_Controller{
         
         $exists_order = $this->Order_model->is_parent_group_order_available($data['order']->orderId, $this->session->userdata('FE_SESSION_VAR'));
         
-        
-        if(!$exists_order):
-            $parentOrderId = $this->Order_model->add($order_data);        
-        elseif($exists_order && $exists_order->status == 0):
-            $this->Order_model->update($order_data,$exists_order->orderId);
-            $parentOrderId = $exists_order->orderId;
+        if($reorder):
+            if($exists_order && $exists_order->status == 0):
+                $this->Order_model->update($order_data,$exists_order->orderId);
+                $parentOrderId = $exists_order->orderId;
+            else:    
+                $parentOrderId = $this->Order_model->add($order_data);
+            endif;
         else:
-            $this->session->set_flashdata('error', 'This Group order process already done. Please try to process for new order!');
-            redirect(BASE_URL.'shopping/ord-message');
+            if(!$exists_order):
+                $parentOrderId = $this->Order_model->add($order_data);        
+            elseif($exists_order && $exists_order->status == 0):
+                $this->Order_model->update($order_data,$exists_order->orderId);
+                $parentOrderId = $exists_order->orderId;
+            else:
+                $this->session->set_flashdata('error', 'This Group order process already done. Please try to process for new order!');
+                redirect(BASE_URL.'shopping/ord-message');
+            endif;
+        
         endif;
         
         
@@ -836,5 +849,113 @@ class Shopping extends MY_Controller{
         $data['user']=$user;
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
         $this->load->view('group_order/group_order_parent',$data);
+    }
+    
+    
+    function order_group_decline_process($orderId){
+        if(!$orderId):
+            redirect(BASE_URL.'404_override');
+        endif;
+        $orderId = base64_decode($orderId);
+        $orderId = $orderId/226201;
+        
+                
+        $SEODataArr=array();
+        //$data=$this->_get_logedin_template($SEODataArr);
+        $user = $this->_get_current_user_details(); 
+        
+        $order = $this->Order_model->get_single_order_by_id($orderId);
+        
+        $group = $this->User_model->get_group_by_id($order->groupId);
+        $prod_price_info = $this->Product_model->get_products_price_details_by_id($order->productPriceId);
+        $a = $this->_get_available_order_quantity($order->groupId);
+        $availQty = $prod_price_info->qty - $a[0]->productQty;
+        
+        if(!$availQty):
+            $this->session->set_flashdata('msg', 'Group order already completed by other members of this group.');
+            redirect(BASE_URL.'shopping/ord-message');
+        endif;
+        
+        
+        if($order->parrentOrderID == 0):
+            $me = $this->_get_current_user_details();
+            foreach($group->users as $key => $usr):
+                if($me->userId != $usr->userId):
+                    $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                    $data['receiverId'] = $usr->userId;
+                    $data['nType'] = 'GROUP-ORDER-DECLINE';
+                    $data['nTitle'] = 'Group oreder [TIDIIT-OD-'.$order->orderId.'] cancel by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+                    $data['nMessage'] = "Hi, <br> Sorry! I can not process this group order right now.<br>";
+                    $data['nMessage'] .= "";
+                    $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+
+                    $data['isRead'] = 0;
+                    $data['status'] = 1;
+                    $data['createDate'] = date('Y-m-d H:i:s');
+
+                    //Send Email message
+                    $recv_email = $usr->email;
+                    $sender_email = $me->email;
+
+                    $this->User_model->notification_add($data);
+                endif;
+            endforeach;
+            $data['receiverId'] = $group->admin->userId;
+            
+            unset($data['nMessage']);
+            
+            $data['nMessage'] = "Hi, <br> Sorry! I can not process this group order right now.<br>";
+            $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-re-order-process/".base64_encode($orderId*226201)."' class='btn btn-warning btn-lg'>Re-order now</a><br><br>";
+            $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+            //Send Email message
+            $recv_email = $group->admin->email;
+            $sender_email = $me->email;
+            $this->User_model->notification_add($data);
+        endif;
+        
+        $this->session->set_flashdata('msg', 'Thanks for group order cancelation!');
+        redirect(BASE_URL.'shopping/ord-message');
+        
+    }
+    
+    function order_group_re_order_process($orderId){
+        if(!$orderId):
+            redirect(BASE_URL.'404_override');
+        endif;
+        $orderId = base64_decode($orderId);
+        $orderId = $orderId/226201;
+        
+                
+        $SEODataArr=array();
+        $data=$this->_get_logedin_template($SEODataArr);
+        $user = $this->_get_current_user_details(); 
+        
+        $order = $this->Order_model->get_single_order_by_id($orderId);
+        if(!$order):
+            redirect(BASE_URL.'404_override');
+        endif;
+        
+        $group = $this->User_model->get_group_by_id($order->groupId);
+        $data['order']= $order;
+        $data['group']= $group;
+        $data['userMenuActive']= '';
+        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $this->load->view('group_order/re_order_process',$data);
+    }
+    
+    function process_group_parent_re_order($orderId, $status){
+        if(!$orderId && $status):
+            redirect(BASE_URL.'404_override');
+        endif;
+        $orderId = base64_decode($orderId);
+        $orderId = $orderId/226201;
+        
+        $status = base64_decode($status);
+        $order = $this->Order_model->get_single_order_by_id($orderId);
+        
+        if(!$order && $status != '100'):
+            redirect(BASE_URL.'404_override');
+        endif;
+        $this->process_group_parent_order(base64_encode($orderId*226201), true);        
     }
 }

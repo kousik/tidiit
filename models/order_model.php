@@ -42,8 +42,10 @@ class Order_model extends CI_Model {
         
         public function get_single_order_by_id($orderId){
             $this->db->limit(1);
-            $orderData = $this->db->select('*')->from($this->_table)->where('orderId',$orderId)->get()->result();            
-            $order = $orderData[0];
+            $orderData = $this->db->select('*')->from($this->_table)->where('orderId',$orderId)->get()->result(); 
+            //echo $str = $this->db->last_query();
+            //print_r($orderData);
+            $order = !empty($orderData)?$orderData[0]:false;
             return $order;
         }
         

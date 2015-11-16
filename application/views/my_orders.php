@@ -48,7 +48,7 @@ $status = array('0'=>'Delete','1'=>'Order Running', '2'=>'Order Processing', '3'
                                                 $porder = $this->Order_model->get_parent_order($order->orderId);
                                                 ?>
                                                 <tr class="" id="not-<?=base64_encode($order->orderId*226201);?>">
-                                                    <td scope="row"><span class="label label-success">TDIIT-OD-<?=$order->orderId?></span></td>
+                                                    <td scope="row"><span class="label label-success">TIDIIT-OD-<?=$order->orderId?></span></td>
                                                     <td><a href="<?php echo BASE_URL.'product/details/'.base64_encode($order->productId);?>" class="" target="_blank"><img src="<?=PRODUCT_DEAILS_SMALL.$pimage?>" alt="..." class="img-responsive"/></a><a href="<?php echo BASE_URL.'product/details/'.base64_encode($order->productId);?>" class="" target="_blank"><?=$ptitle;?></a></td>
                                                     <td><b>$ <?=$order->orderAmount;?></b></td>
                                                     <td><i class="fa fa-clock-o"></i><?=date('F j, Y, g:i a' , strtotime($order->orderDate));?></td>
