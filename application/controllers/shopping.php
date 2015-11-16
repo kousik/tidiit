@@ -406,7 +406,8 @@ class Shopping extends MY_Controller{
                     $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                     $data['receiverId'] = $usr->userId;
                     $data['nType'] = 'GROUP-ORDER';
-                    $data['nTitle'] = 'New Group oreder [TIDIIT-OD'.$order->orderId.'] running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+
+                    $data['nTitle'] = 'New Group order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
                     $data['nMessage'] = "Hi, <br> You have requested to buy group order product.<br>";
                     $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
                     $data['nMessage'] .= "Want to process the order ? <br>";
@@ -430,7 +431,9 @@ class Shopping extends MY_Controller{
                         $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                         $data['receiverId'] = $usr->userId;
                         $data['nType'] = 'GROUP-ORDER';
-                        $data['nTitle'] = 'Group oreder [TIDIIT-OD'.$order->parrentOrderID.'] continue by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+
+                        $data['nTitle'] = 'Group order continue by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+
                         $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this group order.<br>";
                         $data['nMessage'] .= "";
                         $data['nMessage'] .= "Thanks <br> Tidiit Team.";

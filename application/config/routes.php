@@ -76,7 +76,7 @@ $route['edit_groups_re_order/(:any)/(:any)']="user/edit_groups_re_order/$1/$2";
 
 //Notification
 $route['my-notifications']="notification/get_my_notifications";
-$route['my-notifications/(:num)']="notification/get_my_notifications/$1";
+$route['my-notifications/(:num)']="notification/get_my_notifications/$1"; 
 
 //Logout
 $route['logout']="index/logout";

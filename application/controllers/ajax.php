@@ -293,6 +293,10 @@ class Ajax extends MY_Controller{
                 }
                 //pre($newCateoryArr);die;
                 $this->User_model->update_user_product_type_category(array('productTypeCateoryId'=>implode(',', $newCateoryArr)),$userId);
+                $this->User_model->remove_user_from_product_type($userId);
+                foreach($newCateoryArr As $k => $v){
+                    $this->User_model->update_product_type_user($v,$userId);
+                }
                 //echo json_encode(array('result'=>'good'));die; 
                 $this->User_model->edit(array('firstName'=>$firstName,'lastName'=>$lastName,'email'=>$email),$userId);
                 $this->load->model('Country');
@@ -827,6 +831,35 @@ class Ajax extends MY_Controller{
                 echo json_encode(array('result'=>'good','msg'=>'Your password has been sent to your register email address.'));die; 
             }else{
                 echo json_encode(array('result'=>'bad','msg'=>'Please check your "email" and try again.'));die;     
+            }
+        }
+    }
+    
+    function show_locality_all_users_with_product_type(){
+        $localityId=$this->input->post('localityId',TRUE);
+        $productType=$this->input->post('productType',TRUE);
+        if($localityId=="" || $productType==""){
+            echo '';die;
+        }else{
+            $this->load->model('User_model');
+            $UsersDataArr=$this->User_model->get_all_users_by_product_type_locality($productType,$localityId);
+            //pre($UsersDataArr);
+            if(empty($UsersDataArr)){
+                echo '';die;
+            }else{
+                //echo '';die;
+                $html ='<label class="col-sm-3 control-label">Select Group Users :</label>';
+                $html .='<div class="boxes">';
+                foreach($UsersDataArr as $user):
+                $html.='<div class="checkbox-'.$user->userId.'"><div class="checkbox">
+                           <label>
+                               <input type="checkbox" class="tags-group" name="" value="'.$user->userId.'" data-name="'.$user->firstName.' '.$user->lastName.' ('.$user->email.')"> '.$user->firstName.' '.$user->lastName.' ('.$user->email.')
+                           </label>
+                      </div></div>';
+                $html .='';
+                endforeach;
+                $html .='</div>';
+                echo $html;die;
             }
         }
     }

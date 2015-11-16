@@ -12,6 +12,7 @@ class User_model extends CI_Model {
     private $_finance ="user_m_pesa";
     private $_user_product_type_category ="user_product_type_category";
     private $_login_history ="user_login_history";
+    private $_product_type_user ="product_type_user";
 
 
     public $result=NULL;
@@ -495,5 +496,54 @@ class User_model extends CI_Model {
             return $this->db->order_by('loginHistoryId','DESC')->get_where($this->_login_history,array('userId'=>$this->session->userdata('FE_SESSION_VAR')),2,1)->result();
         else
             return FALSE;
+    }
+    
+    function update_product_type_user($categoryId,$userId){
+        $rs=$this->db->get_where($this->_product_type_user,array('productTypeId'=>$categoryId))->result();
+        
+        if(count($rs)>0){
+            /// update record
+            $userIdStr=$rs[0]->userIdStr.','.$userId;
+            $this->db->where('productTypeId',$categoryId);
+            $this->db->update($this->_product_type_user,array('userIdStr'=>$userIdStr));
+            return TRUE;
+        }else{
+            $this->db->insert($this->_product_type_user,array('userIdStr'=>$userId,'productTypeId'=>$categoryId));
+            return $this->db->insert_id();		
+        }
+    }
+    
+    function remove_user_from_product_type($userId){
+        $rs=$this->db->get($this->_product_type_user)->result();
+        foreach($rs As $k){
+            $userIdStrArr=explode(',', $k->userIdStr);
+            if(in_array($userId, explode(',', $k->userIdStr))){
+                unset($userIdStrArr[array_search($userId, $userIdStrArr)]);
+                $this->db->where('productTypeUser',$k->productTypeUser);
+                $this->db->update($this->_product_type_user,array('userIdStr'=>  implode(',', $userIdStrArr)));
+            }
+        }
+    }
+    
+    function get_all_users_by_product_type_locality($productType,$localityId){
+        $rs=$this->db->get_where($this->_product_type_user,array('productTypeId'=>$productType))->result();
+        if(empty($rs)){
+            return array();
+        }else{
+            $this->db->select('u.firstName,u.lastName,u.userId,u.email')->from('user u');
+            $this->db->join($this->_bill_address.' ba','ba.userId=u.userId');
+            $rs=$this->db->where_in('ba.userId',explode(',',$rs[0]->userIdStr))->where('ba.localityId',$localityId)->where_not_in('ba.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+            //echo $this->db->last_query();
+            return $rs;
+        }
+    }
+    
+    function get_my_product_type(){
+        $rs=$this->db->select('productTypeCateoryId')->from($this->_user_product_type_category)->where('userId',  $this->session->userdata('FE_SESSION_VAR'))->get()->result();
+        if(empty($rs)){
+            return array();
+        }else{
+            return explode(',', $rs[0]->productTypeCateoryId);
+        }
     }
 }
