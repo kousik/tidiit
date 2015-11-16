@@ -212,6 +212,163 @@ myJsMain.my_create_groups=function(){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Group has been updated successfully.",200);
         }
     };
+    
+    jQuery('#countryId').on('change',function(){
+        if(jQuery(this).val()==""){
+            return false;
+        }else{
+            jQuery.ajax({
+                type:"POST",
+                url:myJsMain.baseURL+'ajax/show_city_by_country/',
+                data:'countryId='+jQuery(this).val(),
+                success:function(msg){
+                    if(msg!=""){
+                         jQuery('.js-show-group-locality-users').empty();
+                         jQuery('.cityElementPara').html(msg);
+                         jQuery('.zipElementPara').html(zipDynEle);
+                         jQuery('.localityElementPara').html(localityDynEle);
+                    }
+                }
+            });
+        }
+     });
+
+     jQuery('.cityElementPara').on('change','#cityId',function(){
+        if(jQuery(this).val()==""){
+            return false;
+        }else{
+            jQuery.ajax({
+                type:"POST",
+                url:myJsMain.baseURL+'ajax/show_zip_by_city/',
+                data:'cityId='+jQuery(this).val(),
+                success:function(msg){
+                    if(msg!=""){
+                        jQuery('.js-show-group-locality-users').empty();
+                        jQuery('.zipElementPara').html(msg);
+                        jQuery('.localityElementPara').html(localityDynEle);
+                    }
+                }
+            });
+        }
+     });
+
+     jQuery('.zipElementPara').on('change','#zipId',function(){
+        if(jQuery(this).val()==""){
+            return false;
+        }else{
+            jQuery.ajax({
+                type:"POST",
+                url:myJsMain.baseURL+'ajax/show_locality_by_zip/',
+                data:'zipId='+jQuery(this).val(),
+                success:function(msg){
+                    if(msg!=""){
+                        jQuery('.js-show-group-locality-users').empty();
+                        jQuery('.localityElementPara').html(msg);
+                    }
+                }
+            });
+        }
+     });
+
+     jQuery('.localityElementPara').on('change','#localityId',function(){
+        if(jQuery(this).val()==""){
+            return false;
+        }else{
+            jQuery('.js-show-group-locality-users').empty();
+            jQuery.ajax({
+                type:"POST",
+                url:myJsMain.baseURL+'ajax/show_locality_all_users/',
+                data:'localityId='+jQuery(this).val(),
+                success:function(msg){
+                    if(msg!=""){
+                        jQuery('.js-show-group-locality-users').html(msg);
+                    }
+                }
+            });
+        }
+     });
+     //jQuery('div.grp_dashboard').on('click','button.js-group-delete',function(){
+     jQuery("body").delegate('button.js-group-delete', "click", function(e){
+             e.preventDefault();
+         if ( confirm( 'Are you sure you want to delete this group?' ) ) { 
+             var gid = jQuery(this).data('id');
+             jQuery.ajax({
+                type:"POST",
+                url:myJsMain.baseURL+'ajax/delete_group/',
+                data:'groupId='+jQuery(this).data('id'),
+                success:function(msg){
+                    if(msg!=""){
+                        $('.js-group-popover').popover('hide');
+                        jQuery('div#group-id-'+gid).remove();
+                    }
+                }
+            });
+        }
+     });
+
+    jQuery("body").delegate('.tags-group', "click", function(e){
+             e.preventDefault();
+             var gname = jQuery(this).data('name');
+             var gid = jQuery(this).val();
+             var existGid = false;
+             jQuery( ".js-show-group-users-tags input" ).each(function() {
+                 var dGid = jQuery(this).val();
+                 if(dGid == gid){
+                     existGid = true;
+                 }
+             });
+
+             if(!existGid){
+             var html = "<input type=\"hidden\" name=\"groupUsers[]\" value=\""+gid+"\" class=\"checkbox-close-"+gid+"\">  <button type=\"button\" class=\"btn btn-info btn-xs checkbox-close-"+gid+"\">"+gname+" | <span aria-hidden=\"true\" class=\"checkbox-close\" data-id=\""+gid+"\">&times;</span></button>";
+             $('.js-show-group-users-tags').append(html);
+             $('.checkbox-'+gid).hide();
+         } else {
+             $('.checkbox-'+gid).hide();
+         }
+
+     }); 
+
+     jQuery("body").delegate('.checkbox-close', "click", function(e){
+             e.preventDefault();
+             var gid = jQuery(this).data('id');
+             $('.checkbox-close-'+gid).remove();
+             $('.checkbox-'+gid).show();
+     }); 
+
+     jQuery('#productType').on('change',function(){
+         if(jQuery(this).val()==""){
+            jQuery('.js-show-group-locality-users').empty();
+            jQuery.ajax({
+                type:"POST",
+                url:myJsMain.baseURL+'ajax/show_locality_all_users/',
+                data:'localityId='+jQuery('#localityId').val(),
+                success:function(msg){
+                    if(msg!=""){
+                        jQuery('.js-show-group-locality-users').html(msg);
+                    }
+                }
+            });
+         }else{
+             var ajaxData='localityId='+jQuery('#localityId').val()+'&productType='+jQuery(this).val();
+            //console.log(ajaxData);
+            jQuery.ajax({
+                type:"POST",
+                url:myJsMain.baseURL+'ajax/show_locality_all_users_with_product_type/',
+                data:ajaxData,
+                success:function(msg){
+                    if(msg!=""){
+                        jQuery('.js-show-group-locality-users').html(msg);
+                    }else{
+                        myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"There is no user match with selected product type.",200);
+                    }
+                }
+            });
+         }
+     });
+     
+    jQuery(function () {$('.js-group-popover').popover({html:true,container: 'body'});});
+    
+    jQuery('#myModalLogin').on('hidden.bs.modal', function () {jQuery('#add_groups')[0].reset();jQuery('.js-show-group-locality-users').html('')});
 };
 
 

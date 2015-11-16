@@ -293,6 +293,10 @@ class Ajax extends MY_Controller{
                 }
                 //pre($newCateoryArr);die;
                 $this->User_model->update_user_product_type_category(array('productTypeCateoryId'=>implode(',', $newCateoryArr)),$userId);
+                $this->User_model->remove_user_from_product_type($userId);
+                foreach($newCateoryArr As $k => $v){
+                    $this->User_model->update_product_type_user($v,$userId);
+                }
                 //echo json_encode(array('result'=>'good'));die; 
                 $this->User_model->edit(array('firstName'=>$firstName,'lastName'=>$lastName,'email'=>$email),$userId);
                 $this->load->model('Country');
@@ -800,11 +804,12 @@ class Ajax extends MY_Controller{
             echo '';die;
         }else{
             $this->load->model('User_model');
-            $UsersDataArr=$this->User_model->get_all_users_by_locality($localityId);
+            $UsersDataArr=$this->User_model->get_all_users_by_product_type_locality($productType,$localityId);
+            //pre($UsersDataArr);
             if(empty($UsersDataArr)){
                 echo '';die;
             }else{
-                echo '';die;
+                //echo '';die;
                 $html ='<label class="col-sm-3 control-label">Select Group Users :</label>';
                 $html .='<div class="boxes">';
                 foreach($UsersDataArr as $user):

@@ -92,9 +92,16 @@ class User extends MY_Controller{
         $data['countryDataArr']=$this->Country->get_all1();
         $data['userMenuActive']=3;
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
-        
-        $data['topCategoryDataArr']=  $this->category->get_top_category_for_product_list();
-        
+        $topCategoryDataArr=$this->category->get_top_category_for_product_list();
+        $data['topCategoryDataArr']=$topCategoryDataArr;
+        $rs=$this->User_model->get_my_product_type();
+        //pre($rs); //die;
+        $data['userProductTypeArr']=$rs;
+        if(!empty($rs)){
+            $billingAddressProductTypeHtml=$this->load->view('billing_address_product_type_view',$data,TRUE);
+            //echo $billingAddressProductTypeHtml;die;
+            $data['billingAddressProductTypeHtml']=$billingAddressProductTypeHtml;
+        }
         $this->load->view('my_billing_address',$data);
     }
     
@@ -212,5 +219,21 @@ class User extends MY_Controller{
         $userDataArr=$this->User_model->get_details_by_id($this->session->userdata('FE_SESSION_VAR'));
         $data['userDataArr']=$this->User_model->get_details_by_id($this->session->userdata('FE_SESSION_VAR'));
         $this->load->view('edit_profile',$data);
+    }
+    
+    function recusive_category($newCateoryArr,$categoryId){
+        $this->load->model('Category_model','category');
+        $chieldCateArr=$this->category->get_subcategory_by_category_id1($categoryId);
+        pre($chieldCateArr);
+        if(empty($chieldCateArr)){
+            return $newCateoryArr;
+        }else{    
+            foreach($chieldCateArr AS $k){
+                //pre($k); echo ' =========';
+                $newCateoryArr['']=$k;
+                $newCateoryArr=$this->recusive_category($newCateoryArr, $k['categoryId']);
+            }
+            return $newCateoryArr;
+        }
     }
 }

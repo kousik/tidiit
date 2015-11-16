@@ -116,21 +116,22 @@
                                             </div>
                                             <div class="col-md-12 rootShowInerCategoryData">
                                                 <label id="productTypeId[]-error" class="error" for="productTypeId[]" style="display: none;"></label>
-                                                <?php foreach($topCategoryDataArr AS $k):?>
+                                                <?php 
+                                                if(empty($userProductTypeArr)):
+                                                    foreach($topCategoryDataArr AS $k):?>
                                                 <div class="col-md-12">
                                                     <a class="showInerCategoryData" href="javascript://" data-catdivid="<?php echo $k->categoryId;?>" data-isRoot="yes"><?php echo $k->categoryName;?></a>
                                                 </div>
                                                 <div class="col-md-12" style="height: 10px;"></div>
-                                                <?php endforeach;?>
+                                                <?php endforeach;
+                                                else :
+                                                echo $billingAddressProductTypeHtml;    
+                                                endif;?>
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                    
                                 </form>
                             </div>
-                            
-                            
                         </div>
                     </div>
                 </div>
