@@ -64,7 +64,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
           <section class="idealsteps-step">
           
           <div class="form-group field required field">
-                    <!--<div class="row">
+                    <div class="row">
                     <div class="col-sm-4">
                     <label class="control-label main">Product Name</label>                     
                     </div>
@@ -72,12 +72,12 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                          <input type="text" class="form-control" id="title" placeholder="Product Name" value="" name="title" >
               <span class="error"></span>
                       </div>
-                      </div> -->
-                   <div class="field">
+                      </div>
+                  <!--<div class="field">
                <label class="main">Product Name</label>
               <input type="text" class="form-control" id="title" placeholder="Product Name" value="" name="title">
               <span class="error"></span>
-            </div> 
+            </div> ---> 
                     </div>
 
            <div class="form-group field required field">

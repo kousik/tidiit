@@ -5,7 +5,7 @@
         <div id="content">
         <div class="outer">
           <div class="inner bg-light lter">
-              <span style="padding-left: 150px;color: red;"><?php echo $this->session->flashdata('Message');?></span>
+              <div style="color: red; text-align: center; margin: 0 auto;padding-top: 10px;font-weight: bold;"><?php echo $this->session->flashdata('Message');?></div>
             <!--Begin Datatables
             <h4 class="reg_header">&nbsp;</h4>-->
             
