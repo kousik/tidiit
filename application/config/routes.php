@@ -65,6 +65,7 @@ $route['shopping/mod-group-order/(:any)']="shopping/process_my_group_orders_by_i
 $route['shopping/mod-pt-group-order/(:any)']="shopping/process_my_parent_group_orders_by_id/$1";
 $route['shopping/checkout/(:any)']="shopping/process_checkout/$1";
 $route['shopping/remove_group_cart']="shopping/remove_group_cart";
+$route['shopping/ajax_process_group_payment']="shopping/ajax_process_group_payment";
 
 $route['shopping/success']="shopping/oredr_process_success";
 $route['shopping/group-order-accept-process/(:any)']="shopping/process_group_parent_order/$1";

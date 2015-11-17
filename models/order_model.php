@@ -393,6 +393,16 @@ class Order_model extends CI_Model {
             endif;
         }
         
+        
+        public function is_coupon_code_used_or_not_for_single($coupon){
+            $coupons = $this->db->from($this->_order_coupon)->where('couponId',$coupon->couponId)->get()->result();
+            if($coupons):
+                return true;                
+            else:  
+                return false;
+            endif;
+        }
+        
         public function get_order_coupon($orderId){
             $coupons = $this->db->from($this->_order_coupon)->where('orderId',$orderId)->get()->result();
             if($coupons):

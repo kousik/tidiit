@@ -285,7 +285,7 @@ endif;?>
 
 
                                     <div class="cart-container-table">
-                                        <a href="javascript://" class="btn btn-info btn-block js-order-payment" data-orderid="<?=$order->orderId?>" data-cartid="<?=$rowid?>">Pay Now <i class="fa fa-angle-right"></i></a>
+                                        <a href="javascript://" class="btn btn-info btn-block js-order-payment">Pay Now <i class="fa fa-angle-right"></i></a>
                                     </div>
 
 
@@ -391,7 +391,7 @@ endif;?>
                 $('div.js-message').html('<div class="alert alert-danger">Please enter your promo code!</div>');
              $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
             } else {                
-                $.post( myJsMain.baseURL+'shopping/ajax_order_set_promo/', {
+                $.post( myJsMain.baseURL+'shopping/ajax_single_order_set_promo/', {
                     orderId: obj.attr('data-order'),
                     promocode: cpn
                 },
@@ -408,8 +408,8 @@ endif;?>
                     
                     if(data.content){
                         $('tr.js-show-disc').show();
-                        $('td.js-show-disc-amt').text(data.content.amount);
-                        $('.js-sub-total').html('<strong>Total $'+data.content.orderAmount+'</strong>');
+                        $('td.js-show-disc-amt').html('<i class="fa fa-rupee"></i> '+data.content.amount);
+                        $('.js-sub-total').html('<strong>Total <i class="fa fa-rupee"></i> '+data.content.orderAmount+'</strong>');
                         obj.val('');
                     }
                     
@@ -448,11 +448,8 @@ endif;?>
         
         jQuery("body").delegate('a.js-order-payment', "click", function(e){
             e.preventDefault();
-            
-            var orderId = jQuery(this).attr('data-orderid');
             var cartId = jQuery(this).attr('data-cartid');
-            jQuery.post( myJsMain.baseURL+'shopping/ajax_process_group_payment/', {
-                orderId: orderId,
+            jQuery.post( myJsMain.baseURL+'shopping/ajax_process_single_payment/', {
                 cartId: cartId
             },
             function(data){ 

@@ -1027,7 +1027,7 @@ class Shopping extends MY_Controller{
         $data=$this->_get_logedin_template($SEODataArr);
         $user = $this->_get_current_user_details(); 
         if($this->session->userdata('coupon')):
-            $data['coupon'] = $this->session->userdata('coupon');
+            $coupon = $this->session->userdata('coupon');
         else:    
             $coupon = new stdClass();
             $coupon->amount = '0.00';
@@ -1081,5 +1081,48 @@ class Shopping extends MY_Controller{
         $result['contents'] = true;
 	echo json_encode( $result );
 	die;
+    }
+    
+    /**
+     * 
+     */
+    function ajax_single_order_set_promo(){
+        $promocode = $this->input->post('promocode',TRUE);
+        
+        $coupon = $this->Order_model->is_coupon_code_exists($promocode);
+        if(!$coupon):
+            $result['error'] = "Invalid promo code!";
+            echo json_encode( $result );
+            die;
+        endif;
+        
+        $ordercoupon = $this->Order_model->is_coupon_code_used_or_not_for_single($coupon);
+        
+        if($ordercoupon):
+            $result['error'] = "Promo code already used!";
+            echo json_encode( $result );
+            die;
+        else:
+            $data = array();
+            $ctotal = $this->cart->total();
+            if($coupon->type == 'percentage'):
+                $amt = ($coupon->amount/100)*$ctotal;
+                $amt1 = number_format($amt, 2, '.', '');
+                $data['amount'] = substr($amt1, 0, -3);
+            elseif($coupon->type == 'fix'):
+                $data['amount'] = $coupon->amount;
+            endif;
+            $data['orderAmount'] = $ctotal - $coupon->amount;
+            
+            
+            $cpn = new stdClass();
+            $cpn->amount = $coupon->amount;
+            $this->session->set_userdata('coupon', $cpn);
+            $result['msg'] = "Promo code has been applied successfully!";
+            $result['content'] = $data;
+            echo json_encode( $result );
+            die;
+        endif;
+	
     }
 }
