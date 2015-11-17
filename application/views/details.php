@@ -9,7 +9,7 @@ $mobileProcessorCores=$this->config->item('mobileProcessorCores');
 $mobileBatteryType=$this->config->item('mobileBatteryType');
 $mobileProcessorBrand=$this->config->item('mobileProcessorBrand');
 
-$mobileCameraArr=$this->config->item('mobileCamera');
+$mobileCamera=$this->config->item('mobileCamera');
 $ramData=$this->config->item('ramData');
 $internalMemory=$this->config->item('internalMemory');
 $expandableMemory=$this->config->item('expandableMemory');
@@ -463,8 +463,8 @@ jQuery(document).ready(function(){
                   <li class="col-xs-6 dtls-li"> <?php echo $warrantyDurationData;?> Brand Warranty</li>
                   <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->screenSize;?> Display</li>
                   <?php $ramData1='';if(array_key_exists($productDetailsArr[0]->ram,$ramData)){$ramData1=$ramData[$productDetailsArr[0]->ram];}
-                        $internalMemoryData='';if(array_key_exists($productDetailsArr[0]->internalMemory,$internalMemory)){$internalMemoryData=$ramData[$productDetailsArr[0]->internalMemory];}?>
-                  <li class="col-xs-6 dtls-li"> <?php echo $ramData1Data;?> RAM &amp; <?php echo $internalMemory?> ROM</li>
+                        $internalMemoryData='';if(array_key_exists($productDetailsArr[0]->internalMemory,$internalMemory)){$internalMemoryData=$internalMemory[$productDetailsArr[0]->internalMemory];}?>
+                  <li class="col-xs-6 dtls-li"> <?php echo $ramData1;?> RAM &amp; <?php echo $internalMemoryData;?> ROM</li>
                   <?php $mobileCamera='';if(array_key_exists($productDetailsArr[0]->warrantyDuration,$warrantyDuration)){$warrantyDurationData=$warrantyDuration[$productDetailsArr[0]->warrantyDuration];}?>
                   <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->mobileRearCamera;?> Rear &amp;  <?php echo $productDetailsArr[0]->frontCamera;?> Front Camera</li>
                   <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->processorSpeed;?> <?php echo $processorType;?> processor</li>
@@ -683,11 +683,15 @@ jQuery(document).ready(function(){
                              
                               <tr>
                                 <td width="20%">RAM</td>
-                                <td><?php echo $productDetailsArr[0]->ram;?></td>
+                                <td><?php 
+                                $ramData1='';if(array_key_exists($productDetailsArr[0]->ram,$ramData)){$ramData1=$ramData[$productDetailsArr[0]->ram];}
+                                echo $ramData1;?></td>
                               </tr>
                               <tr>
                                 <td width="20%">Internal Memory</td>
-                                <td><?php echo $productDetailsArr[0]->internalMemory;?> </td>
+                                <td><?php 
+                                $internalMemoryData='';if(array_key_exists($productDetailsArr[0]->internalMemory,$internalMemory)){$internalMemoryData=$internalMemory[$productDetailsArr[0]->internalMemory];}
+                                echo $internalMemoryData;?> </td>
                               </tr>
                               <!--<tr>
                                 <td width="20%">User Memory</td>
@@ -695,7 +699,9 @@ jQuery(document).ready(function(){
                               </tr>-->
                               <tr>
                                 <td width="20%">Expandable Memory</td>
-                                <td><?php echo $productDetailsArr[0]->expandableMemory;?> </td>
+                                <td><?php 
+                                $expandableMemoryData='';if(array_key_exists($productDetailsArr[0]->expandableMemory,$expandableMemory)){$expandableMemoryData=$expandableMemory[$productDetailsArr[0]->expandableMemory];}
+                                echo $expandableMemoryData;?> </td>
                               </tr>
                               <tr>
                                 <td width="20%">Memory Card Slot</td>
@@ -815,7 +821,9 @@ jQuery(document).ready(function(){
                               </tr>
                               <tr>
                                 <td width="20%">Warranty Duration(in Month)</td>
-                                <td><?php echo $productDetailsArr[0]->warrantyDuration?> </td>
+                                <td><?php 
+                                $warrantyDurationData='';if(array_key_exists($productDetailsArr[0]->warrantyDuration,$warrantyDuration)){$warrantyDurationData=$warrantyDuration[$productDetailsArr[0]->warrantyDuration];}
+                                echo $warrantyDurationData;?> </td>
                               </tr>
                             </tbody>
                           </table>
