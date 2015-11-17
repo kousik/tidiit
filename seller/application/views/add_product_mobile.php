@@ -8,6 +8,11 @@ $mobileOS=$this->config->item('mobileOS');
 $mobileProcessorCores=$this->config->item('mobileProcessorCores');
 $mobileBatteryType=$this->config->item('mobileBatteryType');
 $mobileProcessorBrand=$this->config->item('mobileProcessorBrand');
+$mobileCameraArr=$this->config->item('mobileCamera');
+$ramData=$this->config->item('ramData');
+$internalMemory=$this->config->item('internalMemory');
+$expandableMemory=$this->config->item('expandableMemory');
+$warrantyDuration=$this->config->item('warrantyDuration');
 $priceRangeSettingsArr=$this->config->item('priceRangeSettings');
 $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
 ?>
@@ -247,6 +252,7 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                     </div>
                       <div class="col-sm-8">
                           <select class="form-control" name="color" id="color">
+                          <option value="default">Select</option>
                           <?php foreach ($mobileColor AS $k=>$v){?>   
                           <option value="<?php echo $k;?>"><?php echo $v; ?></option>
                           <?php }?>
@@ -376,7 +382,13 @@ No</label>
                       <label for="input-model" class="control-label main">Rear Camera</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="mobileRearCamera" placeholder="Rear Camera" value="" name="mobileRearCamera">
+                          <select name="mobileRearCamera" id="mobileRearCamera" class="form-control">
+                              <option value="default">Select</option>
+                              <?php foreach($mobileCameraArr AS $k => $v):?>
+                              <option value="<?php echo $k;?>"><?php echo $v;?></option>
+                              <?php endforeach;?>
+                          </select>
+                          
                         <span class="error"></span>
                       </div>
                       </div>
@@ -405,7 +417,12 @@ No</label>
                       <label for="input-model" class="control-label main">Front Camera</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="frontCamera" placeholder="Front Camera" value="" name="frontCamera">
+                          <select name="frontCamera" id="frontCamera" class="form-control">
+                              <option value="default">Select</option>
+                              <?php foreach($mobileCameraArr AS $k => $v):?>
+                              <option value="<?php echo $k;?>"><?php echo $v;?></option>
+                              <?php endforeach;?>
+                          </select>
                         <span class="error"></span>
                       </div>
                       </div>
@@ -497,7 +514,12 @@ No</label>
                       <label for="input-model" class="control-label main">RAM</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="ram" placeholder="RAM" value="" name="ram">
+                          <select name="ram" id="ram" class="form-control">
+                              <option value="default">Select</option>
+                              <?php foreach($ramData AS $k => $v):?>
+                              <option value="<?php echo $k;?>"><?php echo $v;?></option>
+                              <?php endforeach;?>
+                          </select>
                         <span class="error"></span>
                       </div>
                       </div>
@@ -509,7 +531,12 @@ No</label>
                       <label for="input-model" class="control-label main">Internal Memory</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="internalMemory" placeholder="PInternal Memory" value="" name="internalMemory">
+                          <select name="internalMemory" id="internalMemory" class="form-control">
+                              <option value="default">Select</option>
+                              <?php foreach($internalMemory AS $k => $v):?>
+                              <option value="<?php echo $k;?>"><?php echo $v;?></option>
+                              <?php endforeach;?>
+                          </select>
                         <span class="error"></span>
                       </div>
                       </div>
@@ -521,7 +548,12 @@ No</label>
                       <label for="input-model" class="control-label main">Expandable Memory</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="expandableMemory" placeholder="Expandable Memory" value="" name="expandableMemory">
+                          <select name="expandableMemory" id="expandableMemory" class="form-control">
+                              <option value="default">Select</option>
+                              <?php foreach($expandableMemory AS $k=>$v):?>
+                              <option value="<?php echo $k;?>"><?php echo $v;?></option>
+                              <?php endforeach;?>
+                          </select>
                         <span class="error"></span>
                       </div>
                       </div>
@@ -612,7 +644,12 @@ No</label>
                       <label for="input-model" class="control-label main">Warranty Duration(In Month)</label>
                     </div>
                       <div class="col-sm-8">
-                          <input type="text" class="form-control" id="warrantyDuration" placeholder="Warranty Duration(In Month)" value="" name="warrantyDuration">
+                          <select name="warrantyDuration" id="warrantyDuration" class="form-control">
+                              <option value="default">Select</option>
+                              <?php foreach($warrantyDuration AS $k => $v):?>
+                              <option value="<?php echo $k;?>"><?php echo $v;?></option>
+                              <?php endforeach;?>
+                          </select>
                         <span class="error"></span>
                       </div>
                       </div>
@@ -652,7 +689,7 @@ No</label>
                                 <div class="col-sm-6" style="padding:0;"><label style="margin-top:8px;" for="bulkQty">Quantity</label></div>
                                 <div class="col-sm-6"  style="padding:0;">
                                     <select class="" id="bulkQty" name="bulkQty" style="width:auto;">
-                                          <option value=""> -- Select -- </option>
+                                          <option value="default">Select</option>
                                           <?php for($i=$priceRangeSettingsDataArr['start'];$i<$priceRangeSettingsDataArr['end'];$i+=5){?>
                                           <option value="<?php echo $i;?>"><?php echo $i;?></option>
                                           <?php }?>
@@ -1015,12 +1052,12 @@ jQuery(document).ready(function(){
         'WarrantyDuration': 'required',
         'qty': 'required',
         'minQty': 'required',
-        'mobileRearCamera': 'required',
-        'frontCamera': 'required',
+        'mobileRearCamera': 'select:default',
+        'frontCamera': 'select:default',
         'processorSpeed': 'required',
         'processorCores':'select:default',
         'img1':'required extension:jpg:png',
-        'bulkQty': 'required',
+        'bulkQty': 'select:default',
         'price': 'required',
       },
 

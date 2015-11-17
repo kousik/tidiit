@@ -8,6 +8,12 @@ $mobileOS=$this->config->item('mobileOS');
 $mobileProcessorCores=$this->config->item('mobileProcessorCores');
 $mobileBatteryType=$this->config->item('mobileBatteryType');
 $mobileProcessorBrand=$this->config->item('mobileProcessorBrand');
+
+$mobileCameraArr=$this->config->item('mobileCamera');
+$ramData=$this->config->item('ramData');
+$internalMemory=$this->config->item('internalMemory');
+$expandableMemory=$this->config->item('expandableMemory');
+$warrantyDuration=$this->config->item('warrantyDuration');
 //$priceRangeSettingsArr=$this->config->item('priceRangeSettings');
 //$priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
 ?>
@@ -176,10 +182,15 @@ jQuery(document).ready(function(){
               </span> <span class="ratings-wrapper"> <a class="showRatingTooltip"> 7 Ratings</a> </span> <span>Be the first to review</span> <!--<span>Q&A </span>--> </div>
             <div class="pdp-e-i-keyfeatures">
               <ul>
-                <li title="<?php echo $productDetailsArr[0]->warrantyDuration.' months';?> Brand Warranty">-&nbsp; <?php echo $productDetailsArr[0]->warrantyDuration.' months';?> Brand Warranty</li>
+                <?php $warrantyDurationData='';if(array_key_exists($productDetailsArr[0]->warrantyDuration, $warrantyDuration)){$warrantyDurationData=$warrantyDuration[$productDetailsArr[0]->warrantyDuration];}?>  
+                <li title="<?php echo $warrantyDurationData;?> Brand Warranty">-&nbsp; <?php echo $warrantyDurationData;?> Brand Warranty</li>
                 <li title="<?php echo $productDetailsArr[0]->screenSize;?> Display">-&nbsp;<?php echo $productDetailsArr[0]->screenSize;?> Display</li>
-                <li title="<?php echo $productDetailsArr[0]->ram;?> RAM &amp; <?php echo $productDetailsArr[0]->internalMemory;?> ROM">-&nbsp;<?php echo $productDetailsArr[0]->ram;?> RAM &amp; <?php echo $productDetailsArr[0]->internalMemory;?> ROM</li>
-                <li title="<?php echo $productDetailsArr[0]->mobileRearCamera;?> Rear &amp;  <?php echo $productDetailsArr[0]->frontCamera;?> Front Camera">-&nbsp;<?php echo $productDetailsArr[0]->mobileRearCamera;?> Rear &amp;  <?php echo $productDetailsArr[0]->frontCamera;?> Front Camera</li>
+                <?php $ram='';if(array_key_exists($productDetailsArr[0]->ram, $ramData)){$ram=$ramData[$productDetailsArr[0]->ram];}
+                    $internalMemoryData='';if(array_key_exists($productDetailsArr[0]->internalMemory, $internalMemory)){$internalMemoryData=$internalMemory[$productDetailsArr[0]->internalMemory];}?>  
+                <li title="<?php echo $ram;?> RAM &amp; <?php echo $internalMemoryData;?> ROM">-&nbsp;<?php echo $ram;?> RAM &amp; <?php echo $internalMemoryData;?> ROM</li>
+                <?php $rearCamera='';if(array_key_exists($productDetailsArr[0]->mobileRearCamera, $mobileCamera)){$rearCamera=$mobileCamera[$productDetailsArr[0]->mobileRearCamera];}
+                    $frontCamera='';if(array_key_exists($productDetailsArr[0]->frontCamera, $mobileCamera)){$frontCamera=$mobileCamera[$productDetailsArr[0]->frontCamera];}?>  
+                <li title="<?php echo $rearCamera;?> Rear &amp;  <?php echo $frontCamera;?> Front Camera">-&nbsp;<?php echo $rearCamera;?> Rear &amp;  <?php echo $frontCamera;?> Front Camera</li>
                 <?php 
                 $processorType="";if(array_key_exists($productDetailsArr[0]->processorCores, $mobileProcessorCores)){$processorType=$mobileProcessorCores[$productDetailsArr[0]->processorCores];}
                 ?>
@@ -448,12 +459,16 @@ jQuery(document).ready(function(){
               </div>
               <div class="spec-body">
                 <ul class="dtls-list clear">
-                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->warrantyDuration.' months';?> Brand Warranty</li>
+                  <?php $warrantyDurationData='';if(array_key_exists($productDetailsArr[0]->warrantyDuration,$warrantyDuration)){$warrantyDurationData=$warrantyDuration[$productDetailsArr[0]->warrantyDuration];}?>
+                  <li class="col-xs-6 dtls-li"> <?php echo $warrantyDurationData;?> Brand Warranty</li>
                   <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->screenSize;?> Display</li>
-                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->ram;?> RAM &amp; <?php echo $productDetailsArr[0]->internalMemory;?> ROM</li>
+                  <?php $ramData1='';if(array_key_exists($productDetailsArr[0]->ram,$ramData)){$ramData1=$ramData[$productDetailsArr[0]->ram];}
+                        $internalMemoryData='';if(array_key_exists($productDetailsArr[0]->internalMemory,$internalMemory)){$internalMemoryData=$ramData[$productDetailsArr[0]->internalMemory];}?>
+                  <li class="col-xs-6 dtls-li"> <?php echo $ramData1Data;?> RAM &amp; <?php echo $internalMemory?> ROM</li>
+                  <?php $mobileCamera='';if(array_key_exists($productDetailsArr[0]->warrantyDuration,$warrantyDuration)){$warrantyDurationData=$warrantyDuration[$productDetailsArr[0]->warrantyDuration];}?>
                   <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->mobileRearCamera;?> Rear &amp;  <?php echo $productDetailsArr[0]->frontCamera;?> Front Camera</li>
                   <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->processorSpeed;?> <?php echo $processorType;?> processor</li>
-                  <li class="col-xs-6 dtls-li"> Expandable upto <?php echo $productDetailsArr[0]->expandableMemory;?></li>
+                  <li class="col-xs-6 dtls-li"> Expandable upto <?php echo $expandableMemory[$productDetailsArr[0]->expandableMemory];?></li>
                   <?php $connectivityType='';if(array_key_exists($productDetailsArr[0]->mobileConnectivity,$mobileConnectivity)){$connectivityType=$mobileConnectivity[$productDetailsArr[0]->mobileConnectivity];}?>
                   <li class="col-xs-6 dtls-li"> <?php echo $connectivityType;?></li>
                   <?php $mobileDisplayResolutiontype='';if(array_key_exists($productDetailsArr[0]->displayResolution, $mobileDisplayResolution)){$mobileDisplayResolutiontype=$mobileDisplayResolution[$productDetailsArr[0]->displayResolution];}?>

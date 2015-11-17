@@ -14,3 +14,9 @@ $config['priceRangeSettings']=array(
 );
 $config['lengthClass']=array('1'=>'Centimeter','2'=>'Millimeter','3'=>'Inch');
 $config['weightClass']=array('1'=>'Kilogram','2'=>'Gram','3'=>'Pound','4'=>'Quintal');
+$config['mobileCamera']=array(1=>'1.3 MP',2=>'2 MP','3'=>'3 MP','4'=>'4 MP','5'=>'5 MP','6'=>'8 MP');
+$config['ramData']=array(1=>'256 MB',2=>'512 MB','3'=>'1 GB','4'=>'2 GB','5'=>'3 GB','6'=>'4 GB');
+$config['internalMemory']=array(1=>'2 GB',2=>'4 GB','3'=>'8 GB','4'=>'16 GB','5'=>'32 GB','6'=>'64 GB');
+$config['expandableMemory']=array(1=>'16 GB','2'=>'32 GB','3'=>'64 GB');
+$config['expandableMemory']=array(1=>'16 GB','2'=>'32 GB','3'=>'64 GB');
+$config['warrantyDuration']=array(1=>'6 Months','2'=>'12 Months','3'=>'18 Months','4'=>'24 Months');

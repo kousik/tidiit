@@ -19,6 +19,9 @@ class Product extends MY_Controller{
         $productId=  base64_decode($str);
         //echo $productId;die;
         $productDetailsArr=  $this->Product_model->details($productId);
+        if($productDetailsArr[0]->status==0){
+            redirect(BASE_URL);
+        }
         $productImageArr=$this->Product_model->get_products_images($productId);
         $productPriceArr=$this->Product_model->get_products_price($productId);
         $SEODataArr=array();

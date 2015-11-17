@@ -11,7 +11,7 @@
             
             <br style="clear:both;" />
             <div class="form-group field required">
-            <div class="row">
+            <div class="row dataTableBatchAction">
                  <div class="col-md-1">
                  	<label>Action</label>
                  </div>
@@ -100,6 +100,16 @@
     $(function() {
       Metis.MetisTable();
       Metis.metisSortable();
+      
+        $('.dataTableBatchAction').find('.ui-sortable').each(function(){
+             $(this).removeClass('ui-sortable');
+             $(this).children().removeAttr('class');
+             /*if($(this).children().is("select")){
+                 $($(this).children()+' option').each(function(){
+                     $(this).removeClass();
+                 });
+             }*/
+        });
     });
 	
 </script>
