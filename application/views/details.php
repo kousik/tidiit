@@ -465,8 +465,9 @@ jQuery(document).ready(function(){
                   <?php $ramData1='';if(array_key_exists($productDetailsArr[0]->ram,$ramData)){$ramData1=$ramData[$productDetailsArr[0]->ram];}
                         $internalMemoryData='';if(array_key_exists($productDetailsArr[0]->internalMemory,$internalMemory)){$internalMemoryData=$internalMemory[$productDetailsArr[0]->internalMemory];}?>
                   <li class="col-xs-6 dtls-li"> <?php echo $ramData1;?> RAM &amp; <?php echo $internalMemoryData;?> ROM</li>
-                  <?php $mobileCamera='';if(array_key_exists($productDetailsArr[0]->warrantyDuration,$warrantyDuration)){$warrantyDurationData=$warrantyDuration[$productDetailsArr[0]->warrantyDuration];}?>
-                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->mobileRearCamera;?> Rear &amp;  <?php echo $productDetailsArr[0]->frontCamera;?> Front Camera</li>
+                  <?php $rearCamera='';if(array_key_exists($productDetailsArr[0]->mobileRearCamera,$mobileCameraArr)){$rearCamera=$mobileCameraArr[$productDetailsArr[0]->mobileRearCamera];}?>
+                  <?php $frontCamera='';if(array_key_exists($productDetailsArr[0]->frontCamera,$mobileCameraArr)){$frontCamera=$mobileCameraArr[$productDetailsArr[0]->frontCamera];}?>
+                  <li class="col-xs-6 dtls-li"> <?php echo $rearCamera;?> Rear &amp;  <?php echo $frontCamera;?> Front Camera</li>
                   <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->processorSpeed;?> <?php echo $processorType;?> processor</li>
                   <li class="col-xs-6 dtls-li"> Expandable upto <?php echo $expandableMemory[$productDetailsArr[0]->expandableMemory];?></li>
                   <?php $connectivityType='';if(array_key_exists($productDetailsArr[0]->mobileConnectivity,$mobileConnectivity)){$connectivityType=$mobileConnectivity[$productDetailsArr[0]->mobileConnectivity];}?>
