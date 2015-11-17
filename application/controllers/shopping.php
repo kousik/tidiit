@@ -943,6 +943,11 @@ class Shopping extends MY_Controller{
         $this->load->view('group_order/re_order_process',$data);
     }
     
+    /**
+     * 
+     * @param type $orderId
+     * @param type $status
+     */
     function process_group_parent_re_order($orderId, $status){
         if(!$orderId && $status):
             redirect(BASE_URL.'404_override');
@@ -957,5 +962,124 @@ class Shopping extends MY_Controller{
             redirect(BASE_URL.'404_override');
         endif;
         $this->process_group_parent_order(base64_encode($orderId*226201), true);        
+    }
+    
+    function process_my_single_orders(){
+        //print_r($_POST);
+        $SEODataArr=array();
+        $data=$this->_get_logedin_template($SEODataArr);
+        $user = $this->_get_current_user_details(); 
+        $productId = $this->input->post('productId');
+        $productPriceId = $this->input->post('productPriceId');
+        
+        if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
+            redirect(BASE_URL.'404_override');
+        endif;
+        $product = $this->Product_model->details($productId);
+        $product = $product[0];
+        $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
+        $is_cart_update = false;
+        $cart = $this->cart->contents();
+        
+        
+        if($cart): 
+            foreach ($cart as $item):            
+                if(($item['id'] == $productId)):
+                    $is_cart_update = $item['rowid'];                    
+                endif;
+            endforeach;
+        endif;
+        
+        //Order first step
+        $order_data = array();
+        $order_data['orderType'] = 'SINGLE';
+        $order_data['productId'] = $productId;
+        $order_data['productPriceId'] = $productPriceId;
+        $order_data['orderDate'] = date('Y-m-d H:i:s');
+        $order_data['status'] = 0;
+        
+        //Cart first step
+        $cart_data = array();
+        $cart_data['id'] = $productId;
+        $cart_data['name'] = $product->title;
+        $single_price = ($prod_price_info->price/$prod_price_info->qty);
+        $cart_data['price'] = number_format($single_price, 2, '.', '');
+        $cart_data['qty'] = $prod_price_info->qty;
+        $order_data['productPriceId'] = $productPriceId;
+        $cart_data['options'] = $order_data;
+        
+        //==============================================//
+        if($is_cart_update):            
+            $this->_remove_cart($is_cart_update);
+            $this->_add_to_cart($cart_data);            
+        else:
+            $this->_add_to_cart($cart_data);
+        endif;        
+        
+        redirect(BASE_URL.'shopping/single-checkout');
+    }
+    
+    function single_order_check_out(){
+        if(count($this->cart->contents()) < 1):
+            redirect(BASE_URL);
+        endif;
+        $SEODataArr=array();
+        $data=$this->_get_logedin_template($SEODataArr);
+        $user = $this->_get_current_user_details(); 
+        if($this->session->userdata('coupon')):
+            $data['coupon'] = $this->session->userdata('coupon');
+        else:    
+            $coupon = new stdClass();
+            $coupon->amount = '0.00';
+        endif;
+        $data['coupon'] = $coupon;
+        $userShippingDataDetails=$this->User_model->get_user_shipping_information();
+        if(empty($userShippingDataDetails)){
+            $userShippingDataDetails[0]=new stdClass();
+            $userShippingDataDetails[0]->firstName="";
+            $userShippingDataDetails[0]->lastName="";
+            $userShippingDataDetails[0]->countryId="";
+            $userShippingDataDetails[0]->cityId="";
+            $userShippingDataDetails[0]->zipId="";
+            $userShippingDataDetails[0]->localityId="";
+            $userShippingDataDetails[0]->phone="";
+            $userShippingDataDetails[0]->address="";
+            $userShippingDataDetails[0]->contactNo="";
+            $userShippingDataDetails[0]->landmark="";
+        }
+        if($userShippingDataDetails[0]->countryId!=""){
+            $data['cityDataArr']=  $this->Country->get_all_city1($userShippingDataDetails[0]->countryId);
+        }
+        if($userShippingDataDetails[0]->zipId!=""){
+            $data['zipDataArr']=  $this->Country->get_all_zip1($userShippingDataDetails[0]->cityId);
+        }
+        if($userShippingDataDetails[0]->localityId!=""){
+            $data['localityDataArr']=  $this->Country->get_all_locality($userShippingDataDetails[0]->zipId);
+        }
+        $data['countryDataArr']=$this->Country->get_all1();
+        $data['userShippingDataDetails']=$userShippingDataDetails[0];
+        
+        $data['userMenuActive']=7; 
+        $data['user']=$user;
+        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $this->load->view('single_order/single_order_checkout',$data);
+    }
+    
+    
+    /**
+     * 
+     */
+    function remove_single_cart_processing(){
+        $cartId = $this->input->post('cartId',TRUE);        
+        $this->_remove_cart($cartId);
+        if(count($this->cart->contents()) > 0):
+            $result['reload'] = true;
+        else:
+            $this->session->unset_userdata('coupon');
+            $result['reload'] = false;
+        endif;
+        $result['contents'] = true;
+	echo json_encode( $result );
+	die;
     }
 }

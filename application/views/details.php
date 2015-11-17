@@ -844,7 +844,7 @@ jQuery(document).ready(function(){
             </div>
             <form name="add_to_truck_process_form" id="add_to_truck_process_form" method="post">
                 <input type="hidden" name="productId" id="productId" value="<?php echo $productDetailsArr[0]->productId;?>">
-                <input type="hidden" name="prorductPriceId" id="prorductPriceId" value="">
+                <input type="hidden" name="productPriceId" id="prorductPriceId" value="">
             </form>
         </div>
                 <div class="clearfix"></div>

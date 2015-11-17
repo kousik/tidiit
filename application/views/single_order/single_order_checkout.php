@@ -186,7 +186,7 @@ $cart = $this->cart->contents();
 
 
                                     <div class="cart-container-table">
-                                        <table id="cart" class="table table-hover table-condensed <?=$rowid?>">
+                                        <table id="cart" class="table table-hover table-condensed">
                                             <thead>
                                                 <tr>
                                                     <th style="width:50%">Product</th>
@@ -200,39 +200,37 @@ $cart = $this->cart->contents();
                                                 <?php
                                                 $total = 0;
                                                 foreach ($cart as $item):
-                                                    if ($item['rowid'] == $rowid):
-                                                        $total += $item['subtotal'];
-                                                        $productDetailsArr = $this->Product_model->details($item['options']['productId']);
-                                                        $productImageArr = $this->Product_model->get_products_images($item['options']['productId']);
-                                                        ?>
-                                                        <tr id="<?=$item['rowid']?>">
-                                                            <td data-th="Product">
-                                                                <div class="row">
-                                                                    <div class="col-sm-3 product-img"><img src="<?= PRODUCT_DEAILS_SMALL . $productImageArr[0]->image ?>" alt="..." class="img-responsive"></div>
-                                                                    <div class="col-sm-9 product-details">
-                                                                        <h4 class="nomargin"><?= $item['name'] ?></h4>
-                                                                        <p><?= $productDetailsArr[0]->shortDescription ?></p>
-                                                                    </div>
+                                                    $total += $item['subtotal'];
+                                                    $productDetailsArr = $this->Product_model->details($item['options']['productId']);
+                                                    $productImageArr = $this->Product_model->get_products_images($item['options']['productId']);
+                                                    ?>
+                                                    <tr id="<?=$item['rowid']?>">
+                                                        <td data-th="Product">
+                                                            <div class="row">
+                                                                <div class="col-sm-3 product-img"><img src="<?= PRODUCT_DEAILS_SMALL . $productImageArr[0]->image ?>" alt="..." class="img-responsive"></div>
+                                                                <div class="col-sm-9 product-details">
+                                                                    <h4 class="nomargin"><?= $item['name'] ?></h4>
+                                                                    <p><?= $productDetailsArr[0]->shortDescription ?></p>
                                                                 </div>
-                                                            </td>
-                                                            <td data-th="Price"><i class="fa fa-rupee"></i> <?= $item['price'] ?></td>
+                                                            </div>
+                                                        </td>
+                                                        <td data-th="Price"><i class="fa fa-rupee"></i> <?= $item['price'] ?></td>
 
-                                                            <td data-th="Quantity"><?= $item['qty'] ?></td>
-                                                            <td data-th="Subtotal" class="text-center"><i class="fa fa-rupee"></i> <?= number_format($item['subtotal']) ?>.00</td>
-                                                            <td class="actions" data-th="" align="right">
+                                                        <td data-th="Quantity"><?= $item['qty'] ?></td>
+                                                        <td data-th="Subtotal" class="text-center"><i class="fa fa-rupee"></i> <?= number_format($item['subtotal']) ?>.00</td>
+                                                        <td class="actions" data-th="" align="right">
 
-                                                                <button class="btn btn-danger btn-sm js-group-cart-remove"  data-orderid="<?=$item['options']['orderId']?>" data-cartid="<?=$item['rowid']?>"><i class="fa fa-trash-o"></i></button>								
-                                                            </td>
-                                                        </tr>
-                                                        <?php
-                                                    endif;
+                                                            <button class="btn btn-danger btn-sm js-single-cart-remove" data-cartid="<?=$item['rowid']?>"><i class="fa fa-trash-o"></i></button>								
+                                                        </td>
+                                                    </tr>
+                                                    <?php
                                                 endforeach;
                                                 ?>
 
                                                 <tr>
                                                     <td colspan="5" valign="middle">
                                                         <div class="pincode-check-enable row">
-                                                            <div class="col-sm-5 col-xs-12"><span class="pull-left pincode-TEXT"> Have a promo code? Apply </span><input type="text" id="order-coupon" data-order="<?=$order->orderId?>" name="coupon" value=""></div> 
+                                                            <div class="col-sm-5 col-xs-12"><span class="pull-left pincode-TEXT"> Have a promo code? Apply </span><input type="text" id="order-coupon" name="coupon" value=""></div> 
                                                             <div class="col-sm-1 col-xs-12">
                                                                 <a href="javascript://" class="js-apply-coupon">Apply</a>
                                                             </div>
@@ -252,7 +250,7 @@ $cart = $this->cart->contents();
                                                     <td></td>
                                                 </tr>
 <?php 
-if($coupon):
+if(isset($coupon) && $coupon):
     $total -= $coupon->amount;
     $disc = $coupon->amount;
 else:
@@ -267,7 +265,7 @@ endif;?>
                                                 <tr>
                                                     <td></td>
                                                     <td colspan="2" class="hidden-xs"></td>
-                                                    <td class="hidden-xs text-center js-sub-total"><strong>Total <i class="fa fa-rupee"></i> <?=$total?></strong></td>
+                                                    <td class="hidden-xs text-center js-sub-total"><strong>Total <i class="fa fa-rupee"></i> <?=number_format($total)?>.00</strong></td>
                                                     <td colspan="2"><a href="javascript://" class="btn btn-success btn-block js-proceed-payment">PROCEED TO PAYMENT <i class="fa fa-angle-right"></i></a></td>
                                                 </tr>
                                             </tfoot>
@@ -426,22 +424,24 @@ endif;?>
         });
         
         
-        jQuery("body").delegate('.js-group-cart-remove', "click", function(e){
+        jQuery("body").delegate('.js-single-cart-remove', "click", function(e){
             e.preventDefault();
                          
             var cartId = jQuery(this).attr('data-cartid');
-            var orderId = jQuery(this).attr('data-orderid');
-            jQuery.post( myJsMain.baseURL+'shopping/remove_group_cart/', {
-                cartId: cartId,
-                orderId: orderId
+            jQuery.post( myJsMain.baseURL+'shopping/remove-single-cart/', {
+                cartId: cartId
             },
             function(data){ 
                 if(data.contents){
                     //jQuery('tr#'+cartId).remove();
                     var item = "(<?=count($this->cart->contents())-1?> Item<?php if(count($this->cart->contents())-1 > 1): echo 's';endif;?>)";
-                    jQuery('span.js-cart-item').text(item);
-                    jQuery('.'+cartId).hide();
-                    window.location.href = myJsMain.baseURL;
+                    jQuery('span.js-cart-item').text(item);                    
+                    jQuery('tr#'+cartId).remove();  
+                    if(data.reload){
+                        window.location.href = myJsMain.baseURL+'shopping/single-checkout/';
+                    } else {
+                        window.location.href = myJsMain.baseURL;
+                    }
                 }
             }, 'json' );
         }); 
