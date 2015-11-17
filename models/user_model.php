@@ -120,7 +120,7 @@ class User_model extends CI_Model {
     public function check_login_data($email,$Password,$userType){
         //echo $email.'  '.$Password;die;
         $rs=$this->db->select('*')->from($this->_table)->where('userName',$email)->where('password',base64_encode($Password).'~'.md5('tidiit'))->where('status','1')->where('userType',$userType)->get()->result();
-        //echo $this->db->last_query();die;
+        echo $this->db->last_query();die;
         return $rs;
     }
 
