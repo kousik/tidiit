@@ -90,7 +90,6 @@ class Product_model extends CI_Model {
                 //echo '<br />'.$this->db->last_query(); die;
                 return $dataArr;
 	}
-	
         
         public function get_admin_total(){
             $userId=  $this->session->userdata('FE_SESSION_VAR');

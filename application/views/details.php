@@ -8,6 +8,12 @@ $mobileOS=$this->config->item('mobileOS');
 $mobileProcessorCores=$this->config->item('mobileProcessorCores');
 $mobileBatteryType=$this->config->item('mobileBatteryType');
 $mobileProcessorBrand=$this->config->item('mobileProcessorBrand');
+
+$mobileCamera=$this->config->item('mobileCamera');
+$ramData=$this->config->item('ramData');
+$internalMemory=$this->config->item('internalMemory');
+$expandableMemory=$this->config->item('expandableMemory');
+$warrantyDuration=$this->config->item('warrantyDuration');
 //$priceRangeSettingsArr=$this->config->item('priceRangeSettings');
 //$priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
 ?>
@@ -176,10 +182,15 @@ jQuery(document).ready(function(){
               </span> <span class="ratings-wrapper"> <a class="showRatingTooltip"> 7 Ratings</a> </span> <span>Be the first to review</span> <!--<span>Q&A </span>--> </div>
             <div class="pdp-e-i-keyfeatures">
               <ul>
-                <li title="<?php echo $productDetailsArr[0]->warrantyDuration.' months';?> Brand Warranty">-&nbsp; <?php echo $productDetailsArr[0]->warrantyDuration.' months';?> Brand Warranty</li>
+                <?php $warrantyDurationData='';if(array_key_exists($productDetailsArr[0]->warrantyDuration, $warrantyDuration)){$warrantyDurationData=$warrantyDuration[$productDetailsArr[0]->warrantyDuration];}?>  
+                <li title="<?php echo $warrantyDurationData;?> Brand Warranty">-&nbsp; <?php echo $warrantyDurationData;?> Brand Warranty</li>
                 <li title="<?php echo $productDetailsArr[0]->screenSize;?> Display">-&nbsp;<?php echo $productDetailsArr[0]->screenSize;?> Display</li>
-                <li title="<?php echo $productDetailsArr[0]->ram;?> RAM &amp; <?php echo $productDetailsArr[0]->internalMemory;?> ROM">-&nbsp;<?php echo $productDetailsArr[0]->ram;?> RAM &amp; <?php echo $productDetailsArr[0]->internalMemory;?> ROM</li>
-                <li title="<?php echo $productDetailsArr[0]->mobileRearCamera;?> Rear &amp;  <?php echo $productDetailsArr[0]->frontCamera;?> Front Camera">-&nbsp;<?php echo $productDetailsArr[0]->mobileRearCamera;?> Rear &amp;  <?php echo $productDetailsArr[0]->frontCamera;?> Front Camera</li>
+                <?php $ram='';if(array_key_exists($productDetailsArr[0]->ram, $ramData)){$ram=$ramData[$productDetailsArr[0]->ram];}
+                    $internalMemoryData='';if(array_key_exists($productDetailsArr[0]->internalMemory, $internalMemory)){$internalMemoryData=$internalMemory[$productDetailsArr[0]->internalMemory];}?>  
+                <li title="<?php echo $ram;?> RAM &amp; <?php echo $internalMemoryData;?> ROM">-&nbsp;<?php echo $ram;?> RAM &amp; <?php echo $internalMemoryData;?> ROM</li>
+                <?php $rearCamera='';if(array_key_exists($productDetailsArr[0]->mobileRearCamera, $mobileCamera)){$rearCamera=$mobileCamera[$productDetailsArr[0]->mobileRearCamera];}
+                    $frontCamera='';if(array_key_exists($productDetailsArr[0]->frontCamera, $mobileCamera)){$frontCamera=$mobileCamera[$productDetailsArr[0]->frontCamera];}?>  
+                <li title="<?php echo $rearCamera;?> Rear &amp;  <?php echo $frontCamera;?> Front Camera">-&nbsp;<?php echo $rearCamera;?> Rear &amp;  <?php echo $frontCamera;?> Front Camera</li>
                 <?php 
                 $processorType="";if(array_key_exists($productDetailsArr[0]->processorCores, $mobileProcessorCores)){$processorType=$mobileProcessorCores[$productDetailsArr[0]->processorCores];}
                 ?>
@@ -188,7 +199,7 @@ jQuery(document).ready(function(){
               </ul>
             </div>
          <hr class="divider-horizontal">
-             <?php foreach ($productPriceArr As $k){ //pre($k);die;?>
+             <?php foreach ($productPriceArr As $k){?>
             <div class="row pdp-e-i-MRP  ">            	
                 <div class="col-xs-3  pdp-e-i-MRP-l"><input type="radio" name="selectPackege" value="<?php echo $k->productPriceId;?>" > Packege of <?php echo $k->qty;?> </div>
                 <!--<div class="col-xs-3  pdp-e-i-MRP-r reset-padding"><span class="rsDiv">Rs</span>&nbsp;<s><span>12,290</span></s> [<span class="pdp-e-i-MRP-r-dis">27</span>% OFF]</div> -->
@@ -448,12 +459,13 @@ jQuery(document).ready(function(){
               </div>
               <div class="spec-body">
                 <ul class="dtls-list clear">
-                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->warrantyDuration.' months';?> Brand Warranty</li>
+                  <li class="col-xs-6 dtls-li"> <?php echo $warrantyDurationData;?> Brand Warranty</li>
                   <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->screenSize;?> Display</li>
-                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->ram;?> RAM &amp; <?php echo $productDetailsArr[0]->internalMemory;?> ROM</li>
-                  <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->mobileRearCamera;?> Rear &amp;  <?php echo $productDetailsArr[0]->frontCamera;?> Front Camera</li>
+                  <li class="col-xs-6 dtls-li"> <?php echo $ram;?> RAM &amp; <?php echo $internalMemoryData;?> ROM</li>
+                  <li class="col-xs-6 dtls-li"> <?php echo $rearCamera;?> Rear &amp;  <?php echo $frontCamera;?> Front Camera</li>
                   <li class="col-xs-6 dtls-li"> <?php echo $productDetailsArr[0]->processorSpeed;?> <?php echo $processorType;?> processor</li>
-                  <li class="col-xs-6 dtls-li"> Expandable upto <?php echo $productDetailsArr[0]->expandableMemory;?></li>
+                  <?php $expandableMemoryData='';if(array_key_exists($productDetailsArr[0]->expandableMemory,$expandableMemory)){$expandableMemoryData=$expandableMemory[$productDetailsArr[0]->expandableMemory];}?>
+                  <li class="col-xs-6 dtls-li"> Expandable upto <?php echo $expandableMemoryData;?></li>
                   <?php $connectivityType='';if(array_key_exists($productDetailsArr[0]->mobileConnectivity,$mobileConnectivity)){$connectivityType=$mobileConnectivity[$productDetailsArr[0]->mobileConnectivity];}?>
                   <li class="col-xs-6 dtls-li"> <?php echo $connectivityType;?></li>
                   <?php $mobileDisplayResolutiontype='';if(array_key_exists($productDetailsArr[0]->displayResolution, $mobileDisplayResolution)){$mobileDisplayResolutiontype=$mobileDisplayResolution[$productDetailsArr[0]->displayResolution];}?>
@@ -598,7 +610,7 @@ jQuery(document).ready(function(){
                              
                               <tr>
                                 <td width="20%">Rear Camera</td>
-                                <td><?php echo $productDetailsArr[0]->mobileRearCamera;?> </td>
+                                <td><?php echo $rearCamera;?> </td>
                               </tr>
                               <!--<tr>
                                 <td width="20%">Auto Focus</td>
@@ -610,7 +622,7 @@ jQuery(document).ready(function(){
                               </tr>
                               <tr>
                                 <td width="20%">Front Camera</td>
-                                <td><?php echo $productDetailsArr[0]->frontCamera;?> </td>
+                                <td><?php echo $frontCamera;?> </td>
                               </tr>
                               <tr>
                                 <td width="20%">Other Camera Features</td>
@@ -668,11 +680,11 @@ jQuery(document).ready(function(){
                              
                               <tr>
                                 <td width="20%">RAM</td>
-                                <td><?php echo $productDetailsArr[0]->ram;?></td>
+                                <td><?php echo $ram;?></td>
                               </tr>
                               <tr>
                                 <td width="20%">Internal Memory</td>
-                                <td><?php echo $productDetailsArr[0]->internalMemory;?> </td>
+                                <td><?php echo $internalMemoryData;?> </td>
                               </tr>
                               <!--<tr>
                                 <td width="20%">User Memory</td>
@@ -680,7 +692,7 @@ jQuery(document).ready(function(){
                               </tr>-->
                               <tr>
                                 <td width="20%">Expandable Memory</td>
-                                <td><?php echo $productDetailsArr[0]->expandableMemory;?> </td>
+                                <td><?php echo $expandableMemoryData;?> </td>
                               </tr>
                               <tr>
                                 <td width="20%">Memory Card Slot</td>
@@ -753,7 +765,7 @@ jQuery(document).ready(function(){
                               </tr>
                               <tr>
                                 <td width="20%">Battery Type</td>
-                                <td><?php $batteryTypeName='';if(array_key_exists($productDetailsArr[0]->batteryType, $mobileBatteryType)){ echo $mobileBatteryType[$productDetailsArr[0]->batteryType];}?></td>
+                                <td><?php echo $mobileBatteryName?></td>
                               </tr>
                               <!--<tr>
                                 <td width="20%">Replaceable Battery</td>
@@ -800,7 +812,7 @@ jQuery(document).ready(function(){
                               </tr>
                               <tr>
                                 <td width="20%">Warranty Duration(in Month)</td>
-                                <td><?php echo $productDetailsArr[0]->warrantyDuration?> </td>
+                                <td><?php echo $warrantyDurationData;?> </td>
                               </tr>
                             </tbody>
                           </table>
