@@ -356,7 +356,22 @@
         //alert(myJsMain.baseURL);
         //myJsMain.commonFunction.tidiitConfirm('Tidiit System','Are you sure  ?','silent','',180);
         //myJsMain.commonFunction.tidiitAlert('Tidiit System','returning ',180);
+        <?php 
+        if($this->session->userdata('FE_SESSION_VAR')):?>
+            setInterval(function(){
+                var mesg = true;
+                jQuery.post( myJsMain.baseURL+'update-message/', {
+                    mesg: mesg
+                },
+                function(data){
+                    $('li span.js-notfy-auto-update').text(data.tot_notfy);
+                    $('h3.js-cart-auto-update').html('<span>`</span>'+data.carttotal+' - '+data.totalitem+' item');
+                }, 'json' );
+            }, 10000);
+        <?php 
+        endif;?>
     });
+    
 
     function manualClick() {
         alert(manualClick + ' from fun');

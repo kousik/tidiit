@@ -412,4 +412,12 @@ class Order_model extends CI_Model {
             endif;
         }
         
+        public function tidiit_creat_order_coupon($data){
+            if($this->db->insert($this->_order_coupon, $data)){
+                return $this->db->insert_id();
+            }else{
+                return false;
+            }
+        }
+        
 }

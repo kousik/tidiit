@@ -980,11 +980,9 @@ class Shopping extends MY_Controller{
         $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
         $is_cart_update = false;
         $cart = $this->cart->contents();
-        
-        
         if($cart): 
             foreach ($cart as $item):            
-                if(($item['id'] == $productId)):
+                if(($item['id'] == $productId) && ($item['options']['orderType'] == 'SINGLE')):
                     $is_cart_update = $item['rowid'];                    
                 endif;
             endforeach;
@@ -1016,7 +1014,7 @@ class Shopping extends MY_Controller{
             $this->_add_to_cart($cart_data);
         endif;        
         
-        redirect(BASE_URL.'shopping/single-checkout');
+        redirect(BASE_URL.'product/details/'.base64_encode($productId));
     }
     
     function single_order_check_out(){
@@ -1117,6 +1115,7 @@ class Shopping extends MY_Controller{
             
             $cpn = new stdClass();
             $cpn->amount = $coupon->amount;
+            $cpn->couponId = $coupon->couponId;
             $this->session->set_userdata('coupon', $cpn);
             $result['msg'] = "Promo code has been applied successfully!";
             $result['content'] = $data;
@@ -1124,5 +1123,90 @@ class Shopping extends MY_Controller{
             die;
         endif;
 	
+    }
+    
+    /**
+     * 
+     */
+    function ajax_process_single_payment(){
+        $user = $this->_get_current_user_details(); 
+        $cart = $this->cart->contents();
+        $order = array();
+        $orderid = array();
+        if($this->session->userdata('coupon')):
+            $coupon = $this->session->userdata('coupon');
+        else:    
+            $coupon = new stdClass();
+            $coupon->amount = 0;
+            $coupon->couponId = 0;
+        endif;
+        
+        $totalsingleitem  = 0;
+        foreach ($this->cart->contents() as $citem):            
+            if($citem['options']['orderType'] == 'SINGLE'):
+                $totalsingleitem = $totalsingleitem + 1;                    
+            endif;
+        endforeach;
+        
+        $coupon_price = 0;
+        if($coupon->couponId && $totalsingleitem > 1):
+            $coupon_price = $coupon->amount / $totalsingleitem;
+        elseif($coupon->couponId && $totalsingleitem == 1):
+            $coupon_price = $coupon->amount;            
+        endif;
+        
+        foreach ($cart as $item):  
+            if($item['options']['orderType'] == 'SINGLE'):
+                $order['orderType'] = 'SINGLE';
+                $order['productId'] = $item['options']['productId'];
+                $order['productPriceId'] = $item['options']['productPriceId'];
+                $order['orderDate'] = date('Y-m-d H:i:s');
+                $order['orderUpdatedate'] = date('Y-m-d H:i:s');
+                $order['productQty'] = $item['qty'];
+                $order['userId'] = $this->session->userdata('FE_SESSION_VAR');
+                $order['orderAmount'] = $item['subtotal'] - $coupon_price;
+                $order['subTotalAmount'] = $item['subtotal'];   
+                $order['discountAmount'] = $coupon_price;
+                $order['status'] = 2; 
+
+                $orderinfo = array();
+                $pro = $this->Product_model->details($order['productId']);
+                $orderinfo['pdetail'] = $pro[0];
+                $orderinfo['priceinfo'] = $this->Product_model->get_products_price_details_by_id($order['productPriceId']);
+                $productImageArr =$this->Product_model->get_products_images($order['productId']);
+                $orderinfo['pimage'] = $productImageArr[0];            
+
+                $userShippingDataDetails = $this->User_model->get_user_shipping_information();
+                $orderinfo['shipping'] = $userShippingDataDetails[0];
+                $userBillingDataDetails=$this->User_model->get_billing_address();
+                $orderinfo['billing'] = $userBillingDataDetails[0];
+                $order['orderInfo'] = base64_encode(serialize($orderinfo));
+                $orderId = $this->Order_model->add($order);
+                $orderid['orderId'] = $orderId;
+                
+                if($coupon->couponId):
+                    $cdata = array();
+                    $cdata['orderId'] = $orderId;
+                    $cdata['couponId'] = $coupon->couponId;
+                    $cdata['amount'] = $coupon_price;
+                    $this->Order_model->tidiit_creat_order_coupon($cdata);
+                endif;
+                $this->_remove_cart($item['rowid']);
+                
+                //Send Email message
+                $recv_email = $user->email;
+                
+            endif;
+        endforeach;
+        
+        if($orderid):
+            $result['url'] = BASE_URL.'shopping/success/';
+            echo json_encode( $result );
+            die;                    
+        else:
+            $result['error'] = "Some error happen, please try again later!";
+            echo json_encode( $result );
+            die;
+        endif;
     }
 }

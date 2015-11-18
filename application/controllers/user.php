@@ -274,4 +274,18 @@ class User extends MY_Controller{
             return $newCateoryArr;
         }
     }
+    
+    function ajax_get_update_message(){
+        $this->load->library('cart');
+        $mynotification = $this->User_model->notification_my_unread($this->session->userdata('FE_SESSION_VAR'));
+        if(!empty($mynotification)):
+            $data['tot_notfy'] = count($mynotification);
+        else:
+            $data['tot_notfy'] = 0;
+        endif;
+        $data['carttotal'] = number_format($this->cart->total(), 2, '.', '');
+        $data['totalitem'] = count($this->cart->contents());
+        echo json_encode( $data );
+        die;
+    }
 }
