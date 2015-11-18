@@ -66,30 +66,29 @@ endforeach;
                                 </div>
                             </div>
                         </td>
-                        <td data-th="Price"><?=$item['price']?></td>
+                        <td data-th="Price"><i class="fa fa-rupee"></i> <?=$item['price']?></td>
 
                         <td data-th="Quantity">
                             <?=$item['qty']?>
                         </td>
-                        <td data-th="Subtotal" class="text-center"><?=number_format($item['subtotal'])?></td>
+                        <td data-th="Subtotal" class="text-center"><i class="fa fa-rupee"></i> <?=number_format($item['subtotal'])?></td>
                         <td class="actions" data-th="" align="right">
-                            <button class="btn btn-danger btn-sm js-group-cart-remove" data-cartid="<?=$item['rowid']?>"><i class="fa fa-trash-o"></i></button>
-                            <button class="btn btn-success btn-sm">Checkout <i class="fa fa-angle-right"></i></button>
+                            <button class="btn btn-danger btn-sm js-single-cart-remove" data-cartid="<?=$item['rowid']?>"><i class="fa fa-trash-o"></i></button>
                         </td>
                     </tr>
                     <?php 
-                    $total .= $item['subtotal'];
+                    $total += $item['subtotal'];
                     endif;
                     endforeach;?>
                 </tbody>
 
                 <tfoot>
                     <tr>
-                        <td><!--<a href="#" class="btn btn-warning"><i class="fa fa-angle-left"></i> Continue Shopping</a>--></td>
+                        <td><a href="<?=BASE_URL;?>" class="btn btn-warning"><i class="fa fa-angle-left"></i> Continue Shopping</a></td>
                         <td colspan="2" class="hidden-xs"></td>
-                        <td class="hidden-xs text-center"><strong>Total <?=$total?></strong></td>
+                        <td class="hidden-xs text-center"><strong>Total <i class="fa fa-rupee"></i> <?=number_format($total)?>.00</strong></td>
                         <td>
-                            <?php if($total > 1):?><a href="#" class="btn btn-success btn-block">Checkout <i class="fa fa-angle-right"></i></a><?php endif;?></td>
+                            <?php if($total > 1):?><a href="<?=BASE_URL;?>shopping/single-checkout/" class="btn btn-success btn-block">Checkout <i class="fa fa-angle-right"></i></a><?php endif;?></td>
                     </tr>
                 </tfoot>
             </table>
@@ -123,12 +122,12 @@ endforeach;
                                 </div>
                             </div>
                         </td>
-                        <td data-th="Price"><?=$item['price']?></td>
+                        <td data-th="Price"><i class="fa fa-rupee"></i> <?=$item['price']?></td>
 
                         <td data-th="Quantity">
                             <?=$item['qty']?>
                         </td>
-                        <td data-th="Subtotal" class="text-center"><?=number_format($item['subtotal'])?></td>
+                        <td data-th="Subtotal" class="text-center"><i class="fa fa-rupee"></i> <?=number_format($item['subtotal'])?></td>
                         <td class="actions" data-th="" align="right">
                             <button class="btn btn-danger btn-sm js-group-cart-remove" data-cartid="<?=$item['rowid']?>" data-orderid="<?=$item['options']['orderId']?>"><i class="fa fa-trash-o"></i></button>
                             <a href="<?=BASE_URL;?>shopping/checkout/<?=base64_encode($item['options']['orderId']*226201)?>" class="btn btn-success btn-sm"> Checkout <i class="fa fa-angle-right"></i></a>
@@ -174,8 +173,33 @@ endforeach;
                     jQuery('tr#'+cartId).remove();
                     var item = "(<?=count($this->cart->contents())-1?> Item<?php if(count($this->cart->contents())-1 > 1): echo 's';endif;?>)";
                     jQuery('span.js-cart-item').text(item);
+                    jQuery('#shoppingcart').modal('hide');
+                    jQuery('.showCartDetails').trigger( "click" ); 
                 }
             }, 'json' );
         }); 
+        
+        jQuery("body").delegate('.js-single-cart-remove', "click", function(e){
+            e.preventDefault();
+                         
+            var cartId = jQuery(this).attr('data-cartid');
+            jQuery.post( myJsMain.baseURL+'shopping/remove-single-cart/', {
+                cartId: cartId
+            },
+            function(data){ 
+                if(data.contents){
+                    jQuery('tr#'+cartId).remove();
+                    if(data.reload){
+                        window.location.href = myJsMain.baseURL;
+                    } else {
+                        var item = "(<?=count($this->cart->contents())-1?> Item<?php if(count($this->cart->contents())-1 > 1): echo 's';endif;?>)";
+                        jQuery('span.js-cart-item').text(item);
+                        jQuery('#shoppingcart').modal('hide');
+                        jQuery('.showCartDetails').trigger( "click" ); 
+                    }
+                }
+            }, 'json' );
+        }); 
+        
     });
 </script>

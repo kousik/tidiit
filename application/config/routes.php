@@ -64,6 +64,9 @@ $route['shopping/add-group-order']="shopping/process_my_group_orders";
 $route['shopping/mod-group-order/(:any)']="shopping/process_my_group_orders_by_id/$1";
 $route['shopping/mod-pt-group-order/(:any)']="shopping/process_my_parent_group_orders_by_id/$1";
 $route['shopping/checkout/(:any)']="shopping/process_checkout/$1";
+$route['shopping/remove_group_cart']="shopping/remove_group_cart";
+$route['shopping/ajax_process_group_payment']="shopping/ajax_process_group_payment";
+
 $route['shopping/success']="shopping/oredr_process_success";
 $route['shopping/group-order-accept-process/(:any)']="shopping/process_group_parent_order/$1";
 $route['shopping/ord-message']="shopping/oredr_default_message";
@@ -73,6 +76,11 @@ $route['shopping/group-re-order-process/(:any)']="shopping/order_group_re_order_
 
 $route['shopping/group-re-order-accept-process/(:any)/(:any)']="shopping/process_group_parent_re_order/$1/$2";
 $route['edit_groups_re_order/(:any)/(:any)']="user/edit_groups_re_order/$1/$2";
+
+$route['shopping/add-order']="shopping/process_my_single_orders";
+$route['shopping/single-checkout']="shopping/single_order_check_out";
+$route['shopping/remove-single-cart']="shopping/remove_single_cart_processing";
+
 
 //Notification
 $route['my-notifications']="notification/get_my_notifications";
