@@ -13,10 +13,15 @@ class Banner_model extends CI_Model {
 	}
 	
 	public function get_for_fe(){
-            $this->db->cache_on();
-		$this->db->select('*')->from($this->_table)->where('status','1');
-		return $this->db->get()->result();
+            $this->db->select('*')->from($this->_table)->where('status','1');
+            return $this->db->get()->result();
 	}
+        
+        public function get_home_slider($sliderSlNo=1){
+            $rs=$this->db->from($this->_table)->where('pageId',1)->where('sliderSlNo',$this->db->escape_str($sliderSlNo))->get()->result();
+            //echo $this->db->last_query();
+            return $rs;
+        }
 	
 	public function add($dataArr){
 		$this->db->insert($this->_table,$dataArr);
