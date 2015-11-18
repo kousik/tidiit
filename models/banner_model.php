@@ -17,8 +17,12 @@ class Banner_model extends CI_Model {
             return $this->db->get()->result();
 	}
         
-        public function get_home_slider($sliderSlNo=1){
-            $rs=$this->db->from($this->_table)->where('pageId',1)->where('sliderSlNo',$this->db->escape_str($sliderSlNo))->get()->result();
+        public function get_home_slider($sliderSlNo=1,$app=FALSE){
+            $this->db->from($this->_table)->where('pageId',1)->where('sliderSlNo',$this->db->escape_str($sliderSlNo));
+            if($app==FALSE)
+                $rs=$this->db->get()->result();
+            else
+                $rs=$this->db->get()->result_array();
             //echo $this->db->last_query();
             return $rs;
         }

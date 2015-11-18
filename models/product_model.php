@@ -315,20 +315,6 @@ class Product_model extends CI_Model {
 		$this->db->insert($this->_table_country,$dataArr);
 		return $this->db->insert_id();	
 		
-		/*if($dataArr["CountryID"]=='240'){
-			$CountryDataArr=$this->db->select('CountryID')->from($this->_country)->get()->result();
-			$BatchDataArr=array();
-			foreach($CountryDataArr AS $k){
-				$TmpArr=array();
-				$TmpArr=array('productId'=>$dataArr['productId'],'CountryID'=>$k->CountryID);
-				$BatchDataArr[]=$TmpArr;
-			}
-			$this->db->insert_batch($this->_table_country, $BatchDataArr); 
-			return TRUE;
-		}else{
-			
-		}*/
-		
 	}
 	public function edit_price($dataArr,$productId){
 		$this->db->where('productId',$productId);
@@ -460,178 +446,7 @@ class Product_model extends CI_Model {
 		return $this->db->query($sql)->result();
 	}
 	
-	public function get_tag_by_product_id($productId){
-		$sql="SELECT t.name FROM tags as t JOIN product_tag as pt ON(pt.tagId=t.tagId) WHERE pt.productId='".$productId."'";
-		return $this->db->query($sql)->result();
-		
-	}
 	
-	public function get_all_tag_for_landing(){
-		return $this->db->select('*')->from($this->_tag)->where('Landing',1)->limit(12)->order_by("tagId", "desc")->get()->result();
-	}
-	
-	public function get_all_tag_for_footer(){
-            $CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-            $sql="SELECT DISTINCT t.tagId,t.name FROM `tags` AS t "
-                    . " JOIN `product_tag` AS pt ON(t.tagId=pt.tagId) "
-                    . " JOIN `product_country` AS pc ON(pt.productId=pc.productId) "
-                    . " WHERE pc.CountryID='".$CountryID."' AND t.Home=1 ORDER BY t.tagId DESC LIMIT 0,10";
-		return $this->db->query($sql)->result();
-	}
-	
-	public function get_home_popular(){
-		$CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-		$sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
-                        . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                        . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                        . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                        . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId)  "
-                        . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                        . " WHERE p.Popular='1' AND c.Status=1 AND p.Status='1' AND pc.CountryID='".$CountryID."' ORDER BY RAND() DESC LIMIT 0,5";
-		return $this->db->query($sql)->result();
-	}
-        
-        public function get_category_popular($categoryId){
-		$CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-		$sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
-                        . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                        . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                        . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                        . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId)  "
-                        . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                        . " WHERE p.Popular='1' AND c.Status=1 AND p.Status='1' AND pc.CountryID='".$CountryID."' AND c.categoryId=".$categoryId." ORDER BY RAND() DESC LIMIT 0,5";
-		return $this->db->query($sql)->result();
-	}
-	
-	
-	public function get_home_featured(){
-		$CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-		$sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart FROM product AS p "
-                        . " JOIN product_image AS pi ON(pi.productId=p.productId) "
-                        . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                        . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                        . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                        . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                        . " WHERE p.Featured='1' AND c.Status=1 AND p.Status='1' AND pc.CountryID='".$CountryID."' ORDER BY p.productId DESC LIMIT 0,6";
-		return $this->db->query($sql)->result();
-	}
-	
-	public function get_recent_6_product(){
-		$CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-		$sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
-                        . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                        . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                        . " JOIN category AS c ON(p.categoryId=c.categoryId)  "
-                        . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                        . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                        . " WHERE p.Status=1 AND c.Status=1 AND pc.CountryID='".$CountryID."' AND p.isNew='1' ORDER BY p.productId DESC,p.DealPriceUpdateTime DESC LIMIT 0,6";
-		return $this->db->query($sql)->result();
-	}
-        
-	public function get_recent_4_product(){
-		$CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-		$sql="SELECT p.*,pi.Image,c.CategoryName,c.isAddToCart,dis.Amount "
-                        . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                        . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                        . " JOIN category AS c ON(p.categoryId=c.categoryId)  "
-                        . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                        . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                        . " WHERE p.Status=1 AND c.Status=1 AND pc.CountryID='".$CountryID."' AND p.isNew='1' ORDER BY p.productId DESC,p.DealPriceUpdateTime DESC LIMIT 0,4";
-		return $this->db->query($sql)->result();
-	}
-        
-	public function get_product_by_category($categoryId,$per_page=0,$offcet=0,$productId=0,$level=3){
-            $CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-            $MinPrice=$this->input->post('min_price',TRUE);
-            $MaxPrice=$this->input->post('max_price',TRUE);
-            $PriceSortType=$this->input->post('price_sort_type',TRUE);
-            $SearchProductTitle=$this->input->post('SearchProductTitle',TRUE);
-            $CateLevel='categoryId'.$level;
-            $sql="SELECT p.*,pi.Image,c.CategoryName,c.isAddToCart,c.Note,dis.Amount "
-                    . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId)"
-                    . "  JOIN product_country AS pc ON(pc.productId=p.productId) "
-                    . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                    . " JOIN category AS c1 ON(p.`categoryId`=c1.categoryId) "
-                    . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                    . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID)"
-                    . "  WHERE p.Status=1 AND c.Status=1  AND c1.Status='1' AND p.`".$CateLevel."`='".$categoryId."' AND pc.CountryID='".$CountryID."'  ";
-            if($SearchProductTitle!="")
-                $sql .= " AND p.Title LIKE '%".$SearchProductTitle."%'";
-            if($productId>0){
-                $sql .=" AND p.productId !=".$productId;
-            }
-
-            if($MinPrice!="" && $MaxPrice!=""){
-                $sql .= " AND p.Price BETWEEN $MinPrice AND $MaxPrice ";
-            }
-
-
-            if($PriceSortType=="")
-                $sql .=" ORDER BY p.productId DESC,p.DealPriceUpdateTime DESC ";
-            else
-                $sql .=" ORDER BY p.price $PriceSortType";
-
-            
-            $sql.=" LIMIT $offcet,$per_page";
-            //echo $sql;die;
-            return $this->db->query($sql)->result();
-	}
-        
-        
-        
-        public function get_total_product_by_category($categoryId,$productId=0){
-            $ci =& get_instance();
-            $ci->load->model('Category_model');
-            $rsCat=$ci->Category_model->get_parrent_data_by_id($categoryId);
-            $CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-            if($rsCat[0]->ParrentcategoryId==0){
-                $sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
-                        . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                        . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                        . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                        . " JOIN category AS c1 ON( c.ParrentcategoryId=c1.`categoryId` AND c.Status=1 ) "
-                        . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                        . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                        . " WHERE p.Status=1 AND c1.Status=1 AND c1.`categoryId`='".$categoryId."' AND pc.CountryID='".$CountryID."' ";
-                if($productId>0){
-                    $sql .=" AND p.productId !=".$productId;
-                }
-                
-                $sql .=" ORDER BY p.productId DESC,p.DealPriceUpdateTime DESC ";
-                $num=$this->db->query($sql)->num_rows();
-                
-		$sql1="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
-                        . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                        . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                        . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                        . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                        . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                        . " WHERE p.Status=1 AND c.Status=1 AND p.categoryId='".$categoryId."' AND pc.CountryID='".$CountryID."' ";
-                if($productId>0){
-                    $sql1 .=" AND p.productId !=".$productId;
-                }
-                
-                $sql1 .=" ORDER BY p.productId DESC,p.DealPriceUpdateTime DESC ";
-                $num1=$this->db->query($sql1)->num_rows();
-                return $num+$num1;
-            }else{
-                $sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
-                        . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                        . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                        . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                        . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                        . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                        . " WHERE p.Status=1 AND c.Status=1 AND p.categoryId='".$categoryId."' AND pc.CountryID='".$CountryID."' ";
-                if($productId>0){
-                    $sql .=" AND p.productId !=".$productId;
-                }
-                
-                $sql .=" ORDER BY p.productId DESC,p.DealPriceUpdateTime DESC ";
-                $num=$this->db->query($sql)->num_rows();
-                return $num;
-            }
-	}
-        
 	
 	public function products_for_discount(){
 		$sql="SELECT p.productId,p.Title,pc.CountryID "
@@ -699,19 +514,6 @@ class Product_model extends CI_Model {
 	}
 	
 	
-	public function show_country_wise($Title,$categoryId){
-		//$sql="SELECT pd.* FROM `product` AS p JOIN `product_country` AS pd ON p.productId=pd.productId WHERE p.Title='".$Title."' AND pd.CountryID IN('1','240','99') ORDER BY pd.CountryID";
-                $this->db->select('pd.*');
-                $this->db->from('product p');
-                $this->db->join('product_country pd','p.productId=pd.productId');
-                $this->db->where('p.Title',$Title);
-                $this->db->where('p.categoryId',$categoryId);
-                $this->db->where_in('pd.CountryID',array(1,240,99));
-                $this->db->order_by('pd.CountryID','ASC');
-                
-                //echo $this->db->last_query();die;
-		return $this->db->get()->result();
-	}
 	
 	public function copy_tag($productId,$NewCopyproductId){
 		$OldTagArr=$this->db->select('*')->from($this->_table_tag)->where('productId',$productId)->get()->result();
@@ -726,110 +528,9 @@ class Product_model extends CI_Model {
 		return TRUE;
 	}
 	
-	public function get_popular_store(){
-		$CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-		$sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
-                        . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                        . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                        . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                        . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                        . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                        . " WHERE p.Status=1 AND c.Status=1 AND pc.CountryID='".$CountryID."' AND c.PopularStore=1 ORDER BY p.productId DESC";
-		return $this->db->query($sql)->result();
-	}
-	
-	public function get_recent_deals(){
-		$CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-		$sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
-                        . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                        . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                        . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                        . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                        . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                        . " WHERE p.Status=1 AND c.Status=1 AND pc.CountryID='".$CountryID."' AND p.Deals=1 ORDER BY p.productId DESC";
-		return $this->db->query($sql)->result();
-	}
-	
-	public function get_recent_product($PerPage=0,$PageNo=0){
-		$CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-		$sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
-                        . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                        . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                        . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                        . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                        . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                        . " WHERE p.Status=1 AND c.Status=1 AND pc.CountryID='".$CountryID."' AND p.isNew='1' ORDER BY p.productId DESC,p.DealPriceUpdateTime DESC";
-                if($PerPage>0){
-                    $sql.=" LIMIT $PageNo,$PerPage";
-                }
-		return $this->db->query($sql)->result();
-	}
-        
-        public function get_recent_product_total(){
-		$CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-		$sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
-                        . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                        . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                        . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                        . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                        . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                        . " WHERE p.Status=1 AND c.Status=1 AND pc.CountryID='".$CountryID."' AND p.isNew='1' ORDER BY p.productId DESC,p.DealPriceUpdateTime DESC ";
-                
-		$arr=$this->db->query($sql)->result();
-                return count($arr);
-	}
-	
-	public function get_featured(){
-		$CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-		$sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
-                        . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                        . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                        . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                        . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                        . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                        . " WHERE p.Featured='1' AND c.Status=1 AND p.Status='1' AND pc.CountryID='".$CountryID."' ORDER BY p.productId";
-		return $this->db->query($sql)->result();
-	}
-        
-        public function update_cancel_quantity($productId,$Qty){
-            $dataArr=  $this->db->select('Quantity')->from($this->_table)->where('productId',$productId)->get()->result();
-            $UpdateArr=array('Quantity'=>($dataArr[0]->Quantity+$Qty));
-            $this->edit($UpdateArr, $productId);
-            return TRUE;
-        }
-        
-        public function search($search_text,$categoryId){
-            $CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-            $sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
-                    . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                    . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                    . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                    . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                    . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                    . " WHERE p.Status=1 AND c.Status=1 AND pc.CountryID='".$CountryID."'";
-            if($categoryId>0){
-                $sql .= "AND p.categoryId='".$categoryId."' ";
-            }
-            
-            $sql .= " AND p.Title LIKE('%".$this->db->escape_like_str($search_text)."%') ORDER BY p.productId DESC,p.DealPriceUpdateTime DESC";
-		return $this->db->query($sql)->result();
-        }
         
         public function get_all_tag(){
             return $this->db->select('*')->from($this->_tag)->order_by("tagId", "desc")->get()->result();
-        }
-        
-        public function get_product_list_by_tag_id($tagId){
-            $CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-            $sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
-                    . " FROM product_tag AS pt JOIN product AS p ON(pt.productId=p.productId) "
-                    . " JOIN product_image AS pi ON(pi.productId=p.productId) "
-                    . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                    . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                    . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                    . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                    . " WHERE p.Status=1 AND c.Status=1 AND pc.CountryID='".$CountryID."' AND pt.tagId='".$tagId."' ORDER BY p.productId DESC,p.DealPriceUpdateTime DESC";
-		return $this->db->query($sql)->result();
         }
         
         public function update_tag_state($tagId,$DataArr){
@@ -857,130 +558,7 @@ class Product_model extends CI_Model {
             }       
         }
         
-        function get_product_image_for_download($productIds){
-            $sql="SELECT pi.Image FROM `product` AS p JOIN `product_country` AS pc ON(p.productId=pc.productId) LEFT JOIN `product_image` AS pi 
-                 ON(p.productId=pi.productId) WHERE p.productId IN($productIds)";
-            return $this->db->query($sql)->result();
-        }
         
-        function get_deal_product_by_category($categoryId){
-            $CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-            if($categoryId>0){
-                $sql="SELECT p.*,c.ParrentcategoryId,pi.Image,c.isAddToCart FROM product AS p JOIN category AS c ON(p.categoryId=c.categoryId ) "
-                        . " JOIN product_image AS pi ON(pi.productId=p.productId) JOIN product_country AS pc ON(pc.productId=p.productId) "
-                        . "  WHERE pc.CountryID='".$CountryID."' AND p.Status=1 AND p.Deals=1 ORDER BY p.DealPriceUpdateTime DESC LIMIT 0,1";
-            }else{
-                $sql="SELECT p.*,'TOPCat' AS ParrentcategoryId,pi.Image,c.isAddToCart FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                        . " JOIN product_country AS pc ON(pc.productId=p.productId) WHERE Status=1 AND Deals=1 ORDER BY DealPriceUpdateTime DESC LIMIT 0,1";
-            }
-            //echo $sql;die;
-            return $this->db->query($sql)->result();
-        }
-        
-        function get_products_by_category_only($categoryId,$PerPage=4,$PageNo=0){
-            $CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-            $sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
-                    . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                    . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                    . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                    . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                    . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                    . " WHERE p.Status=1 AND c.Status=1 AND pc.CountryID='".$CountryID."' AND p.categoryId=$categoryId ORDER BY p.productId DESC,p.DealPriceUpdateTime DESC";
-            if($PerPage>0){
-                $sql.=" LIMIT $PageNo,$PerPage";
-            }
-            return $this->db->query($sql)->result();
-        }
-        
-        
-        function get_products_by_all_category_only($categoryId,$PerPage=4,$PageNo=0){
-            $CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-            $sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
-                    . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                    . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                    . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                    . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                    . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                    . " WHERE p.Status=1 AND c.Status=1 AND pc.CountryID='".$CountryID."' AND p.categoryId IN(SELECT c1.categoryId FROM `category` AS c1 where c1.ParrentcategoryId=$categoryId) ORDER BY p.productId DESC,p.DealPriceUpdateTime DESC";
-            if($PerPage>0){
-                $sql.=" LIMIT $PageNo,$PerPage";
-            }
-            //echo $sql;die;
-            return $this->db->query($sql)->result();
-        }
-        
-    function set_deal($dataArr){
-        $this->db->insert($this->_table_deal,$dataArr);
-        return $this->db->insert_id();
-    }
-    
-    function remove_deal($dataArr){
-        $this->db->where_in('productId',$productId);
-        $this->db->delete($this->_table_deal);
-        return TRUE;
-    }
-    
-    function edit_deal($productId,$categoryId,$RegionID){
-        $this->db->where('RegionID',$RegionID);
-        $this->db->where('categoryId',$categoryId);
-        $this->db->update($this->_table_deal,array('productId'=>$productId));
-        //echo $this->db->last_query();die;
-        return TRUE;		
-    }
-    
-    function get_deal($categoryId=0){
-        $this->db->cache_off();
-        $CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-        if($categoryId>0){
-            $sql="SELECT p.*,pi.Image"
-                    . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                    . " JOIN product_deal AS pd ON(pd.productId=p.productId) "
-                    . " JOIN category AS c ON(c.categoryId=p.categoryId) "
-                    . " WHERE p.Status=1 AND pd.RegionID='".$CountryID."' AND pd.categoryId=$categoryId AND c.isAddToCart=1 ORDER BY rand() LIMIT 1";
-        }else{
-            $sql="SELECT p.*,pi.Image"
-                    . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                    . " JOIN product_deal AS pd ON(pd.productId=p.productId) "
-                    . " JOIN category AS c ON(c.categoryId=p.categoryId) "
-                    . " WHERE p.Status=1 AND pd.RegionID='".$CountryID."' AND c.isAddToCart=1 ORDER BY p.DealPriceUpdateTime DESC LIMIT 0,5";
-        }
-        //echo $sql;die;
-        return $this->db->query($sql)->result();
-    }
-    
-    public function get_product_by_category_max_min($categoryId,$level=3){
-        $CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-        $CateLevel='categoryId'.$level;
-        $sql="SELECT MAX(p.Price) AS MaxPrice,MIN(p.Price) AS MinPrice "
-                . " FROM product AS p JOIN product_country AS pc ON(pc.productId=p.productId) "
-                . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                . "  WHERE p.Status=1 AND c.Status=1 AND p.`".$CateLevel."`='".$categoryId."' AND pc.CountryID='".$CountryID."'  ";
-        return $this->db->query($sql)->result();
-    }
-    
-    function search_result($categoryId,$SearchProductTitle,$per_page){
-        $CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-        $sql="SELECT p.*,pi.Image,c.CategoryName,dis.Amount,c.isAddToCart "
-                . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                . " JOIN product_country AS pc ON(pc.productId=p.productId) "
-                . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                . " LEFT JOIN product_discount AS pd ON(p.productId=pd.productId) "
-                . " LEFT JOIN discount AS dis ON(pd.DiscountID=dis.DiscountID) "
-                . " WHERE p.Status=1 AND c.Status=1 AND pc.CountryID='".$CountryID."' AND p.categoryId1=$categoryId AND p.Title LIKE '%".$SearchProductTitle."%' ORDER BY p.productId DESC,p.DealPriceUpdateTime DESC";
-            $sql.=" LIMIT 0,$per_page";
-        return $this->db->query($sql)->result();   
-    }
-    
-    
-    function get_max_min_for_search($categoryId,$SearchProductTitle){
-        $CountryID=$this->session->userdata('USER_SHIPPING_COUNTRY');
-        $sql="SELECT MAX(p.Price) AS MaxPrice,MIN(p.Price) AS MinPrice "
-                . " FROM product AS p JOIN product_country AS pc ON(pc.productId=p.productId) "
-                . " JOIN category AS c ON(p.categoryId=c.categoryId) "
-                . " WHERE p.Status=1 AND c.Status=1 AND pc.CountryID='".$CountryID."' AND p.categoryId1=$categoryId AND p.Title LIKE '%".$SearchProductTitle."%' ";
-        //echo $sql;die;
-        return $this->db->query($sql)->result();   
-    }
     
     function is_exist_deal_for_category($TopcategoryId,$RegionID){
         $rs=$this->db->from($this->_table_deal)->where('RegionID',$RegionID)->where('categoryId',$TopcategoryId)->get()->result();
@@ -990,13 +568,17 @@ class Product_model extends CI_Model {
             return FALSE;
     }
     
-    public function get_recent($noOfItem=12){
+        
+    public function get_recent($noOfItem=12,$app=false){
         $sql="SELECT p.*,pi.image,c.categoryName "
                 . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
                 . " JOIN product_category AS pc ON(pc.productId=p.productId)  "
                 . " JOIN category AS c ON(pc.categoryId=c.categoryId)  "
                 . " WHERE p.status=1 AND c.status=1 GROUP BY pi.productId ORDER BY p.productId DESC,p.updateTime DESC LIMIT 0,$noOfItem";
-        return $this->db->query($sql)->result();
+        if($app==TRUE)
+            return $this->db->query($sql)->result_array();
+        else
+            return $this->db->query($sql)->result();
     }
     
     function get_page_template(){

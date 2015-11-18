@@ -41,8 +41,12 @@ class Brand_model extends CI_Model{
 		return TRUE;
 	}
         
-        public function get_all(){
-            return $this->db->get_where($this->_table,array('status'=>1))->result();
+        public function get_all($app=FALSE){
+            if($app==FALSE)
+                return $this->db->get_where($this->_table,array('status'=>1))->result();
+            else
+                return $this->db->get_where($this->_table,array('status'=>1))->result_array();
         }
+        
 }
 ?>
