@@ -1279,13 +1279,20 @@ abstract class REST_Controller extends CI_Controller
         }
 
         $valid_logins = $this->config->item('rest_valid_logins');
-
+        pre($valid_logins);
         if ( ! array_key_exists($username, $valid_logins)) {
+            echo $username;die;
             return false;
         }
 
         // If actually null (not empty string) then do not check it
-        if ($password === null and $valid_logins[$username] != $password) {
+        if ($password === null) {
+            die('password is null');
+            return false;
+        }
+        
+        if($valid_logins[$username] != $password){
+            die($valid_logins[$username].' = '.$password);
             return false;
         }
 
