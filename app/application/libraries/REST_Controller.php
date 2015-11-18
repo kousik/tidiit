@@ -1316,6 +1316,7 @@ abstract class REST_Controller extends CI_Controller
      */
     protected function _prepare_basic_auth()
     {
+        echo '<pre>';pre($_SERVER);die;
         // If whitelist is enabled it has the first chance to kick them out
         if (config_item('rest_ip_whitelist_enabled')) {
             $this->_check_whitelist_auth();
