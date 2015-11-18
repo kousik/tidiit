@@ -134,6 +134,7 @@ class MY_Controller extends CI_Controller {
     public function _my_seo_freindly_url_str($String){
             $ChangedStr = preg_replace('/\%/',' percentage',$String);
             $ChangedStr = preg_replace('/\@/',' at ',$ChangedStr);
+            $ChangedStr = preg_replace('/\'/',' - ',$ChangedStr);
             $ChangedStr = preg_replace('/\&/',' and ',$ChangedStr);
             $ChangedStr = preg_replace('/\s[\s]+/','-',$ChangedStr);    // Strip off multiple spaces
             $ChangedStr = preg_replace('/[\s\W]+/','-',$ChangedStr);    // Strip off spaces and non-alpha-numeric
@@ -257,6 +258,14 @@ class MY_Controller extends CI_Controller {
             $data['fbData']=$fbData;
         }
         //echo $this->uri->segment(1).' = '.$this->uri->segment(2);die;
+        
+        $data['categoryMenu']=  $this->get_category_menu();
+        $data['html_heading']=$this->load->view('html_heading',$data,true);
+        //echo 'zzz1134588';die;
+        return $data;
+    }
+    
+    function get_category_menu(){
         $TopCategoryData=$this->Category_model->get_top_category_for_product_list();
         //$AllButtomCategoryData=$this->Category_model->buttom_category_for_product_list();
         foreach($TopCategoryData as $k){
@@ -282,10 +291,7 @@ class MY_Controller extends CI_Controller {
                 $k->SubCategory=$SubCateory;
             }
         }
-        $data['categoryMenu']=$TopCategoryData;
-        $data['html_heading']=$this->load->view('html_heading',$data,true);
-        //echo 'zzz1134588';die;
-        return $data;
+        return $TopCategoryData;
     }
 
     private function get_general_meta($data){

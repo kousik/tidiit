@@ -16,6 +16,15 @@ if ( ! function_exists('short_words')){
     }
 }
 
+if ( ! function_exists('isValidTimeStamp'))
+{
+    function isValidTimeStamp($timestamp)
+    {
+        return ((string) (int) $timestamp === $timestamp) 
+            && ($timestamp <= PHP_INT_MAX)
+            && ($timestamp >= ~PHP_INT_MAX);
+    }   
+}
 
 if ( ! function_exists('my_seo_freindly_url')){
     function my_seo_freindly_url($String){

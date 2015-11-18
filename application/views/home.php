@@ -5,34 +5,33 @@
                         <?php echo $main_menu;?>
                 </div>
                 <div class="col-md-6 col-sm-7 padng_left_none">
+                    <?php if(!empty($slider1)):?>
                 <!-- start banner section -->
                     <div class="banner_sec">
                         <ul id="demo1">
+                            <?php foreach ($slider1 AS $k): ?>
                             <li>
-                                <img src="<?php echo SiteImagesURL;?>banner_img.png" />
+                                <img src="<?php echo SiteResourcesURL.'banner/landing/'.$k->image;?>" />
                                 <span>&nbsp;</span>
                             </li>
-                            <li>
-                                <img src="<?php echo SiteImagesURL;?>banner_img1.png" />
-                                <span>&nbsp;</span>
-                            </li>
+                            <?php endforeach;?>
                         </ul>
                     </div>
                     <!-- end banner section -->
-
+                    <?php endif;
+                    if(!empty($slider2)):?>
                     <!-- start banner section -->
                     <div class="banner_sec">
                         <ul id="demo2">
+                            <?php foreach ($slider2 AS $k): ?>
                             <li>
-                                <img src="<?php echo SiteImagesURL;?>banner_img1.png" />
+                                <img src="<?php echo SiteResourcesURL.'banner/landing/'.$k->image;?>" />
                                 <span>&nbsp;</span>
                             </li>
-                            <li>
-                                <img src="<?php echo SiteImagesURL;?>banner_img.png" />
-                                <span>&nbsp;</span>
-                            </li>
+                            <?php endforeach;?>
                         </ul>
                     </div>
+                    <?php endif;?>
                     <!-- end banner section -->
                 </div>
                 <div class="col-md-3 col-sm-5">

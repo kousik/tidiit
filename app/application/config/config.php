@@ -14,12 +14,10 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://'.$_SERVER['HTTP_HOST'].'/event_app/';
+$config['base_url']	= 'http://'.$_SERVER['HTTP_HOST'].'/';
 $config['real_url'] = $config['base_url'];
-$config['SiteResourcesURL']=$config['base_url'].'resources/';
-$config['SiteImagesURL']=$config['SiteResourcesURL'].'images/';
-$config['SiteCSSURL']=$config['SiteResourcesURL'].'css/';
-$config['SiteJSURL']=$config['SiteResourcesURL'].'js/';
+$config['ProductURL']='http://seller.tidiit.com/resources/product/original/';
+$config['MainSiteResourcesURL']='http://tidiit.com/resources/';
 
 /*
 |--------------------------------------------------------------------------
