@@ -77,7 +77,7 @@
                                             <span><i class="fa fa-truck"></i></span>
                                         </div>
                                         <div class="content">
-                                            <h3><span>`</span><?=number_format($this->cart->total(), 2, '.', '')?> - <?=count($this->cart->contents())?> item</h3>
+                                            <h3 class="js-cart-auto-update"><span>`</span><?=number_format($this->cart->total(), 2, '.', '')?> - <?=count($this->cart->contents())?> item</h3>
                                             <p>YOUR TRUCK</p>
                                         </div>
                                     </div>

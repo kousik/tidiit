@@ -53,6 +53,8 @@ $route['edit_groups/(:any)']="user/edit_groups/$1";
 $route['my-finance-info']="user/my_finance_info";
 $route['my-profile']="user/my_profile";
 
+$route['update-message']="user/ajax_get_update_message";
+
 $route['content/(:any)/(:any)']="content/show_content/$2";
 
 

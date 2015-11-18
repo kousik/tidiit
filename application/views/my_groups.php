@@ -25,7 +25,7 @@
                                     <div class="js-my-groups">    
                                         <?php if(!empty($myGroups)):
                                         foreach($myGroups as $gkey => $group):?>        
-                                        <div class="col-md-3 col-sm-3 grp_dashboard js-group-popover " title="Group : <?=$group->groupTitle?>"  data-container="body" data-toggle="popover" data-placement="left"  id="group-id-<?=$group->groupId?>" data-content='<div class="row">
+                                        <div class="col-md-3 col-sm-3 grp_dashboard js-group-popover" title="Group : <?=$group->groupTitle?>"  data-container="body" data-toggle="popover" data-placement="top" data-color="<?=$group->groupColor?>" id="group-id-<?=$group->groupId?>" data-content='<div class="row">
                                              <div class="col-md-12">
                                                  <h5><strong>Group Admin</strong></h5>
                                                  <p class="text-left"><?=$group->admin->firstName?> <?=$group->admin->lastName?></p>
@@ -147,5 +147,8 @@
     //myJsMain.my_billing_address();
     myJsMain.my_create_groups();
     
+    $('.js-group-popover').on('shown.bs.popover', function () {
+        // do something…
+      });
 </script>
 <?php echo $footer;?>
