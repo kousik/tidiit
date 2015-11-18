@@ -10,42 +10,97 @@ class Banner extends MY_Controller{
 	}
 	
 	public function viewlist(){
-		$data=$this->_show_admin_logedin_layout();
-		$data['DataArr']=$this->Banner_model->get_all();
-		$this->load->view('webadmin/banner_list',$data);
+            $data=$this->_show_admin_logedin_layout();
+            $data['DataArr']=$this->Banner_model->get_all();
+            $menuArr=array();
+            $TopCategoryData=$this->Category_model->get_top_category_for_product_list();
+            //$AllButtomCategoryData=$this->Category_model->buttom_category_for_product_list();
+            foreach($TopCategoryData as $k){
+                $SubCateory=$this->Category_model->get_subcategory_by_category_id($k->categoryId);
+                if(count($SubCateory)>0){
+                    foreach($SubCateory as $kk => $vv){
+                        $menuArr[$vv->categoryId]=$k->categoryName.' -> '.$vv->categoryName;
+                        $ThirdCateory=$this->Category_model->get_subcategory_by_category_id($vv->categoryId);
+                        if(count($ThirdCateory)>0){
+                            foreach($ThirdCateory AS $k3 => $v3){
+                                // now going for 4rath
+                                $menuArr[$v3->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName;
+                                $FourthCateory=$this->Category_model->get_subcategory_by_category_id($v3->categoryId);
+                                if(count($FourthCateory)>0){ //print_r($v3);die;
+                                    foreach($FourthCateory AS $k4 => $v4){
+                                        $menuArr[$v4->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName.' -> '.$v4->categoryName;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            $data['CategoryMenuArr']=$menuArr;
+            $this->load->view('webadmin/banner_list',$data);
 	}
 	
 	public function add(){
-            die('rrrrrrrrrrrrr');
-            if($_FILES['Banner']['name']!=""){
-                //$imagePath=$this->config->item('ResourcesPath').'banner/';
-                $file=$_FILES['Banner'];
+            if($_FILES['banner']['name']!=""){
+                //pre($_POST);die;
+                $file=$_FILES['banner'];
                 $image=time().'.'.end(explode('.',$file['name']));
                 //move_uploaded_file($file['tmp_name'],$imagePath.$image);
                 $this->banner_image_resize($file,$image);
                 $status=$this->input->post('status',TRUE);
                 $pageId=$this->input->post('pageId',TRUE);
-
-                $BannerDataArr=$this->Banner_model->get_banner_id_by_page($pageId);
-                if(empty($BannerDataArr)){
-                    $dataArr=array(
-                    'image'=>$image,
-                    'pageId'=>$pageId,
-                    'status'=>$status
-                    );
-                    $this->Banner_model->add($dataArr);
+                $bannerType=$this->input->post('bannerType',TRUE);
+                $sliderSlNo=$this->input->post('sliderSlNo',TRUE);
+                $categoryId=$this->input->post('categoryId',TRUE);
+                $categoryImageTitle=$this->input->post('categoryImageTitle',TRUE);
+                $categoryImageDetails=$this->input->post('categoryImageDetails',TRUE);
+                $url=$this->input->post('url',TRUE);
+                
+                if($pageId==1 && $sliderSlNo==0){
+                    $this->session->set_flashdata('Message','Invalid slider serial no selected!');
                 }else{
-                    $this->delete_img($BannerDataArr->image);
-                    $this->Banner_model->edit(array('image'=>$image),$BannerDataArr->bannerId);
+                    $dataArr=array('image'=>$image,'pageId'=>$pageId,'status'=>$status,'bannerType'=>$bannerType,'sliderSlNo'=>$sliderSlNo,'url'=>$url,
+                        'categoryId'=>$categoryId,'categoryImageTitle'=>$categoryImageTitle,'categoryImageDetails'=>$categoryImageDetails);
+                    $this->Banner_model->add($dataArr);
+                    $this->session->set_flashdata('Message','Banner added successfully.');
                 }
-
-                $this->session->set_flashdata('Message','Banner added successfully.');
-                redirect(base_url().'webadmin/banner/viewlist');	
             }else{
                 $this->session->set_flashdata('Message','Invalid Banner uploaded.');
-                redirect(base_url().'webadmin/banner/viewlist');	
             }
+            redirect(base_url().'webadmin/banner/viewlist');
 	}
+        
+        function edit(){
+            $pageId=$this->input->post('EditpageId',TRUE);
+            $bannerType=$this->input->post('EditbannerType',TRUE);
+            $sliderSlNo=$this->input->post('EditsliderSlNo',TRUE);
+            $url=$this->input->post('Editurl',TRUE);
+            $categoryId=$this->input->post('EditcategoryId',TRUE);
+            $bannerId=$this->input->post('bannerId',TRUE);
+            $categoryImageTitle=$this->input->post('EditcategoryImageTitle',TRUE);
+            $categoryImageDetails=$this->input->post('EditcategoryImageDetails',TRUE);
+            //pre($_FILES);die;
+            $dataArr=array('pageId'=>$pageId,'bannerType'=>$bannerType,'sliderSlNo'=>$sliderSlNo,'url'=>$url);
+            if($pageId==2 && $categoryId!=""){
+                $dataArr['categoryId']=$categoryId;
+                $dataArr['categoryImageTitle']=$categoryImageTitle;
+                $dataArr['categoryImageDetails']=$categoryImageDetails;
+            }
+            if(array_key_exists('Editbanner', $_FILES)){
+                if($_FILES['Editbanner']['name']!=""){
+                    $file=$_FILES['Editbanner'];
+                    $image=time().'.'.end(explode('.',$file['name']));
+                    $bannerImg=$this->Banner_model->get_banner_img($bannerId);
+                    //pre($bannerImg->image);die;
+                    $this->delete_img($bannerImg->image);
+                    $this->banner_image_resize($file,$image);
+                    $dataArr['image']=$image;
+                }
+            }
+            $this->Banner_model->edit($dataArr,$bannerId);
+            $this->session->set_flashdata('Message','Banner data updated successfully.');
+            redirect(base_url().'webadmin/banner/viewlist');
+        }
 	
 	public function change_status($bannerId,$Action){
 		$this->Banner_model->change_status($bannerId,$Action);
