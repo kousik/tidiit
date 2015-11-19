@@ -20,8 +20,7 @@ $brandImageURL=SiteResourcesURL.'brand/admin/';
   </tr>
 <script language="javascript">
 
-function ShowAddAdminBox()
-{
+function ShowAddAdminBox(){
 	$('#MessaeBox').html("");
 	$('#EditBox').hide();
 	$('#AddBtn').hide();
@@ -29,8 +28,16 @@ function ShowAddAdminBox()
 	$('#ListBox').fadeOut(500);
 	$('#AddBox').fadeIn(3500);
 }
- function ShowEditBox(id)
- {
+ function ShowEditBox(id){
+        var categoryIdArr=DataArr[id]['categoryId'].split(",");
+        if (categoryIdArr.length >0) {
+            $.each(categoryIdArr,function(idx,val){
+                //console.log('idx '+idx+' = val '+val);
+                //alert('input[type=checkbox][name=EditcategoryId][value="' + val + '"]');
+                $('input:checkbox[name=EditcategoryId][value="' + val + '"]').prop('checked', true);
+           });
+        }
+     
  	$('#MessaeBox').html("");
 	$('#AddBtn').fadeOut();
 	$('#PageHeading').fadeOut();
@@ -52,13 +59,13 @@ function ShowAddAdminBox()
 	
  }
 
- function CancelEdit()
- {
+ function CancelEdit(){
 	$('#AddBox').hide();
 	$('#PageHeading').fadeIn(3000);
 	$('#ListBox').fadeIn(3000);
 	$('#AddBtn').fadeIn(3000);
 	$('#EditBox').fadeOut(3500);
+        $('#AdminEdit')[0].reset();
 	return false;
  }
  function CancelAdd()
@@ -68,6 +75,7 @@ function ShowAddAdminBox()
 	$('#PageHeading').fadeIn(3000);
 	$('#ListBox').fadeIn(3000);
 	$('#AddBtn').fadeIn(3000);
+        $('#AdminAdd')[0].reset();
 	return false;
  }
  
@@ -131,6 +139,7 @@ function AskDelete(id)
   DataArr[<?php echo $InerArr->brandId?>]['brandId']='<?php echo $InerArr->brandId?>';
   DataArr[<?php echo $InerArr->brandId?>]['title']='<?php echo $InerArr->title?>';
   DataArr[<?php echo $InerArr->brandId?>]['brandImage']='<?php echo $InerArr->brandImage?>';
+  DataArr[<?php echo $InerArr->brandId?>]['categoryId']='<?php echo $InerArr->categoryId?>';
   DataArr[<?php echo $InerArr->brandId?>]['status']='<?php echo $InerArr->status?>';
   </script>
   <?php $val++;}
@@ -175,6 +184,25 @@ function AskDelete(id)
     <td align="left" valign="top">
         <img src="" height="1" width="1" id="EditbrandImageImg" title="Click here to change this image" alt="Click here to change this image">
         <input type="file" name="EditbrandImage" id="EditbrandImage" style="display:none;">
+    </td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  
+  <tr class="ListHeadingLable" style="height:200px;">
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">Category Name</td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top">
+        <div style="width:500px; overflow-y:scroll; position:absolute;height: 195px;">
+            <?php foreach($CategoryMenuArr AS $k =>$v):?>
+            <div style="float:left; padding: 5px;"><label><input type="checkbox" name="EditcategoryId[]" class="required" value="<?php echo $k;?>" style="margin-right:5px;"><?php echo $v;?></label></div>
+            <?php endforeach;?>
+        </div>
     </td>
   </tr>
   <tr>
@@ -255,6 +283,25 @@ function AskDelete(id)
     <td align="left" valign="top" class="ListHeadingLable"> Brand Imaage</td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top"><input  type="file" name="brandImage" id="brandImage"/></td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  
+  <tr class="ListHeadingLable" style="height:200px;">
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">Category Name</td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top">
+        <div style="width:500px; overflow-y:scroll; position:absolute;height: 195px;">
+            <?php foreach($CategoryMenuArr AS $k =>$v):?>
+            <div style="float:left; padding: 5px;"><label><input type="checkbox" name="categoryId[]" class="required" value="<?php echo $k;?>" style="margin-right:5px;"><?php echo $v;?></label></div>
+            <?php endforeach;?>
+        </div>
+    </td>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>

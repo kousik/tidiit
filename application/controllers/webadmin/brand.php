@@ -3,6 +3,7 @@ class Brand extends MY_Controller{
 	public function __construct(){
 		parent::__construct();
 		$this->load->model('Brand_model');
+		$this->load->model('Category_model');
 	}
 	
 	public function index(){
@@ -12,6 +13,31 @@ class Brand extends MY_Controller{
 	public function viewlist(){
 		$data=$this->_show_admin_logedin_layout();
 		$data['DataArr']=$this->Brand_model->get_all_admin();
+                $menuArr=array();
+                $TopCategoryData=$this->Category_model->get_top_category_for_product_list();
+                //$AllButtomCategoryData=$this->Category_model->buttom_category_for_product_list();
+                foreach($TopCategoryData as $k){
+                    $SubCateory=$this->Category_model->get_subcategory_by_category_id($k->categoryId);
+                    if(count($SubCateory)>0){
+                        foreach($SubCateory as $kk => $vv){
+                            $menuArr[$vv->categoryId]=$vv->categoryName;
+                            $ThirdCateory=$this->Category_model->get_subcategory_by_category_id($vv->categoryId);
+                            if(count($ThirdCateory)>0){
+                                foreach($ThirdCateory AS $k3 => $v3){
+                                    // now going for 4rath
+                                    $menuArr[$v3->categoryId]=$v3->categoryName;
+                                    $FourthCateory=$this->Category_model->get_subcategory_by_category_id($v3->categoryId);
+                                    if(count($FourthCateory)>0){ //print_r($v3);die;
+                                        foreach($FourthCateory AS $k4 => $v4){
+                                            $menuArr[$v4->categoryId]=$v4->categoryName;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                $data['CategoryMenuArr']=$menuArr;
 		$this->load->view('webadmin/brand_list',$data);
 	}
         
@@ -47,6 +73,11 @@ class Brand extends MY_Controller{
 	public function edit(){
 		$title=$this->input->post('Edittitle',TRUE);
 		$brandId=$this->input->post('brandId',TRUE);
+		$categoryId=$this->input->post('EditcategoryId',TRUE);
+                if(empty($categoryId)){
+                    $this->session->set_flashdata('Message','Category for brand should not empty.');
+                    redirect(base_url().'webadmin/brand/viewlist');
+                }
                 $image='';
                 $details=$this->Brand_model->details($brandId);
                 if(!array_key_exists('EditbrandImage', $_FILES)){
@@ -62,7 +93,8 @@ class Brand extends MY_Controller{
                 }
 		
 		$dataArr=array(
-		'title'=>$title
+		'title'=>$title,
+                'categoryId'=>  implode(',', $categoryId)   
 		);
                 
                 if($image!=''){
