@@ -440,7 +440,7 @@ endif;?>
                     //if(data.reload){
                        // window.location.href = myJsMain.baseURL+'shopping/single-checkout/';
                    // } else {
-                        window.location.href = myJsMain.baseURL;
+                        window.location.href = myJsMain.baseURL+'shopping/my-cart/';
                    // }
                 }
             }, 'json' );

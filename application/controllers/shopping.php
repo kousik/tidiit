@@ -1212,4 +1212,15 @@ class Shopping extends MY_Controller{
             die;
         endif;
     }
+    
+    
+    function show_my_cart(){
+        $SEODataArr=array();
+        $data=$this->_get_logedin_template($SEODataArr);
+        $user = $this->_get_current_user_details();         
+        $data['user']= $user;
+        $data['userMenuActive']= '';
+        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $this->load->view('my_carts',$data);
+    }
 }

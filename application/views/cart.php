@@ -175,7 +175,7 @@ endforeach;
                     jQuery('span.js-cart-item').text(item);
                     jQuery('#shoppingcart').modal('hide');
                     //jQuery('.showCartDetails').trigger( "click" ); 
-                    window.location.href = myJsMain.baseURL;
+                    window.location.href = myJsMain.baseURL+'shopping/my-cart/';
                 }
             }, 'json' );
         }); 
@@ -198,7 +198,7 @@ endforeach;
                         jQuery('#shoppingcart').modal('hide');
                         jQuery('.showCartDetails').trigger( "click" ); 
                     }*/
-                    window.location.href = myJsMain.baseURL;
+                    window.location.href = myJsMain.baseURL+'shopping/my-cart/';
                 }
             }, 'json' );
         }); 

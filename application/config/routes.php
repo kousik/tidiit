@@ -82,6 +82,7 @@ $route['edit_groups_re_order/(:any)/(:any)']="user/edit_groups_re_order/$1/$2";
 $route['shopping/add-order']="shopping/process_my_single_orders";
 $route['shopping/single-checkout']="shopping/single_order_check_out";
 $route['shopping/remove-single-cart']="shopping/remove_single_cart_processing";
+$route['shopping/my-cart']="shopping/show_my_cart";
 
 
 //Notification
