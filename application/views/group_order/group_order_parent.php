@@ -117,7 +117,11 @@ echo $html_heading; echo $header;?>
 
 
 
-<script type="text/javascript">    
+<script type="text/javascript">  
+    function test1(str) {
+        return /^ *[0-9]+ *$/.test(str);
+    }
+    
     jQuery(document).ready(function(){ 
         
         
@@ -145,10 +149,10 @@ echo $html_heading; echo $header;?>
                 $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
                 return;
             }
-            console.log($('#js-estd-qty').val()+'==='+$('#js-avail-qty').val());
+            //console.log($('#js-estd-qty').val()+'==='+$('#js-avail-qty').val());
             var estd = $('#js-estd-qty').val();
             var avail = $('#js-avail-qty').val();
-            if(parseInt(estd) > parseInt(avail) || parseInt(estd) == 0){
+            if(parseInt(estd) > parseInt(avail) || parseInt(estd) == 0 || !test1(estd)){
                 $('div.js-message').html("Please enter valid quantity!");
                 //$('div.js-message').show();
                 $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });

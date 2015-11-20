@@ -227,6 +227,9 @@ echo $html_heading; echo $header;?>
     var cityDynEle='<select class="form-control nova heght_cntrl" name="cityId" id="cityId" value=""  tabindex="1"><option value="">Select</option></select>';
     //myJsMain.my_billing_address();
     myJsMain.my_create_groups();
+    function test1(str) {
+        return /^ *[0-9]+ *$/.test(str);
+    }
     jQuery(document).ready(function(){
         <?php if($this->session->flashdata('error')): ?>
                 $('div.js-message').html('<?=$this->session->flashdata('error')?>');
@@ -292,16 +295,20 @@ echo $html_heading; echo $header;?>
                 $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
                 return;
             }
-            console.log($('#js-estd-qty').val()+'==='+$('#js-avail-qty').val());
+            //console.log($('#js-estd-qty').val()+'==='+$('#js-avail-qty').val());
             var estd = $('#js-estd-qty').val();
             var avail = $('#js-avail-qty').val();
-            if(parseInt(estd) > parseInt(avail) || parseInt(estd) == 0){
+            
+            
+            if(parseInt(estd) > parseInt(avail) || parseInt(estd) == 0 || !test1(estd)){
                 $('div.js-message').html("Please enter valid quantity!");
                 //$('div.js-message').show();
                 $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
                   
                 return;
             }
+            
+            
             
             $.post( myJsMain.baseURL+'shopping/ajax_update_group_order/', {
                 orderId: obj.val(),
@@ -313,6 +320,8 @@ echo $html_heading; echo $header;?>
                     window.location.href = data.contents;
                 }
             }, 'json' );
+            
+            
         });
     });
     function isInteger(n) {

@@ -857,18 +857,15 @@ class Shopping extends MY_Controller{
             redirect(BASE_URL.'404_override');
         endif;
         $orderId = base64_decode($orderId);
-        $orderId = $orderId/226201;
+        $orderId = $orderId/226201;        
         
-                
-        $SEODataArr=array();
-        //$data=$this->_get_logedin_template($SEODataArr);
         $user = $this->_get_current_user_details(); 
         
         $order = $this->Order_model->get_single_order_by_id($orderId);
         
         $group = $this->User_model->get_group_by_id($order->groupId);
         $prod_price_info = $this->Product_model->get_products_price_details_by_id($order->productPriceId);
-        $a = $this->_get_available_order_quantity($order->groupId);
+        $a = $this->_get_available_order_quantity($orderId);
         $availQty = $prod_price_info->qty - $a[0]->productQty;
         
         if(!$availQty):
@@ -904,9 +901,15 @@ class Shopping extends MY_Controller{
             
             unset($data['nMessage']);
             
+            $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+            $data['nType'] = 'GROUP-ORDER-DECLINE';
+            $data['nTitle'] = 'Group oreder [TIDIIT-OD-'.$order->orderId.'] cancel by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
             $data['nMessage'] = "Hi, <br> Sorry! I can not process this group order right now.<br>";
             $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-re-order-process/".base64_encode($orderId*226201)."' class='btn btn-warning btn-lg'>Re-order now</a><br><br>";
             $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+            $data['isRead'] = 0;
+            $data['status'] = 1;
+            $data['createDate'] = date('Y-m-d H:i:s');
             //Send Email message
             $recv_email = $group->admin->email;
             $sender_email = $me->email;
