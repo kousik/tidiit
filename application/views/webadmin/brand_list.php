@@ -31,11 +31,11 @@ function ShowAddAdminBox(){
  function ShowEditBox(id){
         var categoryIdArr=DataArr[id]['categoryId'].split(",");
         if (categoryIdArr.length >0) {
-            $.each(categoryIdArr,function(idx,val){
-                //console.log('idx '+idx+' = val '+val);
-                //alert('input[type=checkbox][name=EditcategoryId][value="' + val + '"]');
-                $('input:checkbox[name=EditcategoryId][value="' + val + '"]').prop('checked', true);
-           });
+            $('input:checkbox[name="EditcategoryId[]"]').each(function(){
+                if(jQuery.inArray( $(this).val(), categoryIdArr )!=-1){
+                    $(this).prop('checked', true);
+                }
+            });
         }
      
  	$('#MessaeBox').html("");

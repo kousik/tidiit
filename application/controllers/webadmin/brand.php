@@ -43,6 +43,11 @@ class Brand extends MY_Controller{
         
         function add(){
             //pre($_FILES);die;
+            $categoryId=$this->input->post('categoryId',TRUE);
+            if(empty($categoryId)){
+                $this->session->set_flashdata('Message','Category for brand should not empty.');
+                redirect(base_url().'webadmin/brand/viewlist');
+            }
             $image='';
             if(!array_key_exists('brandImage', $_FILES)){
                 $_FILES=array();
@@ -61,7 +66,8 @@ class Brand extends MY_Controller{
             $dataArr=array(
                 'brandImage'=>$image,
                 'status'=>1,
-                'title'=>$title
+                'title'=>$title,
+                'categoryId'=>  implode(',', $categoryId)
                 );
             $this->Brand_model->add($dataArr);
 
