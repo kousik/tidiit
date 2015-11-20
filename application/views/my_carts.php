@@ -163,6 +163,8 @@ $CI->load->model('Product_model');
                                                 </tfoot>
                                             </table>
                                             <?php endif; ?>
+                                            
+                                            <div class="js-message"><div class="alert alert-success" role="alert"><i class="fa fa-shopping-cart"></i>  Sorry! no cart available!</div></div>
                                         </div>
                                         <div class="clearfix"></div>
                                     </div>
