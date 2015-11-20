@@ -174,7 +174,8 @@ endforeach;
                     var item = "(<?=count($this->cart->contents())-1?> Item<?php if(count($this->cart->contents())-1 > 1): echo 's';endif;?>)";
                     jQuery('span.js-cart-item').text(item);
                     jQuery('#shoppingcart').modal('hide');
-                    jQuery('.showCartDetails').trigger( "click" ); 
+                    //jQuery('.showCartDetails').trigger( "click" ); 
+                    window.location.href = myJsMain.baseURL;
                 }
             }, 'json' );
         }); 
@@ -189,14 +190,15 @@ endforeach;
             function(data){ 
                 if(data.contents){
                     jQuery('tr#'+cartId).remove();
-                    if(data.reload){
+                    /*if(data.reload){
                         window.location.href = myJsMain.baseURL;
                     } else {
                         var item = "(<?=count($this->cart->contents())-1?> Item<?php if(count($this->cart->contents())-1 > 1): echo 's';endif;?>)";
                         jQuery('span.js-cart-item').text(item);
                         jQuery('#shoppingcart').modal('hide');
                         jQuery('.showCartDetails').trigger( "click" ); 
-                    }
+                    }*/
+                    window.location.href = myJsMain.baseURL;
                 }
             }, 'json' );
         }); 

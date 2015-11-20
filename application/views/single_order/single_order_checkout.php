@@ -437,11 +437,11 @@ endif;?>
                     var item = "(<?=count($this->cart->contents())-1?> Item<?php if(count($this->cart->contents())-1 > 1): echo 's';endif;?>)";
                     jQuery('span.js-cart-item').text(item);                    
                     jQuery('tr#'+cartId).remove();  
-                    if(data.reload){
-                        window.location.href = myJsMain.baseURL+'shopping/single-checkout/';
-                    } else {
+                    //if(data.reload){
+                       // window.location.href = myJsMain.baseURL+'shopping/single-checkout/';
+                   // } else {
                         window.location.href = myJsMain.baseURL;
-                    }
+                   // }
                 }
             }, 'json' );
         }); 
