@@ -9,8 +9,8 @@
             <tr><td>Hi, <br> You have requested to buy group order product.</td></tr>
             <tr><td>Product is <a href='#'><?php echo $group_order_re_start['TEMPLATE_GROUP_RE_ORDER_START_PRODUCT_TITLE'];?></a></td></tr>
             <tr><td>Want to process the order ?</td></tr>
-            <tr><td><a href='<?php echo BASE_URL;?>shopping/group-order-decline/".<?php echo base64_encode($group_order_re_start['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID1']*226201)?>"'>Decline the Group Order</a></td></tr>
-            <tr><td><a href='<?php echo BASE_URL;?>shopping/group-re-order-accept-process/".<?php echo base64_encode($group_order_re_start['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID1']*226201)?>"'>Accept the Group Order</a></td></tr>
+            <tr><td><a href='<?php echo BASE_URL;?>shopping/group-order-decline/<?php echo base64_encode($group_order_re_start['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID1']*226201);?>'>Decline the Group Order</a></td></tr>
+            <tr><td><a href='<?php echo BASE_URL;?>shopping/group-re-order-accept-process/<?php echo base64_encode($group_order_re_start['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID1']*226201);?>'>Accept the Group Order</a></td></tr>
             <tr><td>Thanks <br> Tidiit Team.</td></tr>
         </table>
     </div>
