@@ -18,5 +18,5 @@
         </table>
     </div>
     <div style="clear: both;width:100%; height: 40px"></div>
-    <div style="clear: both;width:100%; text-align: center;">Copyright &COPY; <?php echo date('Y');?> Tidiit.com All rights reserved.</div>
+    <div style="clear: both;width:100%; text-align: center;">Copyright &copy; <?php echo date('Y');?> Tidiit.com All rights reserved.</div>
 </div>

@@ -1,4 +1,4 @@
-<div style="width:800px;"><?php echo $group_order_start['TEMPLATE_GROUP_ORDER_START_'];?>
+<div style="width:800px;">
     <div style="width:100%">
         <div style="width: 30%;text-align: left;float: left;"><img src="http://tidiit.com/resources/images/logo.png" title="Tidiit Inc Ltd" width="150px"></div>
         <div style="width: 70%;text-align: left;float: left;"><h1>New Group order running by <b><?php echo $group_order_start['TEMPLATE_GROUP_ORDER_START_TITLE'];?></b></h1></div>
@@ -15,5 +15,5 @@
         </table>
     </div>
     <div style="clear: both;width:100%; height: 40px"></div>
-    <div style="clear: both;width:100%; text-align: center;">Copyright &COPY; <?php echo date('Y');?> Tidiit.com All rights reserved.</div>
+    <div style="clear: both;width:100%; text-align: center;">Copyright &copy; <?php echo date('Y');?> Tidiit.com All rights reserved.</div>
 </div>
