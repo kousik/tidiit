@@ -47,7 +47,7 @@ $CI->load->model('Product_model');
                                         endif;
                                     endforeach;
                                     ?>
-                                    <h4>MY CARTS</h4><br>
+                                    <h4>MY TRUCK</h4><br>
                                         <div class="">
                                             <?php if($is_single):?>
                                             <br>

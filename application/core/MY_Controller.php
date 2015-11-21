@@ -470,4 +470,23 @@ class MY_Controller extends CI_Controller {
 	return $this->pagination->create_links();
 
     }
+    
+    function __global_tidiit_mail($to,$subject,$dataResources,$tempplateName="",$toName=""){
+        $message='';
+        if($tempplateName==""){
+            $message=$dataResources;
+        }else{
+            $message=  $this->this->load->view('email_template/'.$tempplateName,$dataResources,TRUE);
+        }
+        $this->load->library('email');
+        $this->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
+        if($toName!="")
+            $this->email->to($DataArr[0]->email,$toName);
+        else
+            $this->email->to($DataArr[0]->email);
+        
+        $this->email->subject($subject);
+        $this->email->message($message);
+        $this->email->send();
+    }
 }

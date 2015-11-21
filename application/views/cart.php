@@ -10,7 +10,7 @@ $CI->load->model('Product_model');
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <div class="cart-heading clearfix">
                         <h3>
-                            Shopping Cart <span class="js-cart-item">(<?=count($this->cart->contents())?> Item<?php if(count($this->cart->contents()) > 1): echo 's';endif;?>)</span>
+                            Shopping Truck <span class="js-cart-item">(<?=count($this->cart->contents())?> Item<?php if(count($this->cart->contents()) > 1): echo 's';endif;?>)</span>
                         </h3>
                         
                     </div>

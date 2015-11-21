@@ -403,15 +403,19 @@ class Shopping extends MY_Controller{
             $group = $this->User_model->get_group_by_id($order->groupId);
             if($order->parrentOrderID == 0):
                 foreach($group->users as $key => $usr):
+                    $mail_template_data=array();
                     $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                     $data['receiverId'] = $usr->userId;
                     $data['nType'] = 'GROUP-ORDER';
 
                     $data['nTitle'] = 'New Group order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
                     $data['nMessage'] = "Hi, <br> You have requested to buy group order product.<br>";
                     $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
                     $data['nMessage'] .= "Want to process the order ? <br>";
                     $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
                     $data['nMessage'] .= "Thanks <br> Tidiit Team.";
 
                     $data['isRead'] = 0;
@@ -421,20 +425,26 @@ class Shopping extends MY_Controller{
                     //Send Email message
                     $recv_email = $usr->email;
                     $sender_email = $group->admin->email;
-
+                    
+                    $mail_template_view_data=$this->load_default_resources();
+                    $mail_template_view_data['group_order_start']=$mail_template_data;
+                    $this->__global_tidiit_mail($recv_email, "New Group Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
                     $this->User_model->notification_add($data);
                 endforeach;
             else:
                 $me = $this->_get_current_user_details();
                 foreach($group->users as $key => $usr):
                     if($me->userId != $usr->userId):
+                        $mail_template_data=array();
                         $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                         $data['receiverId'] = $usr->userId;
                         $data['nType'] = 'GROUP-ORDER';
 
                         $data['nTitle'] = 'Group order continue by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
-
+                        $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$usr->firstName.' '.$usr->lastName;
                         $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this group order.<br>";
+                        $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
+                        $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
                         $data['nMessage'] .= "";
                         $data['nMessage'] .= "Thanks <br> Tidiit Team.";
 
@@ -445,7 +455,10 @@ class Shopping extends MY_Controller{
                         //Send Email message
                         $recv_email = $usr->email;
                         $sender_email = $me->email;
-
+                        
+                        $mail_template_view_data=$this->load_default_resources();
+                        $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
+                        $this->__global_tidiit_mail($recv_email,"One Group Member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                         $this->User_model->notification_add($data);
                     endif;
                 endforeach;
@@ -453,6 +466,9 @@ class Shopping extends MY_Controller{
                 //Send Email message
                 $recv_email = $group->admin->email;
                 $sender_email = $me->email;
+                $mail_template_view_data=$this->load_default_resources();
+                $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
+                $this->__global_tidiit_mail($recv_email,"One Group Member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                 $this->User_model->notification_add($data);
             endif;
             
@@ -877,11 +893,14 @@ class Shopping extends MY_Controller{
         if($order->parrentOrderID == 0):
             $me = $this->_get_current_user_details();
             foreach($group->users as $key => $usr):
+                $mail_template_data=array();
                 if($me->userId != $usr->userId):
                     $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                     $data['receiverId'] = $usr->userId;
                     $data['nType'] = 'GROUP-ORDER-DECLINE';
                     $data['nTitle'] = 'Group oreder [TIDIIT-OD-'.$order->orderId.'] cancel by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ORDER_ID']=$order->orderId;
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ADMIN_NAME']=$usr->firstName.' '.$usr->lastName;
                     $data['nMessage'] = "Hi, <br> Sorry! I can not process this group order right now.<br>";
                     $data['nMessage'] .= "";
                     $data['nMessage'] .= "Thanks <br> Tidiit Team.";
@@ -893,19 +912,26 @@ class Shopping extends MY_Controller{
                     //Send Email message
                     $recv_email = $usr->email;
                     $sender_email = $me->email;
-
+                    $mail_template_view_data=$this->load_default_resources();
+                    $mail_template_view_data['group_order_decline']=$mail_template_data;
+                    $this->__global_tidiit_mail($recv_email, "Group Order Decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline');
+                    
                     $this->User_model->notification_add($data);
                 endif;
             endforeach;
             $data['receiverId'] = $group->admin->userId;
             
             unset($data['nMessage']);
-            
+            $mail_template_data=array();
+            $mail_template_data=array();
             $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
             $data['nType'] = 'GROUP-ORDER-DECLINE';
             $data['nTitle'] = 'Group oreder [TIDIIT-OD-'.$order->orderId.'] cancel by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+            $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ORDER_ID']=$order->orderId;
+            $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ADMIN_NAME']=$usr->firstName.' '.$usr->lastName;
             $data['nMessage'] = "Hi, <br> Sorry! I can not process this group order right now.<br>";
             $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-re-order-process/".base64_encode($orderId*226201)."' class='btn btn-warning btn-lg'>Re-order now</a><br><br>";
+            $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ORDER_ID1']=$orderId;
             $data['nMessage'] .= "Thanks <br> Tidiit Team.";
             $data['isRead'] = 0;
             $data['status'] = 1;
@@ -913,6 +939,9 @@ class Shopping extends MY_Controller{
             //Send Email message
             $recv_email = $group->admin->email;
             $sender_email = $me->email;
+            $mail_template_view_data=$this->load_default_resources();
+            $mail_template_view_data['group_order_decline']=$mail_template_data;
+            $this->__global_tidiit_mail($recv_email, "Group Order Decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline_admin');
             $this->User_model->notification_add($data);
         endif;
         

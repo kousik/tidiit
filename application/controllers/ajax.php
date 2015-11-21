@@ -427,15 +427,21 @@ class Ajax extends MY_Controller{
                 $pro = $this->Product_model->details($order->productId);
                 $orderinfo['pdetail'] = $pro[0];
                 $group = $this->User_model->get_group_by_id($groupId);
+                $mail_template_data=array();
                 foreach($group->users as $key => $usr):
+                    $mail_template_data=array();
                     $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                     $data['receiverId'] = $usr->userId;
                     $data['nType'] = 'GROUP-ORDER';
                     $data['nTitle'] = 'Group Re-order [TIDIIT-OD'.$order->orderId.'] running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+                    $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID']=$order->orderId;
+                    $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ADMIN_NAME']=$group->admin->firstName.' '.$group->admin->lastName;
                     $data['nMessage'] = "Hi, <br> You have requested to buy group order product.<br>";
                     $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
+                    $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
                     $data['nMessage'] .= "Want to process the order ? <br>";
                     $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-re-order-accept-process/".base64_encode($orderId*226201)."/".base64_encode(100)."' class='btn btn-success btn-lg'>Accept</a><br>";
+                    $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID1']=$orderId;
                     $data['nMessage'] .= "Thanks <br> Tidiit Team.";
 
                     $data['isRead'] = 0;
@@ -445,7 +451,11 @@ class Ajax extends MY_Controller{
                     //Send Email message
                     $recv_email = $usr->email;
                     $sender_email = $group->admin->email;
-
+                    /// firing mail
+                    $mail_template_view_data=$this->load_default_resources();
+                    $mail_template_view_data['group_order_re_start']=$mail_template_data;
+                    $this->__global_tidiit_mail($recv_email, "Group Order Re-Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_re_start');
+                    
                     $this->User_model->notification_add($data);
                 endforeach;
             endif;
