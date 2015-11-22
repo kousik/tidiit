@@ -1231,7 +1231,7 @@ class Shopping extends MY_Controller{
                 $recv_email = $user->email;
                 if($orderid):
                     $mail_template_view_data=$this->load_default_resources();
-                    $mail_template_data['ProductImageURLForMail']=PRODUCT_DEAILS_SMALL_IMG;
+                    $mail_template_data['ProductImageURLForMail']=PRODUCT_DEAILS_SMALL;
                     $mail_template_view_data['single_order_success']=$mail_template_data;
                     $this->__global_tidiit_mail($recv_email, "Confirmation mail for your Tidiit order no - TIDIIT-OD-".$orderId, $mail_template_view_data,'single_order_success');
                 endif;
