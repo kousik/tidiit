@@ -1,0 +1,64 @@
+date/time         : 2015-11-21, 20:57:51, 466ms
+computer name     : PAPALI-PC
+user name         : SYSTEM <admin>
+registered owner  : papali
+operating system  : Windows 7 Service Pack 1 build 7601
+system language   : English
+system up time    : 3 days 5 hours
+program up time   : 282 milliseconds
+processors        : 2x Intel(R) Celeron(R) CPU B800 @ 1.50GHz
+physical memory   : 290/2670 MB (free/total)
+free disk space   : (C:) 66.69 GB (D:) 75.17 GB
+display mode      : 1024x768, 32 bit
+process id        : $874
+allocated memory  : 10.24 MB
+command line      : D:/xampp/sendmail/sendmail.exe -oi -f no-reply@tidiit.com -t
+executable        : sendmail.exe
+exec. date/time   : 2012-04-16 23:00
+compiled with     : Delphi 2006/07
+madExcept version : 3.0l
+callstack crc     : $e6f4f7a1, $04d1a256, $04d1a256
+exception number  : 1
+exception class   : Exception
+exception message : Message is missing recipient's address.
+
+main thread ($2108):
+004b5a1a +b66 sendmail.exe sendmail 688 +206 initialization
+7611ed6a +010 kernel32.dll                   BaseThreadInitThunk
+
+stack dump:
+0012fdcc  1f 5a 4b 00 de fa ed 0e - 01 00 00 00 07 00 00 00  .ZK.............
+0012fddc  e0 fd 12 00 1f 5a 4b 00 - 60 50 89 00 bc c2 41 00  .....ZK.`P....A.
+0012fdec  00 00 00 00 00 00 00 00 - 88 ff 12 00 fc fd 12 00  ................
+0012fdfc  08 fe 12 00 c8 4b 40 00 - 88 ff 12 00 14 fe 12 00  .....K@.........
+0012fe0c  5f 4d 40 00 88 ff 12 00 - 7c ff 12 00 c8 4b 40 00  _M@.....|....K@.
+0012fe1c  88 ff 12 00 00 00 00 00 - 00 00 00 00 00 f0 fd 7f  ................
+0012fe2c  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0012fe3c  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0012fe4c  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0012fe5c  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0012fe6c  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0012fe7c  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0012fe8c  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0012fe9c  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0012feac  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0012febc  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0012fecc  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0012fedc  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0012feec  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0012fefc  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+
+disassembling:
+[...]
+004b5a07       jnz     loc_4b5a1f
+004b5a09 688   mov     ecx, $4b6bf4           ; 'Message is missing recipient's address'
+004b5a0e       mov     dl, 1
+004b5a10       mov     eax, [$4085b0]
+004b5a15       call    -$a8086 ($40d994)      ; SysUtils.Exception.Create
+004b5a1a     > call    -$b0d33 ($404cec)      ; System.@RaiseExcept
+004b5a1f 690   cmp     dword ptr [$4c3f20], 0
+004b5a26       jz      loc_4b5a82
+004b5a28 692   xor     eax, eax
+004b5a2a       push    ebp
+004b5a2b       push    $4b5a6f                ; System.@HandleAnyException
+[...]

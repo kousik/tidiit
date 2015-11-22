@@ -6,8 +6,8 @@
         </div>
     </div>
     <div style="clear: both;width:100%; height: 40px"></div>
-    <div style="clear: both;width:100%;text-align: center;">
-        <table style="text-align: center;">
+    <div style="clear: both;width:100%;text-align: left;">
+        <table style="text-align: left;">
             <tr><td>Hi, <br> Sorry! I can not process this group order right now.</td></tr>
             <tr><td>Thanks <br> Tidiit Team.</td></tr>
         </table>

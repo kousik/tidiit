@@ -13,6 +13,11 @@ class User_model extends CI_Model {
     private $_user_product_type_category ="user_product_type_category";
     private $_login_history ="user_login_history";
     private $_product_type_user ="product_type_user";
+    private $_table_country ="country";
+    private $_table_state ="state";
+    private $_table_city ="city";
+    private $_table_locality ="locality";
+    private $_table_zip ="zip";
 
 
     public $result=NULL;
@@ -164,7 +169,12 @@ class User_model extends CI_Model {
 
     /// this is for only guest user
     public function get_user_shipping_information(){
-        return $this->db->from($this->_shipping_address)->where('userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+        $this->db->select('sa.*,c.countryName,s.stateName,ci.city,z.zip,l.locality');
+        $this->db->from($this->_shipping_address.' sa')->join($this->_table_country.' c','sa.countryId=c.countryId','left join');
+        $this->db->join($this->_table_state.' s','sa.stateId=s.stateId','left join')->join($this->_table_city.' ci','sa.cityId=ci.cityId','left join');
+        $this->db->join($this->_table_zip.' z','sa.zipId=z.zipId','left join');
+        $this->db->join($this->_table_locality.' l','sa.localityId=l.localityId','left join');
+        return $this->db->where('sa.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
     }
 
 
@@ -209,7 +219,13 @@ class User_model extends CI_Model {
     }
 
     function get_billing_address(){
-        return $this->db->select('u.firstName,u.lastName,u.email,ba.*')->from('user u')->join('billing_address ba','u.userId=ba.userId','left')->where('u.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+        $this->db->select('ba.*,c.countryName,s.stateName,ci.city AS cityTableData,z.zip AS zipTableData,l.locality,u.firstName,u.lastName,u.email');
+        $this->db->from($this->_bill_address.' ba')->join($this->_table.' u','ba.userId=u.userId','left join');
+        $this->db->join($this->_table_country.' c','ba.countryId=c.countryId','left join');
+        $this->db->join($this->_table_state.' s','ba.stateId=s.stateId','left join')->join($this->_table_city.' ci','ba.cityId=ci.cityId','left join');
+        $this->db->join($this->_table_zip.' z','ba.zipId=z.zipId','left join');
+        $this->db->join($this->_table_locality.' l','ba.localityId=l.localityId','left join');
+        return $this->db->where('ba.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
     }
 
     function is_billing_address_added(){

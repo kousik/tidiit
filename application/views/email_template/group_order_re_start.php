@@ -4,8 +4,8 @@
         <div style="width: 70%;text-align: left;float: left;"><h1>Group Re-order [TIDIIT-OD<?php echo $group_order_re_start['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID'];?>] running by <b><?php echo $group_order_re_start['TEMPLATE_GROUP_RE_ORDER_START_ADMIN_NAME'];?></b></h1></div>
     </div>
     <div style="clear: both;width:100%; height: 40px"></div>
-    <div style="clear: both;width:100%;text-align: center;">
-        <table style="text-align: center;">
+    <div style="clear: both;width:100%;text-align: left;">
+        <table style="text-align: left;">
             <tr><td>Hi, <br> You have requested to buy group order product.</td></tr>
             <tr><td>Product is <a href='#'><?php echo $group_order_re_start['TEMPLATE_GROUP_RE_ORDER_START_PRODUCT_TITLE'];?></a></td></tr>
             <tr><td>Want to process the order ?</td></tr>

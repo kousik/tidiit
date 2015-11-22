@@ -1202,6 +1202,7 @@ class Shopping extends MY_Controller{
                 $order['status'] = 2; 
 
                 $orderinfo = array();
+                $mail_template_data = array();
                 $pro = $this->Product_model->details($order['productId']);
                 $orderinfo['pdetail'] = $pro[0];
                 $orderinfo['priceinfo'] = $this->Product_model->get_products_price_details_by_id($order['productPriceId']);
@@ -1212,10 +1213,11 @@ class Shopping extends MY_Controller{
                 $orderinfo['shipping'] = $userShippingDataDetails[0];
                 $userBillingDataDetails=$this->User_model->get_billing_address();
                 $orderinfo['billing'] = $userBillingDataDetails[0];
+                $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
                 $order['orderInfo'] = base64_encode(serialize($orderinfo));
                 $orderId = $this->Order_model->add($order);
                 $orderid['orderId'] = $orderId;
-                
+                $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$orderId;
                 if($coupon->couponId):
                     $cdata = array();
                     $cdata['orderId'] = $orderId;
@@ -1227,7 +1229,12 @@ class Shopping extends MY_Controller{
                 
                 //Send Email message
                 $recv_email = $user->email;
-                
+                if($orderid):
+                    $mail_template_view_data=$this->load_default_resources();
+                    $mail_template_data['ProductImageURLForMail']=PRODUCT_DEAILS_SMALL_IMG;
+                    $mail_template_view_data['single_order_success']=$mail_template_data;
+                    $this->__global_tidiit_mail($recv_email, "Confirmation mail for your Tidiit order no - TIDIIT-OD-".$orderId, $mail_template_view_data,'single_order_success');
+                endif;
             endif;
         endforeach;
         
