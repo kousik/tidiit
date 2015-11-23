@@ -433,6 +433,7 @@ class Shopping extends MY_Controller{
                 endforeach;
             else:
                 $me = $this->_get_current_user_details();
+                $mail_template_data=array();
                 foreach($group->users as $key => $usr):
                     if($me->userId != $usr->userId):
                         $mail_template_data=array();
@@ -467,6 +468,11 @@ class Shopping extends MY_Controller{
                 $recv_email = $group->admin->email;
                 $sender_email = $me->email;
                 $mail_template_view_data=$this->load_default_resources();
+                if(empty($mail_template_data)){
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$me->firstName.' '.$me->lastName;
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
+                }
                 $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
                 $this->__global_tidiit_mail($recv_email,"One Group Member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                 $this->User_model->notification_add($data);
@@ -898,7 +904,7 @@ class Shopping extends MY_Controller{
                     $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                     $data['receiverId'] = $usr->userId;
                     $data['nType'] = 'GROUP-ORDER-DECLINE';
-                    $data['nTitle'] = 'Group oreder [TIDIIT-OD-'.$order->orderId.'] cancel by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+                    $data['nTitle'] = 'Group order [TIDIIT-OD-'.$order->orderId.'] cancel by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
                     $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ORDER_ID']=$order->orderId;
                     $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ADMIN_NAME']=$usr->firstName.' '.$usr->lastName;
                     $data['nMessage'] = "Hi, <br> Sorry! I can not process this group order right now.<br>";
@@ -926,7 +932,7 @@ class Shopping extends MY_Controller{
             $mail_template_data=array();
             $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
             $data['nType'] = 'GROUP-ORDER-DECLINE';
-            $data['nTitle'] = 'Group oreder [TIDIIT-OD-'.$order->orderId.'] cancel by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+            $data['nTitle'] = 'Group order [TIDIIT-OD-'.$order->orderId.'] cancel by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
             $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ORDER_ID']=$order->orderId;
             $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ADMIN_NAME']=$usr->firstName.' '.$usr->lastName;
             $data['nMessage'] = "Hi, <br> Sorry! I can not process this group order right now.<br>";

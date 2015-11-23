@@ -2,7 +2,7 @@
 <div style="width:800px;">
     <div style="width:100%">
         <div style="width: 30%;text-align: left;float: left;"><img src="<?php echo SiteImagesURL;?>logo.png" title="Tidiit Inc Ltd" width="150px"></div>
-        <div style="width: 70%;text-align: left;float: left;"><img src="<?php echo SiteImagesURL;?>android-ios.gif"></div>
+        <div style="width: 70%;text-align: left;float: right;"><img src="<?php echo SiteImagesURL;?>android-ios.gif"></div>
     </div>
     <div style="clear: both;width:100%; height: 40px"></div>
     <div style="clear: both;width:100%;">
@@ -41,11 +41,11 @@
     </div>
     <div style="clear: both;width:100%; height: 40px"></div>
     <div style="clear: both;width:100%;">
-        <div style="float:left;width: 25%;"><img src="<?php echo SiteImagesURL;?>phone.gif"> +91 80 6770 1010</div>
-        <div style="float:left;width: 25%;"><img src="<?php echo SiteImagesURL;?>mail.gif"><a href="mailto:customercare@tidiit.com">customercare@tidiit.com</a></div>
-        <div style="float:left;width: 16%;"><img src="<?php echo SiteImagesURL;?>fb.gif"></div>
-        <div style="float:left;width: 16%;"><img src="<?php echo SiteImagesURL;?>twitter.gif"></div>
-        <div style="float:left;width: 18%;"><img src="<?php echo SiteImagesURL;?>gplus.gif"></div>
+        <div style="float:left;width: 25%;text-align: center;"><img src="<?php echo SiteImagesURL;?>phone.gif"> +91 80 6770 1010</div>
+        <div style="float:left;width: 25%;text-align: center;"><img src="<?php echo SiteImagesURL;?>mail.gif"><a href="mailto:customercare@tidiit.com">customercare@tidiit.com</a></div>
+        <div style="float:left;width: 16%;text-align: center;"><img src="<?php echo SiteImagesURL;?>fb.gif"></div>
+        <div style="float:left;width: 16%;text-align: center;"><img src="<?php echo SiteImagesURL;?>twitter.gif"></div>
+        <div style="float:left;width: 18%;text-align: center;"><img src="<?php echo SiteImagesURL;?>gplus.gif"></div>
     </div>
     <div style="clear: both;width:100%; height: 40px"></div>
     <div style="clear: both;width:100%; text-align: center;">Copyright &copy; <?php echo date('Y');?> Tidiit.com All rights reserved.</div>
