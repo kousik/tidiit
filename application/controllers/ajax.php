@@ -97,7 +97,8 @@ class Ajax extends MY_Controller{
                 $this->session->set_userdata('FE_SESSION_VAR_TYPE','seller');
                 $this->session->set_userdata('FE_SESSION_UDATA',$DataArr[0]);
                 $this->User_model->add_login_history(array('userId'=>$DataArr[0]->userId));
-                echo json_encode(array('result'=>'good','url'=>$_SERVER['HTTP_REFERER']));die; 
+                $redirect_url = $this->input->post('redirect_url',TRUE);
+                echo json_encode(array('result'=>'good','url'=>$redirect_url?$redirect_url:$_SERVER['HTTP_REFERER']));die; 
             }else{
                 echo json_encode(array('result'=>'bad','msg'=>'Please check your "Username" and "Password" and try again.'));die;     
             }

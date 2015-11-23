@@ -97,8 +97,19 @@ class MY_Controller extends CI_Controller {
     public function _isLoggedIn() {
         if($this->is_loged_in() != true){
             $this->_logout();
+            $this->session->set_flashdata('redirect_url', $this->_get_the_current_url());
             redirect(BASE_URL);
         }
+    }
+    
+    public function _get_the_current_url() {
+    
+        $protocol = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") ? "https" : "http");
+        $base_url = $protocol . "://" . $_SERVER['HTTP_HOST'];
+        $complete_url =   $base_url . $_SERVER["REQUEST_URI"];
+
+        return $complete_url;
+
     }
     
     public function _get_logedin_template($SEODataArr=array()){

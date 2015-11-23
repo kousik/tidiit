@@ -376,6 +376,16 @@ class User_model extends CI_Model {
             return false;
         endif;
     }
+    
+    public function user_exists_on_group($userId,$groupId){
+        $query = $this->db->query("SELECT *  FROM `{$this->_group}` WHERE `groupAdminId` = '{$userId}' OR FIND_IN_SET('{$userId}',groupUsers) > 0 AND `groupId` = '{$groupId}' ORDER BY `groupId` DESC");
+        $datas = $query->result();
+        if($datas):            
+            return true;
+        else:
+            return false;
+        endif;
+    }
 
     /**
      * 

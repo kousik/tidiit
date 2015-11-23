@@ -713,6 +713,10 @@ class Shopping extends MY_Controller{
             redirect(BASE_URL.'shopping/ord-message');
         endif;
         
+        if($this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$data['order']->groupId)):
+            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this group order.');
+            redirect(BASE_URL.'shopping/ord-message');
+        endif;
         //Order first step
         $order_data = array();
         $order_data['orderType'] = 'GROUP';
@@ -801,6 +805,11 @@ class Shopping extends MY_Controller{
         if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
             redirect(BASE_URL.'404_override');
         endif;
+        if($this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$data['order']->groupId)):
+            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this group order.');
+            redirect(BASE_URL.'shopping/ord-message');
+        endif;
+        
         $product = $this->Product_model->details($productId);
         $product = $product[0];
         $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
@@ -895,6 +904,11 @@ class Shopping extends MY_Controller{
             redirect(BASE_URL.'shopping/ord-message');
         endif;
         
+        if($this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$order->groupId)):
+            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this group order.');
+            redirect(BASE_URL.'shopping/ord-message');
+        endif;
+        
         
         if($order->parrentOrderID == 0):
             $me = $this->_get_current_user_details();
@@ -973,6 +987,11 @@ class Shopping extends MY_Controller{
             redirect(BASE_URL.'404_override');
         endif;
         
+        if($this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$order->groupId)):
+            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this group order.');
+            redirect(BASE_URL.'shopping/ord-message');
+        endif;
+        
         $group = $this->User_model->get_group_by_id($order->groupId);
         $data['order']= $order;
         $data['group']= $group;
@@ -999,6 +1018,12 @@ class Shopping extends MY_Controller{
         if(!$order && $status != '100'):
             redirect(BASE_URL.'404_override');
         endif;
+        
+        if($this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$order->groupId)):
+            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this group order.');
+            redirect(BASE_URL.'shopping/ord-message');
+        endif;
+        
         $this->process_group_parent_order(base64_encode($orderId*226201), true);        
     }
     

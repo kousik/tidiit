@@ -157,6 +157,7 @@
                                 </div>
 
                                 <input type="submit" name="loginInSubmit" id="loginInSubmit" value="Sign In" class="btn btn-default col-md-8"/>	
+                                <input type="hidden" name="redirect_url" value="<?=$this->session->flashdata('redirect_url')?>">         
 
                                 <div class="clear"></div>	
                             </form>
@@ -174,7 +175,8 @@
                                     <label id="userEmail-error" class="error" for="userEmail"></label>
                                 </div>
                                 <input type="submit" name="forgotPasswrod" id="forgotPasswrod" value="Submit" class="btn btn-default col-md-8"/>	
-                                <input type="hidden" name="webIdForgotpass" id="webIdForgotpass" value="">                                                 
+                                <input type="hidden" name="webIdForgotpass" id="webIdForgotpass" value="">
+                                <input type="hidden" name="redirect_url" value="<?=$this->session->flashdata('redirect_url')?>">         
                                 <div class="clear"></div>	
                             </form>
                         </div>
