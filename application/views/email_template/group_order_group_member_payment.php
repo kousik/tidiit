@@ -6,7 +6,8 @@
     <div style="clear: both;width:100%; height: 40px"></div>
     <div style="clear: both;width:100%;text-align: left;">
         <table style="text-align:left;">
-            <tr><td>Hi, <br> I have paid Rs.<?php echo $group_order_group_member_payment['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT'];?> /- for the quantity <?php echo $group_order_group_member_payment['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY'];?> of this group order.</td></tr>
+            <tr><td>Hi, <br /><br /> I have paid Rs.<?php echo $group_order_group_member_payment['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT'];?> /- for the quantity <?php echo $group_order_group_member_payment['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY'];?> of this group order.</td></tr>
+            <tr><td>&nbsp;</td></tr>
             <tr><td>Thanks <br> Tidiit Team.</td></tr>
         </table>
     </div>

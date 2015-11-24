@@ -50,8 +50,12 @@ class Appdata extends REST_Controller {
             $result['new_arrivals']=$newArrivalsData;
             $result['featured_products']=$newArrivalsData;
             $result['brand']=$this->brand->get_all(TRUE);
-            $result['site_product_image_url']=$this->config->item('ProductURL');
-            $result['site_image_url']=$this->config->item('MainSiteResourcesURL').'images/';
+            //$result['site_product_image_url']=$this->config->item('ProductURL');
+            $result['site_product_image_url']='http://seller.tidiit.com/resources/product/original/';
+            //$result['site_image_url']=$this->config->item('MainSiteResourcesURL').'images/';
+            $result['site_image_url']='http://tidiit.com/resources/images/';
+            $result['site_slider_image_url']='http://tidiit.com/resources/banner/original/';
+            $result['site_brand_image_url']='http://tidiit.com/resources/brand/original/';
             
             $result['timestamp'] = (string)mktime();
             header('Content-type: application/json');
