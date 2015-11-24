@@ -54,36 +54,47 @@
                     <div class="row">
                         <div class="col-md-3 col-sm-3 col-xs-6">
                             <ul class="fotr_menu">
-                                <h6>Payment</h6>
-                                <li><a href="#">Payment Methods</a></li>
-                                <li><a href="#">Coupon</a></li>
+                                <h6>Tidiit Inc. Ltd.</h6>
+                                <li><a href="#">Careers</a></li>
+                                <li><a href="#">Blog</a></li>
+                                <li><a href="#">Press</a></li>
                                 <h6>Community</h6>
                                 <li><a href="#">Tidiit Facebook</a></li>
+                                <li><a href="#">Tidiit Twitter</a></li>
+                                <li><a href="#">Tidiit LinkedIn</a></li>
                             </ul>
                         </div>
                         <div class="col-md-3 col-sm-3 col-xs-6">
                             <ul class="fotr_menu">
                                 <h6>Dispatch & Delivery</h6>
                                 <li><a href="#">Delivery Options</a></li>
-                                <li><a href="#">Customs & Import Tax</a></li>
+                                <li><a href="#">Customs &amp; Import Tax</a></li>
                                 <li><a href="#">Tracking Your Items</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-md-3 col-sm-3 col-xs-6">
-                            <ul class="fotr_menu">
                                 <h6>Refund & Return</h6>
-                                <li><a href="#">Tidiit Service Pledge</a></li>
                                 <li><a href="#">Refund & Return Process</a></li>
                                 <li><a href="#">Tidiit Resolution Center</a></li>
                             </ul>
                         </div>
                         <div class="col-md-3 col-sm-3 col-xs-6">
+                            <ul class="fotr_menu">
+                                <h6>Policy</h6>
+                                <li><a href="">Privacy Policy</a></li>
+                                <li><a href="">Terms of Use</a></li>
+                                <li><a href="">Terms of Sale</a></li>
+                                <li><a href="">Report Abuse</a></li>
+                                <li><a href="#">Infringement Policy</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3 col-sm-3 col-xs-6">
                             <ul class="fotr_menu brdr_rit_none">
                                 <h6>Customer Service</h6>
+                                <li><a href="#">Contact Us</a></li>
                                 <li><a href="#">Help</a></li>
-                                <li><a href="#">Top Questions</a></li>
                                 <li><a href="#">Customer Service</a></li>
                                 <li><a href="#">Brand Owner Report</a></li>
+                                <h6>Payment</h6>
+                                <li><a href="#">Payment Methods</a></li>
+                                <li><a href="#">Coupon</a></li>
                             </ul>
                         </div>
                     </div>
@@ -93,16 +104,11 @@
                 <img src="<?php echo SiteImagesURL; ?>fotr_img.png" />
                 <ul class="ftr_sbmnu">
                     <li><a href="#">India Wholesale</a></li>
-                    <li><a href="#">Security & Privacy</a></li>
                     <li><a href="#">India Manufacturers</a></li>
                     <li><a href="#">Seller home</a></li>
                     <li><a href="#">Top Searches</a></li>
-                    <li><a href="#">Refined Products</a></li>
                     <li><a href="#">Cheap Products</a></li>
                     <li><a href="#">Reviews</a></li>
-                    <li><a href="#">Terms of Use</a></li>
-                    <li><a href="#">Prices</a></li>
-                    <li><a href="#">Infringement Policy</a></li>
                 </ul>
                 <p>Copyright Notice © 2015 Tidiit.com All rights reserved.</p>
             </div>
