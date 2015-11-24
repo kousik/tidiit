@@ -378,9 +378,10 @@
             }, 10000);
         <?php 
         endif;?>
+               
         <?php 
-        if($this->session->userdata('open_login') && !$this->session->userdata('FE_SESSION_VAR')):?> 
-                $('.bs-example-modal-lg1').modal('hide');
+        if($this->session->flashdata('open_login') && !$this->session->userdata('FE_SESSION_VAR')):?> 
+                $('.bs-example-modal-lg button.close').trigger('click');
                  $('a.showLogin').trigger( "click" );
         <?php 
         endif;?>

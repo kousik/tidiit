@@ -1,5 +1,5 @@
 <button class="inline btn btn-primary howItWork1" data-toggle="modal" data-target=".bs-example-modal-lg1" href="#inline_content" style="display: none;">HOW IT WORKS</button>
-<div class="modal fade bs-example-modal-lg1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+<div class="modal fade bs-example-modal-lg1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="inline_content">
     <div class="modal-dialog modal-lg opn_box" style='padding:10px; background:#fff;  border-radius:10px;'>
         <button aria-label="Close" data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span></button>
         <div class="container">
