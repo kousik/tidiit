@@ -98,6 +98,7 @@ class MY_Controller extends CI_Controller {
         if($this->is_loged_in() != true){
             $this->_logout();
             $this->session->set_flashdata('redirect_url', $this->_get_the_current_url());
+            $this->session->set_flashdata('open_login', true);
             redirect(BASE_URL);
         }
     }

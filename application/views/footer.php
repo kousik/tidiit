@@ -372,6 +372,12 @@
             }, 10000);
         <?php 
         endif;?>
+        <?php 
+        if($this->session->userdata('open_login') && !$this->session->userdata('FE_SESSION_VAR')):?> 
+                $('.bs-example-modal-lg1').modal('hide');
+                 $('a.showLogin').trigger( "click" );
+        <?php 
+        endif;?>
     });
     
 
