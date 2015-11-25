@@ -22,6 +22,7 @@ class Product extends MY_Controller{
         if($productDetailsArr[0]->status==0){
             redirect(BASE_URL);
         }
+        $this->Product_model->update_view($productId);
         $productImageArr=$this->Product_model->get_products_images($productId);
         $productPriceArr=$this->Product_model->get_products_price($productId);
         $SEODataArr=array();

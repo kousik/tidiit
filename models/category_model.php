@@ -66,9 +66,12 @@ class Category_model extends CI_Model {
             return $this->db->from($this->_table)->like('categoryId',$id)->get()->result();
 	}
 	
-	public function get_subcategory_by_category_id($categoryId){
+	public function get_subcategory_by_category_id($categoryId,$app=FALSE){
 		$sql="SELECT `categoryId` , `categoryName` FROM category WHERE `parrentCategoryId` ='".$categoryId."' AND status=1";
-		return $this->db->query($sql)->result();
+                if($app==FALSE)
+                    return $this->db->query($sql)->result();
+                else
+                    return $this->db->query($sql)->result_array();
 	}
         
         public function get_reverse_subcategory_by_category_id($categoryId,$Action){
@@ -93,9 +96,12 @@ WHERE categoryId ='".$categoryId."')";
 		return $this->db->query($sql)->result();
 	}
 	
-	public function get_top_category_for_product_list(){
+	public function get_top_category_for_product_list($app=false){
 		$this->db->select('categoryId,categoryName')->from($this->_table)->where('parrentCategoryId','0')->where('status','1')->order_by('categoryName','ASC');
-		$rs=$this->db->get()->result();
+                if($app==FALSE)
+                    $rs=$this->db->get()->result();
+                else
+                    $rs=$this->db->get()->result_array();
                 //echo $this->db->last_query().'  ==  ';
                 return $rs;
 	}

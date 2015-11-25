@@ -15,6 +15,7 @@ class Product_model extends CI_Model {
         private $_table_brand="product_brand";
         private $_table_seller="product_seller";
         private $_table_template="product_view_page";
+        private $_table_views="product_views";
                 
 	function __construct() {
 		$this->_SiteSession=$this->session->userdata('USER_SITE_SESSION_ID');
@@ -592,5 +593,16 @@ class Product_model extends CI_Model {
     function get_products_price_details_by_id($productPriceId){        
         $data = $this->db->from($this->_table_price)->where('productPriceId',$productPriceId)->get()->result();
         return $data[0];
+    }
+    
+    function update_view($productId){
+        $rs=  $this->db->get_where($this->_table_views,array('productId'=>$productId))->result();
+        if(count($rs)>0){
+            $this->db->where('productId',$productId);
+            $this->db->update($this->_table_views,array('noOfViews'=>(int)$rs[0]->noOfViews+1));
+        }else{
+            $this->db->insert($this->_table_views,array('noOfViews'=>1,'productId'=>$productId));
+        }
+        return TRUE;
     }
 }

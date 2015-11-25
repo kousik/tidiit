@@ -12,8 +12,7 @@ class Appdata extends REST_Controller {
         $this->load->model('Category_model','category');
     }
     
-    function testservice_get()
-    {
+    function testservice_get(){
         $testid = "";
         if($this->get('testid'))
         	$testid = $this->get('testid');
@@ -21,8 +20,7 @@ class Appdata extends REST_Controller {
         $this->response(array("test ID" => $testid), 200);
     }
 
-    function testpostservice_post()
-    {
+    function testpostservice_post(){
         $testid = "";
         if($this->post('testid'))
             $testid = $this->post('testid');
@@ -36,7 +34,6 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Invalid timestamp'), 400);
         }else{
             $this->load->model('Banner_model','banner');
-            $this->load->model('Product_model','product');
             $this->load->model('Brand_model','brand');
             $result = array();
             $slider1=$this->banner->get_home_slider(1,TRUE);
@@ -46,6 +43,7 @@ class Appdata extends REST_Controller {
             
             $result['slider1']=$slider1;
             $result['slider2']=$slider2;
+            $result['category_menu']=$this->get_main_menu();
             $result['best_sellling_item']=$newArrivalsData;
             $result['new_arrivals']=$newArrivalsData;
             $result['featured_products']=$newArrivalsData;
@@ -61,6 +59,45 @@ class Appdata extends REST_Controller {
             header('Content-type: application/json');
             echo json_encode($result);
         }
+    }
+    
+    function get_main_menu(){
+        $mainMenuArr=array();
+        $TopCategoryData=$this->category->get_top_category_for_product_list(TRUE);
+        //$AllButtomCategoryData=$this->Category_model->buttom_category_for_product_list();
+        foreach($TopCategoryData as $k){
+            $SubCateory=$this->category->get_subcategory_by_category_id($k['categoryId'],TRUE);
+            //pre($SubCateory);die;
+            if(count($SubCateory)>0){
+                $SubCateoryArr=array();
+                foreach($SubCateory as $kk => $vv){
+                    $ThirdCateory=$this->category->get_subcategory_by_category_id($vv['categoryId'],TRUE);
+                    if(count($ThirdCateory)>0){
+                        $ThirdCateoryArr=array();
+                        foreach($ThirdCateory AS $k3 => $v3){
+                            // now going for 4rath
+                            //$menuArr[$v3->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName;
+                            $FourthCateory=$this->category->get_subcategory_by_category_id($v3['categoryId'],TRUE);
+                            if(count($FourthCateory)>0){ //print_r($v3);die;
+                                /*foreach($FourthCateory AS $k4 => $v4){
+                                    $menuArr[$v4->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName.' -> '.$v4->categoryName;
+                                }*/
+                                $v3['SubCategory']=$FourthCateory;
+                            }
+                            $ThirdCateoryArr[]=$v3;
+                        }
+                        $vv['SubCategory']=$ThirdCateoryArr;
+                    }
+                    $SubCateoryArr[]=$vv;
+                }
+                $k['SubCategory']=$SubCateoryArr;
+            }
+            $mainMenuArr[]=$k;
+            //pre($k);die;
+        }
+        //pre($mainMenuArr);die;
+        //return $TopCategoryData;
+        return $mainMenuArr;
     }
 }
     
