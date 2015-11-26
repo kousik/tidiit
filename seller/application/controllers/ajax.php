@@ -184,7 +184,8 @@ class Ajax extends MY_Controller{
     
     function valid_security_code($str){
         if($str!=$this->session->userdata('secret')){
-            $this->form_validation->set_message('valid_security_code', 'Invalid security code,please try again.');
+            //$this->form_validation->set_message('valid_security_code', 'Invalid security code,please try again.');
+            $this->form_validation->set_message('valid_security_code', '$str = '.$str.' == '.$this->session->userdata('secret'));
             return FALSE;
         }else{
             return TRUE;
