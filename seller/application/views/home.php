@@ -40,34 +40,38 @@
             <hr>-->
             <div class="text-center">
               <a class="quick-btn" href="#">
-                <i class="fa fa-bolt fa-2x"></i>
-                <span>default</span> 
-                <span class="label label-default">2</span> 
+                <i class="fa fa-flag-checkered fa-2x"></i>
+                <span>Place Order</span> 
+                <span class="label label-danger"><?php echo $placeOrders;?></span> 
+              </a>   
+              <a class="quick-btn" href="#">
+                <i class="fa fa-check-square-o fa-2x"></i>
+                <span>Confirm Orders</span> 
+                <span class="label label-default"><?php echo $confirmOrders;?></span> 
               </a> 
               <a class="quick-btn" href="#">
-                <i class="fa fa-check fa-2x"></i>
-                <span>danger</span> 
-                <span class="label label-danger">2</span> 
+                <i class="fa fa-truck fa-2x"></i>
+                <span>Shipped Orders</span> 
+                <span class="label label-success"><?php echo $shippedOrders;?></span> 
               </a> 
               <a class="quick-btn" href="#">
-                <i class="fa fa-building-o fa-2x"></i>
-                <span>No Label</span> 
+                <i class="fa fa-truck fa-2x"></i>
+                <span>Our for delivery <br /> Orders</span> 
+                <span class="label label-warning"><?php echo $outForDeliveryOrders;?></span> 
               </a> 
+                
               <a class="quick-btn" href="#">
-                <i class="fa fa-envelope fa-2x"></i>
-                <span>success</span> 
-                <span class="label label-success">-456</span> 
+                <i class="fa fa-sun-o fa-2x"></i>
+                <span>Success Order</span> 
+                <span class="label label-warning"><?php echo $successOrders;?></span> 
               </a> 
+              
               <a class="quick-btn" href="#">
-                <i class="fa fa-signal fa-2x"></i>
-                <span>warning</span> 
-                <span class="label label-warning">+25</span> 
+                <i class="fa fa-remove fa-2x"></i>
+                <span>Cancel Orders</span> 
+                <span class="label btn-metis-2"><?php echo $cancelOrders;?></span> 
               </a> 
-              <a class="quick-btn" href="#">
-                <i class="fa fa-external-link fa-2x"></i>
-                <span>π</span> 
-                <span class="label btn-metis-2">3.14159265</span> 
-              </a> 
+                
               <a class="quick-btn" href="#">
                 <i class="fa fa-lemon-o fa-2x"></i>
                 <span>é</span> 

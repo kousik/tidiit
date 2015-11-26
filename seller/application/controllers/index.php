@@ -3,8 +3,8 @@ class Index extends MY_Controller {
 
     public function __construct() {
         parent::__construct();
-        
         $this->load->model('User_model');
+        $this->load->model('Order_model');
         
         parse_str($_SERVER['QUERY_STRING'], $_GET);
         
@@ -23,6 +23,36 @@ class Index extends MY_Controller {
     function home() {
         $data = $this->_get_logedin_template();
         $data['viewsData'] =$this->Product_model->get_views_times_by_seller();
+        $allOrderArr=$this->Order_model->get_order_for_statics();
+        $placeOrders=0;
+        $confirmOrders=0;
+        $shippedOrders=0;
+        $outForDeliveryOrders=0;
+        $successOrders=0;
+        $cancelOrders=0;
+        //$suc
+        foreach($allOrderArr AS $k){
+            if($k->status==2){
+                $placeOrders++;
+            }else if($k->status==3){
+                $confirmOrders++;
+            }else if($k->status==4){
+                $shippedOrders++;
+            }else if($k->status==5){
+                $outForDeliveryOrders++;
+            }else if($k->status==6){
+                $successOrders++;
+            }else if($k->status==7){
+                $cancelOrders++;
+            }
+        }
+        $data['placeOrders']=$placeOrders;
+        $data['confirmOrders']=$confirmOrders;
+        $data['shippedOrders']=$shippedOrders;
+        $data['outForDeliveryOrders']=$outForDeliveryOrders;
+        $data['successOrders']=$successOrders;
+        $data['cancelOrders']=$cancelOrders;
+        
         $this->load->view('home', $data);
     }
 

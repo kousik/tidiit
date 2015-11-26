@@ -6,7 +6,7 @@
           <div class="user-wrapper bg-dark">
             <a class="user-link" href="">
               <img class="media-object img-thumbnail user-img" alt="User Picture" src="<?php echo SiteImagesURL;?>user.gif">
-              <span class="label label-danger user-label">16</span> 
+              <!--<span class="label label-danger user-label">16</span> -->
             </a> 
             <div class="media-body">
               <h5 class="media-heading"><?php echo $this->session->userdata('FE_SESSION_VAR_FNAME');?></h5>
@@ -29,7 +29,7 @@
 
         <!-- #menu -->
         <ul id="menu" class="bg-blue dker">
-          <li class="nav-header">Menu</li>
+          <!--<li class="nav-header">Menu</li>-->
           <li class="nav-divider"></li>
           <li class="active">
             <a href="<?php echo BASE_URL;?>">
@@ -39,13 +39,13 @@
           <li>
             <a href="<?php echo BASE_URL;?>order/viewlist">
               <i class="fa fa-table"></i>
-              <span class="link-title">Orders</span> 
+              <span class="link-title">Orders</span>
             </a> 
           </li>
           <li>
-            <a href="reports.html">
-              <i class="fa fa-file"></i>
-              <span class="link-title">Reports</span> 
+            <a href="<?php echo BASE_URL;?>product/viewlist/">
+              <i class="fa fa-bars"></i>
+              <span class="link-title">Products</span> 
             </a> 
           </li>
           <li>

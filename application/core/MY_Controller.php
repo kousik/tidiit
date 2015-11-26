@@ -12,6 +12,11 @@ class MY_Controller extends CI_Controller {
         $this->load->model('Product_model');
         $this->load->model('Category_model');
         $this->load->library('session');
+        $userLocation=$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');
+        if($userLocation==""){
+            $cIP=$this->input->ip_address();
+            $this->session->set_userdata('FE_SESSION_USER_LOCATION_VAR',file_get_contents("http://ipinfo.io/$cIP/country"));
+        }
     }
 
     public function _logout(){

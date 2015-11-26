@@ -244,6 +244,11 @@ class Order_model extends CI_Model {
             return count($this->db->query($sql)->result());
         }
         
+        function get_order_for_statics(){
+            $sql='SELECT o.* FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) JOIN `user` AS u ON(u.userId=ps.userId) WHERE o.status >1 AND u.userId='.$this->session->userdata('FE_SESSION_VAR').' ';
+            return $this->db->query($sql)->result();
+        }
+        
         
         public function get_admin_uncomplete_total(){
             $sql='SELECT o.OrderID FROM `order` AS o JOIN `user` AS u ON(o.UserID=u.UserID) WHERE o.Status="0" ORDER BY o.OrderID DESC';
