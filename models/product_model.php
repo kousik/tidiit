@@ -605,4 +605,10 @@ class Product_model extends CI_Model {
         }
         return TRUE;
     }
+    
+    function get_views_times_by_seller(){
+        $this->db->select('p.title,pv.*')->from($this->_table.' p')->join($this->_table_seller.' ps','p.productId=ps.productId');
+        $this->db->join($this->_table_views.' pv','p.productId=pv.productId','left')->where('ps.userId',  $this->session->userdata('FE_SESSION_VAR'));
+        return $this->db->get()->result();
+    }
 }

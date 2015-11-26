@@ -15,7 +15,7 @@ class Order extends MY_Controller{
 	}
 	
 	public function viewlist(){
-		$data=$this->_show_admin_logedin_layout();
+		$data=$this->_get_logedin_template();
                 
                 $per_page=20;
                 $PaginationConfig=array(
@@ -34,11 +34,12 @@ class Order extends MY_Controller{
                 }else{
                     $offcet=$per_page*($page-1);
                 }
-                
+                $orderDataArr=$this->Order_model->admin_list($per_page,$offcet);
+                //pre($orderDataArr);die;
 		$data['OrderStateDataArr']=$this->Order_model->get_state();
-		$data['DataArr']=$this->Order_model->admin_list($per_page,$offcet);
+		$data['DataArr']=$orderDataArr;
                 $data["links"] = $this->pagination->create_links();
-		$this->load->view('admin/order_list',$data);
+		$this->load->view('order_list',$data);
 	}
         
         public function viewUncompleteList(){

@@ -11,7 +11,8 @@
             
             <br style="clear:both;" />
             <div class="form-group field required">
-            <div class="row dataTableBatchAction">
+                <h2>Order List</h2>
+            <!--<div class="row dataTableBatchAction">
                  <div class="col-md-1">
                  	<label>Action</label>
                  </div>
@@ -23,10 +24,10 @@
                         <option value="2">Bulk Active</option>
                         <option value="3">Bulk Inactive</option>
                       </select>
-                <!--<input type="hidden" autocomplete="off" />  -->
+                <!--<input type="hidden" autocomplete="off" /> 
                       
                  </div>
-                 </div>
+            </div>--->
                  </div>
                <br style="clear:both;" />
                
@@ -36,12 +37,13 @@
                       <thead>
                         <tr>
                           <th width="15"></th>
-                          <th width="200">Action</th>
+                          <th width="150">Action</th>
                           <th>Status</th>
-                          <th>Image</th>
-                          <th>SKU</th>
-                          <th width="90">Product Name</th>
-                          <th width="30">In stock</th>
+                          <th>Order ID</th>
+                          <th>Order Data</th>
+                          <th>Order Owner Username</th>
+                          <th>Order Quantity</th>
+                          <th>Order Amount</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -49,16 +51,17 @@
                             foreach($DataArr AS $k){?>  
                         <tr>
                           <td><input type="checkbox" name="sel_pro"></td>
-                          <td><a href="#">Edit</a> / 
-                              <a href="javascript:void(0);" class="deleteProduct"  title="Delete" data-productid="<?php echo $k->productId;?>">Delete</a> / 
-                              <?php if($k->status==1){$action="Inactivate";}else{$action="Activate";}?>
-                              <a href="javascript:void(0);" class="changeProductStatus"  title="Delete" data-productid="<?php echo $k->productId;?>" data-productstatus="<?php echo $k->status;?>">Make <?php echo $action;?></a>
+                          <td>
+                              <a href="javascript:void(0);" class="viewOrderDetails"  title="Cancel" data-productid="<?php echo $k->orderId;?>">View Details</a> <br />
+                              <a href="javascript:void(0);" class="cancelOrder"  title="Cancel" data-productid="<?php echo $k->orderId;?>">Cancel</a> <br />
+                              <a href="javascript:void(0);" class="changeOrderStatus"  title="Delete" data-productid="<?php echo $k->orderId;?>" data-productstatus="<?php echo $k->status;?>">Update Status</a>
                           </td>
-                          <td><?php echo ($k->status==0) ?'Inactive' : 'Active';?></td>
-                          <td><img src="<?php echo SiteResourcesURL.'product/100X100/'.$k->image;?>" alt="<?php echo $k->title;?>"></td>
-                          <td><?php echo $k->model;?></td>
-                          <td><?php echo $k->title;?></td>
-                          <td><?php echo $k->qty; ?></td>
+                          <td><?php foreach($OrderStateDataArr AS $kk){ if($kk->orderStateId==$k->status){echo $kk->name ;break;}}?></td>
+                          <td><?php echo $k->orderId;?></td>
+                          <td><?php echo date('d-m-Y',strtotime($k->orderDate));?></td>
+                          <td><?php echo $k->email;?></td>
+                          <td><?php echo $k->productQty; ?></td>
+                          <td><?php echo $k->orderAmount; ?></td>
                         </tr>
                         <?php }
                         }?> 

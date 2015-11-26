@@ -201,32 +201,27 @@ class Order_model extends CI_Model {
             $ToDate=$this->input->post('HiddenFilterToDate',TRUE);
             $UserName=$this->input->post('HiddenFilterUserName',TRUE);
             $OrderStatus=$this->input->post('HiddenFilterOrderStatus',TRUE);
-		$sql='SELECT p.PaymentType,o.*,os.Name AS OrderStateName,u.FirstName,u.LastName,u.Email,pp.PayPalTransactionID,'
-                        . ' ccp.TransactionID,oh.ActionDate FROM `payment` AS p JOIN `order` AS o ON(p.OrderID=o.OrderID) '
-                        . ' JOIN `user` AS u ON(o.UserID=u.UserID) JOIN `order_state` AS os ON(o.OrderStateID=os.OrderStateID) '
-                        . ' LEFT JOIN `paypal_data` AS pp ON(p.PaypalID=pp.PayPalDataID) '
-                        . ' LEFT JOIN `ccavenue_data` AS ccp ON(p.CcAvenueID=ccp.CcAvenueDataID) '
-                        . ' LEFT JOIN order_history AS oh ON(o.OrderID=oh.OrderID AND os.OrderStateID=oh.State) WHERE o.Status="1" ';
-                
-                if($UserName!=""){
-                    $sql .= " AND u.UserName='".$UserName."'";
-                }
-                
-                if($OrderStatus!=""){
-                    $sql .= " AND o.OrderStateID='".$OrderStatus."'";
-                }
-                
-                if($FromDate!="" && $ToDate!=""){
-                    $sql .= " AND o.OrderDate BETWEEN '".$FromDate."' AND '".$ToDate."' ";
-                }
-                
-                $sql .= 'ORDER BY o.OrderID DESC';
-		//if($offcet>0 && $per_page>0){
-                    $sql.=" LIMIT $offcet,$per_page";
-                //}
-		$arr=$this->db->query($sql)->result();
-                //echo $this->db->last_query(); //die;
-                return $arr;
+            $sql='SELECT o.*,u1.email FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) '
+                    . ' JOIN `user` AS u ON(u.userId=ps.userId)'
+                    . ' JOIN `user` AS u1 ON(u1.userId=o.userId) WHERE o.status >1 AND u.userId='.$this->session->userdata('FE_SESSION_VAR').' AND o.parrentOrderID=0 ';
+
+            /*if($UserName!=""){
+                $sql .= " AND u.UserName='".$UserName."'";
+            }
+
+            if($OrderStatus!=""){
+                $sql .= " AND o.OrderStateID='".$OrderStatus."'";
+            }
+
+            if($FromDate!="" && $ToDate!=""){
+                $sql .= " AND o.OrderDate BETWEEN '".$FromDate."' AND '".$ToDate."' ";
+            }*/
+
+            $sql .= 'ORDER BY o.orderId DESC';
+            $sql.=" LIMIT $offcet,$per_page";
+            $arr=$this->db->query($sql)->result();
+            //echo $this->db->last_query(); //die;
+            return $arr;
 	}
         
         public function admin_uncomplete_list($per_page,$offcet=0){
@@ -241,11 +236,12 @@ class Order_model extends CI_Model {
         
         
         public function get_admin_total(){
-            $sql='SELECT p.PaymentType,o.*,os.Name AS OrderStateName,u.FirstName,u.LastName,u.Email,pp.PayPalTransactionID,ccp.TransactionID '
-                    . ' FROM `payment` AS p JOIN `order` AS o ON(p.OrderID=o.OrderID) JOIN `user` AS u ON(o.UserID=u.UserID) '
-                    . ' JOIN `order_state` AS os ON(o.OrderStateID=os.OrderStateID) LEFT JOIN `paypal_data` AS pp ON(p.PaypalID=pp.PayPalDataID) '
-                    . ' LEFT JOIN `ccavenue_data` AS ccp ON(p.CcAvenueID=ccp.CcAvenueDataID) WHERE o.Status="1" ORDER BY o.OrderID DESC';
-		return count($this->db->query($sql)->result());
+            $FromDate=$this->input->post('HiddenFilterFromDate',TRUE);
+            $ToDate=$this->input->post('HiddenFilterToDate',TRUE);
+            $UserName=$this->input->post('HiddenFilterUserName',TRUE);
+            $OrderStatus=$this->input->post('HiddenFilterOrderStatus',TRUE);
+            $sql='SELECT o.* FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) JOIN `user` AS u ON(u.userId=ps.userId) WHERE o.status >1 AND u.userId='.$this->session->userdata('FE_SESSION_VAR').' ';
+            return count($this->db->query($sql)->result());
         }
         
         

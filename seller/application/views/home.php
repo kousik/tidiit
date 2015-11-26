@@ -107,15 +107,10 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr class="active">
+                        <!--<tr class="active">
                           <td>Trident</td>
                           <td>1126</td>
                           <td>00:00:15</td>
-                        </tr>
-                        <tr>
-                          <td>Barmuda</td>
-                          <td>350</td>
-                          <td>00:01:20</td>
                         </tr>
                         <tr class="danger">
                           <td>LED TV</td>
@@ -127,21 +122,18 @@
                           <td>547</td>
                           <td>00:10:20</td>
                         </tr>
-                        <tr>
-                          <td>Soap</td>
-                          <td>560</td>
-                          <td>00:00:10</td>
-                        </tr>
-                        <tr>
-                          <td>Shampoo</td>
-                          <td>97</td>
-                          <td>00:20:00</td>
-                        </tr>
                         <tr class="success">
                           <td>Rice</td>
                           <td>2450</td>
                           <td>00:10:00</td>
-                        </tr>
+                        </tr> -->
+                        <?php $i=0;foreach($viewsData AS $k): $i++;?>
+                        <tr <?php if($i %2 ==0){?>class="success"<?php }else{?>class="warning"<?php } ?>>
+                          <td><?php echo $k->title;?></td>
+                          <td><?php echo $k->noOfViews;?></td>
+                          <td><?php echo ($k->lastViewsDateTime!="") ? date('d-m-Y',  strtotime($k->lastViewsDateTime)): "";?></td>
+                        </tr>  
+                        <?php endforeach;?>  
                       </tbody>
                     </table>
                   </div>

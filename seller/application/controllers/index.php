@@ -22,6 +22,7 @@ class Index extends MY_Controller {
 
     function home() {
         $data = $this->_get_logedin_template();
+        $data['viewsData'] =$this->Product_model->get_views_times_by_seller();
         $this->load->view('home', $data);
     }
 

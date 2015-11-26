@@ -169,6 +169,7 @@
 
     /*----------- BEGIN datatable CODE -------------------------*/
     $('#dataTable').dataTable({
+                "aLengthMenu": [2,5,10,15,20,25,50]
 //         "sDom": "<'pull-right'l>t<'row'<'col-lg-6'f><'col-lg-6'p>>",
 //         "sPaginationType": "bootstrap",
 //         "oLanguage": {
