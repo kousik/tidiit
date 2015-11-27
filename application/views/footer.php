@@ -40,7 +40,7 @@
         </div>
 
         <div class="fotr_btm">
-            <p><strong>India Wholesale Marketplace</strong></p>
+            <p><strong><?php echo ($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=='IN') ? 'India' : 'Kenya';?> Wholesale Marketplace</strong></p>
             <span>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</span>
             <div class="row">
                 <div class="col-md-2">
@@ -55,9 +55,9 @@
                         <div class="col-md-3 col-sm-3 col-xs-6">
                             <ul class="fotr_menu">
                                 <h6>Tidiit Inc. Ltd.</h6>
-                                <li><a href="#">Careers</a></li>
-                                <li><a href="#">Blog</a></li>
-                                <li><a href="#">Press</a></li>
+                                <li><a href="<?php echo BASE_URL.'content/careers/Ng==/';?>">Careers</a></li>
+                                <li><a href="#http://blog.tidiit.com">Blog</a></li>
+                                <li><a href="<?php echo BASE_URL.'content/press/Nw==/';?>">Press</a></li>
                                 <h6>Community</h6>
                                 <li><a href="#">Tidiit Facebook</a></li>
                                 <li><a href="#">Tidiit Twitter</a></li>
@@ -67,34 +67,34 @@
                         <div class="col-md-3 col-sm-3 col-xs-6">
                             <ul class="fotr_menu">
                                 <h6>Dispatch & Delivery</h6>
-                                <li><a href="#">Delivery Options</a></li>
-                                <li><a href="#">Customs &amp; Import Tax</a></li>
-                                <li><a href="#">Tracking Your Items</a></li>
+                                <li><a href="<?php echo BASE_URL.'content/delivery-options/OA==/';?>">Delivery Options</a></li>
+                                <li><a href="<?php echo BASE_URL.'content/customs-and-import-tax/OQ==/';?>">Customs &amp; Import Tax</a></li>
+                                <li><a href="<?php echo BASE_URL.'index/track-order/';?>">Tracking Your Items</a></li>
                                 <h6>Refund & Return</h6>
-                                <li><a href="#">Refund & Return Process</a></li>
-                                <li><a href="#">Tidiit Resolution Center</a></li>
+                                <li><a href="<?php echo BASE_URL.'content/refund-and-return-process/MTA=/';?>">Refund & Return Process</a></li>
+                                <li><a href="<?php echo BASE_URL.'content/tidiit-resolution-center/MTE=/';?>">Tidiit Resolution Center</a></li>
                             </ul>
                         </div>
                         <div class="col-md-3 col-sm-3 col-xs-6">
                             <ul class="fotr_menu">
                                 <h6>Policy</h6>
-                                <li><a href="">Privacy Policy</a></li>
-                                <li><a href="">Terms of Use</a></li>
-                                <li><a href="">Terms of Sale</a></li>
-                                <li><a href="">Report Abuse</a></li>
+                                <li><a href="<?php echo BASE_URL.'content/privacy-policy/Mw==/';?>">Privacy Policy</a></li>
+                                <li><a href="<?php echo BASE_URL.'content/terms-of-use/Mg==/';?>">Terms of Use</a></li>
+                                <li><a href="<?php echo BASE_URL.'content/terms-of-sale/MTI=/';?>">Terms of Sale</a></li>
+                                <li><a href="<?php echo BASE_URL.'content/report-abuse/MTM=/';?>">Report Abuse</a></li>
                                 <li><a href="#">Infringement Policy</a></li>
                             </ul>
                         </div>
                         <div class="col-md-3 col-sm-3 col-xs-6">
                             <ul class="fotr_menu brdr_rit_none">
                                 <h6>Customer Service</h6>
-                                <li><a href="#">Contact Us</a></li>
-                                <li><a href="#">Help</a></li>
-                                <li><a href="#">Customer Service</a></li>
+                                <li><a href="<?php echo BASE_URL.'contact-us/';?>">Contact Us</a></li>
+                                <li><a href="<?php echo BASE_URL.'content/help/MTU=/';?>">Help</a></li>
+                                <li><a href="<?php echo BASE_URL.'content/csutomer-service/MTY=/';?>">Customer Service</a></li>
                                 <li><a href="#">Brand Owner Report</a></li>
                                 <h6>Payment</h6>
-                                <li><a href="#">Payment Methods</a></li>
-                                <li><a href="#">Coupon</a></li>
+                                <li><a href="<?php echo BASE_URL.'content/payment-methods/NA==/';?>">Payment Methods</a></li>
+                                <li><a href="<?php echo BASE_URL.'content/coupon/NQ==/';?>">Coupon</a></li>
                             </ul>
                         </div>
                     </div>
@@ -103,14 +103,20 @@
             <div class="fotr_end">
                 <img src="<?php echo SiteImagesURL; ?>fotr_img.png" />
                 <ul class="ftr_sbmnu">
-                    <li><a href="#">India Wholesale</a></li>
-                    <li><a href="#">India Manufacturers</a></li>
-                    <li><a href="#">Seller home</a></li>
-                    <li><a href="#">Top Searches</a></li>
-                    <li><a href="#">Cheap Products</a></li>
-                    <li><a href="#">Reviews</a></li>
+                    <?php 
+                    //echo '='.$this->session->userdata('FE_SESSION_USER_LOCATION_VAR').'=';die;
+                    if(trim($this->session->userdata('FE_SESSION_USER_LOCATION_VAR'))=='IN'):?>
+                    <li><a href="<?php echo BASE_URL.'content/india-wholesale/';?>">India Wholesale</a></li>
+                    <li><a href="<?php echo BASE_URL.'content/india-manufacturers';?>">India Manufacturers</a></li>
+                    <?php else:?>
+                    <li><a href="<?php echo BASE_URL.'content/kenya-wholesale/';?>">Kenya Wholesale</a></li>
+                    <li><a href="<?php echo BASE_URL.'content/kenya-manufacturers/';?>">Kenya Manufacturers</a></li>
+                    <?php endif?>
+                    <li><a href="http://seller.tidiit.com">Seller home</a></li>
+                    <li><a href="<?php echo BASE_URL.'top-search/';?>">Top Searches</a></li>
+                    <li><a href="<?php echo BASE_URL.'reviews/';?>">Reviews</a></li>
                 </ul>
-                <p>Copyright Notice © 2015 Tidiit.com All rights reserved.</p>
+                <p>Copyright Notice &copy; <?php echo date('Y');?> Tiditt Inc. Ltd. All rights reserved.</p>
             </div>
         </div>
     </div>
@@ -265,6 +271,16 @@
                 }
             });
         });
+        
+        jQuery('.showContactUs').click(function(){
+            location.href='<?php echo BASE_URL.'contact-us/'?>';
+        });
+        
+        jQuery('.goForPartner').click(function(){
+            location.href='<?php echo BASE_URL.'content/partner-with-us/MTg=/'?>';
+        });
+        
+        
         jQuery('.showLogin').click(function(){
             jQuery('#myModalLogin').modal('show');
         });

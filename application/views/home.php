@@ -251,17 +251,17 @@
                 <div class="col-md-4 col-sm-4">
                         <div class="abot_box">
                         <img src="<?php echo SiteImagesURL;?>faq_img.png" />
-                        <a href="#"><h3>New Sellers FAQ</h3></a>
-                        <p>Lorem Ipsum is simply dummy text of the printing and type setting industry.</p>
-                        <p><a href="#">Learn More..</a></p>
+                        <a href="<?php echo BASE_URL.'seller-faq';?>"><h3>New Sellers FAQ</h3></a>
+                        <p><?php if(!empty($sellerDataArr)){echo $sellerDataArr[0]->question;}?></p>
+                        <p><a href="<?php echo BASE_URL.'seller-faq';?>">Learn More..</a></p>
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-4">
                         <div class="abot_box brdr_rit_none">
                         <img src="<?php echo SiteImagesURL;?>prtctn_img.png" />
-                        <a href="#"><h3>New Buyers FAQ</h3></a>
-                        <p>Lorem Ipsum is simply dummy text of the printing and type setting industry.</p>
-                        <p><a href="#">Learn More..</a></p>
+                        <a href="<?php echo BASE_URL.'buyer-faq';?>"><h3>New Buyers FAQ</h3></a>
+                        <p><?php if(!empty($buyerDataArr)){echo $buyerDataArr[0]->question;}?></p>
+                        <p><a href="<?php echo BASE_URL.'buyer-faq';?>">Learn More..</a></p>
                     </div>
                 </div>
             </div>

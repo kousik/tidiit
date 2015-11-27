@@ -21,6 +21,7 @@ class Index extends MY_Controller{
     }
     
     function index(){
+        //echo 'user   location : '.$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');die;
         $SEODataArr=array();
         if($this->is_loged_in()){
             $data=$this->_get_logedin_template($SEODataArr);
@@ -28,6 +29,7 @@ class Index extends MY_Controller{
             $data=$this->_get_tobe_login_template($SEODataArr);
         }
         $this->load->model('Banner_model');
+        $this->load->model('Faq_model');
         /// Home Page slider data
         $slider1=$this->Banner_model->get_home_slider();
         //pre($slider1);die;
@@ -43,6 +45,9 @@ class Index extends MY_Controller{
         $data['newArrivals']=$newArrivalsData;
         $data['featuredProducts']=$newArrivalsData;
         $data['brandZoneArr']=$this->Brand_model->get_all();
+        $data['sellerDataArr']=$this->Faq_model->get_all('seller');
+        $data['buyerDataArr']=$this->Faq_model->get_all('buyer');
+        
         $this->load->view('home',$data);
     }
     
@@ -50,5 +55,48 @@ class Index extends MY_Controller{
         $this->_logout();
         redirect(BASE_URL);
     }
+ 
+    function top_search(){
+        $SEODataArr=array();
+        if($this->is_loged_in()){
+            $data=$this->_get_logedin_template($SEODataArr);
+        }else{
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        }
+        $this->load->view('under_construction',$data);
+    }
     
+    function contact_us(){
+        $SEODataArr=array();
+        if($this->is_loged_in()){
+            $data=$this->_get_logedin_template($SEODataArr);
+        }else{
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        }
+        $this->load->view('under_construction',$data);
+    }
+    
+    function seller_faq(){
+        $SEODataArr=array();
+        if($this->is_loged_in()){
+            $data=$this->_get_logedin_template($SEODataArr);
+        }else{
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        }
+        $this->load->model('Faq_model');
+        $data['faqDataArr']=  $this->Faq_model->get_all('seller');
+        $this->load->view('faq_seller',$data);
+    }
+    
+    function buyer_faq(){
+        $SEODataArr=array();
+        if($this->is_loged_in()){
+            $data=$this->_get_logedin_template($SEODataArr);
+        }else{
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        }
+        $this->load->model('Faq_model');
+        $data['faqDataArr']=  $this->Faq_model->get_all('buyer');
+        $this->load->view('faq_buyer',$data);
+    }
 }

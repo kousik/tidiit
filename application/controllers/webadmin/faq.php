@@ -38,11 +38,13 @@ class Faq extends MY_Controller{
 		$question=$this->input->post('question',TRUE);
 		$answer=$this->input->post('answer',TRUE);
 		$status=$this->input->post('status',TRUE);
+		$type=$this->input->post('type',TRUE);
 		
 		$dataArr=array(
 		'question'=>$question,
 		'answer'=>$answer,
-		'status'=>$status
+		'status'=>$status,
+		'type'=>$type
 		);
 		
 		//print_r($dataArr);die;
@@ -57,13 +59,15 @@ class Faq extends MY_Controller{
 	public function edit(){
 		$question=$this->input->post('Editquestion',TRUE);
 		$answer=$this->input->post('Editanswer',TRUE);
+		$type=$this->input->post('Edittype',TRUE);
 		//$status=$this->input->post('Editstatus',TRUE);
 		$faqId=$this->input->post('faqId',TRUE);
 		
 		
 		$dataArr=array(
 		'question'=>$question,
-		'answer'=>$answer
+		'answer'=>$answer,
+		'type'=>$type
 		);
 		
 		

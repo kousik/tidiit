@@ -12,11 +12,6 @@ class MY_Controller extends CI_Controller {
         $this->load->model('Product_model');
         $this->load->model('Category_model');
         $this->load->library('session');
-        $userLocation=$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');
-        if($userLocation==""){
-            $cIP=$this->input->ip_address();
-            $this->session->set_userdata('FE_SESSION_USER_LOCATION_VAR',file_get_contents("http://ipinfo.io/$cIP/country"));
-        }
     }
 
     public function _logout(){
@@ -424,17 +419,6 @@ class MY_Controller extends CI_Controller {
             array('name' => 'dc.language', 'content' => 'English'),
             array('name' => 'dc.source', 'content' => 'https://www.dailyplaza.com'),
         );
-    }
-
-    function _get_home_url(){
-        $countryId=$this->session->userdata('USER_SHIPPING_COUNTRY');
-        if($countryId==1){
-            return base_url().'send-online-gifts-usa';
-        }else if($countryId==99){
-            return base_url().'send-wine-cakes-flowers-online-india';
-        }else if($countryId==240){
-            return base_url().'send-gifts-worldwide';
-        }
     }
 
     function _no_access(){

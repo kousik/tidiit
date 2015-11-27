@@ -10,7 +10,12 @@
 |
 */
 
-
+$hook['post_controller_constructor'][] = array(
+				            'class'    => 'MY_location_track',
+				            'function' => 'get_and_set_location',
+				            'filename' => 'MY_location_track.php',
+				            'filepath' => 'hooks'
+				            );
 
 /* End of file hooks.php */
 /* Location: ./application/config/hooks.php */
