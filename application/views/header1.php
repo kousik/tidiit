@@ -29,8 +29,8 @@
                                 </div>
                                 <div class="col-md-5 col-sm-5 padng_left_none">
                                     <ul class="sub_menu">
-                                        <li><a href="<?php echo BASE_URL.'buyer-protection';?>">Buyer Protection <i class="fa fa-angle-down"></i></a></li>
-                                        <li><a href="<?php echo BASE_URL.'help';?>">Help <i class="fa fa-angle-down"></i></a></li>
+                                        <li><a href="<?php echo BASE_URL.'buyer-protection/MTc==/';?>">Buyer Protection <i class="fa fa-angle-down"></i></a></li>
+                                        <li><a href="<?php echo BASE_URL.'help/MTU=/';?>">Help <i class="fa fa-angle-down"></i></a></li>
                                         <li><a href="javascript:void(0);" class="showMyAccount">My Account <i class="fa fa-angle-down"></i></a></li>
                                     </ul>
                                 </div>
@@ -50,7 +50,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
-                                    <div class="icon_text">
+                                    <div class="icon_text goForPartner">
                                         <div class="circle_brdr">
                                             <span><i class="fa fa-anchor"></i></span>
                                         </div>
@@ -61,7 +61,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
-                                    <div class="icon_text">
+                                    <div class="icon_text showContactUs">
                                         <div class="circle_brdr">
                                             <span><i class="fa fa-phone"></i></span>
                                         </div>

@@ -21,6 +21,7 @@ class Index extends MY_Controller{
     }
     
     function index(){
+        //echo 'user   location : '.$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');die;
         $SEODataArr=array();
         if($this->is_loged_in()){
             $data=$this->_get_logedin_template($SEODataArr);
@@ -50,5 +51,24 @@ class Index extends MY_Controller{
         $this->_logout();
         redirect(BASE_URL);
     }
+ 
+    function top_search(){
+        $SEODataArr=array();
+        if($this->is_loged_in()){
+            $data=$this->_get_logedin_template($SEODataArr);
+        }else{
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        }
+        $this->load->view('under_construction',$data);
+    }
     
+    function contact_us(){
+        $SEODataArr=array();
+        if($this->is_loged_in()){
+            $data=$this->_get_logedin_template($SEODataArr);
+        }else{
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        }
+        $this->load->view('under_construction',$data);
+    }
 }
