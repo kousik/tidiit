@@ -58,6 +58,7 @@ class Ajax extends MY_Controller{
                         $this->User_model->subscribe($email);
                     }
                 }
+                $this->User_model->add_login_history(array('userId'=>$userId));
                 $users=$this->User_model->get_details_by_id($userId);
                 $this->session->set_userdata('FE_SESSION_VAR',$userId);
                 $this->session->set_userdata('FE_SESSION_USERNAME_VAR',$userName);

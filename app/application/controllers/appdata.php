@@ -61,6 +61,70 @@ class Appdata extends REST_Controller {
         }
     }
     
+    function login_post(){
+        $userName=$this->post('userName');
+        $password=$this->post('password');
+        $deviceType=$this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if (!filter_var($userName, FILTER_VALIDATE_EMAIL)) {
+            $this->response(array('error' => 'Please provide valid email.'), 400); return FALSE;
+        }
+        
+        if($userName!="" && $password!="" && $deviceToken!="" && $deviceType!="" && $UDID!=""){
+            $rs=$this->user->check_login_data($userName,$password,'buyer');
+            if(count($rs)>0){
+                $this->user->add_login_history(array('userId'=>$rs[0]->userId,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'udid'=>$UDID));
+                header('Content-type: application/json');
+                echo json_encode(array('userId' => $rs[0]->userId));
+            }else{$this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;}
+        }else{
+            $this->response(array('error' => 'Please provide Username,password,device token,device type,UDID.'), 400);
+            //echo json_encode(array('error' => 'Problem in saving user, please try again.'));
+            return false;
+        }
+    }
+    
+    function registration_post(){
+        $email=$this->post('email');
+        $password=$this->post('password');
+        $confirmPassword=$this->post('confirmPassword');
+        $firstName=$this->post('firstName');
+        $lastName=$this->post('lastName');
+        $deviceType=$this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->response(array('error' => 'Please provide valid email.'), 400); return FALSE;
+        }
+        if($password!=$confirmPassword){
+            $this->response(array('error' => 'Password and confirm password is not matching.'), 400); return FALSE;
+        }
+        
+        if($password =="" || $confirmPassword =="" || $firstName =="" || $lastName=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
+            $this->response(array('error' => 'All fields are required amd must be filled up.'), 400); return FALSE;
+        }
+        
+        if($this->user->check_username_exists_without_type($email)==TRUE){
+            $this->response(array('error' => 'This email is already registered.Please try a new one.'), 400); return FALSE;
+        }
+        
+        $dataArr=array('userName'=>$email,'password'=>  base64_encode($password).'~'.md5('tidiit'),'firstName'=>$firstName,'lastName'=>$lastName,
+                'email'=>$email,'userResources'=>'app','userType'=>'buyer','status'=>1);
+        $userId=$this->user->add($dataArr);
+        
+        if($userId!=""){               
+            if($this->user->is_already_subscribe($email)==FALSE){
+                $this->user->subscribe($email);
+            }
+            $this->user->add_login_history(array('userId'=>$userId,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'udid'=>$UDID));
+            header('Content-type: application/json');
+            echo json_encode(array('userId' => $userId));
+        }
+    }
+    
     function get_main_menu(){
         $mainMenuArr=array();
         $TopCategoryData=$this->category->get_top_category_for_product_list(TRUE);
