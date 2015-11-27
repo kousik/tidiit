@@ -29,6 +29,7 @@ class Index extends MY_Controller{
             $data=$this->_get_tobe_login_template($SEODataArr);
         }
         $this->load->model('Banner_model');
+        $this->load->model('Faq_model');
         /// Home Page slider data
         $slider1=$this->Banner_model->get_home_slider();
         //pre($slider1);die;
@@ -44,6 +45,9 @@ class Index extends MY_Controller{
         $data['newArrivals']=$newArrivalsData;
         $data['featuredProducts']=$newArrivalsData;
         $data['brandZoneArr']=$this->Brand_model->get_all();
+        $data['sellerDataArr']=$this->Faq_model->get_all('seller');
+        $data['buyerDataArr']=$this->Faq_model->get_all('buyer');
+        
         $this->load->view('home',$data);
     }
     
