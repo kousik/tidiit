@@ -216,7 +216,7 @@ jQuery(document).ready(function(){
             </div>
           </div>
           <div class="col-md-1 product_right reset-padding">
-            <h4>Tranding<br />
+            <h4>Trending<br />
               Now</h4>
               
                <marquee scrollamount="2" direction="down" loop="true" height="500px;"> 
