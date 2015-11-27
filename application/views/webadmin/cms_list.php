@@ -18,7 +18,9 @@
     <td style="padding-left:10px;"></td>
   </tr>
   <tr>
-    <td style="padding-left:10px;"><input type="button" name="AddBtn" id="AddBtn" value="Add Content Pages" onclick="ShowAddPages();" class="btn-primary btn-large"/></td>
+    <td style="padding-left:10px;">
+        <!--<input type="button" name="AddBtn" id="AddBtn" value="Add Content Pages" onclick="ShowAddPages();" class="btn-primary btn-large"/>-->
+    </td>
   </tr>
 <script language="javascript">
 
