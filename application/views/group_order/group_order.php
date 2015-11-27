@@ -242,17 +242,20 @@ echo $html_heading; echo $header;?>
         jQuery("body").delegate('.js-order-group', "click", function(e){
             e.preventDefault();
             var grp = jQuery(this).val();
+            var obj = jQuery(this);
+            jQuery(".js-order-group").prop('checked', false);
             if(grp == 'new'){
-                $('div.js-display-exisit-group').empty();
-                $('#createGroupModalLogin').modal('show');
+                jQuery('div.js-display-exisit-group').empty();
+                jQuery('#createGroupModalLogin').modal('show');
             } else if( grp == 'exists'){                
-                var userId = $('input[id="js-order-info"]').data('userid');
-                $.post( myJsMain.baseURL+'ajax/get_my_groups/', {
+                var userId = jQuery('input[id="js-order-info"]').data('userid');
+                jQuery.post( myJsMain.baseURL+'ajax/get_my_groups/', {
                     userId: userId
                 },
                 function(data){ 
                     if(data.contents){
-                        $('div.js-display-exisit-group').html(data.contents);
+                        jQuery('div.js-display-exisit-group').html(data.contents);                        
+                        obj.prop('checked', true);
                     }
                 }, 'json' );
             }

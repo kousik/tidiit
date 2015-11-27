@@ -322,8 +322,8 @@ myJsMain.my_create_groups=function(){
                  }
              });
 
-             if(!existGid){
-             var html = "<input type=\"hidden\" name=\"groupUsers[]\" value=\""+gid+"\" class=\"checkbox-close-"+gid+"\">  <button type=\"button\" class=\"btn btn-info btn-xs checkbox-close-"+gid+"\">"+gname+" | <span aria-hidden=\"true\" class=\"checkbox-close\" data-id=\""+gid+"\">&times;</span></button>";
+             if(!existGid){             
+             var html = "<input type=\"hidden\" name=\"groupUsers[]\" value=\""+gid+"\" class=\"checkbox-close-"+gid+"\">  <button type=\"button\" class=\"btn btn-info btn-xs checkbox-close-"+gid+"\"><i class=\"fa fa-user\"></i>"+gname+" | <i class=\"fa fa-times-circle checkbox-close\" data-id=\""+gid+"\"></i></button>";
              $('.js-show-group-users-tags').append(html);
              $('.checkbox-'+gid).hide();
          } else {

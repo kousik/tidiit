@@ -21,10 +21,14 @@
                                                 <input type="hidden" name="groupId" value="<?=$group->groupId?>">
                                                 <input type="hidden" name="orderId" value="<?=$orderId?>">
                                                 <div class="row">
+                                                    <div class="row">
                                                     <div class="col-md-12">
                                                         <label for="groupTitle">Group Title</label>
                                                         <input type="text" class="form-control" id="groupTitle" name="groupTitle" placeholder="Jane Doe" value='<?= $group->groupTitle ?>' required>
                                                     </div>
+                                                    </div>
+                                                    <div class="clear" style="margin-bottom: 20px;"></div>
+                                                    <div class="row">
                                                     <div class="col-md-6">
                                                         <label for="locality" class="col-md-6 pad_none">Select Country :</label>
                                                         <div class="col-md-6 pad_none">
@@ -44,6 +48,9 @@
                                                             </select>
                                                         </div>
                                                     </div>
+                                                    </div>
+                                                    <div class="clear" style="margin-bottom: 20px;"></div>
+                                                    <div class="row">
                                                     <div class="col-md-6">
                                                         <label for="locality" class="col-md-6 pad_none">Select Zip :</label>
                                                         <div class="col-md-6 pad_none zipElementPara">
@@ -60,6 +67,10 @@
                                                             </select>
                                                         </div>
                                                     </div> 
+                                                    
+                                                    </div>
+                                                    <div class="clear" style="margin-bottom: 20px;"></div>
+                                                    <div class="row">
                                                     <div class="col-md-6">
                                                         <label for="locality" class="col-md-6 pad_none">Select Product Type :</label>
                                                         <div class="col-md-6 pad_none">
@@ -71,6 +82,8 @@
                                                             </select>
                                                         </div>
                                                     </div>
+                                                    </div>
+                                                    <div class="clear" style="margin-bottom: 20px;"></div>    
 
                                                 </div>
 
