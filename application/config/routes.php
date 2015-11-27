@@ -57,6 +57,8 @@ $route['update-message']="user/ajax_get_update_message";
 $route['top-search']="index/top_search/";
 $route['reviews']="index/reviews/";
 $route['contact-us']="index/contact_us/";
+$route['seller-faq']="index/seller_faq/";
+$route['buyer-faq']="index/buyer_faq/";
 
 $route['content/(:any)/(:any)']="content/show_content/$2";
 

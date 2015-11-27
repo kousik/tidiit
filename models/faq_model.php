@@ -43,8 +43,8 @@ class Faq_model extends CI_Model{
 		return TRUE;
 	}
 	
-	public function get_all(){
-		$this->db->select('*')->from($this->_table)->where('Status',1);
+	public function get_all($type){
+		$this->db->select('*')->from($this->_table)->where('Status',1)->where('type',$type);
 		return $this->db->get()->result();
 	}
 }

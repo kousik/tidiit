@@ -54,8 +54,23 @@
     <td align="left" valign="top" class="ListHeadingLable">answer</td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top"><textarea name="Editanswer" id="Editanswer" class="required"><?php echo $DataArr[0]->answer;?></textarea>
-    <?php echo display_ckeditor($ckeditor);?></td>
+    <?php //echo display_ckeditor($ckeditor);?></td>
   </tr>
+  <tr>
+    <td align="left" valign="top" height="40px;">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable"> Type </td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top"><select name="Edittype" id="Edittype" class="required">
+            <option value="">Select</option>
+            <option value="seller" <?php if($DataArr[0]->type=='seller'){?>selected<?php }?>>Seller</option>
+            <option value="buyer" <?php if($DataArr[0]->type=='buyer'){?>selected<?php }?>>Buyer</option>
+        </select></td>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>

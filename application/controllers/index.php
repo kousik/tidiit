@@ -71,4 +71,28 @@ class Index extends MY_Controller{
         }
         $this->load->view('under_construction',$data);
     }
+    
+    function seller_faq(){
+        $SEODataArr=array();
+        if($this->is_loged_in()){
+            $data=$this->_get_logedin_template($SEODataArr);
+        }else{
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        }
+        $this->load->model('Faq_model');
+        $data['faqDataArr']=  $this->Faq_model->get_all('seller');
+        $this->load->view('faq_seller',$data);
+    }
+    
+    function buyer_faq(){
+        $SEODataArr=array();
+        if($this->is_loged_in()){
+            $data=$this->_get_logedin_template($SEODataArr);
+        }else{
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        }
+        $this->load->model('Faq_model');
+        $data['faqDataArr']=  $this->Faq_model->get_all('buyer');
+        $this->load->view('faq_buyer',$data);
+    }
 }

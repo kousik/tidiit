@@ -39,6 +39,7 @@ function ShowAddAdminBox()
 	$('#EditBox').fadeIn(2500);
 	$('#Editquestion').val(DataArr[id]['question']);
 	$('#Editanswer').val(DataArr[id]['answer']);
+	$('#Edittype').val(DataArr[id]['type']);
 	if(document.AdminEdit.Editstatus[0].value==DataArr[id]['status'])
 	{
 		document.AdminEdit.Editstatus[0].checked=true;
@@ -85,11 +86,12 @@ function AskDelete(id)
     <td>
 	<table width="100%" border="0" align="center" cellpadding="1" cellspacing="1" id="ListBox" class="alt_row">
   <tr class="ListHeadingLable" bgcolor="#DFDFDF" height="25px;">
-    <td width="4%">Sl No </td>
-    <td width="20%">questions</td>
-    <td width="20%">answer</td>
-	<td width="7%">status</td>
-    <td width="20%">Action</td>
+    <td width="6%">Sl No </td>
+    <td width="20%">Questions</td>
+    <td width="40%">Answer</td>
+    <td width="7%">Type</td>
+    <td width="7%">Status</td>
+    <td width="10%">Action</td>
   </tr>
   <script language="javascript">
   var DataArr=new Array(<?=count($DataArr)?>);
@@ -101,6 +103,7 @@ function AskDelete(id)
     <td><?php echo $val+1;?></td>
     <td><?php echo $InerArr->question;?></td>
     <td><?php echo $InerArr->answer;?></td>
+    <td><?php echo $InerArr->type;?></td>
     <td><?php echo ($InerArr->status=='1')?'Active':'Inactive';?></td>
     <td>
 	<?php if($InerArr->status=='1'){$action=0;}else{$action=1;}?>
@@ -116,6 +119,7 @@ function AskDelete(id)
   DataArr[<?php echo $InerArr->faqId?>]['faqId']='<?php echo $InerArr->faqId?>';
   DataArr[<?php echo $InerArr->faqId?>]['question']='<?php echo $InerArr->question?>';
   DataArr[<?php echo $InerArr->faqId?>]['answer']='<?php echo $InerArr->answer?>';
+  DataArr[<?php echo $InerArr->faqId?>]['type']='<?php echo $InerArr->type?>';
   DataArr[<?php echo $InerArr->faqId?>]['status']='<?php echo $InerArr->status?>';
   </script>
   <?php $val++;}
@@ -157,7 +161,26 @@ function AskDelete(id)
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top"><textarea name="Editanswer" id="Editanswer" class="required"></textarea></td>
   </tr>
+
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
   </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable">Type</td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top">
+        <select name="Edittype" id="Edittype" class="required">
+            <option value="">Selecct</option>
+            <option value="seller">Seller</option>
+            <option value="buyer">Buyer</option>
+        </select>
+    </td>
+  </tr>
+
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
@@ -219,7 +242,7 @@ function AskDelete(id)
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable"> question </td>
+    <td align="left" valign="top" class="ListHeadingLable"> Question </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top"><input name="question" type="text" id="question"  class="required" /></td>
   </tr>
@@ -231,9 +254,25 @@ function AskDelete(id)
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable">answer</td>
+    <td align="left" valign="top" class="ListHeadingLable">Answer</td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top"> <textarea name="answer" id="answer" class="required"></textarea></td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable">Type</td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top"> <select name="type" id="type" class="required">
+            <option value="">Selecct</option>
+            <option value="seller">Seller</option>
+            <option value="buyer">Buyer</option>
+        </select></td>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
