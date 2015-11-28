@@ -54,6 +54,7 @@ class Appdata extends REST_Controller {
             $result['site_image_url']='http://tidiit.com/resources/images/';
             $result['site_slider_image_url']='http://tidiit.com/resources/banner/original/';
             $result['site_brand_image_url']='http://tidiit.com/resources/brand/original/';
+            $result['site_brand_image_url']='http://tidiit.com/resources/category/original/';
             
             $result['timestamp'] = (string)mktime();
             header('Content-type: application/json');
