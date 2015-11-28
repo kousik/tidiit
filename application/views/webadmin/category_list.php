@@ -59,7 +59,7 @@ function ShowAddAdminBox(){
 	$('#EditmetaTitle').val(DataArr[id]['metaTitle']);
 	$('#EditmetaKeyWord').val(DataArr[id]['metaKeyWord']);
 	$('#EditmetaDescription').val(DataArr[id]['metaDescription']);
-        <?php if($parrentCategoryId>0){?>
+        <?php //if($parrentCategoryId>0){?>
         $('#Editview').val(DataArr[id]['view']);
         $('#EdituserCategoryView').val(DataArr[id]['userCategoryView']);
         //$("input[type='radio'][name='Editview'][value='"+DataArr[id]['view']+"']").prop("checked",true);
@@ -70,7 +70,7 @@ function ShowAddAdminBox(){
             var srcData='<?php echo $categoryImageURL;?>'+DataArr[id]['image'];
         }
         $('#EditEditcategoryImageImg').attr('height','100').attr('width','100').attr('src',srcData);	
-        <?php }?>
+        <?php //}?>
 	$('#categoryId').val(DataArr[id]['categoryId']);
 	
  }
@@ -303,6 +303,7 @@ function AskDelete(id){
         </select>
     </td>
   </tr>
+  <?php }?>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
@@ -318,7 +319,7 @@ function AskDelete(id){
         <input type="file" name="EditcategoryImage" id="EditcategoryImage" style="display:none;">
     </td>
   </tr>
-  <?php }?>
+  
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
@@ -447,7 +448,7 @@ function AskDelete(id){
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
   </tr>
-  <?php if($parrentCategoryId>0){?>
+  
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top" class="ListHeadingLable"> Select Category Image</td>
@@ -460,6 +461,7 @@ function AskDelete(id){
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
   </tr>
+  <?php if($parrentCategoryId>0){?>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top" class="ListHeadingLable"> Select Category Page Template</td>

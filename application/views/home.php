@@ -131,10 +131,10 @@
                         <?php foreach($bestSelllingItem AS $k){ //pre(HOME_LISTING.$k->image);die;?>
                         <div class="item">
                             <div class="prodct_box">
-                                <a href="#">
+                                <a href="<?php echo BASE_URL.'product/details/'.base64_encode($k->productId);?>">
                                     <img src="<?php echo HOME_LISTING.$k->image;?>" class="img-responsive" />
                                     <div class="ch-info">
-                                        <h3><img src="<?php echo SiteImagesURL;?>add_crt.png" /> &nbsp;Add to Truck</h3>
+                                        <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
                                     </div>
                                 </a>
                                 <p><?php echo $k->title;?></p>
@@ -164,10 +164,10 @@
                         <?php foreach($bestSelllingItem AS $k){ //pre($k);die;?>
                         <div class="item">
                             <div class="prodct_box">
-                                <a href="#">
+                                <a href="<?php echo BASE_URL.'product/details/'.base64_encode($k->productId);?>">
                                     <img src="<?php echo HOME_LISTING.$k->image;?>" class="img-responsive" />
                                     <div class="ch-info">
-                                        <h3><img src="<?php echo SiteImagesURL;?>add_crt.png" /> &nbsp;Add to Truck</h3>
+                                        <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
                                     </div>
                                 </a>
                                 <p><?php echo $k->title;?></p>
@@ -196,10 +196,10 @@
                         <?php foreach($bestSelllingItem AS $k){ //pre($k);die;?>
                         <div class="item">
                             <div class="prodct_box">
-                                <a href="#">
+                                <a href="<?php echo BASE_URL.'product/details/'.base64_encode($k->productId);?>">
                                     <img src="<?php echo HOME_LISTING.$k->image;?>" class="img-responsive" />
                                     <div class="ch-info">
-                                        <h3><img src="<?php echo SiteImagesURL;?>add_crt.png" /> &nbsp;Add to Truck</h3>
+                                        <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
                                     </div>
                                 </a>
                                 <p><?php echo $k->title;?></p>
