@@ -41,7 +41,7 @@ define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 define('SITE_SUB_DOMAIN','');
 define('CAPTCHA_COOKIE_NAME','secret');
 define('BASE_URL','http://'.$_SERVER['HTTP_HOST'].'/'.SITE_SUB_DOMAIN);
-define('SELLER_URL','http://seller.tidiit-local.com/');
+define('SELLER_URL','http://seller.tidiit.com/');
 define('FE_BASE_URL',BASE_URL);
 define('ADMIN_BASE_URL',FE_BASE_URL.'webadmin/');
 define('REAL_URL',BASE_URL);
