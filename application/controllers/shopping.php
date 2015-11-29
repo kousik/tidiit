@@ -1244,9 +1244,10 @@ class Shopping extends MY_Controller{
                 $orderinfo['shipping'] = $userShippingDataDetails[0];
                 $userBillingDataDetails=$this->User_model->get_billing_address();
                 $orderinfo['billing'] = $userBillingDataDetails[0];
-                $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
                 $order['orderInfo'] = base64_encode(serialize($orderinfo));
                 $orderId = $this->Order_model->add($order);
+                $orderinfo['orderId']=$orderId;
+                $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
                 $orderid['orderId'] = $orderId;
                 $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$orderId;
                 if($coupon->couponId):

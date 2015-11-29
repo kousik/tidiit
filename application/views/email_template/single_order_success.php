@@ -12,7 +12,7 @@
                         <td height="46" align="right" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                             <tr>
                               <td width="67%" align="right"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#68696a; font-size:8px; text-transform:uppercase"><a href= "#" style="color:#68696a; text-decoration:none"><strong></strong></a></font></td>
-                              <td width="29%" align="right"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#68696a; font-size:8px"> <a href= "<?php echo $MainSiteBaseURL;?>" style="color:#68696a; text-decoration:none; text-transform:uppercase"><img src="<?php echo $MainSiteImagesURL;?>android-ios.gif"  title="Download App" alt="" border="0" alt="" height="60"/></a> </td>
+                              <td width="29%" align="right"><a href= "<?php echo $MainSiteBaseURL;?>" style="color:#68696a; text-decoration:none; text-transform:uppercase"><img src="<?php  echo $MainSiteImagesURL;?>android-ios.gif"  title="Download App" alt="" border="0" height="60"/></a> </td>
                               <td width="4%">&nbsp;</td>
                             </tr>
                           </table></td>
@@ -48,7 +48,7 @@
                           <td align="left" valign="top" style="background-color:#FFFFFF;display:block;clear:both;padding:20px 20px 0 20px;" bgcolor=""><table border="0" cellspacing="0" cellpadding="0" width="100%" style="">
                               <tbody>
                                 <tr>
-                                  <td colspan="4" width="100%" align="middle" valign="top"><p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">OD204116728014247000</span></a> </p>
+                                  <td colspan="4" width="100%" align="middle" valign="top"><p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;"><?php echo $orderInfo['orderId'];?></span></a> </p>
                                     <br>
                                   </td>
                                 </tr>
