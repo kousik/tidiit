@@ -70,7 +70,7 @@
             <td>&nbsp;</td>
           </tr>
           <tr>
-            <td><img src="images/promo-green2_07.jpg" width="598" height="7" style="display:block" border="0" alt=""/></td>
+            <td><img src="<?php echo $MainSiteImagesURL;?>promo-green2_07.jpg" width="598" height="7" style="display:block" border="0" alt=""/></td>
           </tr>
           <tr>
             <td>&nbsp;</td>
@@ -87,9 +87,9 @@
                   <td width="11%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><a href= "<?php echo $MainSiteBaseURL;?>" style="color:#010203; text-decoration:none"><strong>Flexible Payment Options</strong></a></font></td>
                   <td width="2%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><strong>|</strong></font></td>
                   <td width="17%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><a href= "<?php echo $MainSiteBaseURL;?>" style="color:#010203; text-decoration:none"><strong>STAY CONNECTED</strong></a></font></td>
-                  <td width="4%" align="right"><a href="https://www.facebook.com/" target="_blank"><img src="images/promo-green2_09_01.jpg" alt="facebook" width="22" height="19" border="0" /></a></td>
-                  <td width="5%" align="center"><a href="https://twitter.com/" target="_blank"><img src="images/promo-green2_09_02.jpg" alt="twitter" width="23" height="19" border="0" /></a></td>
-                  <td width="4%" align="right"><a href="http://www.linkedin.com/" target="_blank"><img src="images/promo-green2_09_03.jpg" alt="linkedin" width="20" height="19" border="0" /></a></td>
+                  <td width="4%" align="right"><a href="https://www.facebook.com/" target="_blank"><img src="<?php echo $MainSiteImagesURL;?>promo-green2_09_01.jpg" alt="facebook" width="22" height="19" border="0" /></a></td>
+                  <td width="5%" align="center"><a href="https://twitter.com/" target="_blank"><img src="<?php echo $MainSiteImagesURL;?>promo-green2_09_02.jpg" alt="twitter" width="23" height="19" border="0" /></a></td>
+                  <td width="4%" align="right"><a href="http://www.linkedin.com/" target="_blank"><img src="<?php echo $MainSiteImagesURL;?>promo-green2_09_03.jpg" alt="linkedin" width="20" height="19" border="0" /></a></td>
                   <td width="5%">&nbsp;</td>
                 </tr>
               </table></td>

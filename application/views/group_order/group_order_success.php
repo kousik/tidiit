@@ -32,13 +32,15 @@ echo $html_heading; echo $header;?>
 
                                 <div class="active row grouporder_id">
                                     <div class="alert alert-success" role="alert">
-                                        Congratulations! Your order successfully placed.<br /><br />
-                                        <a href="<?=BASE_URL?>my-orders" class="btn btn-success"> View your orders</a>
-                                        <br /><br />
-                                        Please follow up with your Buyer Club Member to complete the order by completing the full payment.
+                                        Congratulations! Your order successfully placed.
                                     </div>
+                                    <br /><br />
+                                    <br /><br />
+                                    <a href="<?=BASE_URL?>my-orders" class="btn btn-success"> View your orders</a>
+                                    <br /><br />
+                                    Please follow up with your Buyer Club Member to complete the order by completing the full payment.<br />
                                 </div>
-
+                                
                             </div>
 
                         </div>
