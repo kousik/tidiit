@@ -34,14 +34,14 @@ echo $html_heading; echo $header;?>
                                     <div class="col-md-12 col-sm-12">
                                         
                                         <div class="list-group gen_infmtn">
-                                            <h6>Group Re-order Process [TIDIIT-OD-<?=$order->orderId?>]</h6>
+                                            <h6>Buyer Club Re-order Process [TIDIIT-OD-<?=$order->orderId?>]</h6>
                                             <div class="active row grouporder_id">
                                                 <h4> You can choose one of the below operation for this order.</h4>
                                                 <div class="col-xs-6 col-md-3"></div>
                                                 <div class="col-xs-6 col-md-6">
                                                     
                                                     <a href="<?=BASE_URL."shopping/group-re-order-accept-process/".base64_encode($order->orderId*226201)."/".base64_encode(100)?>" class="btn btn-info btn-lg  btn-block">Re-order by me</a>
-                                                    <a href="<?=BASE_URL."edit_groups_re_order/".base64_encode($group->groupId*987654321)."/".base64_encode($order->orderId)?>" class="btn btn-success btn-lg btn-block">Send group member for Re-order</a>
+                                                    <a href="<?=BASE_URL."edit_groups_re_order/".base64_encode($group->groupId*987654321)."/".base64_encode($order->orderId)?>" class="btn btn-success btn-lg btn-block">Send Buyer Club member for Re-order</a>
                                                 </div>
                                                 <div class="col-xs-6 col-md-3"></div>
                                                 

@@ -34,7 +34,7 @@ echo $html_heading; echo $header;?>
                                     <div class="col-md-12 col-sm-12">
                                         
                                         <div class="list-group gen_infmtn">
-                                            <h6>Tidiit Information for you -</h6>
+                                            <h6>Tidiit Information for you</h6>
                                             <div class="active row grouporder_id">
                                                 
                                                 <?php if($this->session->flashdata('error')): ?>
