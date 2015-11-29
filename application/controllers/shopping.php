@@ -408,7 +408,7 @@ class Shopping extends MY_Controller{
                     $data['receiverId'] = $usr->userId;
                     $data['nType'] = 'GROUP-ORDER';
 
-                    $data['nTitle'] = 'New Group order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+                    $data['nTitle'] = 'New Buyer Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
                     $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
                     $data['nMessage'] = "Hi, <br> You have requested to buy group order product.<br>";
                     $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
@@ -428,7 +428,7 @@ class Shopping extends MY_Controller{
                     
                     $mail_template_view_data=$this->load_default_resources();
                     $mail_template_view_data['group_order_start']=$mail_template_data;
-                    $this->_global_tidiit_mail($recv_email, "New Group Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
+                    $this->_global_tidiit_mail($recv_email, "New Buyer Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
                     $this->User_model->notification_add($data);
                 endforeach;
             else:

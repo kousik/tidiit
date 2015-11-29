@@ -34,18 +34,14 @@
             <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td width="10%">&nbsp;</td>
-                  <td width="80%" align="left" valign="top">
-                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:30px">
-                    Hi <?php echo $retribe_user_password['TEMPLATE_RETRIBE_USER_PASSWORD_FIRSTNAME'].' '.$retribe_user_password['TEMPLATE_RETRIBE_USER_PASSWORD_LASTNAME']?>,<br />
-					<strong>Your login credentials are bellow</strong>
-                    </font> <br /><br /><br />
-                   <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">
-				   Your Username : <?php echo $retribe_user_password['TEMPLATE_RETRIBE_USER_PASSWORD_USERNAME'];?>
-				   </font>
-					<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">
-				   Your Password is : <?php echo base64_decode(current(explode('~', $retribe_user_password['TEMPLATE_RETRIBE_USER_PASSWORD_PASSWORD'])));?>
-				   </font>
-					</td>
+                  <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $create_user['TEMPLATE_CREATE_USER_FIRSTNAME'].' '.$create_user['TEMPLATE_CREATE_USER_LASTNAME'];?>,</em></strong></font><br />
+                    <br />
+                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">
+                    Thank you for your register at Tidiit Inc. Ltd. <br /> Your login details as bellow.
+                    <br /><br />
+					Your Username : <strong><?php echo $create_user['TEMPLATE_CREATE_USER_USERNAME'];?></strong><br />
+					Your Password is : <strong><?php echo $create_user['TEMPLATE_CREATE_USER_PASSWORD'];?></strong><br />
+                    </font> <br /></td>
                   <td width="10%">&nbsp;</td>
                 </tr>
                 <tr><td colspan="3">&nbsp;</td></tr>

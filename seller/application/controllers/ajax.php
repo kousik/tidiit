@@ -58,18 +58,16 @@ class Ajax extends MY_Controller{
             $DataArr=$this->User_model->get_data_by_email($email);
             //print_r($DataArr);die;
             if(count($DataArr)>0){
-                $data=array();
-                $this->load->library('email');
-                $this->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
-                $this->email->to($DataArr[0]->email,$DataArr[0]->firstName.' '.$DataArr[0]->lastName);
-                $this->email->subject('Your password at Tidiit Inc. Ltd.');
-                $data=array();
-                //pre($DataArr);//die;
-                $data['userDetails']=$DataArr;
-                $ret=$this->load->view('email_template/retribe_user_password',$data,TRUE);
-                $this->email->message($ret);
-                $this->email->send();
-                //echo $ret;die;
+                $mail_template_data=array();
+                $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_EAMIL']=$DataArr[0]->email;
+                $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_FIRSTNAME']=$DataArr[0]->firstName;
+                $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_LASTNAME']=$DataArr[0]->lastName;
+                $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_USERNAME']=$DataArr[0]->userName;
+                $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_PASSWORD']=$DataArr[0]->password;
+                
+                $mail_template_view_data=$this->load_default_resources();
+                $mail_template_view_data['retribe_user_password']=$mail_template_data;
+                $this->_global_tidiit_mail($DataArr[0]->email, "Your password at Tidiit Inc. Ltd.", $mail_template_view_data,'retribe_user_password',$DataArr[0]->firstName.' '.$DataArr[0]->lastName);
                 echo json_encode(array('result'=>'good','msg'=>'Your password has been sent to your register email address.'));die; 
             }else{
                 echo json_encode(array('result'=>'bad','msg'=>'Please check your "email" and try again.'));die;     
@@ -130,18 +128,6 @@ class Ajax extends MY_Controller{
             $userId=$this->User_model->add($dataArr);
             
             if($userId!=""){
-                /*
-                 * 
-                 $this->load->library('email');
-                $msg=$this->get_user_reg_email_body($firstName,$userName,$password);
-                $SupportEmail=$this->Siteconfig_model->get_value_by_name('SupportEmail');
-                $this->email->from($SupportEmail, 'Tidiit Inc Ltd Support');
-                $this->email->to($email,$firstName.' '.$lastName);
-                $this->email->subject('Your Tidiit Inc Ltd account information.');
-                $this->email->message($msg);
-                $this->email->send();
-                 * 
-                 */
                 $billDataArr=array('userId'=>$userId,'countryId'=>$countryId,'stateId'=>$stateId,'city'=>$city,'address'=>$address,'zip'=>$zip,'contactNo'=>$contactNo);
                 $this->User_model->add_bill_address($billDataArr);
             
@@ -153,7 +139,18 @@ class Ajax extends MY_Controller{
                 
                 $this->session->set_userdata('FE_SESSION_VAR',$userId);
                 $this->session->set_userdata('FE_SESSION_USERNAME_VAR',$userName);
-                //$this->session->set_userdata('FE_SESSION_USERNAME_VAR',$UserName);
+                
+                $mail_template_data=array();
+                $mail_template_data['TEMPLATE_CREATE_USER_EAMIL']=$email;
+                $mail_template_data['TEMPLATE_CREATE_USER_FIRSTNAME']=$firstName;
+                $mail_template_data['TEMPLATE_CREATE_USER_LASTNAME']=$lastName;
+                $mail_template_data['TEMPLATE_CREATE_USER_USERNAME']=$email;
+                $mail_template_data['TEMPLATE_CREATE_USER_PASSWORD']=$password;
+                
+                $mail_template_view_data=$this->load_default_resources();
+                $mail_template_view_data['create_user']=$mail_template_data;
+                $this->_global_tidiit_mail($email, "Your account at Tidiit Inc. Ltd.", $mail_template_view_data,'user_create',$firstName.' '.$lastName);
+                
                 $this->session->set_userdata('FE_SESSION_VAR_TYPE','seller');
                 
                 echo json_encode(array('result'=>'good','url'=>BASE_URL.'index/home/','msg'=>'You have successfully register your account with "Tidiit Inc Ltd.Your login information will be sent to registered email account.'));die; 

@@ -66,6 +66,17 @@ class Ajax extends MY_Controller{
                 $this->session->set_userdata('FE_SESSION_VAR_FNAME',$firstName);
                 $this->session->set_userdata('FE_SESSION_UDATA',$users[0]);
                 
+                $mail_template_data=array();
+                $mail_template_data['TEMPLATE_CREATE_USER_EAMIL']=$email;
+                $mail_template_data['TEMPLATE_CREATE_USER_FIRSTNAME']=$firstName;
+                $mail_template_data['TEMPLATE_CREATE_USER_LASTNAME']=$lastName;
+                $mail_template_data['TEMPLATE_CREATE_USER_USERNAME']=$email;
+                $mail_template_data['TEMPLATE_CREATE_USER_PASSWORD']=$password;
+                
+                $mail_template_view_data=$this->load_default_resources();
+                $mail_template_view_data['create_user']=$mail_template_data;
+                $this->_global_tidiit_mail($email, "Your account at Tidiit Inc. Ltd.", $mail_template_view_data,'user_create',$firstName.' '.$lastName);
+                
                 echo json_encode(array('result'=>'good','url'=>BASE_URL.'my-billing-address','msg'=>'You have successfully register your account with "Tidiit Inc Ltd.Your login information will be sent to registered email account.'));die; 
             }else{
                 echo json_encode(array('result'=>'bad','msg'=>'Please check your user anme and password and try again.'));die;     
@@ -237,7 +248,7 @@ class Ajax extends MY_Controller{
             if(empty($UsersDataArr)){
                 echo '';die;
             }else{
-                $html ='<label class="col-sm-3 control-label">Select Group Users :</label>';
+                $html ='<label class="col-sm-3 control-label">Select Buyer Club Users :</label>';
                 $html .='<div class="boxes">';
                 foreach($UsersDataArr as $user):
                 $html.='<div class="checkbox-'.$user->userId.'"><div class="checkbox">
@@ -372,7 +383,7 @@ class Ajax extends MY_Controller{
         $groupColor = $colors[$rand_keys];
         
         if(!$groupUsersArr):
-            echo json_encode(array('result'=>'bad','msg'=>'Please select the at least one group member!'));die;
+            echo json_encode(array('result'=>'bad','msg'=>'Please select the at least one Buyer Club member!'));die;
         endif;
         
         $groupUsers = implode(",", $groupUsersArr);
@@ -435,7 +446,7 @@ class Ajax extends MY_Controller{
                     $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                     $data['receiverId'] = $usr->userId;
                     $data['nType'] = 'GROUP-ORDER';
-                    $data['nTitle'] = 'Group Re-order [TIDIIT-OD'.$order->orderId.'] running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+                    $data['nTitle'] = 'Buyer Club Re-order [TIDIIT-OD'.$order->orderId.'] running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
                     $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID']=$order->orderId;
                     $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ADMIN_NAME']=$group->admin->firstName.' '.$group->admin->lastName;
                     $data['nMessage'] = "Hi, <br> You have requested to buy group order product.<br>";
@@ -456,7 +467,7 @@ class Ajax extends MY_Controller{
                     /// firing mail
                     $mail_template_view_data=$this->load_default_resources();
                     $mail_template_view_data['group_order_re_start']=$mail_template_data;
-                    $this->__global_tidiit_mail($recv_email, "Group Order Re-Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_re_start');
+                    $this->__global_tidiit_mail($recv_email, "Buyer Club Order Re-Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_re_start');
                     
                     $this->User_model->notification_add($data);
                 endforeach;
@@ -490,7 +501,7 @@ class Ajax extends MY_Controller{
             <div class="alert alert-success" role="alert">
                 <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                 <span class="sr-only">Success:</span>
-                Group has been added successfully. Please process the order without reload page.
+                Buyer Club has been added successfully. Please process the order without reload page.
             </div>
             <div class="col-md-3 col-sm-3 grp_dashboard" style="margin:0;">
             <div class="<?= $group->groupColor ?>">
@@ -499,10 +510,10 @@ class Ajax extends MY_Controller{
             <div class="grp_title"><?= $group->groupTitle ?></div>
         </div>        
         <div class="col-md-6">
-            <h5><strong>Group Admin</strong></h5>
+            <h5><strong>Buyer Club Leader</strong></h5>
             <p class="text-left"><?= $group->admin->firstName ?> <?= $group->admin->lastName ?></p>
             <?php if ($group->users): ?>
-                <h5><strong>Group Users</strong></h5><?php foreach ($group->users as $ukey => $usr): ?>
+                <h5><strong>Buyer Club Users</strong></h5><?php foreach ($group->users as $ukey => $usr): ?>
                     <p class="text-left"><?= $usr->firstName ?> <?= $usr->lastName ?></p>
                 <?php endforeach;
             endif;
@@ -529,7 +540,7 @@ class Ajax extends MY_Controller{
             <thead>
                 <tr>
                     <th>Title</th>
-                    <th>Group Admin</th>
+                    <th>Buyer Club Leader</th>
                     <th>Users</th>
                     <th>Select</th>
                 </tr>
@@ -553,7 +564,7 @@ class Ajax extends MY_Controller{
         else:?>
         <div class="alert alert-danger" role="alert">
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-            You have no own groups or not added any other groups. Please create group first!
+            You have no own Buyer Club or not added any other Buyer. Please create Buyer Club first!
         </div>
         <?php
         endif;
@@ -574,25 +585,25 @@ class Ajax extends MY_Controller{
         $type = $data['nType'];
         switch($type){
             case 'GROUP-ADD':
-                $data['nMessage'] = "Hi, <br> You Have added in my newly created group <b>[".$data['nTitle']."]</b>";
+                $data['nMessage'] = "Hi, <br> You Have added in my newly created Buyer Club <b>[".$data['nTitle']."]</b>";
                 $data['isEmail'] = true;
                 $data['isMobMessage'] = true;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
             case 'GROUP-MODIFY':
-                $data['nMessage'] = "Hi, <br> Group <b>[".$data['nTitle']."]</b> has been modified.";
+                $data['nMessage'] = "Hi, <br> Buyer Club <b>[".$data['nTitle']."]</b> has been modified.";
                 $data['isEmail'] = true;
                 $data['isMobMessage'] = true;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
             case 'GROUP-MODIFY-NEW':
-                $data['nMessage'] = "Hi, <br> You Have added in my group <b>[".$data['nTitle']."]</b>";
+                $data['nMessage'] = "Hi, <br> You Have added in my Buyer Club <b>[".$data['nTitle']."]</b>";
                 $data['isEmail'] = true;
                 $data['isMobMessage'] = true;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
             case 'GROUP-MODIFY-DELETE':
-                $data['nMessage'] = "Hi, <br> You are not part of this group <b>[".$data['nTitle']."]</b>";
+                $data['nMessage'] = "Hi, <br> You are not part of this Buyer Club <b>[".$data['nTitle']."]</b>";
                 $data['isEmail'] = true;
                 $data['isMobMessage'] = true;
                 $data['createDate'] = date('Y-m-d H:i:s');
@@ -828,18 +839,16 @@ class Ajax extends MY_Controller{
             $DataArr=$this->User_model->get_data_by_email($email);
             //print_r($DataArr);die;
             if(count($DataArr)>0){
-                $data=array();
-                $this->load->library('email');
-                $this->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
-                $this->email->to($DataArr[0]->email,$DataArr[0]->firstName.' '.$DataArr[0]->lastName);
-                $this->email->subject('Your password at Tidiit Inc. Ltd.');
-                $data=array();
-                //pre($DataArr);//die;
-                $data['userDetails']=$DataArr;
-                $ret=$this->load->view('email_template/retribe_user_password',$data,TRUE);
-                $this->email->message($ret);
-                $this->email->send();
-                //echo $ret;die;
+                $mail_template_data=array();
+                $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_EAMIL']=$DataArr[0]->email;
+                $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_FIRSTNAME']=$DataArr[0]->firstName;
+                $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_LASTNAME']=$DataArr[0]->lastName;
+                $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_USERNAME']=$DataArr[0]->userName;
+                $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_PASSWORD']=$DataArr[0]->password;
+                
+                $mail_template_view_data=$this->load_default_resources();
+                $mail_template_view_data['retribe_user_password']=$mail_template_data;
+                $this->_global_tidiit_mail($DataArr[0]->email, "Your password at Tidiit Inc. Ltd.", $mail_template_view_data,'retribe_user_password',$DataArr[0]->firstName.' '.$DataArr[0]->lastName);
                 echo json_encode(array('result'=>'good','msg'=>'Your password has been sent to your register email address.'));die; 
             }else{
                 echo json_encode(array('result'=>'bad','msg'=>'Please check your "email" and try again.'));die;     
@@ -860,7 +869,7 @@ class Ajax extends MY_Controller{
                 echo '';die;
             }else{
                 //echo '';die;
-                $html ='<label class="col-sm-3 control-label">Select Group Users :</label>';
+                $html ='<label class="col-sm-3 control-label">Select Buyer Club Users :</label>';
                 $html .='<div class="boxes">';
                 foreach($UsersDataArr as $user):
                 $html.='<div class="checkbox-'.$user->userId.'"><div class="checkbox">
