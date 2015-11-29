@@ -31,7 +31,7 @@ echo $html_heading; echo $header;?>
 
                                         <div class="gen_infmtn">
 
-                                            <h6>Buyer Clubs order ID <span class="label label-success"><?=$orderId?></span> </h6>
+                                            <h6>Buyer Club order ID <span class="label label-success"><?=$orderId?></span> </h6>
 
                                         </div>
 
@@ -140,7 +140,7 @@ echo $html_heading; echo $header;?>
 </article> 
 
 <!-- Modal -->
-<div class="modal fade" id="createBuyer ClubModalLogin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="createGroupModalLogin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -242,11 +242,12 @@ echo $html_heading; echo $header;?>
         jQuery("body").delegate('.js-order-group', "click", function(e){
             e.preventDefault();
             var grp = jQuery(this).val();
+            alert(grp);
             var obj = jQuery(this);
             jQuery(".js-order-group").prop('checked', false);
             if(grp == 'new'){
                 jQuery('div.js-display-exisit-group').empty();
-                jQuery('#createBuyer ClubModalLogin').modal('show');
+                jQuery('#createGroupModalLogin').modal('show');
             } else if( grp == 'exists'){
                 myJsMain.commonFunction.showPleaseWait();
                 var userId = jQuery('input[id="js-order-info"]').data('userid');
