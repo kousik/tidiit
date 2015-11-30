@@ -31,7 +31,7 @@ echo $html_heading; echo $header;?>
 
                                         <div class="gen_infmtn">
 
-                                            <h6>Groups order ID <span class="label label-success"><?=$orderId?></span> </h6>
+                                            <h6>Buyer Club order ID <span class="label label-success"><?=$orderId?></span> </h6>
 
                                         </div>
 
@@ -46,10 +46,10 @@ echo $html_heading; echo $header;?>
                                                 <div class="grp_title"><?= $group->groupTitle ?></div>
                                             </div>        
                                             <div class="col-md-6">
-                                                <h5><strong>Group Admin</strong></h5>
+                                                <h5><strong>Buyer Club Leader</strong></h5>
                                                 <p class="text-left"><?= $group->admin->firstName ?> <?= $group->admin->lastName ?></p>
                                                 <?php if ($group->users): ?>
-                                                    <h5><strong>Group Users</strong></h5><?php foreach ($group->users as $ukey => $usr): ?>
+                                                    <h5><strong>Buyer Club Users</strong></h5><?php foreach ($group->users as $ukey => $usr): ?>
                                                         <p class="text-left"><?= $usr->firstName ?> <?= $usr->lastName ?></p>
                                                     <?php endforeach;
                                                 endif;
@@ -62,7 +62,7 @@ echo $html_heading; echo $header;?>
                                                 <span class="input-group-addon">
                                                     <input type="radio"  name="selectgroup" id="optionsRadios1" class="js-order-group" value="exists">
                                                 </span>
-                                                <span class="group-label">Want to change above group from your existing groups.</span>
+                                                <span class="group-label">Want to change above Buyer Club from your existing Buyer Club.</span>
                                             </label><!-- /input-group -->
 
 
@@ -70,7 +70,7 @@ echo $html_heading; echo $header;?>
                                                 <span class="input-group-addon">
                                                     <input type="radio"  name="selectgroup" id="optionsRadios2" class="js-order-group" value="new">
                                                 </span>
-                                                <span class="group-label">Want to create a new group.
+                                                <span class="group-label">Want to create a new Buyer Club.
                                                 </span>
                                             </label><!-- /input-group -->
                                             <?php else: ?>
@@ -78,7 +78,7 @@ echo $html_heading; echo $header;?>
                                                 <span class="input-group-addon">
                                                     <input type="radio"  name="selectgroup" id="optionsRadios1" class="js-order-group" value="exists">
                                                 </span>
-                                                <span class="group-label">Please select a group from your existing groups.</span>
+                                                <span class="group-label">Please select a group from your existing Buyer Club.</span>
                                             </label><!-- /input-group -->
 
 
@@ -86,7 +86,7 @@ echo $html_heading; echo $header;?>
                                                 <span class="input-group-addon">
                                                     <input type="radio"  name="selectgroup" id="optionsRadios2" class="js-order-group" value="new">
                                                 </span>
-                                                <span class="group-label">Please create a new group.
+                                                <span class="group-label">Please create a new Buyer Club.
                                                 </span>
                                             </label><!-- /input-group -->
                                             <?php endif;?>
@@ -111,7 +111,7 @@ echo $html_heading; echo $header;?>
                                         
                                         <div class="clearfix"></div>
 
-                                        <button type="button" class="btn btn-primary pull-right js-group-order-process">Invite Group User to Process the Order</button>
+                                        <button type="button" class="btn btn-primary pull-right js-group-order-process">Invite Buyer Club User to Process the Order</button>
                                         <div class="clearfix"></div>
                                     </div>                            
 
@@ -145,7 +145,7 @@ echo $html_heading; echo $header;?>
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Create New Group</h4>
+        <h4 class="modal-title" id="myModalLabel">Create New Buyer Club</h4>
         
       </div>
       <form action="#" method="post" name="add_groups_for_order" class="form-horizontal" id="add_groups_for_order"> 
@@ -153,7 +153,7 @@ echo $html_heading; echo $header;?>
       <div class="modal-body">      
           <div class="js-message" style="display:none;"></div>
               <div class="form-group">
-                  <label for="groupTitle" class="col-sm-3 control-label">Group Title</label>
+                  <label for="groupTitle" class="col-sm-3 control-label">Buyer Club Title</label>
                   <div class="col-sm-7">
                   <input type="text" class="form-control" id="groupTitle" name="groupTitle" placeholder="Jane Doe" required>
                   </div>
@@ -213,7 +213,7 @@ echo $html_heading; echo $header;?>
           
       </div>
       <div class="modal-footer">
-        <input type="submit"  class="grpButton" name="creatGrp" id="grpButton" value="Create New Group" />
+        <input type="submit"  class="grpButton" name="creatGrp" id="grpButton" value="Create New Buyer Club" />
       </div>
       </form>    
     </div>
@@ -242,17 +242,20 @@ echo $html_heading; echo $header;?>
         jQuery("body").delegate('.js-order-group', "click", function(e){
             e.preventDefault();
             var grp = jQuery(this).val();
+            alert(grp);
             var obj = jQuery(this);
             jQuery(".js-order-group").prop('checked', false);
             if(grp == 'new'){
                 jQuery('div.js-display-exisit-group').empty();
                 jQuery('#createGroupModalLogin').modal('show');
-            } else if( grp == 'exists'){                
+            } else if( grp == 'exists'){
+                myJsMain.commonFunction.showPleaseWait();
                 var userId = jQuery('input[id="js-order-info"]').data('userid');
                 jQuery.post( myJsMain.baseURL+'ajax/get_my_groups/', {
                     userId: userId
                 },
                 function(data){ 
+                    myJsMain.commonFunction.hidePleaseWait();
                     if(data.contents){
                         jQuery('div.js-display-exisit-group').html(data.contents);                        
                         obj.prop('checked', true);
@@ -262,6 +265,7 @@ echo $html_heading; echo $header;?>
         }); 
         
         jQuery("body").delegate('input[id="js-order-info"]', "click", function(e){
+            myJsMain.commonFunction.showPleaseWait();
             e.preventDefault();//console.log($(this).data('groupid'));
             var groupId = $(this).attr('data-groupid');
             var jqout = $(this);
@@ -270,6 +274,7 @@ echo $html_heading; echo $header;?>
                 orderId: $(this).val()
             },
             function(data){ 
+                myJsMain.commonFunction.hidePleaseWait();
                 if(data.contents){
                     $('div.js-display-exisit-group').empty();
                     $('div.js-display-selected-group').html(data.contents);
@@ -286,7 +291,7 @@ echo $html_heading; echo $header;?>
         jQuery("body").delegate('button.js-group-order-process', "click", function(e){
             var obj = $('input[id="js-order-info"]'); 
             if(!obj.attr('data-groupid')){
-                $('div.js-message').html('Please add a group!');
+                $('div.js-message').html('Please add a Buyer Club!');
                 //$('div.js-message').show();
                 $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
                 return;

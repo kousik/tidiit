@@ -408,7 +408,7 @@ class Shopping extends MY_Controller{
                     $data['receiverId'] = $usr->userId;
                     $data['nType'] = 'GROUP-ORDER';
 
-                    $data['nTitle'] = 'New Group order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+                    $data['nTitle'] = 'New Buyer Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
                     $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
                     $data['nMessage'] = "Hi, <br> You have requested to buy group order product.<br>";
                     $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
@@ -428,7 +428,7 @@ class Shopping extends MY_Controller{
                     
                     $mail_template_view_data=$this->load_default_resources();
                     $mail_template_view_data['group_order_start']=$mail_template_data;
-                    $this->__global_tidiit_mail($recv_email, "New Group Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
+                    $this->_global_tidiit_mail($recv_email, "New Buyer Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
                     $this->User_model->notification_add($data);
                 endforeach;
             else:
@@ -459,7 +459,7 @@ class Shopping extends MY_Controller{
                         
                         $mail_template_view_data=$this->load_default_resources();
                         $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
-                        $this->__global_tidiit_mail($recv_email,"One buyers club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+                        $this->_global_tidiit_mail($recv_email,"One buyers club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                         $this->User_model->notification_add($data);
                     endif;
                 endforeach;
@@ -474,7 +474,7 @@ class Shopping extends MY_Controller{
                     $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
                 }
                 $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
-                $this->__global_tidiit_mail($recv_email,"One buyers club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+                $this->_global_tidiit_mail($recv_email,"One buyers club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                 $this->User_model->notification_add($data);
             endif;
             
@@ -934,7 +934,7 @@ class Shopping extends MY_Controller{
                     $sender_email = $me->email;
                     $mail_template_view_data=$this->load_default_resources();
                     $mail_template_view_data['group_order_decline']=$mail_template_data;
-                    $this->__global_tidiit_mail($recv_email, "Buyers club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline');
+                    $this->_global_tidiit_mail($recv_email, "Buyers club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline');
                     
                     $this->User_model->notification_add($data);
                 endif;
@@ -961,7 +961,7 @@ class Shopping extends MY_Controller{
             $sender_email = $me->email;
             $mail_template_view_data=$this->load_default_resources();
             $mail_template_view_data['group_order_decline']=$mail_template_data;
-            $this->__global_tidiit_mail($recv_email, "Buyers club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline_admin');
+            $this->_global_tidiit_mail($recv_email, "Buyers club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline_admin');
             $this->User_model->notification_add($data);
         endif;
         
@@ -1244,9 +1244,10 @@ class Shopping extends MY_Controller{
                 $orderinfo['shipping'] = $userShippingDataDetails[0];
                 $userBillingDataDetails=$this->User_model->get_billing_address();
                 $orderinfo['billing'] = $userBillingDataDetails[0];
-                $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
                 $order['orderInfo'] = base64_encode(serialize($orderinfo));
                 $orderId = $this->Order_model->add($order);
+                $orderinfo['orderId']=$orderId;
+                $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
                 $orderid['orderId'] = $orderId;
                 $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$orderId;
                 if($coupon->couponId):
@@ -1262,9 +1263,8 @@ class Shopping extends MY_Controller{
                 $recv_email = $user->email;
                 if($orderid):
                     $mail_template_view_data=$this->load_default_resources();
-                    $mail_template_data['ProductImageURLForMail']=PRODUCT_DEAILS_SMALL;
                     $mail_template_view_data['single_order_success']=$mail_template_data;
-                    $this->__global_tidiit_mail($recv_email, "Confirmation mail for your Tidiit order no - TIDIIT-OD-".$orderId, $mail_template_view_data,'single_order_success');
+                    $this->_global_tidiit_mail($recv_email, "Confirmation mail for your Tidiit order no - TIDIIT-OD-".$orderId, $mail_template_view_data,'single_order_success');
                 endif;
             endif;
         endforeach;

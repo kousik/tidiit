@@ -65,10 +65,12 @@ myJsMain.commonFunction = {
         return str;
     },
     showHowItWorksBox:function(){
+        myJsMain.commonFunction.showPleaseWait();
         jQuery.ajax({
            type: "POST",
            url: myJsMain.baseURL+'ajax/show_how_it_works/',
            success: function(msg){
+               myJsMain.commonFunction.hidePleaseWait();
                if(msg!=''){
                    jQuery('#autoLoadHowItWorks').html(msg)
                }

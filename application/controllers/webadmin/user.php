@@ -32,8 +32,8 @@ class User extends My_Controller {
             $userType=$this->input->post('userType',true);
             
             $config = array(
-                array('field'   => 'userName','label'   => 'User Name','rules'=> 'trim|required|xss_clean|min_length[18]|max_length[75]|valid_email|callback_username_check'),
-                array('field'   => 'email','label'   => 'User Name','rules'=> 'trim|required|xss_clean|min_length[18]|max_length[75]|valid_email|callback_email_check'),
+                array('field'   => 'userName','label'   => 'User Name','rules'=> 'trim|required|xss_clean|min_length[10]|max_length[75]|valid_email|callback_username_check'),
+                array('field'   => 'email','label'   => 'User Name','rules'=> 'trim|required|xss_clean|min_length[10]|max_length[75]|valid_email|callback_email_check'),
                 array('field'   => 'password','label'   => 'Password','rules'   => 'trim|required|xss_clean|min_length[4]|max_length[25]'),
                 array('field'   => 'confirmPassword','label'   => 'Password','rules'   => 'trim|required|xss_clean|matches[password]'),
                 array('field'   => 'firstName','label'   => 'First Name','rules'   => 'trim|required|xss_clean|min_length[3]|max_length[25]|alpha'),

@@ -67,7 +67,7 @@ class Category_model extends CI_Model {
 	}
 	
 	public function get_subcategory_by_category_id($categoryId,$app=FALSE){
-		$sql="SELECT `categoryId` , `categoryName` FROM category WHERE `parrentCategoryId` ='".$categoryId."' AND status=1";
+		$sql="SELECT `categoryId` , `categoryName`,`image` FROM category WHERE `parrentCategoryId` ='".$categoryId."' AND status=1";
                 if($app==FALSE)
                     return $this->db->query($sql)->result();
                 else
@@ -97,7 +97,7 @@ WHERE categoryId ='".$categoryId."')";
 	}
 	
 	public function get_top_category_for_product_list($app=false){
-		$this->db->select('categoryId,categoryName')->from($this->_table)->where('parrentCategoryId','0')->where('status','1')->order_by('categoryName','ASC');
+		$this->db->select('categoryId,categoryName,image')->from($this->_table)->where('parrentCategoryId','0')->where('status','1')->order_by('categoryName','ASC');
                 if($app==FALSE)
                     $rs=$this->db->get()->result();
                 else

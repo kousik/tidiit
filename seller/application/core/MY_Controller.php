@@ -176,5 +176,34 @@ class MY_Controller extends CI_Controller {
             $this->load->view('under_construction',$data);
         }
         
+    function _global_tidiit_mail($to,$subject,$dataResources,$tempplateName="",$toName=""){
+        $message='';
+        if($tempplateName==""){
+            $message=$dataResources;
+        }else{
+            $message=  $this->load->view('email_template/'.$tempplateName,$dataResources,TRUE);
+        }
+        $this->load->library('email');
+        $this->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
+        if($toName!="")
+            $this->email->to($to,$toName);
+        else
+            $this->email->to($to);
+        
+        $this->email->subject($subject);
+        $this->email->message($message);
+        $this->email->send();
+    }
     
+    function load_default_resources(){
+        $data=array();
+        $data['SiteImagesURL']=$this->config->item('SiteImagesURL');
+        $data['SiteCSSURL']=$this->config->item('SiteCSSURL');
+        $data['SiteJSURL']=$this->config->item('SiteJSURL');
+        $data['SiteResourcesURL']=$this->config->item('SiteResourcesURL');
+        $data['MainSiteBaseURL']=BASE_URL;
+        $data['MainSiteImagesURL']=$this->config->item('SiteImagesURL');
+        $data['SiteProductImageURL']=DETAILS_PAGE_SMALL_IMG;
+        return $data;
+    }
 }

@@ -59,7 +59,7 @@ function ShowAddAdminBox(){
 	$('#EditmetaTitle').val(DataArr[id]['metaTitle']);
 	$('#EditmetaKeyWord').val(DataArr[id]['metaKeyWord']);
 	$('#EditmetaDescription').val(DataArr[id]['metaDescription']);
-        <?php if($parrentCategoryId>0){?>
+        <?php //if($parrentCategoryId>0){?>
         $('#Editview').val(DataArr[id]['view']);
         $('#EdituserCategoryView').val(DataArr[id]['userCategoryView']);
         //$("input[type='radio'][name='Editview'][value='"+DataArr[id]['view']+"']").prop("checked",true);
@@ -70,7 +70,7 @@ function ShowAddAdminBox(){
             var srcData='<?php echo $categoryImageURL;?>'+DataArr[id]['image'];
         }
         $('#EditEditcategoryImageImg').attr('height','100').attr('width','100').attr('src',srcData);	
-        <?php }?>
+        <?php //}?>
 	$('#categoryId').val(DataArr[id]['categoryId']);
 	
  }
@@ -132,16 +132,16 @@ function AskDelete(id){
 	<a href="#" id="UnCheckAll" style="display: none;text-decoration: underline;">UnCheckAll</a></td>
     <td width="25%">Category Name </td>
     <td width="10%">Image </td>
-    <td width="10%">status</td>
-    <td width="8%">Category Page Template</td>
-    <td width="10%">Product Page Template</td>
-    <td width="35%">Action</td>
+    <td width="5%">status</td>
+    <td width="17%">Category Page Template</td>
+    <td width="23%">Product Page Template</td>
+    <td width="10%">Action</td>
   </tr>
   <script language="javascript">
   var DataArr=new Array(<?=count($DataArr)?>);
   </script>
   <?php $val=0; 
-  if(count($DataArr)>0){
+  if(count($DataArr)>0){ //pre($DataArr);die;
   foreach($DataArr as $InerArr){ ?>
   <tr class="ListTestLable <?php if($val%2 == 0){ echo 'oddtbl'; } else { echo 'eventbl'; } ?>" height="20px;">
     <td><?php echo $val+1;?><input  type="checkbox" name="categoryId[]" value="<?php echo $InerArr->categoryId;?>"/></td>
@@ -160,7 +160,7 @@ function AskDelete(id){
         }?></td>
 	<?php /*<td><?php echo ($InerArr->PopularStore=='1')?'Yes':'No';?></td>*/?>
     <td><?php echo ($InerArr->status=='1')?'Active':'Inactive';?></td>
-    <td><?php if($InerArr->userCategoryView!='' && $InerArr->userCategoryView>0){echo $productPageTypeArr[$InerArr->userCategoryView];}?></td>
+    <td><?php if($InerArr->userCategoryView!='' && $InerArr->userCategoryView>0){echo ($InerArr->userCategoryView==1) ? 'Parrent Level Template' : 'Last Level Template';}?></td>
     <td><?php if($InerArr->view!='' && $InerArr->view>0){echo $productPageTypeArr[$InerArr->view];}?></td>
     <td>
 	<?php if($InerArr->status=='1'){$action=0;}else{$action=1;}?>
@@ -303,6 +303,7 @@ function AskDelete(id){
         </select>
     </td>
   </tr>
+  <?php }?>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
@@ -318,7 +319,7 @@ function AskDelete(id){
         <input type="file" name="EditcategoryImage" id="EditcategoryImage" style="display:none;">
     </td>
   </tr>
-  <?php }?>
+  
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
@@ -447,7 +448,7 @@ function AskDelete(id){
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
   </tr>
-  <?php if($parrentCategoryId>0){?>
+  
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top" class="ListHeadingLable"> Select Category Image</td>
@@ -460,6 +461,7 @@ function AskDelete(id){
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
   </tr>
+  <?php if($parrentCategoryId>0){?>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top" class="ListHeadingLable"> Select Category Page Template</td>

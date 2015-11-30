@@ -45,7 +45,7 @@ class Category extends MY_Controller{
                     $_FILES['categoryImage']=array();
                     $_FILES['categoryImage']['name']="";
                 }
-		if($_FILES['categoryImage']['name']=="" && $parrentCategoryId>0){
+		if($_FILES['categoryImage']['name']==""){
                     $this->session->set_flashdata('Message','Please Browse Category Image.');
                 }else{
                     if($_FILES['categoryImage']['name']!=""){

@@ -34,17 +34,14 @@
             <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td width="10%">&nbsp;</td>
-                  <td width="80%" align="left" valign="top">
+                  <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $create_user['TEMPLATE_CREATE_USER_FIRSTNAME'].' '.$create_user['TEMPLATE_CREATE_USER_LASTNAME'];?>,</em></strong></font><br />
+                    <br />
                     <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">
-					Buyer Club Re-order [TIDIIT-OD<?php echo $group_order_re_start['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID'];?>] running by <b><?php echo $group_order_re_start['TEMPLATE_GROUP_RE_ORDER_START_ADMIN_NAME'];?><br /><br />
-					Hi, <br /><br /> You have requested to buy Buyer Club order product.<br /><br />
-					Product is <a href='#'><?php echo $group_order_re_start['TEMPLATE_GROUP_RE_ORDER_START_PRODUCT_TITLE'];?></a><br /><br />
-					<strong>Want to process the order ?</strong><br /><br />
-					<a href='<?php echo BASE_URL;?>shopping/group-order-decline/<?php echo base64_encode($group_order_re_start['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID1']*226201);?>'>Decline the Buyer Club Order</a><br /><br />
-					<strong><a href='<?php echo BASE_URL;?>shopping/group-re-order-accept-process/<?php echo base64_encode($group_order_re_start['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID1']*226201);?>'>Accept the Buyer Club Order</a></strong>
-                    </font> <br />
-					
-					</td>
+                    Thank you for your register at Tidiit Inc. Ltd. <br /> Your login details as bellow.
+                    <br /><br />
+					Your Username : <strong><?php echo $create_user['TEMPLATE_CREATE_USER_USERNAME'];?></strong><br />
+					Your Password is : <strong><?php echo $create_user['TEMPLATE_CREATE_USER_PASSWORD'];?></strong><br />
+                    </font> <br /></td>
                   <td width="10%">&nbsp;</td>
                 </tr>
                 <tr><td colspan="3">&nbsp;</td></tr>

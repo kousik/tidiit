@@ -59,6 +59,7 @@ $route['reviews']="index/reviews/";
 $route['contact-us']="index/contact_us/";
 $route['seller-faq']="index/seller_faq/";
 $route['buyer-faq']="index/buyer_faq/";
+$route['brand-zone']="index/brand_zone/";
 
 $route['content/(:any)/(:any)']="content/show_content/$2";
 

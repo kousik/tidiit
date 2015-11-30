@@ -389,7 +389,8 @@ myJsMain.my_checkout_shipping_address=function(){
         localityId: {required: true}
     };
     $('#my_checkout_shipping_address').validate({rules: shippingValidationRules,onsubmit: true});
-    $('#my_checkout_shipping_address').submit(function(e) { 
+    $('#my_checkout_shipping_address').submit(function(e) {
+        myJsMain.commonFunction.showPleaseWait();
         e.preventDefault();
         if ($(this).valid()) { 
             $('#shippingCheckoutAddress').prop('disabled',true);
@@ -401,6 +402,7 @@ myJsMain.my_checkout_shipping_address=function(){
         
         // this is just to show product list page
     function shippingCheckAddressFormCallback(resultData){
+        myJsMain.commonFunction.hidePleaseWait();
         $('#shippingCheckoutAddress').prop('disabled',false);
         if(resultData.result=='bad'){
             //alert alert-danger 

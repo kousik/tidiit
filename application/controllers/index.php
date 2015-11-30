@@ -99,4 +99,15 @@ class Index extends MY_Controller{
         $data['faqDataArr']=  $this->Faq_model->get_all('buyer');
         $this->load->view('faq_buyer',$data);
     }
+    
+    function brand_zone(){
+        $SEODataArr=array();
+        if($this->is_loged_in()){
+            $data=$this->_get_logedin_template($SEODataArr);
+        }else{
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        }
+        $data['brandZoneArr']=$this->Brand_model->get_all();
+        $this->load->view('brand_zone',$data);
+    }
 }

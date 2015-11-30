@@ -231,6 +231,9 @@ class MY_Controller extends CI_Controller {
         $data['SiteCSSURL']=$this->config->item('SiteCSSURL');
         $data['SiteJSURL']=$this->config->item('SiteJSURL');
         $data['SiteResourcesURL']=$this->config->item('SiteResourcesURL');
+        $data['MainSiteBaseURL']=BASE_URL;
+        $data['MainSiteImagesURL']=$this->config->item('SiteImagesURL');
+        $data['SiteProductImageURL']=PRODUCT_DEAILS_SMALL;
         return $data;
     }
     
@@ -473,7 +476,7 @@ class MY_Controller extends CI_Controller {
 
     }
     
-    function __global_tidiit_mail($to,$subject,$dataResources,$tempplateName="",$toName=""){
+    function _global_tidiit_mail($to,$subject,$dataResources,$tempplateName="",$toName=""){
         $message='';
         if($tempplateName==""){
             $message=$dataResources;

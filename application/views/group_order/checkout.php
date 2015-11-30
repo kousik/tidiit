@@ -25,8 +25,6 @@ $cart = $this->cart->contents();
 
                 <div class="row">
 
-
-
                     <div class="CheckoutPage_container"> 
                         <div class="container">
 
@@ -393,11 +391,13 @@ endif;?>
                 $('div.js-message').html('<div class="alert alert-danger">Please enter your promo code!</div>');
              $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
             } else {                
+                myJsMain.commonFunction.showPleaseWait();
                 $.post( myJsMain.baseURL+'shopping/ajax_order_set_promo/', {
                     orderId: obj.attr('data-order'),
                     promocode: cpn
                 },
-                function(data){ 
+                function(data){
+                    myJsMain.commonFunction.hidePleaseWait();
                     if(data.error){
                         $('div.js-message').html('<div class="alert alert-danger">'+data.error+'</div>');
                         $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
@@ -447,6 +447,7 @@ endif;?>
         }); 
         
         jQuery("body").delegate('a.js-order-payment', "click", function(e){
+            myJsMain.commonFunction.showPleaseWait();
             e.preventDefault();
             
             var orderId = jQuery(this).attr('data-orderid');
@@ -459,7 +460,7 @@ endif;?>
                 if(data.url){                    
                     window.location.href = data.url;
                 }
-                
+                myJsMain.commonFunction.hidePleaseWait();
                 if(data.error){
                     $('div.js-payment-message').html(data.error);
                     $('div.js-payment-message').fadeIn(300,function() { setTimeout( '$("div.js-payment-message").fadeOut(300)', 15000 ); });
