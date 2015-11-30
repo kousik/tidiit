@@ -1,3 +1,4 @@
+<?php $orderInfo=$single_order_success['TEMPLATE_ORDER_SUCCESS_ORDER_INFO'];?>
 <div bgcolor="#8d8e90">
   <table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#8d8e90">
     <tr>
@@ -48,7 +49,7 @@
                           <td align="left" valign="top" style="background-color:#FFFFFF;display:block;clear:both;padding:20px 20px 0 20px;" bgcolor=""><table border="0" cellspacing="0" cellpadding="0" width="100%" style="">
                               <tbody>
                                 <tr>
-                                  <td colspan="4" width="100%" align="middle" valign="top"><p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;"><?php echo $orderInfo['orderId'];?></span></a> </p>
+                                  <td colspan="4" width="100%" align="middle" valign="top"><p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;"><?php echo $single_order_success['TEMPLATE_ORDER_SUCCESS_ORDER_ID'];?></span></a> </p>
                                     <br>
                                   </td>
                                 </tr>

@@ -385,6 +385,7 @@ endif;?>
       
       jQuery("body").delegate('a.js-apply-coupon', "click", function(e){
             e.preventDefault();
+            myJsMain.commonFunction.showPleaseWait();
             var obj = $('input[id="order-coupon"]');            
             var cpn = obj.val();
             if(!cpn){ 
@@ -396,6 +397,7 @@ endif;?>
                     promocode: cpn
                 },
                 function(data){ 
+                    myJsMain.commonFunction.hidePleaseWait();
                     if(data.error){
                         $('div.js-message').html('<div class="alert alert-danger">'+data.error+'</div>');
                         $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
@@ -447,12 +449,14 @@ endif;?>
         }); 
         
         jQuery("body").delegate('a.js-order-payment', "click", function(e){
+            myJsMain.commonFunction.showPleaseWait();
             e.preventDefault();
             var cartId = jQuery(this).attr('data-cartid');
             jQuery.post( myJsMain.baseURL+'shopping/ajax_process_single_payment/', {
                 cartId: cartId
             },
             function(data){ 
+                myJsMain.commonFunction.hidePleaseWait();
                 if(data.url){                    
                     window.location.href = data.url;
                 }
