@@ -20,17 +20,17 @@
                     	<div class="active row">
                         	<div class="col-md-12 col-sm-12">
                              <div class="gen_infmtn">
-                            	<h6>My Groups <span class="pull-right"><input type="button" data-toggle="modal" data-target="#myModalLogin" name="" value="Creat new Group" /></span></h6>
+                            	<h6>My Buyer Clubs <span class="pull-right"><input type="button" data-toggle="modal" data-target="#myModalLogin" name="" value="Creat new Buyer Club" /></span></h6>
                                 </div>
                                     <div class="js-my-groups">    
                                         <?php if(!empty($myGroups)):
                                         foreach($myGroups as $gkey => $group):?>        
                                         <div class="col-md-3 col-sm-3 grp_dashboard js-group-popover" title="Group : <?=$group->groupTitle?>"  data-container="body" data-toggle="popover" data-placement="top" data-color="<?=$group->groupColor?>" id="group-id-<?=$group->groupId?>" data-content='<div class="row">
                                              <div class="col-md-12">
-                                                 <h5><strong>Group Admin</strong></h5>
+                                                 <h5><strong>Buyer Club Leader</strong></h5>
                                                  <p class="text-left"><?=$group->admin->firstName?> <?=$group->admin->lastName?></p>
                                                  <?php if($group->users):?>
-                                             <h5><strong>Group Users</strong></h5><?php
+                                             <h5><strong>Buyer Club Users</strong></h5><?php
                                                 foreach($group->users as $ukey => $usr):?>
                                              <p class="text-left"><?=$usr->firstName?> <?=$usr->lastName?></p>
                                              <?php endforeach; endif;?>
@@ -65,14 +65,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Create New Group</h4>
+        <h4 class="modal-title" id="myModalLabel">Create New Buyer Club</h4>
       </div>
       <form action="#" method="post" name="add_groups" class="form-horizontal" id="add_groups"> 
           <input type="hidden" name="groupAdminId" value="<?=$user->userId?>">
       <div class="modal-body">  
           <div class="js-message" style="display:none;"></div>
               <div class="form-group">
-                  <label for="groupTitle" class="col-sm-3 control-label">Group Title</label>
+                  <label for="groupTitle" class="col-sm-3 control-label">Buyer Club Title</label>
                   <div class="col-sm-7">
                   <input type="text" class="form-control" id="groupTitle" name="groupTitle" placeholder="Jane Doe" required>
                   </div>
@@ -133,7 +133,7 @@
           
       </div>
       <div class="modal-footer">
-        <input type="submit"  class="grpButton" name="creatGrp" id="grpButton" value="Create New Group" />
+        <input type="submit"  class="grpButton" name="creatGrp" id="grpButton" value="Create New Buyer Club" />
       </div>
       </form>    
     </div>

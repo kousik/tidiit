@@ -65,7 +65,9 @@ myJsMain.commonFunction = {
         return str;
     },
     showHowItWorksBox:function(){
-        myJsMain.commonFunction.showPleaseWait();
+        if(myJsMain.isLogedIn==false){
+            myJsMain.commonFunction.showPleaseWait();
+        }
         jQuery.ajax({
            type: "POST",
            url: myJsMain.baseURL+'ajax/show_how_it_works/',
