@@ -65,13 +65,13 @@ myJsMain.registration=function(){
             required: true,
             tiditAlpha:true,
             minlength:3,
-            maxlength:12
+            maxlength:20
         },
         lastName: {
             required: true,
             tiditAlpha:true,
             minlength:3,
-            maxlength:12
+            maxlength:20
         }
     };
     
@@ -82,7 +82,7 @@ myJsMain.registration=function(){
         rules: registerValidationRules,
         messages:{
             email:{
-                remote:"Pleas provide valid username."
+                remote:"This email is already exists."
             }
         },
         submitHandler: function (form) {
