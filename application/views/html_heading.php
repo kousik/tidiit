@@ -41,7 +41,11 @@
             myJsMain = window.myJsMain || {};
             myJsMain.baseURL = '<?php echo BASE_URL;?>';
             myJsMain.securityCode='<?php echo $this->session->userdata("secret");?>';
-
+            <?php if($this->session->userdata('FE_SESSION_VAR')==''):?>
+            myJsMain.isLogedIn=false;
+            <?php else:?>
+            myJsMain.isLogedIn=true;
+            <?php endif;?>    
         //]]>
         manualClick=false;
         </script>

@@ -14,7 +14,8 @@ myJsMain.my_billing_address=function(){
     $('#my_billing_address').validate({rules: loginValidationRules,onsubmit: true});
     $('#my_billing_address').submit(function(e) { 
         e.preventDefault();
-        if ($(this).valid()) { 
+        if ($(this).valid()) {
+            myJsMain.commonFunction.showPleaseWait();
             $('#billingAddessSubmit').prop('disabled',true);
             //$('#fade_background').fadeIn();
             //$('#LoadingDiv').fadeIn();
@@ -27,6 +28,7 @@ myJsMain.my_billing_address=function(){
         $('#billingAddessSubmit').prop('disabled',false);
         //$('#fade_background').fadeOut();
         //$('#LoadingDiv').fadeOut();
+        myJsMain.commonFunction.hidePleaseWait();
         if(resultData.result=='bad'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         }else if(resultData.result=='good'){
@@ -49,7 +51,8 @@ myJsMain.my_profile=function(){
     $('#my_profile').validate({rules: myProfileValidationRules,onsubmit: true});
     $('#my_profile').submit(function(e) { 
         e.preventDefault();
-        if ($(this).valid()) { 
+        if ($(this).valid()) {
+            myJsMain.commonFunction.showPleaseWait();
             $('#profileSubmit').prop('disabled',true);
             //$('#fade_background').fadeIn();
             //$('#LoadingDiv').fadeIn();
@@ -62,6 +65,7 @@ myJsMain.my_profile=function(){
         $('#profileSubmit').prop('disabled',false);
         //$('#fade_background').fadeOut();
         //$('#LoadingDiv').fadeOut();
+        myJsMain.commonFunction.hidePleaseWait();
         if(resultData.result=='bad'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         }else if(resultData.result=='good'){
@@ -85,6 +89,7 @@ myJsMain.my_shipping_address=function(){
     $('#my_shipping_address').submit(function(e) { 
         e.preventDefault();
         if ($(this).valid()) { 
+            myJsMain.commonFunction.showPleaseWait();
             $('#shippingAddessSubmit').prop('disabled',true);
             //$('#fade_background').fadeIn();
             //$('#LoadingDiv').fadeIn();
@@ -97,6 +102,7 @@ myJsMain.my_shipping_address=function(){
         $('#shippingAddessSubmit').prop('disabled',false);
         //$('#fade_background').fadeOut();
         //$('#LoadingDiv').fadeOut();
+        myJsMain.commonFunction.hidePleaseWait();
         if(resultData.result=='bad'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         }else if(resultData.result=='good'){
@@ -145,7 +151,7 @@ myJsMain.my_create_groups=function(){
     $('#add_groups').validate({
         rules: createGroupValidationRules,
         submitHandler: function (form) {
-            
+            myJsMain.commonFunction.showPleaseWait();
             $('#grpButton').prop('disabled',true);            
             myJsMain.commonFunction.ajaxSubmit($(form),myJsMain.baseURL+'ajax/add_new_group', groupCreateCallback);
     //});
@@ -155,7 +161,7 @@ myJsMain.my_create_groups=function(){
     $('#add_groups_for_order').validate({
         rules: createGroupValidationRules,
         submitHandler: function (form) {
-            
+            myJsMain.commonFunction.showPleaseWait();
             $('#grpButton').prop('disabled',true);            
             myJsMain.commonFunction.ajaxSubmit($(form),myJsMain.baseURL+'ajax/add_new_group', groupCreateForOrderCallback);
     //});
@@ -165,6 +171,7 @@ myJsMain.my_create_groups=function(){
     $('#update_groups').validate({
         rules: createGroupValidationRules,
         submitHandler: function (form) {
+            myJsMain.commonFunction.showPleaseWait();
             //form.submit(function(e) {
             $('#grpButton').prop('disabled',true);            
             myJsMain.commonFunction.ajaxSubmit($(form),myJsMain.baseURL+'ajax/update_group', groupUpdateCallback);
@@ -176,6 +183,7 @@ myJsMain.my_create_groups=function(){
     // this is just to show product list page
     function groupCreateCallback(resultData){
         $('#grpButton').prop('disabled',false);
+        myJsMain.commonFunction.hidePleaseWait();
         if(resultData.result=='bad'){
             //myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
             $('div.js-message').html('<div class="alert alert-danger" role="alert">'+resultData.msg+'</div>');
@@ -190,6 +198,7 @@ myJsMain.my_create_groups=function(){
     // this is just to show product list page
     function groupCreateForOrderCallback(resultData){
         $('#grpButton').prop('disabled',false);
+        myJsMain.commonFunction.hidePleaseWait();
         if(resultData.result=='bad'){
            // myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
             $('div.js-message').html('<div class="alert alert-danger" role="alert">'+resultData.msg+'</div>');
@@ -206,6 +215,7 @@ myJsMain.my_create_groups=function(){
     // this is just to show product list page
     function groupUpdateCallback(resultData){
         $('#grpButton').prop('disabled',false);
+        myJsMain.commonFunction.hidePleaseWait();
         if(resultData.result == 'bad'){
             //myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
             $('div.js-message').html('<div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle"></i> '+resultData.msg+'</div>');
