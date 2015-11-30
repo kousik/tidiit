@@ -2,7 +2,7 @@
 $CI =& get_instance();
 $CI->load->model('Product_model');
 $CI->load->model('Order_model');
-$status = array('0'=>'Delete','1'=>'Order Running', '2'=>'Order Processing', '3'=>'Out of Delivery', '4'=>'Delivered');
+$status = array('0'=>'Delete','1'=>'Order Running', '2'=>'Order Processing', '3'=>'Out of Delivery', '4'=>'Delivered', '5'=>'Cancelled');
 ?>
 </div>
 </header>
@@ -54,8 +54,9 @@ $status = array('0'=>'Delete','1'=>'Order Running', '2'=>'Order Processing', '3'
                                                     <td><i class="fa fa-clock-o"></i><?=date('F j, Y, g:i a' , strtotime($order->orderDate));?></td>
                                                     <td><span class="label label-info"><?=$order->orderType;?> - <?=$status[$order->status];?></span></td>
                                                     <td align="center">
-                                                <a class="btn btn-success btn-xs" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-eye"></i> Order</a>
+                                                <a class="btn btn-success btn-xs js-view-order" href="<?php echo BASE_URL.'order/details/'.base64_encode($order->orderId*226201);?>"><i class="fa fa-eye"></i> Order</a>
                                                     <?php if($porder):?><a class="btn btn-warning btn-xs" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-eye"></i> Parent Order</a><?php endif;?>
+                                                    <?php if($order->orderType == 'SINGLE' && $order->status < 3):?><a class="btn btn-danger btn-xs" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-shopping-cart"></i> Cancel Order</a><?php endif;?>
                                                     </td>
                                                 </tr>
                                             
@@ -81,3 +82,12 @@ $status = array('0'=>'Delete','1'=>'Order Running', '2'=>'Order Processing', '3'
   </div>
 </article>
 <?php echo $footer;?>
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        /*jQuery("body").delegate('.js-group-cart-remove', "click", function(e){
+            e.preventDefault();
+            var orderId = jQuery(this).attr('data-orderid');
+            window.location.href = myJsMain.baseURL+'order/view/'+orderId;
+        });  */  
+    });
+</script>    

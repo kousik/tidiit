@@ -89,6 +89,7 @@ $route['shopping/add-order']="shopping/process_my_single_orders";
 $route['shopping/single-checkout']="shopping/single_order_check_out";
 $route['shopping/remove-single-cart']="shopping/remove_single_cart_processing";
 $route['shopping/my-cart']="shopping/show_my_cart";
+$route['order/details/(:any)']="shopping/view_order_details/$1";
 
 
 //Notification

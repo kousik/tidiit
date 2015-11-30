@@ -1290,4 +1290,38 @@ class Shopping extends MY_Controller{
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
         $this->load->view('my_carts',$data);
     }
+    
+    function view_order_details($orderId){
+        if(!$orderId):
+            redirect(BASE_URL.'404_override');
+        endif;
+        $orderId = base64_decode($orderId);
+        $orderId = $orderId/226201;
+        
+                
+        $SEODataArr=array();
+        $data=$this->_get_logedin_template($SEODataArr);
+        $user = $this->_get_current_user_details(); 
+        
+        $order = $this->Order_model->get_single_order_by_id($orderId);
+        if(!$order):
+            redirect(BASE_URL.'404_override');
+        endif;
+        
+        if($order->groupId && !$this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$order->groupId)):
+            $this->session->set_flashdata('error', 'You can not view this order because you are not member of this buyers club.');
+            redirect(BASE_URL.'shopping/ord-message');
+        endif;
+        
+        if($order->groupId):
+            $group = $this->User_model->get_group_by_id($order->groupId);
+            $data['group']= $group;
+        else:
+            $data['group']= false;
+        endif;
+        $data['order']= $order;
+        $data['userMenuActive']= '';
+        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $this->load->view('my_order_details',$data);
+    }
 }

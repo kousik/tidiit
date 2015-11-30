@@ -1,0 +1,187 @@
+<?php echo $html_heading; echo $header;
+$CI =& get_instance();
+$CI->load->model('Product_model');
+$CI->load->model('Order_model');
+$status = array('0'=>'Delete','1'=>'Order Running', '2'=>'Order Processing', '3'=>'Out of Delivery', '4'=>'Delivered', '5'=>'Cancell Requested', '6'=>'Cancelled');
+$orderinfo = unserialize(base64_decode($order->orderInfo));
+?>
+</div>
+</header>
+<article>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 col-sm-12 productInner">
+        <div class="page_content">
+            <div class="row">
+                <?php echo $userMenu;?>
+                <div class="col-md-9 wht_bg">
+                    <!-- Tab panes -->
+                    <div class="tab_dashbord">
+                    	<div class="active row">
+                            <div class="col-md-12 col-sm-12"> 
+                                
+                                
+                                    <div class="gen_infmtn">
+                                    <div class="table-responsive">
+                                        <div class="panel panel-default">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr class="active">
+                                                <th><a href="javascript://">Order #TIDIIT-OD-<?=$order->orderId?></a> <?php if($order->orderType == 'SINGLE' && $order->status < 3):?><a class="btn btn-danger btn-xs pull-right" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-shopping-cart"></i> Cancel Order</a><?php endif;?><?php if($order->status == 4):?><a class="btn btn-info btn-xs pull-right" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-file-text-o"></i> View Invoice</a><?php endif;?></th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                            <tr>
+                                                <td>
+                                                    <p><i class="fa fa-sort-desc"></i> Order Details</p>
+                                                 <table class="table">
+                                                    <thead>
+                                                    <tr class="info">
+                                                        <th>Order ID</th>
+                                                        <th>Member</th>
+                                                        <th>Order Total</th>
+                                                        <th>Payment</th>
+                                                        <th>Paid?</th>
+                                                        <th>Order Status</th>
+                                                      </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                    <tr>
+                                                        <td>Order #TIDIIT-OD-<?=$order->orderId?></td>
+                                                        <td><?=$order->orderType=='GROUP'?'Buyer Club':'Self'?></td>
+                                                        <td><i class="fa fa-rupee"></i><?=$order->subTotalAmount?></td>
+                                                        <td>Paid</td>
+                                                        <td><span style="color: #009900;">Yes</span></td>
+                                                        <td><span class="label label-info"><?=$status[$order->status];?></span> (<?=$order->orderDate;?>)</td>
+                                                    </tr>
+                                                </table>
+                                                    
+                                                 <table class="table table-bordered table-hover">
+                                                    <thead>
+                                                    <tr class="success">
+                                                        <th>Billing Name</th>
+                                                        <th style="width: 35%;"><?=isset($orderinfo['billing']->firstName)?$orderinfo['billing']->firstName:''?> <?=isset($orderinfo['billing']->lastName)?$orderinfo['billing']->lastName:''?></th>
+                                                        <th>Shipping Name</th>
+                                                        <th style="width: 35%;"><?=isset($orderinfo['shipping']->firstName)?$orderinfo['shipping']->firstName:''?> <?=isset($orderinfo['shipping']->lastName)?$orderinfo['shipping']->lastName:''?></th>
+                                                      </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                    <tr>
+                                                        <td>Billing Address</td>
+                                                        <td><?=isset($orderinfo['billing']->address)?$orderinfo['billing']->address:''?><br>
+                                                            <?=isset($orderinfo['billing']->locality)?$orderinfo['billing']->locality:''?><br>
+                                                        City: <?=isset($orderinfo['billing']->cityTableData)?$orderinfo['billing']->cityTableData:''?><br>
+                                                        State :<?=isset($orderinfo['billing']->stateName)?$orderinfo['billing']->stateName:''?><br>
+                                                        PIN :<?=isset($orderinfo['billing']->zipTableData)?$orderinfo['billing']->zipTableData:''?><br>
+                                                        Country :<?=isset($orderinfo['billing']->countryName)?$orderinfo['billing']->countryName:''?> 
+                                                        </td>
+                                                        <td>Shipping Address</td>
+                                                        <td><?=isset($orderinfo['shipping']->address)?$orderinfo['shipping']->address:''?><br>
+                                                            <?=isset($orderinfo['shipping']->locality)?$orderinfo['shipping']->locality:''?><br>
+                                                        City: <?=isset($orderinfo['shipping']->city)?$orderinfo['shipping']->city:''?><br>
+                                                        State :<?=isset($orderinfo['shipping']->stateName)?$orderinfo['shipping']->stateName:''?><br>
+                                                        PIN :<?=isset($orderinfo['shipping']->zip)?$orderinfo['shipping']->zip:''?><br>
+                                                        Country :<?=isset($orderinfo['shipping']->countryName)?$orderinfo['shipping']->countryName:''?><br>
+                                                        <b>Landmark</b> :<?=isset($orderinfo['shipping']->landmark)?$orderinfo['shipping']->landmark:''?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Billing Phone</td>
+                                                        <td><?=isset($orderinfo['billing']->contactNo)?$orderinfo['billing']->contactNo:''?></td>
+                                                        <td>Shipping Phone</td>
+                                                        <td><?=isset($orderinfo['shipping']->contactNo)?$orderinfo['shipping']->contactNo:''?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>E-Mail</td>
+                                                        <td><?=isset($orderinfo['billing']->email)?$orderinfo['billing']->email:''?></td>
+                                                        <td>E-Mail</td>
+                                                        <td><?=isset($orderinfo['billing']->email)?$orderinfo['billing']->email:''?></td>
+                                                    </tr>
+                                                </table> 
+                                                    
+                                                    <p><i class="fa fa-sort-desc"></i> Items</p>
+                                                    <table class="table table-bordered table-hover">
+                                                        <thead>
+                                                        <tr class="danger">
+                                                            <th>#</th>
+                                                            <th>Product</th>
+                                                            <th>Model</th>
+                                                            <th>Brand</th>
+                                                            <th>Price</th>
+                                                            <th>Quantity</th>
+                                                            <th>Total</th>
+                                                          </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        </tbody>
+                                                        <tr>
+                                                            <td><?=isset($orderinfo['pdetail']->productId)?$orderinfo['pdetail']->productId:''?></td>
+                                                            <td>
+                                                                <?php if(isset($orderinfo['pimage']->image)):?>
+                                                                <a href="<?php echo BASE_URL.'product/details/'.base64_encode($order->productId);?>" class="" target="_blank"><img src="<?=PRODUCT_DEAILS_SMALL.$orderinfo['pimage']->image?>" alt="..." class="img-thumbnail img-responsive"/></a>
+                                                            <?php endif;?>
+                                                                <a href="<?php echo BASE_URL.'product/details/'.base64_encode($order->productId);?>" class="" target="_blank"><?=isset($orderinfo['pdetail']->title)?$orderinfo['pdetail']->title:''?></a></td>
+                                                            <td><?=isset($orderinfo['pdetail']->model)?$orderinfo['pdetail']->model:''?></td>
+                                                            <td><?=isset($orderinfo['pdetail']->brandTitle)?$orderinfo['pdetail']->brandTitle:''?></td>
+                                                            <td><i class="fa fa-rupee"></i><?=isset($order->orderAmount)?$order->orderAmount/$order->productQty:'0.00'?></td>
+                                                            <td><?=isset($order->productQty)?$order->productQty:'0'?></td>
+                                                            <td><i class="fa fa-rupee"></i><?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></td>
+                                                        </tr>
+                                                        <tr> 
+                                                            <td colspan="5"></td>
+                                                            <td>Order Sub Total</td>
+                                                            <td><i class="fa fa-rupee"></i><?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></td>
+                                                        </tr>
+                                                        <tr> 
+                                                            <td colspan="5"></td>
+                                                            <td>Order Discount</td>
+                                                            <td><i class="fa fa-rupee"></i><?=isset($order->discountAmount)?$order->discountAmount:''?></td>
+                                                        </tr>
+                                                        <tr> 
+                                                            <td colspan="5"></td>
+                                                            <td>Shipping ()</td>
+                                                            <td><i class="fa fa-rupee"></i><?=isset($order->shippingamount)?$order->shippingamount:''?></td>
+                                                        </tr>
+                                                        <tr> 
+                                                            <td colspan="5"></td>
+                                                            <td>Tax</td>
+                                                            <td><i class="fa fa-rupee"></i><?=isset($order->taxAmount)?$order->taxAmount:''?></td>
+                                                        </tr>
+                                                        <tr> 
+                                                            <td colspan="5"></td>
+                                                            <td>Order Total</td>
+                                                            <td><i class="fa fa-rupee"></i><?=isset($order->orderAmount)?$order->orderAmount:''?></td>
+                                                        </tr>
+                                                        <tr> 
+                                                            <td colspan="5"></td>
+                                                            <td>Paid</td>
+                                                            <td><i class="fa fa-rupee"></i><?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></td>
+                                                        </tr>
+                                                    </table>  
+                                                    
+                                                </td>
+                                            </tr>
+                                        </table>  
+                                        </div>
+                                    </div> 
+                                        <a href="<?=BASE_URL?>my-orders"><button class="btn btn-warning"><i class="fa fa-arrow-left"></i> Back</button> </a>
+                                        <?php if($order->status == 4):?><a class="btn btn-info btn-xs pull-right" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-file-text-o"></i> View Invoice</a><?php endif;?>
+                                    </div>
+                            </div>    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+<?php echo $footer;?>
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        
+    });
+</script>    
