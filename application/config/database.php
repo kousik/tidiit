@@ -49,8 +49,8 @@ $active_group = 'default';
 $active_record = TRUE;
 
 $db['default']['hostname'] = 'localhost';
-$db['default']['username'] = 'tidiit_cto';
-$db['default']['password'] = 'H=*r_XI+TSmU'; //secret
+$db['default']['username'] = 'root';
+$db['default']['password'] = 'root'; //secret
 $db['default']['database'] = 'tidiit';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
