@@ -18,6 +18,7 @@ class User_model extends CI_Model {
     private $_table_city ="city";
     private $_table_locality ="locality";
     private $_table_zip ="zip";
+    private $_table_order = 'order';
 
 
     public $result=NULL;
@@ -36,7 +37,7 @@ class User_model extends CI_Model {
 
     public function edit($DataArr,$userId){
         $this->db->where('userId',$userId);
-        $this->db->update($this->_table,$DataArr);
+        $this->db->update($this->_table,$DataArr);        
         return TRUE;		
     }
 
@@ -140,6 +141,9 @@ class User_model extends CI_Model {
         //$this->db->delete($this->_table, array('userId' => $userId)); 
         $this->db->where_in('userId',explode(',',$userId));
         $this->db->delete($this->_table); 
+        $this->group_delete_by_admin($userId);
+        $this->group_member_update($userId);
+        $this->order_update($userId);
         return TRUE;
     }
 
@@ -284,6 +288,25 @@ class User_model extends CI_Model {
     
     /**
      * 
+     * @param type $userId
+     * @return boolean
+     */
+    public function group_delete_by_admin($userId){
+        $this->db->delete($this->_group, array('groupAdminId' => $userId)); 
+        return TRUE;
+    }
+    
+    /**
+     * 
+     * @param type $userId
+     */
+    public function group_member_update($userId){
+        $sql = "UPDATE `{$this->_group}` SET groupUsers = TRIM(BOTH ',' FROM REPLACE(REPLACE(groupUsers, '{$userId}', ''), ',,', ','))";
+        $this->db->query($sql, array());
+    }
+    
+    /**
+     * 
      * @param type $groupId
      * @return type
      */
@@ -320,8 +343,10 @@ class User_model extends CI_Model {
                 $udata = array();
                 if($users):                        
                     foreach($users as $ukey => $usrId):
-                        $udatas = $this->get_details_by_id($usrId);
-                        $udata[] = $udatas[0];
+                        if($usrId):
+                            $udatas = $this->get_details_by_id($usrId);
+                            $udata[] = $udatas[0];
+                        endif;
                     endforeach;
                 endif;
                 $grp->users = $udata;
@@ -386,7 +411,18 @@ class User_model extends CI_Model {
             return false;
         endif;
     }
-
+    
+    /**
+     * 
+     * @param type $userId
+     * @return boolean
+     */
+    public function order_update($userId){
+        $DataArr = array('status' => 0);
+        $this->db->where('userId',$userId);
+        $this->db->update($this->_table_order,$DataArr);
+        return TRUE;		
+    }
     /**
      * 
      * @param type $dataArray
