@@ -427,3 +427,43 @@ myJsMain.my_checkout_shipping_address=function(){
         }
     }
 };
+
+jQuery(document).ready(function(){
+    jQuery("body").delegate('#btnPrint', "click", function(e){
+	e.preventDefault();
+        var text = jQuery(this).attr('data-text'); 
+        $("#js-print-container").print({
+
+            // Use Global styles
+            globalStyles : true, 
+
+            // Add link with attrbute media=print
+            mediaPrint : false, 
+
+            //Custom stylesheet
+            stylesheet : "http://fonts.googleapis.com/css?family=Inconsolata", 
+
+            //Print in a hidden iframe
+            iframe : true, 
+
+            // Don't print this
+            noPrintSelector : ".no-print,.btn",
+
+            // Add this on top
+            append : text, 
+
+            // Add this at bottom
+            prepend : null,
+
+            // Manually add form values
+            manuallyCopyFormValues: true,
+
+            // resolves after print and restructure the code for better maintainability
+            deferred: $.Deferred(),
+
+            // timeout
+            timeout: 250
+
+        });
+    });
+});

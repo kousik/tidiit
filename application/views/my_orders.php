@@ -2,7 +2,7 @@
 $CI =& get_instance();
 $CI->load->model('Product_model');
 $CI->load->model('Order_model');
-$status = array('0'=>'Delete','1'=>'Order Running', '2'=>'Order Processing', '3'=>'Out of Delivery', '4'=>'Delivered', '5'=>'Cancel Requested', '6'=>'Cancelled');
+$status = array('0'=>'Delete','1'=>'Order Running', '2'=>'Order Approved', '4'=>'Out of Delivery', '5'=>'Delivered', '6'=>'Cancel Requested', '7'=>'Cancelled', '3'=>'Order Processing');
 ?>
 </div>
 </header>
@@ -56,7 +56,7 @@ $status = array('0'=>'Delete','1'=>'Order Running', '2'=>'Order Processing', '3'
                                                     <td align="center">
                                                 <a class="btn btn-success btn-xs js-view-order" href="<?php echo BASE_URL.'order/details/'.base64_encode($order->orderId*226201);?>"><i class="fa fa-eye"></i> Order</a>
                                                     <?php if($porder):?><a class="btn btn-warning btn-xs" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-eye"></i> Parent Order</a><?php endif;?>
-                                                    <?php if($order->orderType == 'SINGLE' && $order->status < 3):?><a class="btn btn-danger btn-xs" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-shopping-cart"></i> Cancel Order</a><?php endif;?>
+                                                    <?php if($order->orderType == 'SINGLE' && $order->status < 4):?><a class="btn btn-danger btn-xs" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-times"></i> Cancel Order</a><?php endif;?>
                                                     </td>
                                                 </tr>
                                             

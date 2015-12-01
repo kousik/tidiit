@@ -2,9 +2,11 @@
 $CI =& get_instance();
 $CI->load->model('Product_model');
 $CI->load->model('Order_model');
-$status = array('0'=>'Delete','1'=>'Order Running', '2'=>'Order Processing', '3'=>'Out of Delivery', '4'=>'Delivered', '5'=>'Cancel Requested', '6'=>'Cancelled');
+$status = array('0'=>'Delete','1'=>'Order Running', '2'=>'Order Approved', '4'=>'Out of Delivery', '5'=>'Delivered', '6'=>'Cancel Requested', '7'=>'Cancelled', '3'=>'Order Processing');
 $orderinfo = unserialize(base64_decode($order->orderInfo));
 ?>
+<script src="<?php echo SiteJSURL;?>jQuery.print.js" type="text/javascript"></script>
+<script src="<?php echo SiteJSURL;?>user-all-my-js.js" type="text/javascript"></script>
 </div>
 </header>
 <article>
@@ -24,10 +26,10 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));
                                     <div class="gen_infmtn">
                                     <div class="table-responsive">
                                         <div class="panel panel-default">
-                                        <table class="table table-striped">
+                                        <table class="table table-striped" id='js-print-container'>
                                             <thead>
                                             <tr class="active">
-                                                <th><a href="javascript://">Order #TIDIIT-OD-<?=$order->orderId?></a> <?php if($order->orderType == 'SINGLE' && $order->status < 3):?><a class="btn btn-danger btn-xs pull-right" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-shopping-cart"></i> Cancel Order</a><?php endif;?><?php if($order->status == 4):?><a class="btn btn-info btn-xs pull-right" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-file-text-o"></i> View Invoice</a><?php endif;?></th>
+                                                <th><a href="javascript://">Order #TIDIIT-OD-<?=$order->orderId?></a> <?php if($order->orderType == 'SINGLE' && $order->status < 4):?><a class="btn btn-danger btn-xs pull-right" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-times"></i> Cancel Order</a><?php endif;?><?php if($order->status == 5):?><a class="btn btn-info btn-xs pull-right no-print" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-file-text-o"></i> View Invoice</a><?php endif;?></th>
                                               </tr>
                                             </thead>
                                             <tbody>
@@ -122,7 +124,8 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));
                                                                 <?php if(isset($orderinfo['pimage']->image)):?>
                                                                 <a href="<?php echo BASE_URL.'product/details/'.base64_encode($order->productId);?>" class="" target="_blank"><img src="<?=PRODUCT_DEAILS_SMALL.$orderinfo['pimage']->image?>" alt="..." class="img-thumbnail img-responsive"/></a>
                                                             <?php endif;?>
-                                                                <a href="<?php echo BASE_URL.'product/details/'.base64_encode($order->productId);?>" class="" target="_blank"><?=isset($orderinfo['pdetail']->title)?$orderinfo['pdetail']->title:''?></a></td>
+                                                                <a href="<?php echo BASE_URL.'product/details/'.base64_encode($order->productId);?>" class="" target="_blank"><?=isset($orderinfo['pdetail']->title)?$orderinfo['pdetail']->title:''?></a><br>
+                                                          <a class="btn btn-info btn-xs pull-left no-print" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-thumbs-up"></i> Review Product</a></td>
                                                             <td><?=isset($orderinfo['pdetail']->model)?$orderinfo['pdetail']->model:''?></td>
                                                             <td><?=isset($orderinfo['pdetail']->brandTitle)?$orderinfo['pdetail']->brandTitle:''?></td>
                                                             <td><i class="fa fa-rupee"></i><?=isset($order->orderAmount)?$order->orderAmount/$order->productQty:'0.00'?></td>
@@ -161,13 +164,34 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));
                                                         </tr>
                                                     </table>  
                                                     
+                                                    <table class="table no-print">
+                                                    <thead>
+                                                    <tr class="info">
+                                                        <th>Manage Order</th>
+                                                        <th></th>
+                                                        <th></th>
+                                                      </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                    <tr>
+                                                        <td align='middle'>
+                                                            <span id='btnPrint' style='cursor: pointer;' data-text="Tidiit.com - Order Information - TIDIIT-OD-<?=$order->orderId;?>"><i class="fa fa-print"></i><br>
+                                                                PRINT ORDER</span>
+                                                        </td>
+                                                        <td align='middle'><?php if($order->status == 5):?><a data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-envelope"></i><br>EMAIL INVOICE</a><?php endif;?></td>
+                                                        <td align='middle'><span><a href="<?=BASE_URL?>contact-us"><i class="fa fa-phone-square"></i><br>
+                                                                    CONTACT US</a></span></td>
+                                                    </tr>
+                                                </table>
+                                                    
                                                 </td>
                                             </tr>
                                         </table>  
                                         </div>
                                     </div> 
                                         <a href="<?=BASE_URL?>my-orders"><button class="btn btn-warning"><i class="fa fa-arrow-left"></i> Back</button> </a>
-                                        <?php if($order->status == 4):?><a class="btn btn-info btn-xs pull-right" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-file-text-o"></i> View Invoice</a><?php endif;?>
+                                        <?php if($order->status == 5):?><a class="btn btn-info btn-xs pull-right" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-file-text-o"></i> View Invoice</a><?php endif;?>
                                     </div>
                             </div>    
                         </div>
