@@ -467,7 +467,7 @@ class Ajax extends MY_Controller{
                     /// firing mail
                     $mail_template_view_data=$this->load_default_resources();
                     $mail_template_view_data['group_order_re_start']=$mail_template_data;
-                    $this->__global_tidiit_mail($recv_email, "Buyer Club Order Re-Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_re_start');
+                    $this->_global_tidiit_mail($recv_email, "Buyer Club Order Re-Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_re_start');
                     
                     $this->User_model->notification_add($data);
                 endforeach;

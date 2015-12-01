@@ -78,8 +78,8 @@
                                                         <div class="col-md-6 pad_none">
                                                             <select name="productType" class="form-control nova heght_cntrl" id="productType">
                                                                 <option value="">Select</option>
-                                                                <?php foreach ($CatArr AS $cat): ?>
-                                                                    <option value="<?= $cat->categoryId ?>" <?php if ($cat->categoryId == $group->productType): ?> selected<?php endif; ?>><?= $cat->categoryName ?></option>
+                                                                <?php foreach ($CatArr AS $categoryId=>$categoryName): ?>
+                                                                <option value="<?= $categoryId ?>"><?= $categoryName ?></option>
                                                                 <?php endforeach; ?>
                                                             </select>
                                                         </div>
