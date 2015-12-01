@@ -396,6 +396,10 @@ class Shopping extends MY_Controller{
             $userBillingDataDetails=$this->User_model->get_billing_address();
             $orderinfo['billing'] = $userBillingDataDetails[0];
             
+            if($order->groupId):
+                $orderinfo['group'] = $this->User_model->get_group_by_id($order->groupId);
+            endif;
+            
             $info['orderInfo'] = base64_encode(serialize($orderinfo));
             $this->Order_model->update($info, $orderId);
             
@@ -1243,7 +1247,7 @@ class Shopping extends MY_Controller{
                 $userShippingDataDetails = $this->User_model->get_user_shipping_information();
                 $orderinfo['shipping'] = $userShippingDataDetails[0];
                 $userBillingDataDetails=$this->User_model->get_billing_address();
-                $orderinfo['billing'] = $userBillingDataDetails[0];
+                $orderinfo['billing'] = $userBillingDataDetails[0];                
                 $order['orderInfo'] = base64_encode(serialize($orderinfo));
                 $orderId = $this->Order_model->add($order);
                 $orderinfo['orderId']=$orderId;

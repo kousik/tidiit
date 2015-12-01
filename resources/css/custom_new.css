@@ -2699,3 +2699,21 @@ legend.scheduler-border{
 button.checkbox-close {
     margin-left: -9px;
 }
+
+.center-mod
+{
+    z-index: 1000;
+    margin: 100px auto;
+    /*padding: 10px;*/
+    width: 130px;
+    /*background-color: White;
+    border-radius: 10px;*/
+    filter: alpha(opacity=100);
+    opacity: 1;
+    -moz-opacity: 1;
+}
+.center-mod img
+{
+    height: 128px;
+    width: 128px;
+}

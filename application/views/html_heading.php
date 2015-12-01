@@ -54,6 +54,7 @@
         <script src="<?php echo SiteJSURL;?>jquery.min.js"></script>
         <script src="<?php echo SiteJSURL;?>bootstrap.min.js"></script>
         <script src="<?php echo SiteJSURL;?>jquery-ui.min.js"></script>
+        <script src="<?php echo SiteJSURL;?>jQuery.print.js" type="text/javascript"></script>
         
         <!-- General JS fiies end here-->
         
