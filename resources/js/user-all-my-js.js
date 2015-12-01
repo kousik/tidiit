@@ -400,9 +400,9 @@ myJsMain.my_checkout_shipping_address=function(){
     };
     $('#my_checkout_shipping_address').validate({rules: shippingValidationRules,onsubmit: true});
     $('#my_checkout_shipping_address').submit(function(e) {
-        myJsMain.commonFunction.showPleaseWait();
         e.preventDefault();
         if ($(this).valid()) { 
+            myJsMain.commonFunction.showPleaseWait();
             $('#shippingCheckoutAddress').prop('disabled',true);
             //$('#fade_background').fadeIn();
             //$('#LoadingDiv').fadeIn();

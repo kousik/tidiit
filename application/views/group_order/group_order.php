@@ -242,7 +242,6 @@ echo $html_heading; echo $header;?>
         jQuery("body").delegate('.js-order-group', "click", function(e){
             e.preventDefault();
             var grp = jQuery(this).val();
-            alert(grp);
             var obj = jQuery(this);
             jQuery(".js-order-group").prop('checked', false);
             if(grp == 'new'){
