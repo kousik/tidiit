@@ -352,7 +352,7 @@ class Ajax extends MY_Controller{
         $notify = array();
         
         if(!$groupUsersArr):
-            echo json_encode(array('result'=>'bad','msg'=>'Please select the at least one group member!'));die;
+            echo json_encode(array('result'=>'bad','msg'=>'Please select the at least one Buyer club member!'));die;
         endif;
         
         $groupId = $this->User_model->group_add(array('groupAdminId'=>$groupAdminId,'groupTitle'=>$groupTitle,'productType'=>$productType,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor));
@@ -499,7 +499,7 @@ class Ajax extends MY_Controller{
         ob_start();?>
         <div class="container-fluid">
             <div class="alert alert-success" role="alert">
-                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                <i class="fa fa-group"></i>
                 <span class="sr-only">Success:</span>
                 Buyer Club has been added successfully. Please process the order without reload page.
             </div>
@@ -532,9 +532,9 @@ class Ajax extends MY_Controller{
         ob_start();
         if($groups):?>
         <div class="alert alert-success" role="alert">
-            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+            <i class="fa fa-exclamation-circle"></i>
             <span class="sr-only">Success:</span>
-            Please select a group!
+            Please select a buyer club!
         </div>
         <table class="table table-hover">
             <thead>

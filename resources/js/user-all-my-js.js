@@ -145,8 +145,7 @@ myJsMain.my_finance=function(){
 
 myJsMain.my_create_groups=function(){ 
     var createGroupValidationRules = {
-        groupTitle: {required: true},
-        productType: {required: true}
+        groupTitle: {required: true}
     };
     $('#add_groups').validate({
         rules: createGroupValidationRules,
@@ -190,7 +189,7 @@ myJsMain.my_create_groups=function(){
             $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
         } else if(resultData.result=='good') {
             $( "#myModalLogin .close" ).trigger( "click" );
-            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Group has been added successfully.",200);
+            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Buyer club has been added successfully.",200);
             window.setTimeout(function(){location.reload();},3000);
         }
     }
@@ -222,7 +221,7 @@ myJsMain.my_create_groups=function(){
             $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
         } else if(resultData.result == 'good') {
             //myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Group has been updated successfully.",200);
-            $('div.js-message').html('<div class="alert alert-success" role="alert"><i class="fa fa-check"></i> Group has been updated successfully.</div>');
+            $('div.js-message').html('<div class="alert alert-success" role="alert"><i class="fa fa-check"></i> Buyer club has been updated successfully.</div>');
             $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
         }
     };
@@ -296,6 +295,9 @@ myJsMain.my_create_groups=function(){
                 success:function(msg){
                     if(msg!=""){
                         jQuery('.js-show-group-locality-users').html(msg);
+                    }else{
+                        jQuery('div.js-message').html('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> There is no user match with selected locality.</div>');
+                        jQuery('div.js-message').fadeIn(300,function() { setTimeout( 'jQuery("div.js-message").fadeOut(300)', 15000 ); });
                     }
                 }
             });
@@ -333,7 +335,7 @@ myJsMain.my_create_groups=function(){
              });
 
              if(!existGid){             
-             var html = "<input type=\"hidden\" name=\"groupUsers[]\" value=\""+gid+"\" class=\"checkbox-close-"+gid+"\">  <button type=\"button\" class=\"btn btn-info btn-xs checkbox-close-"+gid+"\"><i class=\"fa fa-user\"></i>"+gname+" | <i class=\"fa fa-times-circle checkbox-close\" data-id=\""+gid+"\"></i></button>";
+             var html = "<input type=\"hidden\" name=\"groupUsers[]\" value=\""+gid+"\" class=\"checkbox-close-"+gid+"\">  <button type=\"button\" class=\"btn btn-info btn-xs checkbox-close-"+gid+"\"><i class=\"fa fa-user\"></i>"+gname+"</button><button type=\"button\" class=\"btn btn-danger btn-xs checkbox-close checkbox-close-"+gid+"\" data-id=\""+gid+"\"><i class=\"fa fa-times-circle\"></i></button>";
              $('.js-show-group-users-tags').append(html);
              $('.checkbox-'+gid).hide();
          } else {
@@ -359,6 +361,9 @@ myJsMain.my_create_groups=function(){
                 success:function(msg){
                     if(msg!=""){
                         jQuery('.js-show-group-locality-users').html(msg);
+                    } else{
+                        jQuery('div.js-message').html('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> There is no user match with selected locality.</div>');
+                        jQuery('div.js-message').fadeIn(300,function() { setTimeout( 'jQuery("div.js-message").fadeOut(300)', 15000 ); });
                     }
                 }
             });
@@ -373,7 +378,8 @@ myJsMain.my_create_groups=function(){
                     if(msg!=""){
                         jQuery('.js-show-group-locality-users').html(msg);
                     }else{
-                        myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"There is no user match with selected product type.",200);
+                        jQuery('div.js-message').html('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> There is no user match with selected product type.</div>');
+                        jQuery('div.js-message').fadeIn(300,function() { setTimeout( 'jQuery("div.js-message").fadeOut(300)', 15000 ); });
                     }
                 }
             });

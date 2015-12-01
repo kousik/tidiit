@@ -15,7 +15,7 @@
                                     <div class="row">
                                         <div class="col-md-12 col-sm-12">
                                             <div class="js-message" style="display:none;"></div>
-                                            <div class="gen_infmtn"><h6>Edit Group: <?= $group->groupTitle ?> </h6></div>
+                                            <div class="gen_infmtn"><h6><i class='fa fa-group'></i> Edit buyer club : <?= $group->groupTitle ?> </h6></div>
                                             <div class="create_grp">
                                                 <input type="hidden" name="reorder" value="<?=$reorder?>">
                                                 <input type="hidden" name="groupId" value="<?=$group->groupId?>">
@@ -28,6 +28,8 @@
                                                     </div>
                                                     </div>
                                                     <div class="clear" style="margin-bottom: 20px;"></div>
+                                                    <fieldset class="scheduler-border">
+                                                        <legend class="scheduler-border">Search club member by below filters </legend>
                                                     <div class="row">
                                                     <div class="col-md-6">
                                                         <label for="locality" class="col-md-6 pad_none">Select Country :</label>
@@ -74,7 +76,7 @@
                                                     <div class="col-md-6">
                                                         <label for="locality" class="col-md-6 pad_none">Select Product Type :</label>
                                                         <div class="col-md-6 pad_none">
-                                                            <select name="productType" class="form-control nova heght_cntrl" id="productType" required>
+                                                            <select name="productType" class="form-control nova heght_cntrl" id="productType">
                                                                 <option value="">Select</option>
                                                                 <?php foreach ($CatArr AS $cat): ?>
                                                                     <option value="<?= $cat->categoryId ?>" <?php if ($cat->categoryId == $group->productType): ?> selected<?php endif; ?>><?= $cat->categoryName ?></option>
@@ -83,6 +85,7 @@
                                                         </div>
                                                     </div>
                                                     </div>
+                                                    </fieldset>
                                                     <div class="clear" style="margin-bottom: 20px;"></div>    
 
                                                 </div>
@@ -97,10 +100,12 @@
                                                         <div class="form-group"><label>Selected Users :</label></div>
                                                         <?php foreach ($group->users as $ukey => $usr): ?>
                                                             <input type="hidden" name="groupUsers[]" value="<?= $usr->userId ?>" class="checkbox-close-<?= $usr->userId ?>">
-                                                            <button type="button" class="btn btn-info btn-xs checkbox-close-<?= $usr->userId ?>"><i class="fa fa-user"></i><?= $usr->firstName ?> <?= $usr->lastName ?> | <i class="fa fa-times-circle checkbox-close" data-id="<?= $usr->userId ?>"></i></button>
+                                                            <button type="button" class="btn btn-info btn-xs checkbox-close-<?= $usr->userId ?>"><i class="fa fa-user"></i><?= $usr->firstName ?> <?= $usr->lastName ?></button> <button type="button" class="btn btn-danger btn-xs checkbox-close checkbox-close-<?= $usr->userId ?>" data-id="<?= $usr->userId ?>"><i class="fa fa-times-circle"></i></button>
                                                         <?php endforeach; ?>
                                                     </div>
                                                 </div>
+                                                
+                                                
                                                 <div class="row">
                                                     <div class="col-md-3 pull-right">
                                                         <input type="submit"  class="grpButton" name="creatGrp" id="grpButton" value="Modify Group" />
@@ -220,7 +225,7 @@
                    data:'groupId='+jQuery(this).data('id'),
                    success:function(msg){
                        if(msg!=""){
-                           $('.js-group-popover').popover('hide');
+                           jQuery('.js-group-popover').popover('hide');
                            jQuery('div#group-id-'+gid).remove();
                        }
                    }
@@ -242,26 +247,26 @@
                 });
                 
                 if(!existGid){
-                var html = "<input type=\"hidden\" name=\"groupUsers[]\" value=\""+gid+"\" class=\"checkbox-close-"+gid+"\">  <button type=\"button\" class=\"btn btn-info btn-xs checkbox-close-"+gid+"\"><i class=\"fa fa-user\"></i>"+gname+" | <i class=\"fa fa-times-circle checkbox-close\" data-id=\""+gid+"\"></i></button>";
-                $('.js-show-group-users-tags').append(html);
-                $('.checkbox-'+gid).hide();
+                var html = "<input type=\"hidden\" name=\"groupUsers[]\" value=\""+gid+"\" class=\"checkbox-close-"+gid+"\">  <button type=\"button\" class=\"btn btn-info btn-xs checkbox-close-"+gid+"\"><i class=\"fa fa-user\"></i>"+gname+"</button><button type=\"button\" class=\"btn btn-danger btn-xs checkbox-close checkbox-close-"+gid+"\" data-id=\""+gid+"\"><i class=\"fa fa-times-circle\"></i></button>";
+                jQuery('.js-show-group-users-tags').append(html);
+                jQuery('.checkbox-'+gid).hide();
             } else {
-                $('.checkbox-'+gid).hide();
+                jQuery('.checkbox-'+gid).hide();
             }
                 
         }); 
         
         
-        jQuery("body").delegate('.checkbox-close', "click", function(e){
+        jQuery("body").delegate('button.checkbox-close', "click", function(e){
 		e.preventDefault();
                 var gid = jQuery(this).data('id');
-                $('.checkbox-close-'+gid).remove();
-                $('.checkbox-'+gid).show();
+                jQuery('.checkbox-close-'+gid).remove();
+                jQuery('.checkbox-'+gid).show();
         }); 
         
     });
     jQuery(function () {
-        $('.js-group-popover').popover({html:true,container: 'body'});
+        jQuery('.js-group-popover').popover({html:true,container: 'body'});
     });
 </script>
 <?php echo $footer;?>

@@ -158,53 +158,55 @@ echo $html_heading; echo $header;?>
                   <input type="text" class="form-control" id="groupTitle" name="groupTitle" placeholder="Jane Doe" required>
                   </div>
               </div>
-              <div class="form-group">
-                  <label for="locality" class="col-sm-3 control-label">Select Country :</label>
-                  <div class="col-sm-7">
-                      <select name="countryId" class="form-control nova heght_cntrl" id="countryId">
-                          <option value="">Select</option>
-                          <?php foreach ($countryDataArr AS $k): ?>
-                              <option value="<?= $k->countryId ?>"><?= $k->countryName ?></option>
-                          <?php endforeach; ?>
-                      </select>
-                  </div>
-              </div>
-              <div class="form-group">
-                  <label for="locality" class="col-sm-3 control-label">Select City :</label>
-                  <div class="cityElementPara col-sm-7">
-                      <select name="cityId" class="form-control nova heght_cntrl" id="cityId">
-                          <option>Select City</option>
-                      </select>
-                  </div>
-              </div>
-              <div class="form-group">
-                  <label for="locality" class="col-sm-3 control-label">Select Zip :</label>
-                  <div class="zipElementPara col-sm-7">
-                      <select name="zipId" class="form-control nova heght_cntrl" id="zipId">
-                          <option>Select Zip</option>
-                      </select>
-                  </div>
-              </div> 
-              <div class="form-group">
-                  <label for="locality" class="col-sm-3 control-label">Select Locality :</label>
-                  <div class="localityElementPara col-sm-7">
-                      <select name="localityId" class="form-control nova heght_cntrl" id="localityId">
-                          <option>Select Locality</option>
-                      </select>
-                  </div>
-              </div> 
-              <div class="form-group">
-                  <label for="locality" class="col-sm-3 control-label">Select Product Type :</label>
-                  <div class="col-sm-7">
-                      <select name="productType" class="form-control nova heght_cntrl" id="productType" required>
-                          <option value="">Select</option>
-                          <?php foreach ($CatArr AS $categoryId=>$categoryName): ?>
-                              <option value="<?= $categoryId ?>"><?= $categoryName ?></option>
-                          <?php endforeach; ?>
-                      </select>
-                  </div>
-              </div>
-          
+                <fieldset class="scheduler-border">
+                    <legend class="scheduler-border">Search club member by below filters </legend>
+                    <div class="form-group">
+                        <label for="locality" class="col-sm-3 control-label">Select Country :</label>
+                        <div class="col-sm-7">
+                            <select name="countryId" class="form-control nova heght_cntrl" id="countryId">
+                                <option value="">Select</option>
+                                <?php foreach ($countryDataArr AS $k): ?>
+                                    <option value="<?= $k->countryId ?>"><?= $k->countryName ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="locality" class="col-sm-3 control-label">Select City :</label>
+                        <div class="cityElementPara col-sm-7">
+                            <select name="cityId" class="form-control nova heght_cntrl" id="cityId">
+                                <option>Select City</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="locality" class="col-sm-3 control-label">Select Zip :</label>
+                        <div class="zipElementPara col-sm-7">
+                            <select name="zipId" class="form-control nova heght_cntrl" id="zipId">
+                                <option>Select Zip</option>
+                            </select>
+                        </div>
+                    </div> 
+                    <div class="form-group">
+                        <label for="locality" class="col-sm-3 control-label">Select Locality :</label>
+                        <div class="localityElementPara col-sm-7">
+                            <select name="localityId" class="form-control nova heght_cntrl" id="localityId">
+                                <option>Select Locality</option>
+                            </select>
+                        </div>
+                    </div> 
+                    <div class="form-group">
+                        <label for="locality" class="col-sm-3 control-label">Select Product Type :</label>
+                        <div class="col-sm-7">
+                            <select name="productType" class="form-control nova heght_cntrl" id="productType">
+                                <option value="">Select</option>
+                                <?php foreach ($CatArr AS $categoryId=>$categoryName): ?>
+                                    <option value="<?= $categoryId ?>"><?= $categoryName ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                </fieldset>
               <div class="form-group js-show-group-locality-users">
               </div>
               <div class="js-show-group-users-tags">

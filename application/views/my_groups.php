@@ -25,7 +25,7 @@
                                     <div class="js-my-groups">    
                                         <?php if(!empty($myGroups)):
                                         foreach($myGroups as $gkey => $group):?>        
-                                        <div class="col-md-3 col-sm-3 grp_dashboard js-group-popover" title="Group : <?=$group->groupTitle?>"  data-container="body" data-toggle="popover" data-placement="top" data-color="<?=$group->groupColor?>" id="group-id-<?=$group->groupId?>" data-content='<div class="row">
+                                        <div class="col-md-3 col-sm-3 grp_dashboard js-group-popover" title="<i class='fa fa-group'></i> Buyer Club : <?=$group->groupTitle?>"  data-container="body" data-toggle="popover" data-placement="top" data-color="<?=$group->groupColor?>" id="group-id-<?=$group->groupId?>" data-content='<div class="row">
                                              <div class="col-md-12">
                                                  <h5><strong>Buyer Club Leader</strong></h5>
                                                  <p class="text-left"><?=$group->admin->firstName?> <?=$group->admin->lastName?></p>
@@ -70,67 +70,70 @@
       <form action="#" method="post" name="add_groups" class="form-horizontal" id="add_groups"> 
           <input type="hidden" name="groupAdminId" value="<?=$user->userId?>">
       <div class="modal-body">  
-          <div class="js-message" style="display:none;"></div>
+          
               <div class="form-group">
                   <label for="groupTitle" class="col-sm-3 control-label">Buyer Club Title</label>
                   <div class="col-sm-7">
                   <input type="text" class="form-control" id="groupTitle" name="groupTitle" placeholder="Jane Doe" required>
                   </div>
               </div>
-              <div class="form-group">
-                  <label for="locality" class="col-sm-3 control-label">Select Country :</label>
-                  <div class="col-sm-7">
-                      <select name="countryId" class="form-control nova heght_cntrl" id="countryId">
-                          <option value="">Select</option>
-                          <?php foreach ($countryDataArr AS $k): ?>
-                              <option value="<?= $k->countryId ?>"><?= $k->countryName ?></option>
-                          <?php endforeach; ?>
-                      </select>
-                  </div>
-              </div>
-              <div class="form-group">
-                  <label for="locality" class="col-sm-3 control-label">Select City :</label>
-                  <div class="cityElementPara col-sm-7">
-                      <select name="cityId" class="form-control nova heght_cntrl" id="cityId">
-                          <option>Select City</option>
-                      </select>
-                  </div>
-              </div>
-              <div class="form-group">
-                  <label for="locality" class="col-sm-3 control-label">Select Zip :</label>
-                  <div class="zipElementPara col-sm-7">
-                      <select name="zipId" class="form-control nova heght_cntrl" id="zipId">
-                          <option>Select Zip</option>
-                      </select>
-                  </div>
-              </div> 
-              <div class="form-group">
-                  <label for="locality" class="col-sm-3 control-label">Select Locality :</label>
-                  <div class="localityElementPara col-sm-7">
-                      <select name="localityId" class="form-control nova heght_cntrl" id="localityId">
-                          <option>Select Locality</option>
-                      </select>
-                  </div>
-              </div> 
-              <div class="form-group">
-                  <label for="locality" class="col-sm-3 control-label">Select Product Type :</label>
-                  <div class="col-sm-7">
-                      <select name="productType" class="form-control nova heght_cntrl" id="productType" required>
-                          <option value="">Select</option>
-                          <?php //foreach ($CatArr AS $cat): ?>
-                          <?php foreach ($CatArr AS $categoryId=>$categoryName): ?>
-                              <option value="<?= $categoryId ?>"><?= $categoryName ?></option>
-                          <?php endforeach; ?>
-                      </select>
-                  </div>
-              </div>
-          
-              <div class="form-group js-show-group-locality-users">
-              </div>
-              <div class="js-show-group-users-tags">
-                  <div class="form-group"><label class="col-sm-3 control-label">Selected Users :</label></div>
-              </div>
-          
+                <fieldset class="scheduler-border">
+                    <legend class="scheduler-border">Search club member by below filters </legend>
+                    <div class="form-group">
+                        <label for="locality" class="col-sm-3 control-label">Select Country :</label>
+                        <div class="col-sm-7">
+                            <select name="countryId" class="form-control nova heght_cntrl" id="countryId">
+                                <option value="">Select</option>
+                                <?php foreach ($countryDataArr AS $k): ?>
+                                    <option value="<?= $k->countryId ?>"><?= $k->countryName ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="locality" class="col-sm-3 control-label">Select City :</label>
+                        <div class="cityElementPara col-sm-7">
+                            <select name="cityId" class="form-control nova heght_cntrl" id="cityId">
+                                <option>Select City</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="locality" class="col-sm-3 control-label">Select Zip :</label>
+                        <div class="zipElementPara col-sm-7">
+                            <select name="zipId" class="form-control nova heght_cntrl" id="zipId">
+                                <option>Select Zip</option>
+                            </select>
+                        </div>
+                    </div> 
+                    <div class="form-group">
+                        <label for="locality" class="col-sm-3 control-label">Select Locality :</label>
+                        <div class="localityElementPara col-sm-7">
+                            <select name="localityId" class="form-control nova heght_cntrl" id="localityId">
+                                <option>Select Locality</option>
+                            </select>
+                        </div>
+                    </div> 
+                    <div class="form-group">
+                        <label for="locality" class="col-sm-3 control-label">Select Product Type :</label>
+                        <div class="col-sm-7">
+                            <select name="productType" class="form-control nova heght_cntrl" id="productType">
+                                <option value="">Select</option>
+                                <?php //foreach ($CatArr AS $cat): ?>
+                                <?php foreach ($CatArr AS $categoryId=>$categoryName): ?>
+                                    <option value="<?= $categoryId ?>"><?= $categoryName ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                </fieldset>
+                    <div class="form-group js-show-group-locality-users">
+                    </div>
+                    <div class="js-show-group-users-tags">
+                        <div class="form-group"><label class="col-sm-3 control-label">Selected Users :</label></div>
+                    </div>
+                
+            <div class="js-message" style="display:none;"></div>
       </div>
       <div class="modal-footer">
         <input type="submit"  class="grpButton" name="creatGrp" id="grpButton" value="Create New Buyer Club" />
