@@ -611,4 +611,9 @@ class Product_model extends CI_Model {
         $this->db->join($this->_table_views.' pv','p.productId=pv.productId','left')->where('ps.userId',  $this->session->userdata('FE_SESSION_VAR'));
         return $this->db->get()->result();
     }
+    
+    function update_product_quantity_after_order_process($productId,$qty){
+        $detailsArr=  $this->details($productId);
+        $this->edit(array('qty'=>(int)($detailsArr[0]->qty-$qty)), $productId);
+    }
 }

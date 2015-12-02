@@ -476,6 +476,7 @@ class Product extends MY_Controller{
             array('field'   => 'metaDescription','label'   => 'Product Meta Description','rules'   => 'trim|required|xss_clean'),
             array('field'   => 'metaKeyword','label'   => 'Product Meta Keywords','rules'   => 'trim|required|xss_clean'),
             array('field'   => 'tag','label'   => 'Product Tags','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'categoryId','label'   => 'Product Category','rules'   => 'trim|required|xss_clean'),
         );
         $this->form_validation->set_rules($config);
 
@@ -491,8 +492,9 @@ class Product extends MY_Controller{
             $metaKeyWord=$this->input->post('metaKeyword',TRUE);
             $metaTitle=$this->input->post('metaTitle',TRUE);
             $metaDescription=$this->input->post('metaDescription',TRUE);
+            $categoryId=$this->input->post('categoryId',TRUE);
 
-            $dataArr=array('title'=>$title,'shortDescription'=>$shortDescription,'description'=>$description,'tag'=>$tag,'metaKeyword'=>$metaKeyWord,'metaTitle'=>$metaTitle,'metaDescription'=>$metaDescription);
+            $dataArr=array('title'=>$title,'shortDescription'=>$shortDescription,'description'=>$description,'tag'=>$tag,'metaKeyword'=>$metaKeyWord,'metaTitle'=>$metaTitle,'metaDescription'=>$metaDescription,'categoryId'=>$categoryId);
             return array('status'=>'success','data'=>$dataArr);
         }
     }

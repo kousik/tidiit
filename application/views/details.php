@@ -155,7 +155,8 @@ jQuery(document).ready(function(){
 </div>
 <div class="container">
   <div class="comp-breadcrumbs">
-    <div class="bread-crumb" id="breadCrumbWrapper"> <a href="#">Home</a> >> <a href="#">Mobiles & Tablets</a> >> <a href="#">Mobile Phones</a> >> Lava Flair Z1 8 GB
+    <div class="bread-crumb" id="breadCrumbWrapper"> 
+        <?php echo $breadCrumbStr;?>
       <div class="clear"></div>
     </div>
   </div>
@@ -211,7 +212,7 @@ jQuery(document).ready(function(){
             <hr class="divider-horizontal">
             <div id="pdp-buynow-rp" class="container-fluid buy-button-container reset-padding">
               <div class="row-fluid">               
-                <div id="add-cart-button-id" class="col-xs-8 btn btn-primary btn-xl rippleWhite buyLink marR15" data-toggle="modal" data-target=".multiselect-modal-sm"> <span class="intialtext">add to truck</span> </div>                
+                <div id="add-cart-button-id" class="col-xs-8 btn btn-primary btn-xl rippleWhite buyLink marR15" data-toggle="modal" data-target=".multiselect-modal-sm"> <span class="intialtext">Add to Truck</span> </div>                
               </div>
             </div>
           </div>

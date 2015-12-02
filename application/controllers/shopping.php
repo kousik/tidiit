@@ -371,7 +371,8 @@ class Shopping extends MY_Controller{
         $prod_price_info = $this->Product_model->get_products_price_details_by_id($pevorder->productPriceId);
         
         if($prod_price_info->qty == $a[0]->productQty):
-            $order_update['status'] = 2;   
+            $order_update['status'] = 2;
+            $this->Product_model->update_product_quantity_after_order_process($prod_price_info->productId,$prod_price_info->qty);
         else:
             $order_update['status'] = 1;   
         endif;
@@ -1247,6 +1248,9 @@ class Shopping extends MY_Controller{
                 $order['orderInfo'] = base64_encode(serialize($orderinfo));
                 $orderId = $this->Order_model->add($order);
                 $orderinfo['orderId']=$orderId;
+                
+                $this->Product_model->update_product_quantity_after_order_process($order['productId'],$order['productQty']);
+                
                 $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
                 $orderid['orderId'] = $orderId;
                 $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$orderId;

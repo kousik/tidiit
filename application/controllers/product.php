@@ -19,9 +19,12 @@ class Product extends MY_Controller{
         $productId=  base64_decode($str);
         //echo $productId;die;
         $productDetailsArr=  $this->Product_model->details($productId);
+        //pre($productDetailsArr);die;
         if($productDetailsArr[0]->status==0){
             redirect(BASE_URL);
         }
+        
+        
         $this->Product_model->update_view($productId);
         $productImageArr=$this->Product_model->get_products_images($productId);
         $productPriceArr=$this->Product_model->get_products_price($productId);
@@ -32,10 +35,40 @@ class Product extends MY_Controller{
             $data=$this->_get_tobe_login_template($SEODataArr);
         }
         $data['is_loged_in'] = $this->is_loged_in();
+        $data['breadCrumbStr']=$this->breadCrumb($productDetailsArr[0]->categoryId, $productDetailsArr[0]->title);
         $data['productDetailsArr']=$productDetailsArr;
         $data['productImageArr']=$productImageArr;
         $data['productPriceArr']=$productPriceArr;
         
         $this->load->view('details',$data);
+    }
+    
+    private function breadCrumb($categoryId,$title){
+        $breadCrumbStr='<a href="'.BASE_URL.'">Home</a>';
+        $categoryArr=  $this->get_category_arr_for_breadcrumb($categoryId);
+        ksort($categoryArr);
+        //pre($categoryArr);die;
+        foreach($categoryArr AS $k => $v){
+            //echo $k .' = '.$v;die;
+            $breadCrumbStr .=' >> <a href="'.BASE_URL.'category/details/'.  my_seo_freindly_url($v).'/'.  base64_encode('k').'~'.md5('tidiit').'">'.$v.'</a>';
+        }
+        return $breadCrumbStr .= ' >> '.$title;
+    }
+    
+    function get_category_arr_for_breadcrumb($categoryId,$CategoryArr=array()){
+        if(empty($CategoryArr)){
+            $Details=$this->Category_model->get_details_by_id($categoryId);
+            $CategoryArr[$categoryId]=$Details[0]->categoryName;
+            return $this->get_category_arr_for_breadcrumb($Details[0]->parrentCategoryId,$CategoryArr);
+        }else{
+            $Details=$this->Category_model->get_details_by_id($categoryId);
+            if($Details[0]->parrentCategoryId==0){
+                $CategoryArr[$categoryId]=$Details[0]->categoryName;
+                return $CategoryArr;    
+            }else{
+                $CategoryArr[$categoryId]=$Details[0]->categoryName;
+                return $this->get_category_arr($Details[0]->parrentCategoryId,$CategoryArr);
+            }
+        }
     }
 }
