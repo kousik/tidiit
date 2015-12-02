@@ -1082,7 +1082,8 @@ class Shopping extends MY_Controller{
             $this->_add_to_cart($cart_data);
         endif;        
         
-        redirect(BASE_URL.'product/details/'.base64_encode($productId));
+        //redirect(BASE_URL.'product/details/'.base64_encode($productId));
+        redirect(BASE_URL.'shopping/my-cart');
     }
     
     function single_order_check_out(){

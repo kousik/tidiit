@@ -1,5 +1,4 @@
 <?php echo $html_heading; echo $header;
-//pre($this->cart->contents());die;
 //$productPageTypeArr=$this->config->item('productPageTypeArr');
 $mobileBoxContents=$this->config->item('mobileBoxContents');
 $mobileColor=$this->config->item('mobileColor');
@@ -102,15 +101,6 @@ jQuery(document).ready(function(){
         }    
         
     });
-    <?php if(count($this->cart->contents())>0):?>
-        jQuery.ajax({
-                type:"POST",
-                url:myJsMain.baseURL+'ajax/show_cart/',
-                success:function(msg){
-                    jQuery('#cartInnerHtmlDiv').html(msg);
-                }
-            });
-    <?php endif;?>
 });  
 </script>
 <button class="inline btn btn-primary howItWork" data-toggle="modal" data-target=".bs-example-modal-lg" href="#inline_content">HOW IT WORKS</button>
