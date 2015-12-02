@@ -5,7 +5,6 @@ $CI->load->model('Order_model');
 $status = array('0'=>'Delete','1'=>'Order Running', '2'=>'Order Approved', '4'=>'Out of Delivery', '5'=>'Delivered', '6'=>'Cancel Requested', '7'=>'Cancelled', '3'=>'Order Processing');
 $orderinfo = unserialize(base64_decode($order->orderInfo));
 ?>
-<script src="<?php echo SiteJSURL;?>jQuery.print.js" type="text/javascript"></script>
 <script src="<?php echo SiteJSURL;?>user-all-my-js.js" type="text/javascript"></script>
 </div>
 </header>
