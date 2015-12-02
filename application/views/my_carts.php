@@ -164,7 +164,10 @@ $CI->load->model('Product_model');
                                             </table>
                                             <?php endif; ?>
                                             
-                                            <div class="js-message"><div class="alert alert-success" role="alert"><i class="fa fa-shopping-cart"></i>  Sorry! no truck item's available.</div></div>
+                                            <div class="js-message"></div>
+                                            <?php if(!$is_single && !$is_group):?>
+                                            <div class="alert alert-success" role="alert"><i class="fa fa-shopping-cart"></i>  Sorry! no truck item's available.</div>
+                                            <?php endif;?>
                                         </div>
                                         <div class="clearfix"></div>
                                     </div>
