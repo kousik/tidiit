@@ -149,42 +149,13 @@ class Order_model extends CI_Model {
 	}
 	
 	
-	public function details($OrderID){
-		$sql="SELECT 
-		o.*,u.Email,u.FirstName,u.LastName, 
-		b.City,b.Address,b.Zip,b.ContactNo,c.CountryName,s.StateName,s.StateCode,os.Name AS OrderStateName, 
-		sad.City AS ShippingCity,sad.Address AS ShippingAddress,sad.Zip AS ShippingZip, 
-		sad.ContactNo AS ShippingContactNo,ss.StateName AS ShippingStateName,ss.StateCode AS ShippingStateCode,sc.CountryName AS ShippingCountryName, 
-		p.PaymentType,sh.Title 
-		FROM `order` AS o JOIN `user` AS u ON(o.UserID=u.UserID) 
-		JOIN `billing_address` AS b ON(o.UserID=b.UserID) 
-		JOIN `country` AS c ON(b.CountryID=c.CountryID) 
-		JOIN `state` AS s ON(b.StateID=s.StateID) 
-		JOIN order_state AS os ON(o.OrderStateID=os.OrderStateID) 
-		JOIN `shipping_address` AS sad ON(o.ShippingAddresssID=sad.ShippingAddressID) 
-		JOIN state AS ss ON(sad.StateID=ss.StateID) 
-		JOIN country AS sc ON(sad.CountryID=sc.CountryID) 
-		JOIN payment AS p ON(o.OrderID=p.OrderID) 
-		JOIN shipping AS sh ON(o.ShippingID=sh.ShippingID)WHERE o.OrderID='".$OrderID."'";
-		$rs=$this->db->query($sql)->result();
-		//echo $this->db->last_query();
-		return $rs;
+	public function details($orderId){
+            $this->db->select('o.*,pp.qty AS productSlabPrice,pp.price AS productSlabPrice,s.email AS sellerEmail,s.firstName AS sellerFirstName,s.lastName AS sellerLastName');
+            $this->db->from($this->_table.' o')->join('product_price pp','o.productPriceId=pp.productPriceId');
+            $this->db->join('product_seller ps','o.productId=ps.productId')->join('user s','ps.userId=s.userId');
+            return $this->db->where('o.orderId',$orderId)->get()->result();
 	}
 	
-	public function cc_details($OrderID){
-		$sql="SELECT o.*,u.Email,u.FirstName,u.LastName,b.City,b.Address,b.Zip,b.ContactNo,c.CountryName,s.StateName,s.StateCode,"
-                        . " os.Name AS OrderStateName,sad.City AS ShippingCity,sad.Address AS ShippingAddress,sad.Zip AS ShippingZip,"
-                        . " sad.ContactNo AS ShippingContactNo,ss.StateName AS ShippingStateName,sc.CountryName AS ShippingCountryName "
-                        . " FROM `order` AS o JOIN `user` AS u ON(o.UserID=u.UserID) JOIN `billing_address` AS b ON(o.UserID=b.UserID) "
-                        . " JOIN `country` AS c ON(b.CountryID=c.CountryID) JOIN `state` AS s ON(b.StateID=s.StateID) "
-                        . " JOIN order_state AS os ON(o.OrderStateID=os.OrderStateID) "
-                        . " JOIN `shipping_address` AS sad ON(o.ShippingAddresssID=sad.ShippingAddressID) "
-                        . " JOIN state AS ss ON(sad.StateID=ss.StateID) JOIN country AS sc ON(sad.CountryID=sc.CountryID) "
-                        . " WHERE o.OrderID='".$OrderID."'";
-		$rs=$this->db->query($sql)->result();
-		//echo $this->db->last_query();
-		return $rs;
-	}
 	
 	public function remove_order($OrderID){
 		$this->db->where_in('OrderID',$OrderID);
@@ -421,4 +392,8 @@ class Order_model extends CI_Model {
             }
         }
         
+        function get_all_chield_order($orderId){
+            $rs=  $this->db->from($this->_table)->where('parrentOrderID',$orderId)->get()->result();
+            return $rs;
+        }
 }
