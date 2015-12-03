@@ -128,14 +128,22 @@
             <div class="row">
                 <div id="demo">
                     <div id="owl-demo" class="owl-carousel">
-                        <?php foreach($bestSelllingItem AS $k){ //pre(HOME_LISTING.$k->image);die;?>
+                        <?php foreach($bestSelllingItem AS $k){ //pre($k);die;?>
                         <div class="item">
-                            <div class="prodct_box">
+                            <div class="prodct_box" <?php if($k->qty<$k->minQty){ echo 'style="margin:0 !important;margin-bottom:30px !important;"';}?>>
+                                <?php if($k->qty<$k->minQty):?>
+                                <a href="javascript:void(0);">
+                                <?php else :?>
                                 <a href="<?php echo BASE_URL.'product/details/'.base64_encode($k->productId);?>">
+                                <?php endif;?>    
                                     <img src="<?php echo HOME_LISTING.$k->image;?>" class="img-responsive" />
+                                    <?php if($k->qty<$k->minQty):?>
+                                    <h4>Out Of Stuck</h4>
+                                    <?php else:?>
                                     <div class="ch-info">
                                         <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
                                     </div>
+                                    <?php endif;?>
                                 </a>
                                 <p><?php echo $k->title;?></p>
                                 <ul class="star">
@@ -147,7 +155,13 @@
                                 </ul>
                                 <p><?php echo $k->lowestPrice.' - '.$k->heighestPrice;?></p>
                                 <?php /*<p><a href="<?php echo BASE_URL.str_replace('+','-',urlencode(my_seo_freindly_url($k->title))).'+'. base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p> */?>
-                                <p><a href="<?php echo BASE_URL.'product/details/'.base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
+                                <p>
+                                    <?php if($k->qty<$k->minQty):?>
+                                    <a href="javascript:void(0);">View Details &nbsp;<i class="fa fa-caret-right"></i></a>
+                                    <?php else:?>
+                                    <a href="<?php echo BASE_URL.'product/details/'.base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a>
+                                    <?php endif;?>
+                                </p>
                             </div>
                         </div>
                         <?php }?>
@@ -163,12 +177,20 @@
                     <div id="owl-demo1" class="owl-carousel">
                         <?php foreach($bestSelllingItem AS $k){ //pre($k);die;?>
                         <div class="item">
-                            <div class="prodct_box">
+                            <div class="prodct_box" <?php if($k->qty<$k->minQty){ echo 'style="margin:0 !important;margin-bottom:30px !important;"';}?>>
+                                <?php if($k->qty<$k->minQty):?>
+                                <a href="javascript:void(0);">
+                                <?php else :?>
                                 <a href="<?php echo BASE_URL.'product/details/'.base64_encode($k->productId);?>">
+                                <?php endif;?>    
                                     <img src="<?php echo HOME_LISTING.$k->image;?>" class="img-responsive" />
+                                    <?php if($k->qty<$k->minQty):?>
+                                    <h4>Out Of Stuck</h4>
+                                    <?php else:?>
                                     <div class="ch-info">
                                         <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
                                     </div>
+                                    <?php endif;?>
                                 </a>
                                 <p><?php echo $k->title;?></p>
                                 <ul class="star">
@@ -179,7 +201,13 @@
                                     <li><i class="fa fa-star-o"></i></li>
                                 </ul>
                                 <p><?php echo $k->lowestPrice.' - '.$k->heighestPrice;?></p>
-                                <p><a href="<?php echo BASE_URL.'product/details/'.base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
+                                <p>
+                                    <?php if($k->qty<$k->minQty):?>
+                                    <a href="javascript:void(0);">View Details &nbsp;<i class="fa fa-caret-right"></i></a>
+                                    <?php else:?>
+                                    <a href="<?php echo BASE_URL.'product/details/'.base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a>
+                                    <?php endif;?>
+                                </p>
                             </div>
                         </div>
                         <?php }?>
@@ -195,12 +223,20 @@
                     <div id="owl-demo2" class="owl-carousel">
                         <?php foreach($bestSelllingItem AS $k){ //pre($k);die;?>
                         <div class="item">
-                            <div class="prodct_box">
+                            <div class="prodct_box" <?php if($k->qty<$k->minQty){ echo 'style="margin:0 !important;margin-bottom:30px !important;"';}?>>
+                                <?php if($k->qty<$k->minQty):?>
+                                <a href="javascript:void(0);">
+                                <?php else :?>
                                 <a href="<?php echo BASE_URL.'product/details/'.base64_encode($k->productId);?>">
+                                <?php endif;?>    
                                     <img src="<?php echo HOME_LISTING.$k->image;?>" class="img-responsive" />
+                                    <?php if($k->qty<$k->minQty):?>
+                                    <h4>Out Of Stuck</h4>
+                                    <?php else:?>
                                     <div class="ch-info">
                                         <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
                                     </div>
+                                    <?php endif;?>
                                 </a>
                                 <p><?php echo $k->title;?></p>
                                 <ul class="star">
@@ -211,7 +247,13 @@
                                     <li><i class="fa fa-star-o"></i></li>
                                 </ul>
                                 <p><?php echo $k->lowestPrice.' - '.$k->heighestPrice;?></p>
-                                <p><a href="<?php echo BASE_URL.'product/details/'.base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
+                                <p>
+                                    <?php if($k->qty<$k->minQty):?>
+                                    <a href="javascript:void(0);">View Details &nbsp;<i class="fa fa-caret-right"></i></a>
+                                    <?php else:?>
+                                    <a href="<?php echo BASE_URL.'product/details/'.base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a>
+                                    <?php endif;?>
+                                </p>
                             </div>
                         </div>
                         <?php }?>
