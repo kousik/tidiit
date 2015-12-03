@@ -91,4 +91,34 @@ class Tidiit_debug extends MY_Controller{
             }
         }
     }
+    
+    function sent_single_order_complete_mail(){
+        $this->load->model('Order_model');
+        $orderId=2;
+        //echo '$order id '.$order->parrentOrderID;
+        /// mail to leader and seller and support
+        $orderDetails=  $this->Order_model->details($orderId);
+        //pre($orderDetails);die;
+        $adminMailData=  $this->load_default_resources();
+        $adminMailData['orderDetails']=$orderDetails;
+        $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
+        //pre($orderInfoDataArr);die;
+        $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
+        /// for seller
+        $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+        $adminMailData['buyerFullName']=$orderInfoDataArr['billing']->firstName.' '.$orderInfoDataArr['billing']->lastName;
+        //$this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Buying Club order no - TIDIIT-OD-".$orderId.' has placed from Tidiit Inc Ltd', $adminMailData,'seller_single_order_success',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
+
+        /// for support
+        $adminMailData['userFullName']='Tidiit Inc Support';
+        $adminMailData['sellerFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+        $adminMailData['buyerFullName']=$orderInfoDataArr['billing']->firstName.' '.$orderInfoDataArr['billing']->lastName;
+        $this->load->model('Siteconfig_model','siteconfig');
+        //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
+        $supportEmail='judhisahoo@gmail.com';
+        $this->_global_tidiit_mail($supportEmail, "Buying Club order no - TIDIIT-OD-".$orderId.' has placed from Tidiit Inc Ltd', $adminMailData,'support_single_order_success','Tidiit Inc Support');
+        //die;
+        
+        return TRUE;
+    }
 }

@@ -1277,6 +1277,7 @@ class Shopping extends MY_Controller{
                     $mail_template_view_data=$this->load_default_resources();
                     $mail_template_view_data['single_order_success']=$mail_template_data;
                     $this->_global_tidiit_mail($recv_email, "Confirmation mail for your Tidiit order no - TIDIIT-OD-".$orderId, $mail_template_view_data,'single_order_success');
+                    $this->_sent_single_order_complete_mail($orderId);
                 endif;
             endif;
         endforeach;
@@ -1412,6 +1413,32 @@ class Shopping extends MY_Controller{
                 $this->_global_tidiit_mail($supportEmail, "Buying Club order no - TIDIIT-OD-".$k->orderId.' has placed from Tidiit Inc Ltd', $adminMailData,'support_group_order_success','Tidiit Inc Support');
             }
         }
+        return TRUE;
+    }
+    
+    function _sent_single_order_complete_mail($orderId){
+        $orderDetails=  $this->Order_model->details($orderId);
+        //pre($orderDetails);die;
+        $adminMailData=  $this->load_default_resources();
+        $adminMailData['orderDetails']=$orderDetails;
+        $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
+        //pre($orderInfoDataArr);die;
+        $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
+        /// for seller
+        $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+        $adminMailData['buyerFullName']=$orderInfoDataArr['billing']->firstName.' '.$orderInfoDataArr['billing']->lastName;
+        $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "A new order no - TIDIIT-OD-".$orderId.' has placed from Tidiit Inc Ltd', $adminMailData,'seller_single_order_success',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
+
+        /// for support
+        $adminMailData['userFullName']='Tidiit Inc Support';
+        $adminMailData['sellerFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+        $adminMailData['buyerFullName']=$orderInfoDataArr['billing']->firstName.' '.$orderInfoDataArr['billing']->lastName;
+        $this->load->model('Siteconfig_model','siteconfig');
+        //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
+        $supportEmail='judhisahoo@gmail.com';
+        $this->_global_tidiit_mail($supportEmail, "Order no - TIDIIT-OD-".$orderId.' has placed by '.$orderInfoDataArr['billing']->firstName.' '.$orderInfoDataArr['billing']->lastName, $adminMailData,'support_single_order_success','Tidiit Inc Support');
+        //die;
+        
         return TRUE;
     }
 }
