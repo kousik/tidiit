@@ -43,8 +43,8 @@ class Product_model extends CI_Model {
                 $this->db->join('product_image pi','p.productId=pi.productId');
                 $this->db->join('product_seller ps','p.productId=ps.productId');
                 $this->db->join('product_category pc','pc.productId=p.productId');
-                $this->db->join('category c','pc.categoryId=c.categoryId');
-                $this->db->where('c.status','1');
+                $this->db->join('category c','pc.categoryId=c.categoryId', 'LEFT');
+                //$this->db->where('c.status','1');
                 $this->db->where('ps.userId',$userId);
                 
                 if($Status==""){

@@ -67,7 +67,7 @@ class Product extends MY_Controller{
                 return $CategoryArr;    
             }else{
                 $CategoryArr[$categoryId]=$Details[0]->categoryName;
-                return $this->get_category_arr($Details[0]->parrentCategoryId,$CategoryArr);
+                return $this->get_category_arr_for_breadcrumb($Details[0]->parrentCategoryId,$CategoryArr);
             }
         }
     }

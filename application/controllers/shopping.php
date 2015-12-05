@@ -1344,8 +1344,8 @@ class Shopping extends MY_Controller{
             redirect(BASE_URL.'404_override');
         endif;
         
-        if($order->groupId && !$this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$order->groupId)):
-            $this->session->set_flashdata('error', 'You can not view this order because you are not member of this buyers club.');
+        if($order->userId != $this->session->userdata('FE_SESSION_VAR')):
+            $this->session->set_flashdata('error', 'You can not view this order because you are not enough permission.');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
         
