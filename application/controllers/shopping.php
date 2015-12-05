@@ -1201,6 +1201,10 @@ class Shopping extends MY_Controller{
      * 
      */
     function ajax_process_single_payment(){
+        $paymentType=  $this->input->post('paymentOption');
+        if($paymentType==""){
+            redirect(BASE_URL.'shopping/my-cart');
+        }
         $user = $this->_get_current_user_details(); 
         $cart = $this->cart->contents();
         $order = array();
@@ -1226,7 +1230,8 @@ class Shopping extends MY_Controller{
         elseif($coupon->couponId && $totalsingleitem == 1):
             $coupon_price = $coupon->amount;            
         endif;
-        
+        $paymentGatewayAmount=0;
+        $allOrderArray=array();
         foreach ($cart as $item):  
             if($item['options']['orderType'] == 'SINGLE'):
                 $order['orderType'] = 'SINGLE';
@@ -1237,10 +1242,14 @@ class Shopping extends MY_Controller{
                 $order['productQty'] = $item['qty'];
                 $order['userId'] = $this->session->userdata('FE_SESSION_VAR');
                 $order['orderAmount'] = $item['subtotal'] - $coupon_price;
+                $paymentGatewayAmount+=$order['orderAmount'];
                 $order['subTotalAmount'] = $item['subtotal'];   
                 $order['discountAmount'] = $coupon_price;
-                $order['status'] = 2; 
-
+                if($paymentType=='sod')
+                    $order['status'] = 2; 
+                else
+                    $order['status'] = 0; 
+                
                 $orderinfo = array();
                 $mail_template_data = array();
                 $pro = $this->Product_model->details($order['productId']);
@@ -1256,12 +1265,9 @@ class Shopping extends MY_Controller{
                 $order['orderInfo'] = base64_encode(serialize($orderinfo));
                 $orderId = $this->Order_model->add($order);
                 $orderinfo['orderId']=$orderId;
+                $allOrderArray[]=$orderId;
                 
-                $this->Product_model->update_product_quantity_after_order_process($order['productId'],$order['productQty']);
-                
-                $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
                 $orderid['orderId'] = $orderId;
-                $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$orderId;
                 if($coupon->couponId):
                     $cdata = array();
                     $cdata['orderId'] = $orderId;
@@ -1269,27 +1275,44 @@ class Shopping extends MY_Controller{
                     $cdata['amount'] = $coupon_price;
                     $this->Order_model->tidiit_creat_order_coupon($cdata);
                 endif;
-                $this->_remove_cart($item['rowid']);
+                
+                if($paymentType=='sod'):
+                    $this->Product_model->update_product_quantity_after_order_process($order['productId'],$order['productQty']);
+                    $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
+                    $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$orderId;
+                    $this->_remove_cart($item['rowid']);
+                endif;
                 
                 //Send Email message
                 $recv_email = $user->email;
                 if($orderid):
-                    $mail_template_view_data=$this->load_default_resources();
-                    $mail_template_view_data['single_order_success']=$mail_template_data;
-                    $this->_global_tidiit_mail($recv_email, "Confirmation mail for your Tidiit order no - TIDIIT-OD-".$orderId, $mail_template_view_data,'single_order_success');
-                    $this->_sent_single_order_complete_mail($orderId);
+                    if($paymentType=='sod'):
+                        $settlementOnDeliveryId=$this->Order_model->add_sod(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+                        $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'single'));
+                        $mail_template_view_data=$this->load_default_resources();
+                        $mail_template_view_data['single_order_success']=$mail_template_data;
+                        $this->_global_tidiit_mail($recv_email, "Confirmation mail for your Tidiit order no - TIDIIT-OD-".$orderId, $mail_template_view_data,'single_order_success');
+                        $this->_sent_single_order_complete_mail($orderId);
+                    endif;
                 endif;
             endif;
         endforeach;
         
         if($orderid):
-            $result['url'] = BASE_URL.'shopping/success/';
-            echo json_encode( $result );
-            die;                    
+            if($paymentType=='sod'):
+                redirect(BASE_URL.'shopping/success/');
+                //$result['url'] = BASE_URL.'shopping/success/';
+                //echo json_encode( $result );
+                //die;                    
+            else:
+                $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single');
+                $this->session->userdata('PaymentData', base64_encode(serialize($paymentDataArr)));
+                //redirect()
+            endif;            
         else:
-            $result['error'] = "Some error happen, please try again later!";
-            echo json_encode( $result );
-            die;
+            //$result['error'] = "Some error happen, please try again later!";
+            //echo json_encode( $result );
+            //die;
         endif;
     }
     

@@ -138,7 +138,7 @@
                                 <?php endif;?>    
                                     <img src="<?php echo HOME_LISTING.$k->image;?>" class="img-responsive" />
                                     <?php if($k->qty<$k->minQty):?>
-                                    <h4>Out Of Stuck</h4>
+                                    <h4>Out Of Stock</h4>
                                     <?php else:?>
                                     <div class="ch-info">
                                         <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
@@ -185,7 +185,7 @@
                                 <?php endif;?>    
                                     <img src="<?php echo HOME_LISTING.$k->image;?>" class="img-responsive" />
                                     <?php if($k->qty<$k->minQty):?>
-                                    <h4>Out Of Stuck</h4>
+                                    <h4>Out Of Stock</h4>
                                     <?php else:?>
                                     <div class="ch-info">
                                         <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
@@ -231,7 +231,7 @@
                                 <?php endif;?>    
                                     <img src="<?php echo HOME_LISTING.$k->image;?>" class="img-responsive" />
                                     <?php if($k->qty<$k->minQty):?>
-                                    <h4>Out Of Stuck</h4>
+                                    <h4>Out Of Stock</h4>
                                     <?php else:?>
                                     <div class="ch-info">
                                         <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>

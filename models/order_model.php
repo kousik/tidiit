@@ -13,6 +13,10 @@ class Order_model extends CI_Model {
         
         private $_coupon = 'coupon';
         private $_order_coupon = 'order_coupon';
+        
+        private $_cod="cash_on_delivery";
+        private $_mpesa="mpesa_data";
+        private $_netbanking="netbanking_data";
 	
 	
 	public $result=NULL;
@@ -237,17 +241,6 @@ class Order_model extends CI_Model {
 		return TRUE;
 	}
 	
-	public function get_paypal_transaction_id($OrderID){
-		$sql="SELECT pd.PayPalTransactionID,cd.TransactionID FROM `order` AS o JOIN payment AS p ON(o.OrderID=p.OrderID) "
-                        . " LEFT JOIN  paypal_data AS pd ON(p.PaypalID=pd.PayPalDataID) "
-                        . " LEFT JOIN ccavenue_data AS cd ON(p.CcAvenueID=cd.CcAvenueDataID) WHERE o.OrderID='".$OrderID."'";
-		$dataArr=$this->db->query($sql)->result();
-		if($dataArr[0]->PayPalTransactionID==""){
-			return $dataArr[0]->TransactionID;
-		}else{
-			return $dataArr[0]->PayPalTransactionID;
-		}
-	}
 	
 	public function get_cart_details_by_order($OrderID){
 		return $this->db->select('*')->from($this->_cart)->where('OrderID',$OrderID)->get()->result();
@@ -276,16 +269,7 @@ class Order_model extends CI_Model {
 		return $this->db->insert_id();
 	}
 	
-	public function update_inventory($OrderID){
-		$sql="SELECT ProductID,Qty FROM `cart` WHERE OrderID='".$OrderID."'";
-		$dataArr=$this->db->query($sql)->result();
-		foreach($dataArr AS $k){
-			$this->db->where('ProductID',$k->ProductID);
-			$this->db->update($this->_product,array('Quantity'=>$k->Qty));
-		}
-		return TRUE;
-	}
-        
+	
         public function get_track_url($OrderID){
             return $this->db->select('*')->from($this->_shipped_history)->where('OrderID',$OrderID)->get()->result();
         }
@@ -395,5 +379,14 @@ class Order_model extends CI_Model {
         function get_all_chield_order($orderId){
             $rs=  $this->db->from($this->_table)->where('parrentOrderID',$orderId)->get()->result();
             return $rs;
+        }
+        
+        function add_sod($dataArr){
+            $this->db->insert($this->_table,$dataArr);
+            return $this->db->insert_id();
+        }
+        
+        function add_mpesa(){
+            
         }
 }
