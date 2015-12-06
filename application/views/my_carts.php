@@ -49,6 +49,9 @@ $CI->load->model('Product_model');
                                     ?>
                                     <h4>MY TRUCK</h4><br>
                                         <div class="">
+                                            <div class="clearfix"></div>
+                                            <div class="js-message" role="alert" style="display: none;"></div>
+                                            <div class="clearfix"></div>
                                             <?php if($is_single):?>
                                             <br>
                                             <h4>Single Order</h4><br>
@@ -197,7 +200,11 @@ $CI->load->model('Product_model');
 </article> 
 <script type="text/javascript">
     jQuery(document).ready(function(){
-        
+        var message='<?php  echo $this->session->flashdata('message');?>';
+        if(message!=''){
+            $('div.js-message').html('<div class="alert alert-danger">'+message+'</div>');
+            $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
+        }
         jQuery("body").delegate('.js-group-cart-remove', "click", function(e){
             e.preventDefault();
                          
