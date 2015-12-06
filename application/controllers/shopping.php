@@ -499,13 +499,13 @@ class Shopping extends MY_Controller{
                 $this->session->userdata('PaymentData', base64_encode(serialize($paymentDataArr)));
             endif;
             
-            
             if($order_update['status']==2):
-                if($paymentOption=='sod')
-                    $this->_sent_order_complete_mail($order);
+                $this->_sent_order_complete_mail($order);
             endif;
             
             if($paymentOption=='sod'):
+                $settlementOnDeliveryId=$this->Order_model->add_sod(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+                $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'group'));
                 $this->_remove_cart($cartId);
                 redirect(BASE_URL.'shopping/success/');
             endif;
