@@ -287,7 +287,7 @@ endif;?>
                                         <form name="single_order_payment_option" id="single_order_payment_option" method="post" action="<?php echo BASE_URL.'shopping/ajax_process_single_payment/';?>">
                                             <div class="input-group form-group order-labl">
                                                 <span class="input-group-addon">
-                                                  <input type="radio" name="paymentOption" value="mpesa">
+                                                    <input type="radio" name="paymentOption" value="mpesa" disabled>
                                                 </span>
                                                 <label for="grp">mPesa</label>
                                               </div><!-- /input-group -->
