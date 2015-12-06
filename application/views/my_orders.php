@@ -53,10 +53,10 @@ $status = array('0'=>'Delete','1'=>'Order Running', '2'=>'Order Approved', '4'=>
                                                     <td><b><i class="fa fa-rupee"></i> <?=$order->orderAmount;?></b></td>
                                                     <td><i class="fa fa-clock-o"></i><?=date('F j, Y, g:i a' , strtotime($order->orderDate));?></td>
                                                     <td><span class="label label-info"><?=$order->orderType;?> - <?=$status[$order->status];?></span></td>
-                                                    <td align="center">
-                                                <a class="btn btn-success btn-xs js-view-order" href="<?php echo BASE_URL.'order/details/'.base64_encode($order->orderId*226201);?>"><i class="fa fa-eye"></i> Order</a>
-                                                    <?php if($porder):?><a class="btn btn-warning btn-xs" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-eye"></i> Parent Order</a><?php endif;?>
+                                                    <td align="right">
+                                                        <?php if($porder):?><a class="btn btn-warning btn-xs" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-eye"></i> Parent Order</a><?php endif;?>
                                                     <?php if($order->orderType == 'SINGLE' && $order->status < 4):?><a class="btn btn-danger btn-xs" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-times"></i> Cancel Order</a><?php endif;?>
+                                                <a class="btn btn-success btn-xs js-view-order" href="<?php echo BASE_URL.'order/details/'.base64_encode($order->orderId*226201);?>"><i class="fa fa-eye"></i> Order</a>
                                                     </td>
                                                 </tr>
                                             

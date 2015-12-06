@@ -312,7 +312,10 @@ class User_model extends CI_Model {
      */
     public function get_group_by_id($groupId){
         $this->db->limit(1);
-        $groupData = $this->db->select('*')->from($this->_group)->where('groupId',$groupId)->get()->result();            
+        $groupData = $this->db->select('*')->from($this->_group)->where('groupId',$groupId)->get()->result();     
+        if(!$groupData):
+            return false;
+        endif;
         $group = $groupData[0];
         $users = explode(",", $group->groupUsers);
         $udata = array();
