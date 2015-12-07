@@ -46,14 +46,10 @@ class Category extends MY_Controller{
         if(!isset($_GET['cpid']) || !$_GET['cpid']):
             $this->session->set_flashdata('error', 'Invalid location. Please click proper category link!');
             redirect(BASE_URL.'products/ord-message');
-        else:  
-            //echo $_GET['cpid'];
+        else:
             $categoryId = base64_decode($_GET['cpid'])/226201;
             $currentCat = $this->Category_model->get_details_by_id($categoryId);
             $currCat = $currentCat[0];
-            
-            //echo my_seo_freindly_url($currentCat->categoryName);
-            //echo $name;die;
             if(my_seo_freindly_url($currCat->categoryName) != $name):
                 $this->session->set_flashdata('error', 'Invalid location. Please click proper category link!');
                 redirect(BASE_URL.'products/ord-message');
@@ -62,7 +58,9 @@ class Category extends MY_Controller{
         $data['currCat'] = $currCat;
         $is_last = $this->Category_model->is_category_last($categoryId);
         $data['widget_cats'] = $this->Category_model->get_parent_categories($categoryId);
-        $data['body_cats'] = $this->Category_model->display_children_categories($categoryId);
+        if(!$is_last):
+            $data['body_cats'] = $this->Category_model->display_children_categories($categoryId);
+        endif;
         $data['is_last'] = $is_last;
         $data['s_widget_cats'] = $data['widget_cats'];
         

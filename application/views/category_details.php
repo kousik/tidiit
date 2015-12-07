@@ -72,7 +72,12 @@
         <!---- Product Listing right  --->
         
         <div class="col-md-9 col-sm-12 padng_left_none">
-          <div id="slider1_container" style="position: relative; top: 0px; left: 0px; width: 810px; height: 300px; background: #000; overflow: hidden; "> 
+            <?php if($is_last):?>
+            <div class="img_cont">
+                <img src="<?php echo SiteImagesURL;?>long01.jpg" class="img-responsive" />
+            </div>
+            <?php else:?>
+            <div id="slider1_container" style="position: relative; top: 0px; left: 0px; width: 810px; height: 300px; background: #000; overflow: hidden; "> 
             
             <!-- Loading Screen -->
             <div u="loading" style="position: absolute; top: 0px; left: 0px;">
@@ -130,6 +135,8 @@
             <!--#endregion ThumbnailNavigator Skin End --> 
             
           </div>
+            <?php endif;?>
+            <div class="clearfix"></div>
           <div class="blank_padding">&nbsp;</div>
           <?php if(!$is_last):?>
           <div class="topseller_zne">
