@@ -7,6 +7,9 @@ class Category extends MY_Controller{
     }
     
     function details($name,$idStr){
+        //echo '<pre>';
+        //$cats = $this->Category_model->get_site_categories();
+        //print_r($cats);die;
         $idStrArr=  explode('~', $idStr);
         if(count($idStrArr)>0){
             $categoryDetails=$this->Category_model->get_details_by_id(base64_decode($idStrArr[0]));
