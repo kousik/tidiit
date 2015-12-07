@@ -10,21 +10,19 @@
 </header>
 <script type="text/javascript">
     //jQuery(document).ready(function(){});
-</script
+</script>
 <article>
   <div class="container">
     <div class="categrs_bannr">
       <div class="row">
         <div class="col-md-3 col-sm-12 padng_right_none">
-            <?php echo $main_menu;?>
-            <!--<div class="shop_by">
-              <h2>Shop By</h2>
-              <h5>Price</h5>
-              <form method="get">
-                <input id="range_03" class="irs-hidden-input" readonly style="display:none;">
-                <input type="submit" class="button-search" value="Sreach" />
-              </form>
-            </div>-->
+            <ul class="categrs">
+            <?php foreach($s_widget_cats as $key => $cat):?>
+            <li>
+                <a href="<?php echo BASE_URL.'products/'.my_seo_freindly_url($cat->categoryName).'/?cpid='.base64_encode($cat->categoryId*226201);?>" <?php if($cat->categoryId == $currCat->categoryId):?> class="active"<?php endif;?>><?php echo $cat->categoryName;?> &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
+            </li>
+            <?php endforeach; ?>
+            </ul>
 
             <div class="block block-layered-nav block-layered-nav--no-filters">
               <!--<div class="block-title"> <strong><span>Shop By</span></strong> </div>-->
@@ -37,52 +35,24 @@
                          <span style="display: inline-block; width: 100%; padding: 0 5px;"><input id="Slider1" type="slider" name="price" value="30000.5;60000" /></span>
                       </div> 
                   </div> 
-
+                  <?php if(isset($products['brands']) && $products['brands']):?>
                   <div class="brand_sec">
                       <div class="sub_hdng">
                           <h3>Brand</h3>
                       </div>
                       <ul id="brand" class="rand_list">
+                          <?php
+                              foreach($products['brands'] As $bkey => $brnd):?>
                           <li>
-                                  <input type="checkbox" checked="checked" value="" />
-                              <span>Roadster</span>
+                                  <input type="checkbox" name="brand[]" value="<?=$brnd?>" />
+                              <span><?=$brnd?></span>
                           </li>
-                          <li>
-                                  <input type="checkbox" checked="checked" value="" />
-                              <span>Roadster</span>
-                          </li>
-                          <li>
-                                  <input type="checkbox" checked="checked" value="" />
-                              <span>Roadster</span>
-                          </li>
-                          <li>
-                                  <input type="checkbox" checked="checked" value="" />
-                              <span>Roadster</span>
-                          </li>
-                          <li>
-                                  <input type="checkbox" checked="checked" value="" />
-                              <span>Roadster</span>
-                          </li>
-                          <li>
-                                  <input type="checkbox" checked="checked" value="" />
-                              <span>Roadster</span>
-                          </li>
+                          <?php endforeach;?>
                       </ul>
                   </div>
-
-                 <dl id="narrow-by-list">
-                  <!--<dt class="odd">Color</dt>
-                  <dd class="odd">
-                    <ol class="configurable-swatch-list">
-                      <li style="line-height: 19px;"> <a class="swatch-link has-image" href=""> <span style="height:17px; width:17px;" class="swatch-label"> <img width="15" height="15" title="White" alt="White" src="http://ultimo.infortis-themes.com/demo/media/catalog/swatches/1/15x15/media/white.png"> </span> <span class="count">(5)</span> </a> </li>
-                      <li style="line-height: 19px;"> <a class="swatch-link has-image" href=""> <span style="height:17px; width:17px;" class="swatch-label"> <img width="15" height="15" title="Gray" alt="Gray" src="http://ultimo.infortis-themes.com/demo/media/catalog/swatches/1/15x15/media/gray.png"> </span> <span class="count">(3)</span> </a> </li>
-                      <li style="line-height: 19px;"> <a class="swatch-link has-image" href=""> <span style="height:17px; width:17px;" class="swatch-label"> <img width="15" height="15" title="Dark Gray" alt="Dark Gray" src="http://ultimo.infortis-themes.com/demo/media/catalog/swatches/1/15x15/media/dark-gray.png"> </span> <span class="count">(3)</span> </a> </li>
-                      <li style="line-height: 19px;"> <a class="swatch-link has-image" href=""> <span style="height:17px; width:17px;" class="swatch-label"> <img width="15" height="15" title="Black" alt="Black" src="http://ultimo.infortis-themes.com/demo/media/catalog/swatches/1/15x15/media/black.png"> </span> <span class="count">(5)</span> </a> </li>
-                      <li style="line-height: 19px;"> <a class="swatch-link has-image" href=""> <span style="height:17px; width:17px;" class="swatch-label"> <img width="15" height="15" title="Dark Blue" alt="Dark Blue" src="http://ultimo.infortis-themes.com/demo/media/catalog/swatches/1/15x15/media/dark-blue.png"> </span> <span class="count">(1)</span> </a> </li>
-                      <li style="line-height: 19px;"> <a class="swatch-link has-image" href=""> <span style="height:17px; width:17px;" class="swatch-label"> <img width="15" height="15" title="Red" alt="Red" src="http://ultimo.infortis-themes.com/demo/media/catalog/swatches/1/15x15/media/red.png"> </span> <span class="count">(1)</span> </a> </li>
-                      <li style="line-height: 19px;"> <a class="swatch-link has-image" href=""> <span style="height:17px; width:17px;" class="swatch-label"> <img width="15" height="15" title="Blue" alt="Blue" src="http://ultimo.infortis-themes.com/demo/media/catalog/swatches/1/15x15/media/blue.png"> </span> <span class="count">(2)</span> </a> </li>
-                    </ol>
-                  </dd>-->
+                    <?php endif;?>
+                <?php /* ?> <dl id="narrow-by-list">
+                     
                   <dt class="last even">Size</dt>
                   <dd class="last even">
                     <ol class="configurable-swatch-list">
@@ -93,7 +63,8 @@
                     </ol>
                   </dd>
                 </dl>
-                <script type="text/javascript">decorateDataList('narrow-by-list')</script> 
+                 
+                 <?php */ ?>
               </div>
             </div>
         </div>
@@ -160,187 +131,29 @@
             
           </div>
           <div class="blank_padding">&nbsp;</div>
+          <?php if(!$is_last):?>
           <div class="topseller_zne">
+              <h2>Shop by category</h2>
             <div id="demo">
               <div id="owl-demo4" class="owl-carousel">
+                <?php foreach($body_cats as $bdkey => $bcat)://print_r($bcat);?>
                 <div class="item">
-                  <div class="prodct_box"> <a href="#"> 
+                  <div class="prodct_box"> <a href="<?php echo BASE_URL.'products/'.my_seo_freindly_url($bcat->categoryName).'/?cpid='.base64_encode($bcat->categoryId*226201);?>"> 
                   	<img src="<?php echo SiteImagesURL;?>prdct_img.png" class="img-responsive" />
-                    <h4>Sale</h4>
                     </a>
-                    <p>Aidalane Gold Plated studded aaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
-                    <ul class="star">
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star-o"></i></li>
-                    </ul>
-                    <p>20000 - 60000</p>
-                  </div>                </div>
-                <div class="item">
-                  <div class="prodct_box"> <a href="#">
-                   <img src="<?php echo SiteImagesURL;?>prdct_img1.png" class="img-responsive" />
-                    <h4>New Arrivals</h4>
-                   </a>
-                    <p>Aidalane Gold Plated studded</p>
-                    <ul class="star">
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star-o"></i></li>
-                    </ul>
-                    <p>20000 - 60000</p>
-                  </div>
+                      <p><a href="<?php echo BASE_URL.'products/'.my_seo_freindly_url($bcat->categoryName).'/?cpid='.base64_encode($bcat->categoryId*226201);?>"><?=$bcat->categoryName?></a></p>
+                  </div>                
                 </div>
-                <div class="item">
-                  <div class="prodct_box"> <a href="#"> <img src="<?php echo SiteImagesURL;?>prdct_img2.png" class="img-responsive" /> </a>
-                    <p>Aidalane Gold Plated studded</p>
-                    <ul class="star">
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star-o"></i></li>
-                    </ul>
-                    <p>20000 - 60000</p>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="prodct_box"> <a href="#"> <img src="<?php echo SiteImagesURL;?>prdct_img.png" class="img-responsive" />
-                  	<h4>Best Selling</h4>
-                   </a>
-                    <p>Aidalane Gold Plated studded</p>
-                    <ul class="star">
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star-o"></i></li>
-                    </ul>
-                    <p>20000 - 60000</p>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="prodct_box"> <a href="#"> <img src="<?php echo SiteImagesURL;?>prdct_img1.png" class="img-responsive" /> </a>
-                    <p>Aidalane Gold Plated studded</p>
-                    <ul class="star">
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star-o"></i></li>
-                    </ul>
-                    <p>20000 - 60000</p>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="prodct_box"> <a href="#"> <img src="<?php echo SiteImagesURL;?>prdct_img2.png" class="img-responsive" />
-                  	<h4>Hot Deal</h4>
-                   </a>
-                    <p>Aidalane Gold Plated studded</p>
-                    <ul class="star">
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star-o"></i></li>
-                    </ul>
-                    <p>20000 - 60000</p>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="prodct_box"> <a href="#"> <img src="<?php echo SiteImagesURL;?>prdct_img.png" class="img-responsive" /> </a>
-                    <p>Aidalane Gold Plated studded</p>
-                    <ul class="star">
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star-o"></i></li>
-                    </ul>
-                    <p>20000 - 60000</p>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="prodct_box"> <a href="#"> <img src="<?php echo SiteImagesURL;?>prdct_img1.png" class="img-responsive" /> </a>
-                    <p>Aidalane Gold Plated studded</p>
-                    <ul class="star">
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star-o"></i></li>
-                    </ul>
-                    <p>20000 - 60000</p>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="prodct_box"> <a href="#"> <img src="<?php echo SiteImagesURL;?>prdct_img2.png" class="img-responsive" /> </a>
-                    <p>Aidalane Gold Plated studded</p>
-                    <ul class="star">
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star-o"></i></li>
-                    </ul>
-                    <p>20000 - 60000</p>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="prodct_box"> <a href="#"> <img src="<?php echo SiteImagesURL;?>prdct_img.png" class="img-responsive" /> </a>
-                    <p>Aidalane Gold Plated studded</p>
-                    <ul class="star">
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star-o"></i></li>
-                    </ul>
-                    <p>20000 - 60000</p>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="prodct_box"> <a href="#"> <img src="<?php echo SiteImagesURL;?>prdct_img1.png" class="img-responsive" /> </a>
-                    <p>Aidalane Gold Plated studded</p>
-                    <ul class="star">
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star-o"></i></li>
-                    </ul>
-                    <p>20000 - 60000</p>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="prodct_box"> <a href="#"> <img src="<?php echo SiteImagesURL;?>prdct_img2.png" class="img-responsive" /> </a>
-                    <p>Aidalane Gold Plated studded</p>
-                    <ul class="star">
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star"></i></li>
-                      <li><i class="fa fa-star-o"></i></li>
-                    </ul>
-                    <p>20000 - 60000</p>
-                  </div>
-                </div>
+               <?php endforeach;?>
               </div>
-              <!--<div class="customNavigation">
-                                        <a class="btn topseller_prev"><i class="fa fa-angle-left"></i></a>
-                                        <a class="btn topseller_next"><i class="fa fa-angle-right"></i></a>
-                                    </div>--> 
             </div>
           </div>
-          
+          <?php endif;?>
           <!------------  SORT SECTION ---->
           <div class="padng_fftn">
+              
               <div class="toolbar">
-                <div class="sorter">
-                  <p class="amount"> Items 1 to 8 of 11 total </p>
+                <div class="sorter">                  
                   <div class="sort-by">
                     <label>Sort By</label>
                     <select onchange="<!--setLocation(this.value)-->">
@@ -349,34 +162,13 @@
                       <option value="#"> Price </option>
                     </select>
                     <a title="Set Descending Direction" href="#" class="category-asc ic ic-arrow-down"></a> </div>
-                  <div class="limiter">
-                    <label>Show</label>
-                    <select onchange="<!--setLocation(this.value)-->">
-                      <option value="#"> 4 </option>
-                      <option selected="selected" value="#"> 8 </option>
-                      <option value="#"> 12 </option>
-                      <option value="#"> 15 </option>
-                      <option value="#"> 30 </option>
-                      <option value="#"> 80 </option>
-                      <option value="#"> All </option>
-                    </select>
-                    <span class="per-page"> per page</span> </div>
                 </div>
-                <!-- end: sorter -->
                 
-                <div class="pager">
-                  <div class="pages"> <strong>Page:</strong>
-                    <ol>
-                      <li class="current">1</li>
-                      <li><a href="#">2</a></li>
-                    </ol>
-                  </div>
-                </div>
               </div>
               <!------  Product Section  --->
               
               <div class="bst_sllng">
-                <h2>Category</h2>
+                <h2><?=$currCat->categoryName?></h2>
                 <div class="row">
                     <div class="item col-md-3 col-sm-3 col-xs-6">
                         <div class="prodct_box prodct_box1"> 
@@ -734,7 +526,7 @@
 jQuery(document).ready(function () {
     var owl = $("#owl-demo4");		
     owl.owlCarousel({		
-          items : 4, //10 items above 1000px browser width
+          items : 3, //10 items above 1000px browser width
           itemsDesktop : [1024,4], //5 items between 1000px and 901px
           itemsDesktopSmall : [900,3], // 3 items betweem 900px and 601px
           itemsTablet: [600,2], //2 items between 600 and 0;

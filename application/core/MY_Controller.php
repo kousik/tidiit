@@ -510,7 +510,7 @@ class MY_Controller extends CI_Controller {
                 <?php 
                 foreach($cat->parent As $pkey =>$pcat): //pre($v);die;?>
                 <li>
-                    <a href="<?php echo BASE_URL.'category/details/'.my_seo_freindly_url($pcat->categoryName).'/'.  base64_encode($pcat->categoryId).'~'.md5('tidiit');?>"><?php echo $pcat->categoryName;?> &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
+                    <a href="<?php echo BASE_URL.'products/'.my_seo_freindly_url($pcat->categoryName).'/?cpid='.base64_encode($pcat->categoryId*226201);?>"><?php echo $pcat->categoryName;?> &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
                     <?php if(isset($pcat->parent) && $pcat->parent): 
                         $this->multi_cat_menu_list_design($pcat->parent);
                     endif;?>
@@ -532,7 +532,7 @@ class MY_Controller extends CI_Controller {
         <ul class="sub_sub_ctgrs">
             <?php foreach($pcat AS $pkey => $cat):?>
             <li>
-                <a href="<?php echo BASE_URL.'category/details/'.my_seo_freindly_url($cat->categoryName).'/'.  base64_encode($cat->categoryId).'~'.md5('tidiit');?>"><?php echo $cat->categoryName;?>&nbsp;<i class="fa fa-angle-down mobl_vrsn"></i></a>
+                <a href="<?php echo BASE_URL.'products/'.my_seo_freindly_url($cat->categoryName).'/?cpid='.base64_encode($cat->categoryId*226201);?>"><?php echo $cat->categoryName;?>&nbsp;<i class="fa fa-angle-down mobl_vrsn"></i></a>
                 <?php if(isset($cat->parent) && $cat->parent):
                     $this->multi_cat_menu_list_design($cat->parent);
                 endif;?>

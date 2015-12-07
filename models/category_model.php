@@ -197,10 +197,12 @@ WHERE c.categoryId =".$categoryId;
     public function display_children_categories($parent, $level = 0) { 
         $sql = "SELECT * FROM `{$this->_table}` WHERE parrentCategoryId = ".$parent." AND status = 1";
         $rs = $this->db->query($sql)->result();
+        $newlevel = $level+1;
         $category = array();
-        if($rs):            
+        if($rs): 
+            //if($newlevel != 0 && $newlevel < =):
             foreach($rs as $key => $cat):                
-                if($pcats = $this->display_children_categories($cat->categoryId, $level+1)):
+                if($pcats = $this->display_children_categories($cat->categoryId, $newlevel)):
                     $cat->parent = $pcats;
                 endif;
                 $category[] = $cat;
@@ -237,16 +239,16 @@ WHERE c.categoryId =".$categoryId;
     public function get_children_categories_id($parent, $level = 0) { 
         $sql = "SELECT `categoryId` FROM `{$this->_table}` WHERE parrentCategoryId = ".$parent." AND status = 1";
         $rs = $this->db->query($sql)->result();
-        $category = array();
+        $categoryid = array();
         if($rs):            
             foreach($rs as $key => $cat):   
                 $categoryid[] = $cat->categoryId;
-                if($pcats = $this->get_children_categories_id($cat->categoryId, $level+1)):
-                    $categoryid[] = $cat->categoryId;
+                if($pcats = $this->get_children_categories_id($cat->categoryId, $level+1)): 
+                    $categoryid = array_merge($categoryid, $pcats);
                 endif;                
             endforeach;
         endif;
-        return $category;
+        return $categoryid;
     }
     
     /**
@@ -260,7 +262,8 @@ WHERE c.categoryId =".$categoryId;
     public function get_children_categories_products($categoryId, $offset = null, $limit = null, $cond) { 
         
         $pcatsId = $this->get_children_categories_id($categoryId);
-        $pcatsId = implode(",", $pcatsId);        
+        $pcatsId[] = $categoryId;
+        $pcatsId = implode("','", $pcatsId);        
         $group_by = ' GROUP BY p.productId';        
         $order_by = ' ORDER BY p.productId';
         if(isset($cond['order_by']) && $cond['order_by']):
@@ -275,7 +278,7 @@ WHERE c.categoryId =".$categoryId;
         endif;
         
         $plimit = '';
-        if($offset && $limit):
+        if($offset >= 0 && $limit):
             $plimit = ' LIMIT '.$offset.', '.$limit;
         else:
             $plimit = ' LIMIT 0, 12';
@@ -284,7 +287,7 @@ WHERE c.categoryId =".$categoryId;
         $where_str = 'p.status = 1 ';
         
         if($pcatsId):
-            $where_str = $where_str."c.categoryId IN ('".$pcatsId."')";
+            $where_str = $where_str." AND c.categoryId IN ('".$pcatsId."')";
         endif;
         
         $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `c`.`categoryName`, 
@@ -296,15 +299,15 @@ WHERE c.categoryId =".$categoryId;
             LEFT JOIN category AS c ON c.categoryId = pc.categoryId
             LEFT JOIN product_image AS pimage ON pimage.productId = p.productId
             WHERE {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
-        $rs = $this->db->query($sql)->result();
+        $rs = $this->db->query($sql)->result();//echo $this->db->last_query();print_r($rs);
         $products = array();
         $brands = array();
         if($rs):            
             foreach($rs as $key => $product):  
-                $product->tags = $this->get_product_tags($product->produtcId);
-                $product->seller = $this->get_product_seller($product->produtcId);
-                $product->product_price = $this->get_products_price($product->produtcId);
-                $product->curent_category = $this->get_details_by_id($categoryId);
+                //$product->tags = $this->get_product_tags($product->productId);
+                //$product->seller = $this->get_product_seller($product->productId);
+                //$product->product_price = $this->get_products_price($product->productId);
+                //$product->curent_category = $this->get_details_by_id($categoryId);
                 $products[] =  $product;  
                 $brands[$product->btitle] = $product->btitle;
             endforeach;
@@ -356,7 +359,7 @@ WHERE c.categoryId =".$categoryId;
      */
     function get_product_seller($produtcId){
         $sql = "SELECT `u`.*
-            FROM `{$this->_user}` AS t
+            FROM `{$this->_user}` AS u
             LEFT JOIN {$this->_product_seller} AS ps ON ps.userId = u.userId
             WHERE `ps`.`productId` = {$produtcId}";
         $rs = $this->db->query($sql)->result();

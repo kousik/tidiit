@@ -103,5 +103,8 @@ $route['default_controller'] = "index";
 $route['404_override'] = 'index/under_construnction';
 
 
+//Category - Product Listing
+$route['products/(:any)']="category/display_category_products/$1";
+$route['products/ord-message']="category/display_default_message";
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
