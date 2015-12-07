@@ -280,8 +280,26 @@ endif;?>
                                     <div class="js-payment-message" role="alert" style="display: none;"></div>                                        
                                     <div class="clearfix"></div>
 
-                                    <h3 class="log-title">Make Payment</h3>
-                                    <div class="small-font-text form-group">We have a host of payment options to select from</div>
+                                    <h3 class="log-title">Select Payment Option</h3>
+                                    <div class="small-font-text form-group">
+                                        <form name="group_order_payment_option" id="group_order_payment_option" method="post" action="<?php echo BASE_URL.'shopping/ajax_process_group_payment/';?>">
+                                            <div class="input-group form-group order-labl">
+                                                <span class="input-group-addon">
+                                                    <input type="radio" name="paymentOption" value="mpesa" disabled>
+                                                </span>
+                                                <label for="grp">mPesa</label>
+                                            </div><!-- /input-group -->
+
+                                            <div class="input-group order-labl form-group">
+                                                <span class="input-group-addon">
+                                                  <input type="radio" name="paymentOption" value="sod" checked>
+                                                </span>
+                                                <label for="sin">Settlement on Delivery</label>
+                                            </div><!-- /input-group -->
+                                              <input type="hidden" name="orderId" value="<?=$order->orderId?>"/>
+                                              <input type="hidden" name="cartId" value="<?=$rowid?>"/>
+                                        </form>
+                                    </div>
 
 
                                     <div class="cart-container-table">
@@ -448,7 +466,8 @@ endif;?>
         
         jQuery("body").delegate('a.js-order-payment', "click", function(e){
             myJsMain.commonFunction.showPleaseWait();
-            e.preventDefault();
+            $('#group_order_payment_option')[0].submit();
+            /*e.preventDefault();
             
             var orderId = jQuery(this).attr('data-orderid');
             var cartId = jQuery(this).attr('data-cartid');
@@ -465,7 +484,7 @@ endif;?>
                     $('div.js-payment-message').html(data.error);
                     $('div.js-payment-message').fadeIn(300,function() { setTimeout( '$("div.js-payment-message").fadeOut(300)', 15000 ); });
                 }
-            }, 'json' );
+            }, 'json' );*/
         });
     });
 </script>
