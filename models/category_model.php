@@ -304,10 +304,10 @@ WHERE c.categoryId =".$categoryId;
         $brands = array();
         if($rs):            
             foreach($rs as $key => $product):  
-                //$product->tags = $this->get_product_tags($product->productId);
-                //$product->seller = $this->get_product_seller($product->productId);
-                //$product->product_price = $this->get_products_price($product->productId);
-                //$product->curent_category = $this->get_details_by_id($categoryId);
+                $product->tags = $this->get_product_tags($product->productId);
+                $product->seller = $this->get_product_seller($product->productId);
+                $product->product_price = $this->get_products_price($product->productId);
+                $product->curent_category = $this->get_details_by_id($categoryId);
                 $products[] =  $product;  
                 $brands[$product->btitle] = $product->btitle;
             endforeach;

@@ -16,7 +16,10 @@
     <div class="categrs_bannr">
       <div class="row">
         <div class="col-md-3 col-sm-12 padng_right_none">
-            <ul class="categrs">
+         <div class="cate_cont" style="display:none;">
+            <?php echo $main_menu;?>
+         </div>
+            <ul class="categrs left_nav">
             <?php foreach($s_widget_cats as $key => $cat):?>
             <li>
                 <a href="<?php echo BASE_URL.'products/'.my_seo_freindly_url($cat->categoryName).'/?cpid='.base64_encode($cat->categoryId*226201);?>" <?php if($cat->categoryId == $currCat->categoryId):?> class="active"<?php endif;?>><?php echo $cat->categoryName;?> &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
@@ -32,7 +35,7 @@
                           <h3>Price</h3>
                       </div>
                       <div class="layout-slider" style="width: 100%">
-                         <span style="display: inline-block; width: 100%; padding: 0 5px;"><input id="Slider1" type="slider" name="price" value="30000.5;60000" /></span>
+                         <span style="display: inline-block; width: 100%; padding: 0 5px;"><input id="Slider1" type="slider" name="price" value="30000;60000" /></span>
                       </div> 
                   </div> 
                   <?php if(isset($products['brands']) && $products['brands']):?>
@@ -42,7 +45,7 @@
                       </div>
                       <ul id="brand" class="rand_list">
                           <?php
-                              foreach($products['brands'] As $bkey => $brnd):?>
+                              foreach($products['brands'] as $bkey => $brnd):?>
                           <li>
                                   <input type="checkbox" name="brand[]" value="<?=$brnd?>" />
                               <span><?=$brnd?></span>
@@ -531,6 +534,10 @@
 <script src="<?php echo SiteJSURL;?>ion.rangeSlider.js"></script> 
 <script type="text/javascript">
 jQuery(document).ready(function () {
+    jQuery(".category_inner").click(function(){
+            jQuery('.cate_cont').toggle();
+            jQuery('.left_nav').toggle();
+        });
     var owl = $("#owl-demo4");		
     owl.owlCarousel({		
           items : 3, //10 items above 1000px browser width
