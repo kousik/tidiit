@@ -512,7 +512,7 @@ class Shopping extends MY_Controller{
                 $this->_mpesa_process($orderId);
             endif;
         else:
-            $this->session->set_fashdata("message","Some error happen, please try again later!");
+            $this->session->set_flashdata("message","Some error happen, please try again later!");
             redirect(BASE_URL.'shiping/my-cart');
         endif;
     }
@@ -1332,7 +1332,7 @@ class Shopping extends MY_Controller{
                 $this->_mpesa_process($allOrderArray);
             endif;            
         else:
-            $this->session->set_fashdata("message","Some error happen, please try again later!");
+            $this->session->set_flashdata("message","Some error happen, please try again later!");
             redirect(BASE_URL.'shiping/my-cart');
         endif;
     }
@@ -1634,7 +1634,7 @@ class Shopping extends MY_Controller{
                 $this->_remove_cart($PaymentDataArr['cartId']);
                 redirect(BASE_URL.'shopping/success/');
             else:
-                $this->session->set_fashdata("message","Some error happen, please try again later!");
+                $this->session->set_flashdata("message","Some error happen, please try again later!");
                 redirect(BASE_URL.'shiping/my-cart');
             endif;
         endforeach;
