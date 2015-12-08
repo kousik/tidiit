@@ -14,8 +14,8 @@ class Order_model extends CI_Model {
         private $_coupon = 'coupon';
         private $_order_coupon = 'order_coupon';
         
-        private $_cod="cash_on_delivery";
-        private $_mpesa="mpesa_data";
+        private $_sod="cash_on_delivery";
+        private $_mpesa="mpesa";
         private $_netbanking="netbanking_data";
 	
 	
@@ -382,11 +382,12 @@ class Order_model extends CI_Model {
         }
         
         function add_sod($dataArr){
-            $this->db->insert($this->_table,$dataArr);
+            $this->db->insert($this->_sod,$dataArr);
             return $this->db->insert_id();
         }
         
-        function add_mpesa(){
-            
+        function add_mpesa($dataArr){
+            $this->db->insert($this->_mpesa,$dataArr);
+            return $this->db->insert_id();
         }
 }
