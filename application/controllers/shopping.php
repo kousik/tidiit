@@ -496,7 +496,7 @@ class Shopping extends MY_Controller{
                 endif;
             else:
                 $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'group','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$pevorder,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>$cartId);
-                $this->session->set_userdata('PaymentData', base64_encode(serialize($paymentDataArr)));
+                $this->session->set_userdata('PaymentData',$paymentDataArr);
             endif;
             
             if($order_update['status']==2):
@@ -1222,7 +1222,9 @@ class Shopping extends MY_Controller{
      */
     function ajax_process_single_payment(){
         $paymentType=$this->input->post('paymentOption');
+        $paymentType='mpesa';
         if($paymentType==""){
+            pre($_POST);
             pre($paymentType);die; 
             $this->session->set_flashdata("message","Invalid payment option selected!");
             redirect(BASE_URL.'shopping/my-cart');
@@ -1330,7 +1332,7 @@ class Shopping extends MY_Controller{
                 redirect(BASE_URL.'shopping/success/');
             else:
                 $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$allOrderInfoArray);
-                $this->session->set_userdata('PaymentData', base64_encode(serialize($paymentDataArr)));
+                $this->session->set_userdata('PaymentData', $paymentDataArr);
                 //redirect(BASE_URL.'shipping/mpesa_process/');
                 $this->_mpesa_process($orderId);
             endif;            
@@ -1504,7 +1506,7 @@ class Shopping extends MY_Controller{
         $returnAction=  $this->input->post('returnAction');
         pre($this->session->all_userdata());
         if($returnAction=='success'):
-            $PaymentDataArr=  unserialize(base64_decode($this->session->userdata('PaymentData')));
+            $PaymentDataArr=  $this->session->userdata('PaymentData');
             pre($PaymentDataArr);die;
             //$paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount);
             $orderType=$PaymentDataArr['orderType'];
