@@ -1639,6 +1639,7 @@ class Shopping extends MY_Controller{
     }
     
     function process_mpesa_success_single_order($PaymentDataArr){
+        pre($PaymentDataArr);
         foreach ($PaymentDataArr['orders'] AS $k => $v):
             //$paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$orderinfo,'order'=>$order,'cartId'=>$allCartArray);
             $order_update=array();

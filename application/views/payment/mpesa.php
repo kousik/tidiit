@@ -18,6 +18,7 @@
                                     });
                                 </script>
                                 <?php if($_SERVER['HTTP_HOST']=='tidiit-local.com'):?>
+                                <?php /*<form name="mpesaSubmitForm" id="mpesaSubmitForm" action="<?php echo 'http://localhost/testing_mpesa/index.php';//'http://demosandbox.tidiit-local.com/index.php';?>" method="post"> */?>
                                 <form name="mpesaSubmitForm" id="mpesaSubmitForm" action="<?php echo 'http://demosandbox.tidiit-local.com/index.php';?>" method="post">
                                 <?php else:?>    
                                 <form name="mpesaSubmitForm" id="mpesaSubmitForm" action="<?php echo 'http://demosandbox.tidiit.com/index.php';?>" method="post">
