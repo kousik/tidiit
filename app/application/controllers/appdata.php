@@ -204,6 +204,61 @@ class Appdata extends REST_Controller {
         echo json_encode($result);
     }
     
+    function my_shipping_address_get(){
+        $result = array();
+        $result=  $this->get_default_urls();
+        $userId=  $this->get('userId');
+        $this->load->model('Country');
+        $userShippingDataDetails=$this->user->get_user_shipping_information($userId);
+        if(empty($userShippingDataDetails)){
+            $userShippingDataDetails[0]=new stdClass();
+            $userShippingDataDetails[0]->firstName="";
+            $userShippingDataDetails[0]->lastName="";
+            $userShippingDataDetails[0]->countryId="";
+            $userShippingDataDetails[0]->cityId="";
+            $userShippingDataDetails[0]->zipId="";
+            $userShippingDataDetails[0]->localityId="";
+            $userShippingDataDetails[0]->phone="";
+            $userShippingDataDetails[0]->address="";
+            $userShippingDataDetails[0]->contactNo="";
+        }
+        if($userShippingDataDetails[0]->countryId!=""){
+            $result['cityDataArr']=  $this->Country->get_all_city1($userShippingDataDetails[0]->countryId);
+        }
+        if($userShippingDataDetails[0]->zipId!=""){
+            $result['zipDataArr']=  $this->Country->get_all_zip1($userShippingDataDetails[0]->cityId);
+        }
+        if($userShippingDataDetails[0]->localityId!=""){
+            $result['localityDataArr']=  $this->Country->get_all_locality($userShippingDataDetails[0]->zipId);
+        }
+        $result['countryDataArr']=$this->Country->get_all1();
+        $result['userShippingDataDetails']=$userShippingDataDetails;
+        $topCategoryDataArr=$this->category->get_top_category_for_product_list();
+        $result['topCategoryDataArr']=$topCategoryDataArr;
+        $rs=$this->user->get_my_product_type($userId);
+        //pre($rs); //die;
+        $result['userProductTypeArr']=$rs;
+        $result['timestamp'] = (string)mktime();
+        header('Content-type: application/json');
+        echo json_encode($result);
+    }
+    
+    function my_finance_get(){
+        $result = array();
+        $result=  $this->get_default_urls();
+        $userId=  $this->get('userId');
+        $financeDataArr=$this->user->get_finance_info($userId);
+        if(empty($financeDataArr)){
+            $financeDataArr[0]=new stdClass();
+            $financeDataArr[0]->mpesaFullName="";
+            $financeDataArr[0]->mpesaAccount="";
+        }
+        $result['financeDataArr']=$financeDataArr;
+        $result['timestamp'] = (string)mktime();
+        header('Content-type: application/json');
+        echo json_encode($result);
+    }
+    
     function get_main_menu(){
         $mainMenuArr=array();
         $TopCategoryData=$this->category->get_top_category_for_product_list(TRUE);

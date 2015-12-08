@@ -172,13 +172,16 @@ class User_model extends CI_Model {
     }
 
     /// this is for only guest user
-    public function get_user_shipping_information(){
+    public function get_user_shipping_information($userId=0){
         $this->db->select('sa.*,c.countryName,s.stateName,ci.city,z.zip,l.locality');
         $this->db->from($this->_shipping_address.' sa')->join($this->_table_country.' c','sa.countryId=c.countryId','left join');
         $this->db->join($this->_table_state.' s','sa.stateId=s.stateId','left join')->join($this->_table_city.' ci','sa.cityId=ci.cityId','left join');
         $this->db->join($this->_table_zip.' z','sa.zipId=z.zipId','left join');
         $this->db->join($this->_table_locality.' l','sa.localityId=l.localityId','left join');
-        return $this->db->where('sa.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+        if($userId==0)
+            return $this->db->where('sa.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+        else
+            return $this->db->where('sa.userId',$userId)->get()->result();
     }
 
 
@@ -568,8 +571,11 @@ class User_model extends CI_Model {
         return $this->db->get_where($this->_shipping_address,array('userId'=>$this->session->userdata('FE_SESSION_VAR')))->result();
     }
 
-    function get_finance_info(){
-        return $this->db->get_where($this->_finance,array('userId'=>  $this->session->userdata('FE_SESSION_VAR')))->result();
+    function get_finance_info($userId=0){
+        if($userId==0)
+            return $this->db->get_where($this->_finance,array('userId'=>  $this->session->userdata('FE_SESSION_VAR')))->result();
+        else
+            return $this->db->get_where($this->_finance,array('userId'=>  $userId))->result();
     }
 
     public function add_finance($dataArray){
@@ -669,8 +675,13 @@ class User_model extends CI_Model {
         }
     }
     
-    function get_my_product_type(){
-        $rs=$this->db->select('productTypeCateoryId')->from($this->_user_product_type_category)->where('userId',  $this->session->userdata('FE_SESSION_VAR'))->get()->result();
+    function get_my_product_type($userId=0){
+        $this->db->select('productTypeCateoryId')->from($this->_user_product_type_category);
+        if($userId==0)
+            $rs=$this->db->where('userId',  $this->session->userdata('FE_SESSION_VAR'))->get()->result();
+        else
+            $rs=$this->db->where('userId',  $userId)->get()->result();
+        
         if(empty($rs)){
             return array();
         }else{
