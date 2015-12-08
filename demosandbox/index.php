@@ -9,7 +9,7 @@
 
     <body>
         <div style="width:100%;text-align:center;position:absolute;">
-            <form name="mpesaSuccess" id="mpesaSuccess" action="<?php echo $_POST['return_url'];?>" style="text-align:center">
+            <form name="mpesaSuccess" id="mpesaSuccess" action="<?php echo $_POST['return_url'];?>" style="text-align:center" method="post">
                 <input type="hidden" value="<?php echo $_POST['custom']?>" name="custom" />
                 <input type="hidden" name="returnAction" id="returnAction" value="success" />
                 <!--<input type="button" name="cancel" id="cancel" value="Cancel"  onclick="document.getElementById('returnAction').value='fail';"/> &nbsp; &nbsp; &nbsp; -->
