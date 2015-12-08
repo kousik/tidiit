@@ -1503,6 +1503,7 @@ class Shopping extends MY_Controller{
         $returnAction=  $this->input->post('returnAction');
         if($returnAction=='success'):
             $PaymentDataArr=  unserialize(base64_decode($this->session->userdata('PaymentData')));
+            pre($PaymentDataArr);
             //$paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount);
             $orderType=$PaymentDataArr['orderType'];
             if($orderType=='group'):
