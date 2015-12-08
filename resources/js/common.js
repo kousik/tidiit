@@ -176,8 +176,10 @@ function getURLParameter(name) {
         return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
     }
 
-function changeUrlParam (param, value) {
+function changeUrlParam (param, value, cururl) {
+        
         var currentURL = window.location.href+'&';
+        
         var change = new RegExp('('+param+')=(.*)&', 'g');
         var newURL = currentURL.replace(change, '$1='+value+'&');
 
@@ -196,6 +198,119 @@ function changeUrlParam (param, value) {
             }
         }
     }
+    
+(function () {
+    'use strict';
+    var queryString = {};
+
+    queryString.parse = function (str) {
+        if (typeof str !== 'string') {
+            return {};
+        }
+
+        str = str.trim().replace(/^\?/, '');
+
+        if (!str) {
+            return {};
+        }
+
+        return str.trim().split('&').reduce(function (ret, param) {
+            var parts = param.replace(/\+/g, ' ').split('=');
+            var key = parts[0];
+            var val = parts[1];
+
+            key = decodeURIComponent(key);
+            // missing `=` should be `null`:
+            // http://w3.org/TR/2012/WD-url-20120524/#collect-url-parameters
+            val = val === undefined ? null : decodeURIComponent(val);
+
+            if (!ret.hasOwnProperty(key)) {
+                ret[key] = val;
+            } else if (Array.isArray(ret[key])) {
+                ret[key].push(val);
+            } else {
+                ret[key] = [ret[key], val];
+            }
+
+            return ret;
+        }, {});
+    };
+
+    queryString.stringify = function (obj) {
+        return obj ? Object.keys(obj).map(function (key) {
+            var val = obj[key];
+
+            if (Array.isArray(val)) {
+                return val.map(function (val2) {
+                    return encodeURIComponent(key) + '=' + encodeURIComponent(val2);
+                }).join('&');
+            }
+
+            return encodeURIComponent(key) + '=' + encodeURIComponent(val);
+        }).join('&') : '';
+    };
+
+    queryString.push = function (key, new_value) {
+    var params = queryString.parse(location.search);
+    params[key] = new_value;
+    var new_params_string = queryString.stringify(params);
+    history.pushState({}, "", window.location.pathname + '?' + new_params_string);
+  };
+
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = queryString;
+    } else {
+        window.queryString = queryString;
+    }
+})();
+
+
+$(document).ready(function () {
+    $("body").delegate('ul.js-p-sort li a', "click", function(e){
+        e.preventDefault();
+        var sort = $(this).attr('data-content');
+        var jqout = $(this);
+        $('ul.js-p-sort li a').removeClass('active');
+        $(this).addClass('active');
+        //changeUrlParam ('sort', sort);
+        queryString.push('sort', sort);
+        /*$.post( myJsMain.baseURL+'ajax/get_single_group/', {
+            groupId: groupId,
+            orderId: $(this).val()
+        },
+        function(data){ 
+            if(data.contents){
+                $('div.js-display-exisit-group').empty();
+                $('div.js-display-selected-group').html(data.contents);
+            }
+        }, 'json' );*/
+    });     
+    
+    $("ul#brand input[class='brandsort']").click(function(){ 
+        var jqout = $(this);
+        var brands = [];
+        
+        $('ul#brand').find("input[class='brandsort']:checked").each(function() {
+            brands.push(jQuery(this).val());
+        });
+        
+        if(brands){
+            var brand = brands.join("|");
+        } else {
+            var brand = false;
+        }  
+        
+        //changeUrlParam ('brand', brand);
+        queryString.push('brand', brand);
+    }); 
+    
+    $( ".jslider-pointer" ).mouseup( function() {
+        var prices = $("input[id='Slider1']").val();
+        var price = prices.split(";");
+        price = price.join("|");
+        queryString.push('range', price);
+    } );
+});    
     
     
 
