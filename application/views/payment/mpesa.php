@@ -17,8 +17,9 @@
                                         jQuery('#mpesaSubmitForm')[0].submit();
                                     });
                                 </script>
-                                <?php 
-                                //pre(unserialize(base64_decode($this->session->userdata('PaymentData'))));
+                                <?php
+                                $this->session->set_userdata('paydata',$this->session->userdata('PaymentData'));
+                                //pre($this->session->userdata('PaymentData'));
                                 if($_SERVER['HTTP_HOST']=='tidiit-local.com'):?>
                                 <form name="mpesaSubmitForm" id="mpesaSubmitForm" action="http://localhost/testing_mpesa/index.php" method="post">
                                 <?php /*<form name="mpesaSubmitForm" id="mpesaSubmitForm" action="<?php echo 'http://demosandbox.tidiit-local.com/index.php';?>" method="post"> */?>

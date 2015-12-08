@@ -1222,10 +1222,7 @@ class Shopping extends MY_Controller{
      */
     function ajax_process_single_payment(){
         $paymentType=$this->input->post('paymentOption');
-        $paymentType='mpesa';
         if($paymentType==""){
-            pre($_POST);
-            pre($paymentType);die; 
             $this->session->set_flashdata("message","Invalid payment option selected!");
             redirect(BASE_URL.'shopping/my-cart');
         }
@@ -1256,9 +1253,7 @@ class Shopping extends MY_Controller{
         endif;
         $paymentGatewayAmount=0;
         $allOrderArray=array();
-        $allOrderDataArray=array();
         $allOrderInfoArray=array();
-        $allCartArray=array();
         foreach ($cart as $item):  
             if($item['options']['orderType'] == 'SINGLE'):
                 $order['orderType'] = 'SINGLE';
@@ -1327,14 +1322,14 @@ class Shopping extends MY_Controller{
             endif;
         endforeach;
         
-        if($orderid):
+        if(!empty($allOrderArray)):
             if($paymentType=='sod'):
                 redirect(BASE_URL.'shopping/success/');
             else:
                 $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$allOrderInfoArray);
                 $this->session->set_userdata('PaymentData', $paymentDataArr);
                 //redirect(BASE_URL.'shipping/mpesa_process/');
-                $this->_mpesa_process($orderId);
+                $this->_mpesa_process($allOrderArray);
             endif;            
         else:
             $this->session->set_fashdata("message","Some error happen, please try again later!");
@@ -1491,12 +1486,12 @@ class Shopping extends MY_Controller{
         return TRUE;
     }
     
-    function _mpesa_process($orderId){
+    function _mpesa_process($orderIdArr){
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $data['userMenuActive']=1;
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
-        $data['orderId']=$orderId;
+        $data['orderId']=$orderIdArr[0];
         $this->load->view('payment/mpesa',$data);
     }
     
@@ -1504,7 +1499,9 @@ class Shopping extends MY_Controller{
     function mpesa_return(){
         $custom=$this->input->post('custom');
         $returnAction=  $this->input->post('returnAction');
-        pre($this->session->all_userdata());
+        //pre($this->session->all_userdata());
+        echo '<pre>';print_r($this->session->userdata('paydata'));
+        die;
         if($returnAction=='success'):
             $PaymentDataArr=  $this->session->userdata('PaymentData');
             pre($PaymentDataArr);die;
