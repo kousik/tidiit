@@ -1221,10 +1221,11 @@ class Shopping extends MY_Controller{
      * 
      */
     function ajax_process_single_payment(){
+        pre($_POST);die;
         $paymentType=  $this->input->post('paymentOption');
         if($paymentType==""){
             $this->session->set_flashdata("message","Invalid payment option selected!");
-            redirect(BASE_URL.'shiping/my-cart');
+            redirect(BASE_URL.'shopping/my-cart');
         }
         $user = $this->_get_current_user_details(); 
         $cart = $this->cart->contents();
