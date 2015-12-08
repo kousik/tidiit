@@ -35,7 +35,7 @@ class Category extends MY_Controller{
     
     
     function display_category_products($name){
-        
+        //print_r($_GET);die;
         $SEODataArr=array();        
         if($this->is_loged_in()):
             $data=$this->_get_logedin_template($SEODataArr);
@@ -65,7 +65,18 @@ class Category extends MY_Controller{
         $data['s_widget_cats'] = $data['widget_cats'];
         
         
+        unset($_GET['cpid']);
         $cond = array();
+        foreach($_GET as $key => $get):
+            if($key == 'sort'):
+                //$cond['order_sort'] = $get;
+            endif;
+            if($key == 'sort'):
+               // $cond['order_sort'] = $get;
+            endif;
+        endforeach;
+        
+        
         $data['products'] = $this->Category_model->get_children_categories_products($categoryId, $offset = 0, $limit = 12, $cond);
         
         $this->load->view('category_details',$data);

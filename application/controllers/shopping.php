@@ -4,6 +4,7 @@ class Shopping extends MY_Controller{
     
     public function __construct(){
         parent::__construct();
+        session_start();
         $this->_isLoggedIn();
         $this->load->model('User_model');
         $this->load->model('Order_model');
@@ -12,6 +13,7 @@ class Shopping extends MY_Controller{
         $this->load->model('Category_model');
         $this->load->model('Product_model');
         $this->load->model('Country');
+        $this->load->library('session');
     }
        
     
@@ -1327,8 +1329,7 @@ class Shopping extends MY_Controller{
                 redirect(BASE_URL.'shopping/success/');
             else:
                 $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$allOrderInfoArray);
-                $this->session->set_userdata('PaymentData', $paymentDataArr);
-                //redirect(BASE_URL.'shipping/mpesa_process/');
+                $_SESSION['PaymentData'] = $paymentDataArr;
                 $this->_mpesa_process($allOrderArray);
             endif;            
         else:
@@ -1499,9 +1500,8 @@ class Shopping extends MY_Controller{
     function mpesa_return(){
         $custom=$this->input->post('custom');
         $returnAction=  $this->input->post('returnAction');
-        //pre($this->session->all_userdata());
-        echo '<pre>';print_r($this->session->userdata('paydata'));
-        die;
+        //print_r($_SESSION['PaymentData']);
+        //die;
         if($returnAction=='success'):
             $PaymentDataArr=  $this->session->userdata('PaymentData');
             pre($PaymentDataArr);die;

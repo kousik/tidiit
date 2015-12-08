@@ -18,9 +18,7 @@
                                     });
                                 </script>
                                 <?php
-                                $this->session->set_userdata('paydata',$this->session->userdata('PaymentData'));
-                                //pre($this->session->userdata('PaymentData'));
-                                if($_SERVER['HTTP_HOST']=='tidiit-local.com'):?>
+                                if($_SERVER['HTTP_HOST']=='local.tidiit.com'):?>
                                 <form name="mpesaSubmitForm" id="mpesaSubmitForm" action="http://localhost/testing_mpesa/index.php" method="post">
                                 <?php /*<form name="mpesaSubmitForm" id="mpesaSubmitForm" action="<?php echo 'http://demosandbox.tidiit-local.com/index.php';?>" method="post"> */?>
                                 <?php else:?>    
