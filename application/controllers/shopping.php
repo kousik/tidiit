@@ -1222,6 +1222,7 @@ class Shopping extends MY_Controller{
      */
     function ajax_process_single_payment(){
         $paymentType=$this->input->post('paymentOption');
+        $paymentType='mpesa';
         if($paymentType==""){
             pre($_POST);
             pre($paymentType);die; 
