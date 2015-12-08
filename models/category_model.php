@@ -264,12 +264,17 @@ WHERE c.categoryId =".$categoryId;
         $pcatsId = $this->get_children_categories_id($categoryId);
         $pcatsId[] = $categoryId;
         $pcatsId = implode("','", $pcatsId);        
-        $group_by = ' GROUP BY p.productId';        
-        $order_by = ' ORDER BY p.productId';
-        if(isset($cond['order_by']) && $cond['order_by']):
-            $order_by = $order_by.', '.$cond['order_by'];
+        $group_by = ' GROUP BY p.productId';   
+        
+        $sort = array('featured','isNew','popular','lowestPrice');
+        $order_by = 'p.popular';
+        if(isset($cond['order_by']) && $cond['order_by'] && in_array($cond['order_by'], $sort)):
+            $order_by = '  ORDER BY '.$cond['order_by'];
             unset($cond['order_by']);
+        else:
+            $order_by = '  ORDER BY p.popular';
         endif;
+        
         $order_sort = ' ASC';
         
         if(isset($cond['order_sort']) && $cond['order_sort']):
@@ -304,10 +309,10 @@ WHERE c.categoryId =".$categoryId;
         $brands = array();
         if($rs):            
             foreach($rs as $key => $product):  
-                $product->tags = $this->get_product_tags($product->productId);
-                $product->seller = $this->get_product_seller($product->productId);
-                $product->product_price = $this->get_products_price($product->productId);
-                $product->curent_category = $this->get_details_by_id($categoryId);
+                //$product->tags = $this->get_product_tags($product->productId);
+                //$product->seller = $this->get_product_seller($product->productId);
+               // $product->product_price = $this->get_products_price($product->productId);
+                //$product->curent_category = $this->get_details_by_id($categoryId);
                 $products[] =  $product;  
                 $brands[$product->btitle] = $product->btitle;
             endforeach;
