@@ -259,6 +259,35 @@ class Appdata extends REST_Controller {
         echo json_encode($result);
     }
     
+    function retrive_your_password_post(){
+        $email=$this->post('email');
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->response(array('error' => 'Please provide valid email.'), 400); return FALSE;
+        }
+        $DataArr=$this->user->get_data_by_email($email);
+        if(count($DataArr)>0):
+            $mail_template_data=array();
+            $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_EAMIL']=$DataArr[0]->email;
+            $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_FIRSTNAME']=$DataArr[0]->firstName;
+            $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_LASTNAME']=$DataArr[0]->lastName;
+            $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_USERNAME']=$DataArr[0]->userName;
+            $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_PASSWORD']=$DataArr[0]->password;
+
+            $mail_template_view_data=$this->get_default_urls();
+            $mail_template_view_data['retribe_user_password']=$mail_template_data;
+            $this->_global_tidiit_mail($DataArr[0]->email, "Your password at Tidiit Inc. Ltd.", $mail_template_view_data,'retribe_user_password',$DataArr[0]->firstName.' '.$DataArr[0]->lastName);
+            $result = array();
+            $result=  $this->get_default_urls();
+            $result['message']="Your password has send by your registered email.";
+            $result['timestamp'] = (string)mktime();
+            header('Content-type: application/json');
+            echo json_encode($result);
+        else:
+            $this->response(array('error' => 'Please check your "email" and try again.'), 400); return FALSE;
+        endif;
+        
+    }
+    
     function get_main_menu(){
         $mainMenuArr=array();
         $TopCategoryData=$this->category->get_top_category_for_product_list(TRUE);
@@ -306,7 +335,27 @@ class Appdata extends REST_Controller {
         $result['site_slider_image_url']='http://tidiit.com/resources/banner/original/';
         $result['site_brand_image_url']='http://tidiit.com/resources/brand/original/';
         $result['site_category_image_url']='http://tidiit.com/resources/category/original/';
+        $result['main_site_url']='http://www.tidiit.com/';
         return $result;
+    }
+    
+    function _global_tidiit_mail($to,$subject,$dataResources,$tempplateName="",$toName=""){
+        $message='';
+        if($tempplateName==""){
+            $message=$dataResources;
+        }else{
+            $message=  $this->load->view('email_template/'.$tempplateName,$dataResources,TRUE);
+        }
+        $this->load->library('email');
+        $this->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
+        if($toName!="")
+            $this->email->to($to,$toName);
+        else
+            $this->email->to($to);
+        
+        $this->email->subject($subject);
+        $this->email->message($message);
+        $this->email->send();
     }
 }
     

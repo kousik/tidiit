@@ -1,1 +1,0 @@
-<?php echo 'comming to index in admin';?>
