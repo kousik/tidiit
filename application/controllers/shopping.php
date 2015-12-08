@@ -496,7 +496,7 @@ class Shopping extends MY_Controller{
                 endif;
             else:
                 $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'group','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$pevorder,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>$cartId);
-                $this->session->userdata('PaymentData', base64_encode(serialize($paymentDataArr)));
+                $this->session->set_userdata('PaymentData', base64_encode(serialize($paymentDataArr)));
             endif;
             
             if($order_update['status']==2):
@@ -1329,7 +1329,7 @@ class Shopping extends MY_Controller{
                 redirect(BASE_URL.'shopping/success/');
             else:
                 $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$allOrderInfoArray);
-                $this->session->userdata('PaymentData', base64_encode(serialize($paymentDataArr)));
+                $this->session->set_userdata('PaymentData', base64_encode(serialize($paymentDataArr)));
                 //redirect(BASE_URL.'shipping/mpesa_process/');
                 $this->_mpesa_process($orderId);
             endif;            
@@ -1501,9 +1501,10 @@ class Shopping extends MY_Controller{
     function mpesa_return(){
         $custom=$this->input->post('custom');
         $returnAction=  $this->input->post('returnAction');
+        pre($this->session->all_userdata());
         if($returnAction=='success'):
             $PaymentDataArr=  unserialize(base64_decode($this->session->userdata('PaymentData')));
-            pre($PaymentDataArr);
+            pre($PaymentDataArr);die;
             //$paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount);
             $orderType=$PaymentDataArr['orderType'];
             if($orderType=='group'):
