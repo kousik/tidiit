@@ -14,7 +14,7 @@ class Order_model extends CI_Model {
         private $_coupon = 'coupon';
         private $_order_coupon = 'order_coupon';
         
-        private $_sod="cash_on_delivery";
+        private $_sod="settlement_on_delivery";
         private $_mpesa="mpesa";
         private $_netbanking="netbanking_data";
 	
