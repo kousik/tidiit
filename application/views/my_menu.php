@@ -4,7 +4,7 @@
         <ul class="nav nav-tabs dashbrd_tab" role="tablist">
           <li <?php if($userMenuActive==1){?>class="active"<?php }?>><a href="<?php echo BASE_URL.'myaccount';?>" >General Information <span><i class="fa  fa-dashboard"></i></span></a></li>
           <li <?php if($userMenuActive==2){?>class="active"<?php }?>><a href="<?php echo BASE_URL.'my-shipping-address';?>">Shipping Address <span><i class="fa  fa-truck"></i></span></a> </li>
-          <li <?php if($userMenuActive==3){?>class="active"<?php }?>><a href="<?php echo BASE_URL.'my-billing-address';?>">Billing Address <span><i class="fa  fa-th-list"></i></span></a></li>
+          <?php /*<li <?php if($userMenuActive==3){?>class="active"<?php }?>><a href="<?php echo BASE_URL.'my-billing-address';?>">Billing Address <span><i class="fa  fa-th-list"></i></span></a></li>*/?>
           <li <?php if($userMenuActive==4){?>class="active"<?php }?>><a href="<?php echo BASE_URL.'my-orders';?>">Orders <span><i class="fa  fa-reorder"></i></span></a></li>
           <li <?php if($userMenuActive==5){?>class="active"<?php }?>><a href="<?php echo BASE_URL.'my-groups';?>">Buyer Clubs <span><i class="fa  fa-group"></i></span></a></li>
           <?php if($userMenuActive==7){?>

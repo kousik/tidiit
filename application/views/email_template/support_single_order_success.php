@@ -48,7 +48,8 @@
                           <td align="left" valign="top" style="background-color:#FFFFFF;display:block;clear:both;padding:20px 20px 0 20px;" bgcolor=""><table border="0" cellspacing="0" cellpadding="0" width="100%" style="">
                               <tbody>
                                 <tr>
-									<td width="48%" align="middle" valign="top">
+                                    <td width="10%" align="middle" valign="top">&nbsp;</td>
+									<td width="80%" align="middle" valign="top">
 										<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:15px; line-height:21px;font-weight:bold;">
 											Shipping Address
 										</font>
@@ -61,8 +62,8 @@
 										<br />
 										</font> 
 									</td>
-                                  <td width="4%" align="middle" valign="top">&nbsp;</td>
-									<td width="48%" align="middle" valign="top">
+                                  <td width="10%" align="middle" valign="top">&nbsp;</td>
+									<?phpp /*<td width="48%" align="middle" valign="top">
 										<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:15px; line-height:21px;font-weight:bold;">
 											Billing Address
 										</font>
@@ -76,7 +77,7 @@
 										<br />
 										</font> 
 
-									</td>
+									</td>*/?>
                                 </tr>
                               </tbody>
                             </table></td>

@@ -373,12 +373,78 @@ class User_model extends CI_Model {
         endif;
     }
     
+    function get_my_groups_apps($userId,$df = false){
+        $this->db->order_by('groupId','desc');
+        $datas = $this->db->from($this->_group)->where('groupAdminId =',$userId)->get()->result();
+        if($datas):
+            $groups = array();
+            foreach($datas as $key => $grp):
+                $users = explode(",", $grp->groupUsers);
+                $udata = array();
+                if($users):                        
+                    foreach($users as $ukey => $usrId):
+                        if($usrId):
+                            $udatas = $this->get_details_by_id($usrId);
+                            $udata[] = $udatas[0];
+                        endif;
+                    endforeach;
+                endif;
+                $grp->users = $udata;
+
+                $getgpadmin = $this->get_details_by_id($userId);
+
+                $grp->admin = $getgpadmin[0];
+                $grp->hide = false;
+                $groups[$grp->groupId] = $grp;
+            endforeach;
+
+            $in_groups = $this->get_my_on_groups();
+            if($in_groups && !$df):
+                $result = array_merge($groups, $in_groups);
+            else:
+                $result = $groups;
+            endif;
+            return (object)$result;
+        else:
+            return false;
+        endif;
+    }
+    
+    
     /**
      * 
      * @return boolean
      */
     public function get_my_on_groups(){
         $query = $this->db->query("SELECT *  FROM `{$this->_group}` WHERE FIND_IN_SET('{$this->session->userdata('FE_SESSION_VAR')}',groupUsers) > 0 ORDER BY `groupId` DESC  ");
+        $datas = $query->result();
+
+        if($datas):
+            $groups = array();
+            foreach($datas as $key => $grp):
+                $users = explode(",", $grp->groupUsers);
+                $udata = array();
+                if($users):                        
+                    foreach($users as $ukey => $usrId):
+                        $udatas = $this->get_details_by_id($usrId);
+                        $udata[] = $udatas[0];
+                    endforeach;
+                endif;
+                $grp->users = $udata;
+
+                $getgpadmin = $this->get_details_by_id($grp->groupAdminId); 
+                $grp->admin = $getgpadmin[0];
+                $grp->hide = true;
+                $groups[$grp->groupId] = $grp;
+            endforeach;
+            return $groups;
+        else:
+            return false;
+        endif;
+    }
+    
+    public function get_my_on_groups_apps($userId){
+        $query = $this->db->query("SELECT *  FROM `{$this->_group}` WHERE FIND_IN_SET('{$userId}',groupUsers) > 0 ORDER BY `groupId` DESC  ");
         $datas = $query->result();
 
         if($datas):

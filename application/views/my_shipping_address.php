@@ -34,7 +34,7 @@
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <label>Phone</label>
-                                                        <input type="phone" name="phone" id="phone" class="form-control" value="<?php echo $userShippingDataDetails[0]->contactNo;?>" required>
+                                                        <input type="phone" name="phone" id="phone" class="form-control" value="<?php echo $userShippingDataDetails[0]->contactNo;?>" required maxlength="12">
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label>Address</label>
@@ -110,7 +110,21 @@
                                                     
                                                 </div>
                                             </div>
-                                           
+                                            
+                                            <div class="col-md-12 rootShowInerCategoryData">
+                                                <label id="productTypeId[]-error" class="error" for="productTypeId[]" style="display: none;"></label>
+                                                <?php 
+                                                if(empty($userProductTypeArr)):
+                                                    foreach($topCategoryDataArr AS $k):?>
+                                                <div class="col-md-12">
+                                                    <a class="showInerCategoryData" href="javascript://" data-catdivid="<?php echo $k->categoryId;?>" data-isRoot="yes"><?php echo $k->categoryName;?></a>
+                                                </div>
+                                                <div class="col-md-12" style="height: 10px;"></div>
+                                                <?php endforeach;
+                                                else :
+                                                echo $billingAddressProductTypeHtml;    
+                                                endif;?>
+                                            </div>
                                         </div>
                                     </div>
                                     
@@ -196,15 +210,32 @@
             var oldHtmlContent=$(this).html();
             //return false;
             var catId = $(this).data('catdivid');
+            var isRoot = $(this).data('isroot');
             var jqout = $(this);
+            if($(this).parent().children().length>1 && isRoot=='yes'){
+                return false;
+            }
+            if($(this).parent().children().length>2){
+                return false;
+            }
+            $(this).prev().attr('checked', false); 
             $.post( myJsMain.baseURL+'ajax/get_subcategory_for_user_product_type/', {
                 categoryId: catId
             },
             function(data){
-                jqout.parent('div').empty();
-                jqout.parent('div').html(oldHtmlContent);
+                //jqout.parent('div').empty();
+                //jqout.parent('div').html(oldHtmlContent);
                 jqout.parent('div').append(data.content);
             }, 'json' );
+        });
+        
+        jQuery("body").delegate('.productTypeCategorySelection', "click", function(e){
+            $(this).parent().children().each(function(idx,ele){
+                //if(ele.attr('type'))
+                if(idx>1){
+                    ele.remove();
+                }
+            });
         });
     });
 </script>

@@ -77,7 +77,7 @@ class Ajax extends MY_Controller{
                 $mail_template_view_data['create_user']=$mail_template_data;
                 $this->_global_tidiit_mail($email, "Your account at Tidiit Inc. Ltd.", $mail_template_view_data,'user_create',$firstName.' '.$lastName);
                 
-                echo json_encode(array('result'=>'good','url'=>BASE_URL.'my-billing-address','msg'=>'You have successfully register your account with "Tidiit Inc Ltd.Your login information will be sent to registered email account.'));die; 
+                echo json_encode(array('result'=>'good','url'=>BASE_URL.'my-shipping-address','msg'=>'You have successfully register your account with "Tidiit Inc Ltd.Your login information will be sent to registered email account.'));die; 
             }else{
                 echo json_encode(array('result'=>'bad','msg'=>'Please check your user anme and password and try again.'));die;     
             }
@@ -663,7 +663,8 @@ class Ajax extends MY_Controller{
            array('field'   => 'countryId','label'   => 'Country','rules'   => 'trim|required|xss_clean'),
            array('field'   => 'cityId','label'   => 'City','rules'   => 'trim|required|xss_clean'),
            array('field'   => 'zipId','label'   => 'Zip','rules'   => 'trim|required|xss_clean'),
-           array('field'   => 'localityId','label'   => 'Locality','rules'   => 'trim|required|xss_clean')
+           array('field'   => 'localityId','label'   => 'Locality','rules'   => 'trim|required|xss_clean'), 
+           array('field'   => 'productTypeId[]','label'   => 'Product Type','rules'   => 'trim|required|xss_clean')
          );
         //initialise the rules with validatiion helper
         $this->form_validation->set_rules($config); 
@@ -684,6 +685,20 @@ class Ajax extends MY_Controller{
                 $zipId=$this->input->post('zipId',TRUE);
                 $localityId=$this->input->post('localityId',TRUE);
                 $address=$this->input->post('address',TRUE);
+                
+                $productTypeId=$this->input->post('productTypeId',TRUE);
+                $newCateoryArr=array();
+                //pre($productTypeId);
+                foreach ($productTypeId AS $k =>$v){
+                    $newCateoryArr[]=$v;
+                    $newCateoryArr=$this->recusive_category($newCateoryArr,$v);
+                }
+                //pre($newCateoryArr);die;
+                $this->User_model->update_user_product_type_category(array('productTypeCateoryId'=>implode(',', $newCateoryArr)),$userId);
+                $this->User_model->remove_user_from_product_type($userId);
+                foreach($newCateoryArr As $k => $v){
+                    $this->User_model->update_product_type_user($v,$userId);
+                }
                 
                 $this->load->model('Country');
                 $rs=$this->Country->city_details($cityId);

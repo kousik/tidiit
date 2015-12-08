@@ -36,25 +36,21 @@ class Appdata extends REST_Controller {
             $this->load->model('Banner_model','banner');
             $this->load->model('Brand_model','brand');
             $result = array();
+            $result=  $this->get_default_urls();
             $slider1=$this->banner->get_home_slider(1,TRUE);
-            $slider2=$this->banner->get_home_slider(2,TRUE);
+            //$slider2=$this->banner->get_home_slider(2,TRUE);
             $noOfItem=  $this->siteconfig->get_value_by_name('MOBILE_APP_HOME_PAGE_SLIDER_ITEM_NO');
             $newArrivalsData=  $this->product->get_recent($noOfItem,TRUE);
             
             $result['slider1']=$slider1;
-            $result['slider2']=$slider2;
+            //$result['slider2']=$slider2;
             $result['category_menu']=$this->get_main_menu();
             $result['best_sellling_item']=$newArrivalsData;
             $result['new_arrivals']=$newArrivalsData;
             $result['featured_products']=$newArrivalsData;
             $result['brand']=$this->brand->get_all(TRUE);
             //$result['site_product_image_url']=$this->config->item('ProductURL');
-            $result['site_product_image_url']='http://seller.tidiit.com/resources/product/original/';
-            //$result['site_image_url']=$this->config->item('MainSiteResourcesURL').'images/';
-            $result['site_image_url']='http://tidiit.com/resources/images/';
-            $result['site_slider_image_url']='http://tidiit.com/resources/banner/original/';
-            $result['site_brand_image_url']='http://tidiit.com/resources/brand/original/';
-            $result['site_category_image_url']='http://tidiit.com/resources/category/original/';
+            
             
             $result['timestamp'] = (string)mktime();
             header('Content-type: application/json');
@@ -126,6 +122,88 @@ class Appdata extends REST_Controller {
         }
     }
     
+    function my_profile_get(){
+        $result = array();
+        $result=  $this->get_default_urls();
+        $userId=  $this->get('userId');
+        if($userId==""):
+            $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
+        else:
+            $result['userProfileData']=$this->user->get_details_by_id($userId);
+            $result['timestamp'] = (string)mktime();
+            header('Content-type: application/json');
+            echo json_encode($result);
+        endif;
+    }
+    
+    function my_profile_post(){
+        $firstName=$this->post('firstName');
+        $lastName=$this->post('lastName');
+        $contactNo=$this->post('contactNo');
+        $email=$this->post('email');
+        $mobile=$this->post('mobile');
+        $fax=$this->post('fax');
+        $DOB=$this->post('DOB');
+        $aboutMe=$this->post('aboutMe');
+        $userId=$this->post('userId');
+        
+        $deviceType=$this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->response(array('error' => 'Please provide valid email.'), 400); return FALSE;
+        }
+        
+        if($email!="" && $contactNo!="" && $deviceToken!="" && $deviceType!="" && $UDID!="" && $userId!=""):
+            $this->load->model();
+            $myProfileDataArr=array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo,
+                    'email'=>$email,'DOB'=>$DOB,'mobile'=>$mobile,'fax'=>$fax,'aboutMe'=>$aboutMe);
+            $this->user->edit($myProfileDataArr,$userId);
+            header('Content-type: application/json');
+            echo json_encode(array('Messaage'=>'Profile data updated successfully'));
+        endif;
+    }
+    
+    function my_buyers_clubs_get(){
+        $result = array();
+        $result=  $this->get_default_urls();
+        $userId=  $this->get('userId');
+        $this->load->model('Country');
+        $result['countryDataArr']=$this->Country->get_all1();
+        //$data['CatArr']=$this->Category_model->get_all(0);
+        $menuArr=array();
+        $TopCategoryData=$this->category->get_top_category_for_product_list();
+        //$AllButtomCategoryData=$this->Category_model->buttom_category_for_product_list();
+        foreach($TopCategoryData as $k){
+            $SubCateory=$this->category->get_subcategory_by_category_id($k->categoryId);
+            if(count($SubCateory)>0){
+                foreach($SubCateory as $kk => $vv){
+                    $menuArr[$vv->categoryId]=$k->categoryName.' -> '.$vv->categoryName;
+                    $ThirdCateory=$this->category->get_subcategory_by_category_id($vv->categoryId);
+                    if(count($ThirdCateory)>0){
+                        foreach($ThirdCateory AS $k3 => $v3){
+                            // now going for 4rath
+                            $menuArr[$v3->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName;
+                            $FourthCateory=$this->category->get_subcategory_by_category_id($v3->categoryId);
+                            if(count($FourthCateory)>0){ //print_r($v3);die;
+                                foreach($FourthCateory AS $k4 => $v4){
+                                    $menuArr[$v4->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName.' -> '.$v4->categoryName;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $result['CatArr']=$menuArr;
+        $my_groups = $this->user->get_my_groups_apps($userId);
+        $result['myGroups']=$my_groups;
+        $result['timestamp'] = (string)mktime();
+        header('Content-type: application/json');
+        echo json_encode($result);
+    }
+    
     function get_main_menu(){
         $mainMenuArr=array();
         $TopCategoryData=$this->category->get_top_category_for_product_list(TRUE);
@@ -163,6 +241,17 @@ class Appdata extends REST_Controller {
         //pre($mainMenuArr);die;
         //return $TopCategoryData;
         return $mainMenuArr;
+    }
+    
+    function get_default_urls(){
+        $result=array();
+        $result['site_product_image_url']='http://seller.tidiit.com/resources/product/original/';
+        //$result['site_image_url']=$this->config->item('MainSiteResourcesURL').'images/';
+        $result['site_image_url']='http://tidiit.com/resources/images/';
+        $result['site_slider_image_url']='http://tidiit.com/resources/banner/original/';
+        $result['site_brand_image_url']='http://tidiit.com/resources/brand/original/';
+        $result['site_category_image_url']='http://tidiit.com/resources/category/original/';
+        return $result;
     }
 }
     

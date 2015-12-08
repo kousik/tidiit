@@ -83,7 +83,8 @@ myJsMain.my_shipping_address=function(){
         countryId: {required: true},
         cityId: {required: true},
         zipId: {required: true},
-        localityId: {required: true}
+        localityId: {required: true},
+        productTypeId: {required: true}
     };
     $('#my_shipping_address').validate({rules: shippingAddressValidationRules,onsubmit: true});
     $('#my_shipping_address').submit(function(e) { 

@@ -27,6 +27,7 @@ class User extends MY_Controller{
     
     function my_shipping_address(){
         $this->load->model('Country');
+        $this->load->model('Category_model','category');
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $data['userMenuActive']=2;
@@ -55,6 +56,16 @@ class User extends MY_Controller{
         }
         $data['countryDataArr']=$this->Country->get_all1();
         $data['userShippingDataDetails']=$userShippingDataDetails;
+        $topCategoryDataArr=$this->category->get_top_category_for_product_list();
+        $data['topCategoryDataArr']=$topCategoryDataArr;
+        $rs=$this->User_model->get_my_product_type();
+        //pre($rs); //die;
+        $data['userProductTypeArr']=$rs;
+        if(!empty($rs)){
+            $billingAddressProductTypeHtml=$this->load->view('billing_address_product_type_view',$data,TRUE);
+            //echo $billingAddressProductTypeHtml;die;
+            $data['billingAddressProductTypeHtml']=$billingAddressProductTypeHtml;
+        }
         $this->load->view('my_shipping_address',$data);
     }
     
