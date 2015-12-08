@@ -7,6 +7,9 @@ class Category extends MY_Controller{
     }
     
     function details($name,$idStr){
+        //echo '<pre>';
+        //$cats = $this->Category_model->get_site_categories();
+        //print_r($cats);die;
         $idStrArr=  explode('~', $idStr);
         if(count($idStrArr)>0){
             $categoryDetails=$this->Category_model->get_details_by_id(base64_decode($idStrArr[0]));
@@ -28,6 +31,58 @@ class Category extends MY_Controller{
         }else{
             redirect(BASE_URL);
         }
+    }
+    
+    
+    function display_category_products($name){
+        
+        $SEODataArr=array();        
+        if($this->is_loged_in()):
+            $data=$this->_get_logedin_template($SEODataArr);
+        else:
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        endif;
+        
+        if(!isset($_GET['cpid']) || !$_GET['cpid']):
+            $this->session->set_flashdata('error', 'Invalid location. Please click proper category link!');
+            redirect(BASE_URL.'products/ord-message');
+        else:
+            $categoryId = base64_decode($_GET['cpid'])/226201;
+            $currentCat = $this->Category_model->get_details_by_id($categoryId);
+            $currCat = $currentCat[0];
+            if(my_seo_freindly_url($currCat->categoryName) != $name):
+                $this->session->set_flashdata('error', 'Invalid location. Please click proper category link!');
+                redirect(BASE_URL.'products/ord-message');
+            endif;
+        endif;
+        $data['currCat'] = $currCat;
+        $is_last = $this->Category_model->is_category_last($categoryId);
+        $data['widget_cats'] = $this->Category_model->get_parent_categories($categoryId);
+        if(!$is_last):
+            $data['body_cats'] = $this->Category_model->display_children_categories($categoryId);
+        endif;
+        $data['is_last'] = $is_last;
+        $data['s_widget_cats'] = $data['widget_cats'];
+        
+        
+        $cond = array();
+        $data['products'] = $this->Category_model->get_children_categories_products($categoryId, $offset = 0, $limit = 12, $cond);
+        
+        $this->load->view('category_details',$data);
+        
+    }
+    
+    /**
+     * 
+     */
+    function display_default_message(){
+        $SEODataArr=array();
+        if($this->is_loged_in()):
+            $data=$this->_get_logedin_template($SEODataArr);
+        else:
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        endif;
+        $this->load->view('product_default_message',$data);
     }
     
     

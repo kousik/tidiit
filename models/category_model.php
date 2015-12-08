@@ -1,8 +1,14 @@
 <?php
 class Category_model extends CI_Model {
-	public $_table='category';
-	public $_table_seo='seo_data';
-	public $_table_template='category_view_page';
+	public $_table = 'category';
+	public $_table_seo = 'seo_data';
+	public $_table_template = 'category_view_page';
+        private $_table_price = 'product_price';
+        private $_tag = 'tags';
+	private $_table_tag = 'product_tag';
+        private $_product_seller = 'product_seller';
+        private $_user = 'user';
+        
 	function __construct() {
 		
 	}
@@ -178,6 +184,237 @@ WHERE c.categoryId =".$categoryId;
         }else{
             return FALSE;
         }
+    }
+    
+    
+    //======================Category-Products Display all main query=====================//
+    /**
+     * 
+     * @param type $parent
+     * @param type $level
+     * @return type
+     */
+    public function display_children_categories($parent, $level = 0) { 
+        $sql = "SELECT * FROM `{$this->_table}` WHERE parrentCategoryId = ".$parent." AND status = 1";
+        $rs = $this->db->query($sql)->result();
+        $newlevel = $level+1;
+        $category = array();
+        if($rs): 
+            //if($newlevel != 0 && $newlevel < =):
+            foreach($rs as $key => $cat):                
+                if($pcats = $this->display_children_categories($cat->categoryId, $newlevel)):
+                    $cat->parent = $pcats;
+                endif;
+                $category[] = $cat;
+            endforeach;
+        endif;
+        return $category;
+    } 
+    
+    /**
+     * 
+     * @return type
+     */
+    public function get_site_categories() { 
+        $sql = "SELECT * FROM `{$this->_table}` WHERE parrentCategoryId = 0 AND status = 1";
+        $rs = $this->db->query($sql)->result();
+        $category = array();
+        if($rs):            
+            foreach($rs as $key => $cat):                
+                if($pcats = $this->display_children_categories($cat->categoryId, 0)):
+                    $cat->parent = $pcats;
+                endif;
+                $category[] = $cat;
+            endforeach;
+        endif;
+        return $category;
+    }
+    
+    /**
+     * 
+     * @param type $parent
+     * @param type $level
+     * @return array
+     */
+    public function get_children_categories_id($parent, $level = 0) { 
+        $sql = "SELECT `categoryId` FROM `{$this->_table}` WHERE parrentCategoryId = ".$parent." AND status = 1";
+        $rs = $this->db->query($sql)->result();
+        $categoryid = array();
+        if($rs):            
+            foreach($rs as $key => $cat):   
+                $categoryid[] = $cat->categoryId;
+                if($pcats = $this->get_children_categories_id($cat->categoryId, $level+1)): 
+                    $categoryid = array_merge($categoryid, $pcats);
+                endif;                
+            endforeach;
+        endif;
+        return $categoryid;
+    }
+    
+    /**
+     * 
+     * @param type $categoryId
+     * @param type $offset
+     * @param type $limit
+     * @param type $cond
+     * @return type
+     */
+    public function get_children_categories_products($categoryId, $offset = null, $limit = null, $cond) { 
+        
+        $pcatsId = $this->get_children_categories_id($categoryId);
+        $pcatsId[] = $categoryId;
+        $pcatsId = implode("','", $pcatsId);        
+        $group_by = ' GROUP BY p.productId';        
+        $order_by = ' ORDER BY p.productId';
+        if(isset($cond['order_by']) && $cond['order_by']):
+            $order_by = $order_by.', '.$cond['order_by'];
+            unset($cond['order_by']);
+        endif;
+        $order_sort = ' ASC';
+        
+        if(isset($cond['order_sort']) && $cond['order_sort']):
+            $order_sort = ' '.$cond['order_sort'];
+            unset($cond['order_sort']);
+        endif;
+        
+        $plimit = '';
+        if($offset >= 0 && $limit):
+            $plimit = ' LIMIT '.$offset.', '.$limit;
+        else:
+            $plimit = ' LIMIT 0, 12';
+        endif;
+        
+        $where_str = 'p.status = 1 ';
+        
+        if($pcatsId):
+            $where_str = $where_str." AND c.categoryId IN ('".$pcatsId."')";
+        endif;
+        
+        $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `c`.`categoryName`, 
+            `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage` 
+            FROM `product` AS p
+            LEFT JOIN product_brand AS pb ON p.productId = pb.productId
+            LEFT JOIN brand AS b ON pb.brandId = b.brandId
+            LEFT JOIN product_category AS pc ON pc.productId = p.productId
+            LEFT JOIN category AS c ON c.categoryId = pc.categoryId
+            LEFT JOIN product_image AS pimage ON pimage.productId = p.productId
+            WHERE {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
+        $rs = $this->db->query($sql)->result();//echo $this->db->last_query();print_r($rs);
+        $products = array();
+        $brands = array();
+        if($rs):            
+            foreach($rs as $key => $product):  
+                $product->tags = $this->get_product_tags($product->productId);
+                $product->seller = $this->get_product_seller($product->productId);
+                $product->product_price = $this->get_products_price($product->productId);
+                $product->curent_category = $this->get_details_by_id($categoryId);
+                $products[] =  $product;  
+                $brands[$product->btitle] = $product->btitle;
+            endforeach;
+        endif;
+        $products['brands'] = $brands;
+        return $products;
+    }
+    
+    /**
+     * 
+     * @param type $produtcId
+     * @return type
+     */
+    function get_products_price($produtcId){
+        $rs = $this->db->from($this->_table_price)->where('productId',$produtcId)->get()->result();
+        $prices = array();
+        if($rs):            
+            foreach($rs as $key => $price):   
+                $prices[] = $price;            
+            endforeach;
+        endif;
+        return $prices;
+    }
+    
+    /**
+     * 
+     * @param type $produtcId
+     * @return type
+     */
+    function get_product_tags($produtcId){
+        $sql = "SELECT `t`.*
+            FROM `{$this->_tag}` AS t
+            LEFT JOIN {$this->_table_tag} AS pt ON pt.tagId = t.tagId
+            WHERE `pt`.`productId` = {$produtcId}";
+        $rs = $this->db->query($sql)->result();
+        $tags = array();
+        if($rs):            
+            foreach($rs as $key => $tag):   
+                $tags[] = $tag;            
+            endforeach;
+        endif;
+        return $tags;
+    }
+    
+    /**
+     * 
+     * @param type $produtcId
+     * @return type
+     */
+    function get_product_seller($produtcId){
+        $sql = "SELECT `u`.*
+            FROM `{$this->_user}` AS u
+            LEFT JOIN {$this->_product_seller} AS ps ON ps.userId = u.userId
+            WHERE `ps`.`productId` = {$produtcId}";
+        $rs = $this->db->query($sql)->result();
+        $users = array();
+        if($rs):            
+            foreach($rs as $key => $user):   
+                $users[] = $user;            
+            endforeach;
+        endif;
+        return $users;
+    }
+    
+    function is_category_last($categoryId){
+        $sql = "SELECT `categoryId` FROM `{$this->_table}` WHERE parrentCategoryId = ".$categoryId." AND status = 1";
+        $rs = $this->db->query($sql)->result();
+        
+        if($rs):
+            return false;
+        else:
+            return true;
+        endif;
+    }
+    
+    function get_root_category($categoryId){
+        $sql = "SELECT * FROM `{$this->_table}` WHERE parrentCategoryId = ".$categoryId." AND status = 1";
+        $rs = $this->db->query($sql)->result();
+        if($rs):
+            foreach($rs as $key => $cat):
+                if($key == 0):
+                    $datails = $this->get_details_by_id($cat->categoryId);
+                    if($datails[0]->parrentCategoryId == 0):
+                        return $datails[0];
+                    else:
+                        $this->get_root_category($cat->categoryId);
+                    endif;
+                endif;
+            endforeach;  
+        else:
+            $details = $this->get_details_by_id($categoryId);
+            return $details[0];
+        endif;
+    }
+    
+    
+    function get_parent_categories($categoryId){
+        $datails = $this->get_details_by_id($categoryId);
+        $sql = "SELECT * FROM `{$this->_table}` WHERE parrentCategoryId = ".$datails[0]->parrentCategoryId." AND status = 1";
+        $rs = $this->db->query($sql)->result();
+        $pcats = array();
+        if($rs):
+            foreach($rs as $key => $cat):
+                $pcats[] = $cat;
+            endforeach;
+        endif;
+        return $pcats;
     }
 }
 ?>

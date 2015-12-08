@@ -563,6 +563,17 @@ body{
 }
 
 
+.categrs li a.active{
+
+	background-color: rgb(255, 255, 255);
+
+    border-bottom: 1px solid rgb(217, 217, 217);
+
+	box-shadow: -10px 0 20px rgb(204, 204, 204);
+
+	color:#00A2B5;
+
+}
 
 .categrs li:last-child a{border-bottom:none;}
 
@@ -4402,3 +4413,75 @@ ul.dashbrd_tab span{ float:right; }
 .grpMemeber .grpButton{ float:right !important; }
 
 /*=================Product details Page ==================*/
+.topseller_zne h2 {
+    font-family: arial;
+    border: 1px solid #cccccc;
+    color: #1ab7be;
+    font-size: 20px;
+    display: inline-block;
+    width: 100%;
+    margin: 0 0 10px;
+    padding: 5px 5px;
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu>.dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    -webkit-border-radius: 0 6px 6px 6px;
+    -moz-border-radius: 0 6px 6px;
+    border-radius: 0 6px 6px 6px;
+}
+
+.dropdown-submenu:hover>.dropdown-menu {
+    display: block;
+}
+
+.dropdown-submenu>a:after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #ccc;
+    margin-top: 5px;
+    margin-right: -10px;
+}
+
+.dropdown-submenu:hover>a:after {
+    border-left-color: #fff;
+}
+
+.dropdown-submenu.pull-left {
+    float: none;
+}
+
+.dropdown-submenu.pull-left>.dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    -webkit-border-radius: 6px 0 6px 6px;
+    -moz-border-radius: 6px 0 6px 6px;
+    border-radius: 6px 0 6px 6px;
+}
+
+
+.prodct_box p a{
+
+    box-shadow: none !important;
+    font-size: 16px;
+
+    transition:none  !important;
+
+}
+
+
+
+.prodct_box p a:hover{ box-shadow: none !important; }

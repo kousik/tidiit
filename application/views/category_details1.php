@@ -10,7 +10,7 @@
 </header>
 <script type="text/javascript">
     jQuery(document).ready(function(){});
-</script
+</script>
 <article>
   <div class="container">
     <div class="categrs_bannr">

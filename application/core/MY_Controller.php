@@ -122,7 +122,8 @@ class MY_Controller extends CI_Controller {
         //$data['AboutUSShortData']=$AboutUsData[0]->ShortBody;
         $data['header']=$this->load->view('header1',$data,true);
         $data['footer']=$this->load->view('footer',$data,true);
-        $data['main_menu']=$this->load->view('main_menu',$data,true);
+        //$data['main_menu']=$this->load->view('main_menu',$data,true);
+        $data['main_menu']=$this->get_site_categories_view();
         $user = $this->_get_current_user_details();
         $mynotification = $this->User_model->notification_my_unread($user->userId);
         if(!empty($mynotification)):
@@ -140,7 +141,8 @@ class MY_Controller extends CI_Controller {
             //$data['AboutUSShortData']=$AboutUsData[0]->ShortBody;
             $data['header']=$this->load->view('header',$data,true);
             $data['footer']=$this->load->view('footer',$data,true);
-            $data['main_menu']=$this->load->view('main_menu',$data,true);
+            //$data['main_menu']=$this->load->view('main_menu',$data,true);
+            $data['main_menu']=$this->get_site_categories_view();
             return $data;
     }
 
@@ -493,5 +495,49 @@ class MY_Controller extends CI_Controller {
         $this->email->subject($subject);
         $this->email->message($message);
         $this->email->send();
+    }
+    
+    
+    function get_site_categories_view(){
+        $TopCategoryData=$this->Category_model->get_site_categories();
+        ob_start();?>
+        <ul class="categrs">
+        <?php foreach($TopCategoryData as $key => $cat):?>
+        <li>
+            <a href="javascript:void(0);"><?php echo my_seo_freindly_url($cat->categoryName);?> <span>&nbsp;</span></a>
+            <?php if(isset($cat->parent) && $cat->parent):?>
+            <ul class="sub_catgrs">
+                <?php 
+                foreach($cat->parent As $pkey =>$pcat): //pre($v);die;?>
+                <li>
+                    <a href="<?php echo BASE_URL.'products/'.my_seo_freindly_url($pcat->categoryName).'/?cpid='.base64_encode($pcat->categoryId*226201);?>"><?php echo $pcat->categoryName;?> &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
+                    <?php if(isset($pcat->parent) && $pcat->parent): 
+                        $this->multi_cat_menu_list_design($pcat->parent);
+                    endif;?>
+                </li>
+                <?php endforeach;?>
+            </ul>
+            <?php endif; ?>
+        </li>
+        <?php endforeach; ?>
+        </ul>
+        <?php 
+        $menu = ob_get_contents();
+        ob_get_clean();
+        return $menu;
+    }
+    
+    function multi_cat_menu_list_design($pcat){        
+    ?>
+        <ul class="sub_sub_ctgrs">
+            <?php foreach($pcat AS $pkey => $cat):?>
+            <li>
+                <a href="<?php echo BASE_URL.'products/'.my_seo_freindly_url($cat->categoryName).'/?cpid='.base64_encode($cat->categoryId*226201);?>"><?php echo $cat->categoryName;?>&nbsp;<i class="fa fa-angle-down mobl_vrsn"></i></a>
+                <?php if(isset($cat->parent) && $cat->parent):
+                    $this->multi_cat_menu_list_design($cat->parent);
+                endif;?>
+            </li>
+            <?php endforeach;?>
+        </ul><?php
     }
 }
