@@ -295,6 +295,18 @@ WHERE c.categoryId =".$categoryId;
             $where_str = $where_str." AND c.categoryId IN ('".$pcatsId."')";
         endif;
         
+        
+        if(isset($cond['brand']) && $cond['brand']):
+            $brands = implode('","', $cond['brand']);        
+            $where_str = $where_str.' AND b.title IN ("'.$brands.'")';
+        endif;
+        
+        if(isset($cond['range']) && $cond['range']):
+            $lowestPrice = $cond['range'][0];
+            $heighestPrice = $cond['range'][1];
+            $where_str = $where_str.' AND p.lowestPrice >= '.$lowestPrice.' AND p.lowestPrice <= '.$heighestPrice;
+        endif;
+        
         $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `c`.`categoryName`, 
             `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage` 
             FROM `product` AS p
@@ -313,7 +325,7 @@ WHERE c.categoryId =".$categoryId;
                 //$product->seller = $this->get_product_seller($product->productId);
                // $product->product_price = $this->get_products_price($product->productId);
                 //$product->curent_category = $this->get_details_by_id($categoryId);
-                $products[] =  $product;  
+                $products['products'][] =  $product;  
                 $brands[$product->btitle] = $product->btitle;
             endforeach;
         endif;

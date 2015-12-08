@@ -35,7 +35,7 @@ class Category extends MY_Controller{
     
     
     function display_category_products($name){
-        //print_r($_GET);die;
+        //echo $_SERVER['SERVER_ADDR'];print_r($_GET);die;
         $SEODataArr=array();        
         if($this->is_loged_in()):
             $data=$this->_get_logedin_template($SEODataArr);
@@ -67,12 +67,23 @@ class Category extends MY_Controller{
         
         unset($_GET['cpid']);
         $cond = array();
+        $data['sort'] = 'popular';
+        $data['brand'] = array();
+        $data['range'] = array(0,100000);
         foreach($_GET as $key => $get):
-            if($key == 'sort'):
-                //$cond['order_sort'] = $get;
+            if($key == 'sort' && $get):
+                $cond['order_by'] = $get;
+                $data['sort'] = $get;
             endif;
-            if($key == 'sort'):
-               // $cond['order_sort'] = $get;
+            if($key == 'brand' && $get):
+                $brands = explode("|", $get);
+                $cond['brand'] = $brands;
+                $data['brand'] = $brands;
+            endif;
+            if($key == 'range' && $get):
+                $ranges = explode("|", $get);
+                $cond['range'] = $ranges;
+                $data['range'] = array($ranges[0],$ranges[1]);
             endif;
         endforeach;
         

@@ -22,7 +22,7 @@
             <ul class="categrs left_nav">
             <?php foreach($s_widget_cats as $key => $cat):?>
             <li>
-                <a href="<?php echo BASE_URL.'products/'.my_seo_freindly_url($cat->categoryName).'/?cpid='.base64_encode($cat->categoryId*226201);?>" <?php if($cat->categoryId == $currCat->categoryId):?> class="active"<?php endif;?>><?php echo $cat->categoryName;?> &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
+                <a href="<?php echo BASE_URL.'products/'.my_seo_freindly_url($cat->categoryName).'/?cpid='.base64_encode($cat->categoryId*226201);?>&sort=popular" <?php if($cat->categoryId == $currCat->categoryId):?> class="active"<?php endif;?>><?php echo $cat->categoryName;?> &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
             </li>
             <?php endforeach; ?>
             </ul>
@@ -35,7 +35,7 @@
                           <h3>Price</h3>
                       </div>
                       <div class="layout-slider" style="width: 100%">
-                         <span style="display: inline-block; width: 100%; padding: 0 5px;"><input id="Slider1" type="slider" name="price" value="500;100000" /></span>
+                         <span style="display: inline-block; width: 100%; padding: 0 5px;"><input id="Slider1" type="slider" name="price" value="<?=$range[0]?>;<?=$range[1]?>" /></span>
                       </div> 
                   </div> 
                   <?php if(isset($products['brands']) && $products['brands']):?>
@@ -47,13 +47,13 @@
                           <?php
                               foreach($products['brands'] as $bkey => $brnd):?>
                           <li>
-                              <input type="checkbox" class="brandsort" value="<?=$brnd?>" />
+                              <input type="checkbox" class="brandsort" value="<?=$brnd?>" <?php if(in_array($brnd, $brand)):?>checked="checked" <?php endif;?> />
                               <span><?=$brnd?></span>
                           </li>
                           <?php endforeach;?>
                       </ul>
                   </div>
-                    <?php endif;?>
+                    <?php unset($products['brands']);endif; ?>
                 <?php /* ?> <dl id="narrow-by-list">
                      
                   <dt class="last even">Size</dt>
@@ -168,9 +168,9 @@
                     
                     <ul class="list-inline js-p-sort">
                         <li><label>Sort By :</label></li>
-                        <li><a href="javascript//" data-content="popular">Popularity</a></li>
-                        <li><a href="javascript//" data-content="lowestPrice">Price</a></li>
-                        <li><a href="javascript//" data-content="isNew">New</a></li>
+                        <li><a href="javascript//" data-content="popular" <?php if($sort == "popular"):?>class="active" <?php endif;?>>Popularity</a></li>
+                        <li><a href="javascript//" data-content="lowestPrice" <?php if($sort == "lowestPrice"):?>class="active" <?php endif;?>>Price</a></li>
+                        <li><a href="javascript//" data-content="isNew" <?php if($sort == "isNew"):?>class="active" <?php endif;?>>New</a></li>
                     </ul>
                     <a title="Set Descending Direction" href="#" class="category-asc ic ic-arrow-down"></a> </div>
                 </div>
@@ -181,15 +181,27 @@
               <div class="bst_sllng">
                 <h2><?=$currCat->categoryName?></h2>
                 <div class="row">
+                    <?php if(isset($products['products']) && $products['products']):?>
+                    <?php foreach($products['products'] as $pkey => $pro):?>
                     <div class="item col-md-3 col-sm-3 col-xs-6">
                         <div class="prodct_box prodct_box1"> 
-                            <a href="#"> 
-                                <img src="<?php echo SiteImagesURL;?>prdct_img.png" class="img-responsive" />
+                            <?php if($pro->qty < $pro->minQty):?>
+                            <a href="javascript//">
+                            <?php else :?>
+                            <a href="<?=BASE_URL.'product/details/'.base64_encode($pro->productId);?>"> 
+                            <?php endif;?> 
+                                <img src="<?=HOME_LISTING.$pro->pImage;?>" class="img-responsive" />
+                                <?php if($pro->qty < $pro->minQty):?>
+                                <div class="ch-info">
+                                    <h3><i class="fa fa-thumbs-o-down"></i> &nbsp;Out of Stock</h3>
+                                </div>
+                                <?php else :?>
                                 <div class="ch-info">
                                     <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
                                 </div>
+                                <?php endif;?>
                             </a>
-                            <p>Aidalane Gold Plated studded</p>
+                            <p><?=$pro->title;?></p>
                             <ul class="star">
                                 <li><i class="fa fa-star"></i></li>
                                 <li><i class="fa fa-star"></i></li>
@@ -197,243 +209,20 @@
                                 <li><i class="fa fa-star"></i></li>
                                 <li><i class="fa fa-star-o"></i></li>
                             </ul>
-                            <p>20000 - 60000</p>
-                            <p><a href="#">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
+                            <p><?=$pro->lowestPrice.' - '.$pro->heighestPrice;?></p>
+                            <p>
+                                <?php if($pro->qty < $pro->minQty):?>
+                                    <a href="javascript//">View Details &nbsp;<i class="fa fa-caret-right"></i></a>
+                                <?php else:?>
+                                <a href="<?=BASE_URL.'product/details/'.base64_encode($pro->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a>
+                                <?php endif;?>
+                            </p>
                         </div>
                     </div>
-                
-                    <div class="item col-md-3 col-sm-3 col-xs-6">
-                        <div class="prodct_box prodct_box1"> 
-                            <a href="#"> 
-                                <img src="<?php echo SiteImagesURL;?>prdct_img1.png" class="img-responsive" />
-                                <div class="ch-info">
-                                    <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
-                                </div>
-                            </a>
-                            <p>Aidalane Gold Plated studded</p>
-                            <ul class="star">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star-o"></i></li>
-                            </ul>
-                            <p>20000 - 60000</p>
-                            <p><a href="#">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
-                        </div>
-                    </div>            
-                    
-                    <div class="item col-md-3 col-sm-3 col-xs-6">
-                        <div class="prodct_box prodct_box1"> 
-                            <a href="#"> 
-                                <img src="<?php echo SiteImagesURL;?>prdct_img2.png" class="img-responsive" />
-                                <div class="ch-info">
-                                    <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
-                                </div>
-                            </a>
-                            <p>Aidalane Gold Plated studded</p>
-                            <ul class="star">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star-o"></i></li>
-                            </ul>
-                            <p>20000 - 60000</p>
-                            <p><a href="#">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
-                        </div>
-                    </div>
-                
-                    <div class="item col-md-3 col-sm-3 col-xs-6">
-                        <div class="prodct_box prodct_box1"> 
-                            <a href="#"> 
-                                <img src="<?php echo SiteImagesURL;?>prdct_img1.png" class="img-responsive" />
-                                <div class="ch-info">
-                                    <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
-                                </div>
-                            </a>
-                            <p>Aidalane Gold Plated studded</p>
-                            <ul class="star">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star-o"></i></li>
-                            </ul>
-                            <p>20000 - 60000</p>
-                            <p><a href="#">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
-                        </div>
-                    </div>  
-                    
-                    <div class="item col-md-3 col-sm-3 col-xs-6">
-                        <div class="prodct_box prodct_box1"> 
-                            <a href="#"> 
-                                <img src="<?php echo SiteImagesURL;?>prdct_img.png" class="img-responsive" />
-                                <div class="ch-info">
-                                    <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
-                                </div>
-                            </a>
-                            <p>Aidalane Gold Plated studded</p>
-                            <ul class="star">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star-o"></i></li>
-                            </ul>
-                            <p>20000 - 60000</p>
-                            <p><a href="#">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
-                        </div>
-                    </div>
-                
-                    <div class="item col-md-3 col-sm-3 col-xs-6">
-                        <div class="prodct_box prodct_box1"> 
-                            <a href="#"> 
-                                <img src="<?php echo SiteImagesURL;?>prdct_img1.png" class="img-responsive" />
-                                <div class="ch-info">
-                                    <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
-                                </div>
-                            </a>
-                            <p>Aidalane Gold Plated studded</p>
-                            <ul class="star">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star-o"></i></li>
-                            </ul>
-                            <p>20000 - 60000</p>
-                            <p><a href="#">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
-                        </div>
-                    </div>            
-                    
-                    <div class="item col-md-3 col-sm-3 col-xs-6">
-                        <div class="prodct_box prodct_box1"> 
-                            <a href="#"> 
-                                <img src="<?php echo SiteImagesURL;?>prdct_img2.png" class="img-responsive" />
-                                <div class="ch-info">
-                                    <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
-                                </div>
-                            </a>
-                            <p>Aidalane Gold Plated studded</p>
-                            <ul class="star">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star-o"></i></li>
-                            </ul>
-                            <p>20000 - 60000</p>
-                            <p><a href="#">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
-                        </div>
-                    </div>
-                
-                    <div class="item col-md-3 col-sm-3 col-xs-6">
-                        <div class="prodct_box prodct_box1"> 
-                            <a href="#"> 
-                                <img src="<?php echo SiteImagesURL;?>prdct_img1.png" class="img-responsive" />
-                                <div class="ch-info">
-                                    <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
-                                </div>
-                            </a>
-                            <p>Aidalane Gold Plated studded</p>
-                            <ul class="star">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star-o"></i></li>
-                            </ul>
-                            <p>20000 - 60000</p>
-                            <p><a href="#">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
-                        </div>
-                    </div> 
-                    
-                    
-                    
-                    <div class="item col-md-3 col-sm-3 col-xs-6">
-                        <div class="prodct_box prodct_box1"> 
-                            <a href="#"> 
-                                <img src="<?php echo SiteImagesURL;?>prdct_img.png" class="img-responsive" />
-                                <div class="ch-info">
-                                    <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
-                                </div>
-                            </a>
-                            <p>Aidalane Gold Plated studded</p>
-                            <ul class="star">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star-o"></i></li>
-                            </ul>
-                            <p>20000 - 60000</p>
-                            <p><a href="#">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
-                        </div>
-                    </div>
-                
-                    <div class="item col-md-3 col-sm-3 col-xs-6">
-                        <div class="prodct_box prodct_box1"> 
-                            <a href="#"> 
-                                <img src="<?php echo SiteImagesURL;?>prdct_img1.png" class="img-responsive" />
-                                <div class="ch-info">
-                                    <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
-                                </div>
-                            </a>
-                            <p>Aidalane Gold Plated studded</p>
-                            <ul class="star">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star-o"></i></li>
-                            </ul>
-                            <p>20000 - 60000</p>
-                            <p><a href="#">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
-                        </div>
-                    </div>            
-                    
-                    <div class="item col-md-3 col-sm-3 col-xs-6">
-                        <div class="prodct_box prodct_box1"> 
-                            <a href="#"> 
-                                <img src="<?php echo SiteImagesURL;?>prdct_img2.png" class="img-responsive" />
-                                <div class="ch-info">
-                                    <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
-                                </div>
-                            </a>
-                            <p>Aidalane Gold Plated studded</p>
-                            <ul class="star">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star-o"></i></li>
-                            </ul>
-                            <p>20000 - 60000</p>
-                            <p><a href="#">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
-                        </div>
-                    </div>
-                
-                    <div class="item col-md-3 col-sm-3 col-xs-6">
-                        <div class="prodct_box prodct_box1"> 
-                            <a href="#"> 
-                                <img src="<?php echo SiteImagesURL;?>prdct_img1.png" class="img-responsive" />
-                                <div class="ch-info">
-                                    <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
-                                </div>
-                            </a>
-                            <p>Aidalane Gold Plated studded</p>
-                            <ul class="star">
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star"></i></li>
-                                <li><i class="fa fa-star-o"></i></li>
-                            </ul>
-                            <p>20000 - 60000</p>
-                            <p><a href="#">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p>
-                        </div>
-                    </div> 
+                    <?php endforeach;?>
+                    <?php else:?>
+                    <div class="alert alert-danger" role="alert"><h1><i class="fa fa-exclamation-triangle"></i> &nbsp; &nbsp; Oops! No products found as per your wish!</h1></div>
+                    <?php endif;?>
                 </div>
               </div>
           </div>
