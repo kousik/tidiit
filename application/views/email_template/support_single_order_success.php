@@ -63,7 +63,7 @@
 										</font> 
 									</td>
                                   <td width="10%" align="middle" valign="top">&nbsp;</td>
-									<?phpp /*<td width="48%" align="middle" valign="top">
+									<?php /*<td width="48%" align="middle" valign="top">
 										<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:15px; line-height:21px;font-weight:bold;">
 											Billing Address
 										</font>

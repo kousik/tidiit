@@ -499,6 +499,7 @@ class Shopping extends MY_Controller{
             else:
                 $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'group','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$pevorder,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>$cartId);
                 $this->session->set_userdata('PaymentData',$paymentDataArr);
+                $_SESSION['PaymentData'] = $paymentDataArr;
             endif;
             
             if($order_update['status']==2):
@@ -1503,8 +1504,9 @@ class Shopping extends MY_Controller{
         //print_r($_SESSION['PaymentData']);
         //die;
         if($returnAction=='success'):
-            $PaymentDataArr=  $this->session->userdata('PaymentData');
-            pre($PaymentDataArr);die;
+            //$PaymentDataArr=  $this->session->userdata('PaymentData');
+            $PaymentDataArr= $_SESSION['PaymentData'];
+            //pre($PaymentDataArr);die;
             //$paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount);
             $orderType=$PaymentDataArr['orderType'];
             if($orderType=='group'):
@@ -1632,6 +1634,7 @@ class Shopping extends MY_Controller{
                 $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
                 $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'group'));
                 $this->_remove_cart($PaymentDataArr['cartId']);
+                unset($_SESSION['PaymentData']);
                 redirect(BASE_URL.'shopping/success/');
             else:
                 $this->session->set_flashdata("message","Some error happen, please try again later!");
@@ -1641,7 +1644,7 @@ class Shopping extends MY_Controller{
     }
     
     function process_mpesa_success_single_order($PaymentDataArr){
-        pre($PaymentDataArr);
+        //pre($PaymentDataArr);
         foreach ($PaymentDataArr['orders'] AS $k => $v):
             //$paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$orderinfo,'order'=>$order,'cartId'=>$allCartArray);
             $order_update=array();
@@ -1667,6 +1670,7 @@ class Shopping extends MY_Controller{
             $this->_global_tidiit_mail($recv_email, "Confirmation mail for your Tidiit order no - TIDIIT-OD-".$v, $mail_template_view_data,'single_order_success');
             $this->_sent_single_order_complete_mail($v);
         endforeach;
+        unset($_SESSION['PaymentData']);
         redirect(BASE_URL.'shopping/success/');
     }
 }
