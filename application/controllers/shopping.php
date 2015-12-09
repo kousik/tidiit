@@ -427,9 +427,9 @@ class Shopping extends MY_Controller{
                         $data['receiverId'] = $usr->userId;
                         $data['nType'] = 'GROUP-ORDER';
 
-                        $data['nTitle'] = 'New Buyer Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+                        $data['nTitle'] = 'New Buying Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
                         $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
-                        $data['nMessage'] = "Hi, <br> You have requested to buy group order product.<br>";
+                        $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club order product.<br>";
                         $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
                         $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
                         $data['nMessage'] .= "Want to process the order ? <br>";
@@ -447,7 +447,7 @@ class Shopping extends MY_Controller{
 
                         $mail_template_view_data=$this->load_default_resources();
                         $mail_template_view_data['group_order_start']=$mail_template_data;
-                        $this->_global_tidiit_mail($recv_email, "New Buyer Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
+                        $this->_global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
                         $this->User_model->notification_add($data);
                     endforeach;
                 else:
@@ -936,7 +936,7 @@ class Shopping extends MY_Controller{
         endif;
         
         if(!$this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$order->groupId)):
-            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this buyers club.');
+            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this buying club.');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
         
@@ -952,7 +952,7 @@ class Shopping extends MY_Controller{
                     $data['nTitle'] = 'Buyers club order [TIDIIT-OD-'.$order->orderId.'] cancel by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
                     $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ORDER_ID']=$order->orderId;
                     $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ADMIN_NAME']=$usr->firstName.' '.$usr->lastName;
-                    $data['nMessage'] = "Hi, <br> Sorry! I can not process this group order right now.<br>";
+                    $data['nMessage'] = "Hi, <br> Sorry! I can not process this Buying Club order right now.<br>";
                     $data['nMessage'] .= "";
                     $data['nMessage'] .= "Thanks <br> Tidiit Team.";
 
@@ -1386,7 +1386,7 @@ class Shopping extends MY_Controller{
     
     /*
      * 
-     * send mail to Buyer Club member and leader after success payment by all member as well leader
+     * send mail to Buying Club member and leader after success payment by all member as well leader
      */
     function _sent_order_complete_mail($order){
         //return TRUE;
@@ -1403,7 +1403,7 @@ class Shopping extends MY_Controller{
             $adminMailData['orderParrentId']=$order->parrentOrderID;
             $adminMailData['userFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
             //pre($adminMailData);die;
-            $this->_global_tidiit_mail($orderInfoDataArr->group->admin->email, "Confirmation mail for your Tidiit Buying Club order no - TIDIIT-OD-".$order->parrentOrderID, $adminMailData,'group_order_success',$orderInfoDataArr->group->admin->firstName.' '.$orderInfoDataArr->group->admin->lastName);
+            $this->_global_tidiit_mail($orderInfoDataArr['group']->admin->email, "Confirmation mail for your Tidiit Buying Club order no - TIDIIT-OD-".$order->parrentOrderID, $adminMailData,'group_order_success',$orderInfoDataArr->group->admin->firstName.' '.$orderInfoDataArr->group->admin->lastName);
             
             /// for seller
             $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
@@ -1558,9 +1558,9 @@ class Shopping extends MY_Controller{
                         $data['receiverId'] = $usr->userId;
                         $data['nType'] = 'GROUP-ORDER';
 
-                        $data['nTitle'] = 'New Buyer Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+                        $data['nTitle'] = 'New Buying Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
                         $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
-                        $data['nMessage'] = "Hi, <br> You have requested to buy group order product.<br>";
+                        $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club order product.<br>";
                         $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
                         $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
                         $data['nMessage'] .= "Want to process the order ? <br>";
@@ -1578,7 +1578,7 @@ class Shopping extends MY_Controller{
 
                         $mail_template_view_data=$this->load_default_resources();
                         $mail_template_view_data['group_order_start']=$mail_template_data;
-                        $this->_global_tidiit_mail($recv_email, "New Buyer Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
+                        $this->_global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
                         $this->User_model->notification_add($data);
                     endforeach;
                 else:
