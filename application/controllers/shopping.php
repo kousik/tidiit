@@ -1510,7 +1510,7 @@ class Shopping extends MY_Controller{
             //$paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount);
             $orderType=$PaymentDataArr['orderType'];
             if($orderType=='group'):
-                $orderDataArr=array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo'],'group'=>$PaymentDataArr['group'],'pevorder'=>$PaymentDataArr['pevorder'],'aProductQty'=>$PaymentDataArr['aProductQty'],'prod_price_info'=>$PaymentDataArr['prod_price_info'],'order'=>$PaymentDataArr['order'],'cartId'=>$PaymentDataArr['cartId']);
+                $orderDataArr=array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo'],'group'=>$PaymentDataArr['group'],'pevorder'=>$PaymentDataArr['pevorder'],'aProductQty'=>$PaymentDataArr['aProductQty'],'prod_price_info'=>$PaymentDataArr['prod_price_info'],'cartId'=>$PaymentDataArr['cartId']);
                 $this->process_mpesa_success_group_order($orderDataArr);
             else:
                 $this->process_mpesa_success_single_order(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo']));
