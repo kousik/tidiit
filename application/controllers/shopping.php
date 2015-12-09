@@ -1538,7 +1538,7 @@ class Shopping extends MY_Controller{
                 if($order->groupId):
                     $orderinfo['group'] = $PaymentDataArr['group'];
                 endif;
-
+                $group=$PaymentDataArr['group'];
                 $info['orderInfo'] = base64_encode(serialize($orderinfo));
                 $this->Order_model->update($info, $orderId);
                 if($order->parrentOrderID == 0):
