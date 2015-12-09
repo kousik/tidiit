@@ -241,7 +241,7 @@ class User_model extends CI_Model {
 
     function get_all_users_by_locality($localityId){
         $this->db->where('userId !=', $this->session->userdata('FE_SESSION_VAR'));
-        $this->db->select('userId')->from($this->_bill_address)->where('localityId',$localityId);
+        $this->db->select('userId')->from($this->_shipping_address)->where('localityId',$localityId);
         $query=$this->db->get();
         $data = $query->result();
         if($data): 
