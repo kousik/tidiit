@@ -74,9 +74,9 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));
                                                         <td>Billing Address</td>
                                                         <td><?=isset($orderinfo['shipping']->address)?$orderinfo['shipping']->address:''?><br>
                                                             <?=isset($orderinfo['shipping']->locality)?$orderinfo['shipping']->locality:''?><br>
-                                                        City: <?=isset($orderinfo['shipping']->cityTableData)?$orderinfo['shipping']->cityTableData:''?><br>
+                                                        City: <?=isset($orderinfo['shipping']->city)?$orderinfo['shipping']->city:''?><br>
                                                         State :<?=isset($orderinfo['shipping']->stateName)?$orderinfo['shipping']->stateName:''?><br>
-                                                        PIN :<?=isset($orderinfo['shipping']->zipTableData)?$orderinfo['shipping']->zipTableData:''?><br>
+                                                        PIN :<?=isset($orderinfo['shipping']->zip)?$orderinfo['shipping']->zip:''?><br>
                                                         Country :<?=isset($orderinfo['shipping']->countryName)?$orderinfo['shipping']->countryName:''?> 
                                                         </td>
                                                         <td>Shipping Address</td>
