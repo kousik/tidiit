@@ -5,7 +5,9 @@
         <div id="content">
         <div class="outer">
           <div class="inner bg-light lter">
-              <div style="color: red; text-align: center; margin: 0 auto;padding-top: 10px;font-weight: bold;"><?php echo $this->session->flashdata('Message');?></div>
+              <div style="color: red; text-align: center; margin: 0 auto;padding-top: 10px;font-weight: bold;">
+                  <div class="alert alert-success" role="alert"><i class="fa fa-check"></i> <?php echo $this->session->flashdata('Message');?></div>
+              </div>
             <!--Begin Datatables
             <h4 class="reg_header">&nbsp;</h4>-->
             
@@ -39,7 +41,7 @@
                           <th width="200">Action</th>
                           <th>Status</th>
                           <th>Image</th>
-                          <th>SKU</th>
+                          <th>Model</th>
                           <th width="90">Product Name</th>
                           <th width="30">In stock</th>
                         </tr>
@@ -58,7 +60,11 @@
                           <td><img src="<?php echo SiteResourcesURL.'product/100X100/'.$k->image;?>" alt="<?php echo $k->title;?>"></td>
                           <td><?php echo $k->model;?></td>
                           <td><?php echo $k->title;?></td>
-                          <td><?php echo $k->qty; ?></td>
+                          <td><?php 
+                          if($k->qty>$k->minQty):
+                              echo $k->qty; 
+                          else: ?><span><a href="javascript:void(0);" class="updateStock" data-productid="<?php echo $k->productId;?>">Update Stock</a></span>
+                          <?php endif;?></td>
                         </tr>
                         <?php }
                         }?> 
@@ -78,6 +84,34 @@
     <?php echo $footer;?>
 </body>
 </html>
+<!-- Modal -->
+<div class="modal fade" id="myModalLogin123" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Updating Stock</h4>
+      </div>
+      <form action="<?php echo BASE_URL.'product/update_stock/'?>" method="post" name="updateStockForm" class="form-horizontal" id="updateStockForm"> 
+          <input type="hidden" name="updateQuantityProductId" id="updateQuantityProductId" value="">
+      <div class="modal-body">  
+          
+              <div class="form-group">
+                  <label for="groupTitle" class="col-sm-3 control-label">New Quantity</label>
+                  <div class="col-sm-7">
+                  <input type="text" class="form-control" id="newQty" name="newQty" placeholder="1" required>
+                  </div>
+              </div>
+            <div class="js-message" style="display:none;"></div>
+      </div>
+      <div class="modal-footer">
+        <input type="submit"  class="grpButton" name="updateStockBtn" id="updateStockBtn" value="submit" />
+      </div>
+      </form>    
+    </div>
+  </div>
+</div>
+<!-- /.modal -->
 <script src="<?php echo SiteJSURL;?>jquery.dataTables.min.js"></script>
 <script src="<?php echo SiteJSURL;?>dataTables.bootstrap.js"></script>
 <script src="<?php echo SiteJSURL;?>jquery.tablesorter.min.js"></script>
@@ -96,6 +130,14 @@
         var productstatus = $(this).data('productstatus');
        location.href= myJsMain.baseURL+'product/change_status/'+productid+'/'+productstatus;
     });
+    
+    $('.updateStock').on('click',function(){
+        var productid = $(this).data('productid');
+        $('#updateQuantityProductId').val(productid);
+        $('#myModalLogin123').modal('show');
+    });
+    
+    
 }); 
     $(function() {
       Metis.MetisTable();

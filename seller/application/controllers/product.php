@@ -444,6 +444,16 @@ class Product extends MY_Controller{
             $this->session->set_flashdata('Message','Product updated successfully.');
             redirect(base_url().'admin/product/viewlist');
     }
+    
+    function update_stock(){
+        $productId=$this->input->post('updateQuantityProductId',TRUE);
+        $newQty=  $this->input->post('newQty',TRUE);
+        $productDetails=$this->Product_model->details($productId);
+        $newQty+=$productDetails[0]->qty;
+        $this->Product_model->edit(array('qty'=>$newQty),$productId);
+        $this->session->set_flashdata('Message','Stock updated successfully.');
+        redirect(BASE_URL.'product/viewlist');
+    }
 
     function delete($productId){
         $ProductImages=$this->Product_model->get_products_images($productId);
