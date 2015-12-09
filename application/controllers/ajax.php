@@ -248,7 +248,7 @@ class Ajax extends MY_Controller{
             if(empty($UsersDataArr)){
                 echo '';die;
             }else{
-                $html ='<label class="col-sm-3 control-label">Select Buyer Club Users :</label>';
+                $html ='<label class="col-sm-3 control-label">Select Buying Club Users :</label>';
                 $html .='<div class="boxes">';
                 foreach($UsersDataArr as $user):
                 $html.='<div class="checkbox-'.$user->userId.'"><div class="checkbox">
@@ -383,7 +383,7 @@ class Ajax extends MY_Controller{
         $groupColor = $colors[$rand_keys];
         
         if(!$groupUsersArr):
-            echo json_encode(array('result'=>'bad','msg'=>'Please select the at least one Buyer Club member!'));die;
+            echo json_encode(array('result'=>'bad','msg'=>'Please select the at least one Buying Club member!'));die;
         endif;
         
         $groupUsers = implode(",", $groupUsersArr);
@@ -446,10 +446,10 @@ class Ajax extends MY_Controller{
                     $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                     $data['receiverId'] = $usr->userId;
                     $data['nType'] = 'GROUP-ORDER';
-                    $data['nTitle'] = 'Buyer Club Re-order [TIDIIT-OD'.$order->orderId.'] running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+                    $data['nTitle'] = 'Buying Club Re-order [TIDIIT-OD'.$order->orderId.'] running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
                     $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID']=$order->orderId;
                     $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ADMIN_NAME']=$group->admin->firstName.' '.$group->admin->lastName;
-                    $data['nMessage'] = "Hi, <br> You have requested to buy group order product.<br>";
+                    $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club order product.<br>";
                     $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
                     $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
                     $data['nMessage'] .= "Want to process the order ? <br>";
@@ -467,7 +467,7 @@ class Ajax extends MY_Controller{
                     /// firing mail
                     $mail_template_view_data=$this->load_default_resources();
                     $mail_template_view_data['group_order_re_start']=$mail_template_data;
-                    $this->_global_tidiit_mail($recv_email, "Buyer Club Order Re-Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_re_start');
+                    $this->_global_tidiit_mail($recv_email, "Buying Club Order Re-Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_re_start');
                     
                     $this->User_model->notification_add($data);
                 endforeach;
@@ -501,7 +501,7 @@ class Ajax extends MY_Controller{
             <div class="alert alert-success" role="alert">
                 <i class="fa fa-group"></i>
                 <span class="sr-only">Success:</span>
-                Buyer Club has been added successfully. Please process the order without reload page.
+                Buying Club has been added successfully. Please process the order without reload page.
             </div>
             <div class="col-md-3 col-sm-3 grp_dashboard" style="margin:0;">
             <div class="<?= $group->groupColor ?>">
@@ -510,10 +510,10 @@ class Ajax extends MY_Controller{
             <div class="grp_title"><?= $group->groupTitle ?></div>
         </div>        
         <div class="col-md-6">
-            <h5><strong>Buyer Club Leader</strong></h5>
+            <h5><strong>Buying Club Leader</strong></h5>
             <p class="text-left"><?= $group->admin->firstName ?> <?= $group->admin->lastName ?></p>
             <?php if ($group->users): ?>
-                <h5><strong>Buyer Club Users</strong></h5><?php foreach ($group->users as $ukey => $usr): ?>
+                <h5><strong>Buying Club Members</strong></h5><?php foreach ($group->users as $ukey => $usr): ?>
                     <p class="text-left"><?= $usr->firstName ?> <?= $usr->lastName ?></p>
                 <?php endforeach;
             endif;
@@ -534,13 +534,13 @@ class Ajax extends MY_Controller{
         <div class="alert alert-success" role="alert">
             <i class="fa fa-exclamation-circle"></i>
             <span class="sr-only">Success:</span>
-            Please select a buyer club!
+            Please select a Buying club!
         </div>
         <table class="table table-hover">
             <thead>
                 <tr>
                     <th>Title</th>
-                    <th>Buyer Club Leader</th>
+                    <th>Buying Club Leader</th>
                     <th>Users</th>
                     <th>Select</th>
                 </tr>
@@ -564,7 +564,7 @@ class Ajax extends MY_Controller{
         else:?>
         <div class="alert alert-danger" role="alert">
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-            You have no own Buyer Club or not added any other Buyer. Please create Buyer Club first!
+            You have no own Buying Club or not added any other Buyer. Please create Buying Club first!
         </div>
         <?php
         endif;
@@ -585,25 +585,25 @@ class Ajax extends MY_Controller{
         $type = $data['nType'];
         switch($type){
             case 'GROUP-ADD':
-                $data['nMessage'] = "Hi, <br> You Have added in my newly created Buyer Club <b>[".$data['nTitle']."]</b>";
+                $data['nMessage'] = "Hi, <br> You Have added in my newly created Buying Club <b>[".$data['nTitle']."]</b>";
                 $data['isEmail'] = true;
                 $data['isMobMessage'] = true;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
             case 'GROUP-MODIFY':
-                $data['nMessage'] = "Hi, <br> Buyer Club <b>[".$data['nTitle']."]</b> has been modified.";
+                $data['nMessage'] = "Hi, <br> Buying Club <b>[".$data['nTitle']."]</b> has been modified.";
                 $data['isEmail'] = true;
                 $data['isMobMessage'] = true;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
             case 'GROUP-MODIFY-NEW':
-                $data['nMessage'] = "Hi, <br> You Have added in my Buyer Club <b>[".$data['nTitle']."]</b>";
+                $data['nMessage'] = "Hi, <br> You Have added in my Buying Club <b>[".$data['nTitle']."]</b>";
                 $data['isEmail'] = true;
                 $data['isMobMessage'] = true;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
             case 'GROUP-MODIFY-DELETE':
-                $data['nMessage'] = "Hi, <br> You are not part of this Buyer Club <b>[".$data['nTitle']."]</b>";
+                $data['nMessage'] = "Hi, <br> You are not part of this Buying Club <b>[".$data['nTitle']."]</b>";
                 $data['isEmail'] = true;
                 $data['isMobMessage'] = true;
                 $data['createDate'] = date('Y-m-d H:i:s');
@@ -884,7 +884,7 @@ class Ajax extends MY_Controller{
                 echo '';die;
             }else{
                 //echo '';die;
-                $html ='<label class="col-sm-3 control-label">Select Buyer Club Users :</label>';
+                $html ='<label class="col-sm-3 control-label">Select Buying Club Users :</label>';
                 $html .='<div class="boxes">';
                 foreach($UsersDataArr as $user):
                 $html.='<div class="checkbox-'.$user->userId.'"><div class="checkbox">

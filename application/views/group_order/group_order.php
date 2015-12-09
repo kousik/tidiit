@@ -153,7 +153,7 @@ echo $html_heading; echo $header;?>
       <div class="modal-body">      
           <div class="js-message" style="display:none;"></div>
               <div class="form-group">
-                  <label for="groupTitle" class="col-sm-3 control-label">Buyer Club Title</label>
+                  <label for="groupTitle" class="col-sm-3 control-label">Buyer Club Name</label>
                   <div class="col-sm-7">
                   <input type="text" class="form-control" id="groupTitle" name="groupTitle" placeholder="Jane Doe" required>
                   </div>
@@ -196,7 +196,7 @@ echo $html_heading; echo $header;?>
                         </div>
                     </div> 
                     <div class="form-group">
-                        <label for="locality" class="col-sm-3 control-label">Select Product Type :</label>
+                        <label for="locality" class="col-sm-3 control-label">Select Product Category :</label>
                         <div class="col-sm-7">
                             <select name="productType" class="form-control nova heght_cntrl" id="productType">
                                 <option value="">Select</option>
@@ -210,7 +210,7 @@ echo $html_heading; echo $header;?>
               <div class="form-group js-show-group-locality-users">
               </div>
               <div class="js-show-group-users-tags">
-                  <div class="form-group"><label class="col-sm-3 control-label">Selected Users :</label></div>
+                  <div class="form-group"><label class="col-sm-3 control-label">Selected Club Member :</label></div>
               </div>
           
       </div>
