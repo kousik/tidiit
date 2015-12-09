@@ -417,7 +417,6 @@ class Shopping extends MY_Controller{
             $info['orderInfo'] = base64_encode(serialize($orderinfo));
             $this->Order_model->update($info, $orderId);
             $allOrderArray=array();
-            $allOrderArray[]=$orderId;
             $paymentGatewayAmount=$order->orderAmount;
             if($paymentOption=='sod'):
                 if($order->parrentOrderID == 0):
@@ -497,12 +496,11 @@ class Shopping extends MY_Controller{
                     $this->User_model->notification_add($data);
                 endif;
             else:
-                $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'group','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$pevorder,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>$cartId);
-                $this->session->set_userdata('PaymentData',$paymentDataArr);
-                $_SESSION['PaymentData'] = $paymentDataArr;
+                $paymentDataArr = array('orders'=>$orderId,'orderType'=>'group','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$pevorder,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>$cartId);      
+                $_SESSION['PaymentData'] = $paymentDataArr;     
             endif;
             
-            if($order_update['status']==2):
+            if($order_update['status'] == 2):
                 $this->_sent_order_complete_mail($order);
             endif;
             
@@ -1490,7 +1488,7 @@ class Shopping extends MY_Controller{
     
     function _mpesa_process($orderIdArr){
         $SEODataArr=array();
-        $data=$this->_get_logedin_template($SEODataArr);
+        $data = $this->_get_logedin_template($SEODataArr);
         $data['userMenuActive']=1;
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
         $data['orderId']=$orderIdArr[0];
@@ -1501,16 +1499,11 @@ class Shopping extends MY_Controller{
     function mpesa_return(){
         $custom=$this->input->post('custom');
         $returnAction=  $this->input->post('returnAction');
-        //print_r($_SESSION['PaymentData']);
-        //die;
         if($returnAction=='success'):
-            //$PaymentDataArr=  $this->session->userdata('PaymentData');
-            $PaymentDataArr= $_SESSION['PaymentData'];
-            //pre($PaymentDataArr);die;
-            //$paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount);
-            $orderType=$PaymentDataArr['orderType'];
+            $PaymentDataArr = $_SESSION['PaymentData'];
+            $orderType = $PaymentDataArr['orderType'];
             if($orderType=='group'):
-                $orderDataArr=array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo'],'group'=>$PaymentDataArr['group'],'pevorder'=>$PaymentDataArr['pevorder'],'aProductQty'=>$PaymentDataArr['aProductQty'],'prod_price_info'=>$PaymentDataArr['prod_price_info'],'cartId'=>$PaymentDataArr['cartId']);
+                $orderDataArr = $PaymentDataArr;
                 $this->process_mpesa_success_group_order($orderDataArr);
             else:
                 $this->process_mpesa_success_single_order(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo']));
@@ -1520,13 +1513,11 @@ class Shopping extends MY_Controller{
         endif;
     }
     
-    function process_mpesa_success_group_order($PaymentDataArr){
-        foreach ($PaymentDataArr['orders'] AS $k => $v):
-            $orderId = $v;
+    function process_mpesa_success_group_order($PaymentDataArr){        
+            $orderId = $PaymentDataArr['orders'];
             $pevorder = $PaymentDataArr['pevorder'];
-            //$a = $this->_get_available_order_quantity($orderId);
-
             $prod_price_info = $PaymentDataArr['prod_price_info'];
+            
             $order_update=array();
             if($prod_price_info->qty == $PaymentDataArr['aProductQty']):
                 $order_update['status'] = 2;
@@ -1534,19 +1525,18 @@ class Shopping extends MY_Controller{
             else:
                 $order_update['status'] = 1;
             endif;
+            
             $update = $this->Order_model->update($order_update,$orderId);
+            
             if($update):
                 $this->Order_model->order_group_status_update($orderId, $order_update['status'],$pevorder->parrentOrderID);
                 
                 //Notification
                 $order = $PaymentDataArr['order'];
-                
-                $orderinfo = $PaymentDataArr['orderinfo'];
-                
-                $group = $PaymentDataArr['group'];
+                $orderinfo = $PaymentDataArr['orderInfo'];
                 
                 if($order->groupId):
-                    $orderinfo['group'] = $group;
+                    $orderinfo['group'] = $PaymentDataArr['group'];
                 endif;
 
                 $info['orderInfo'] = base64_encode(serialize($orderinfo));
@@ -1627,6 +1617,7 @@ class Shopping extends MY_Controller{
                     $this->_global_tidiit_mail($recv_email,"One buyers club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                     $this->User_model->notification_add($data);
                 endif;
+                
                 if($order_update['status']==2):
                     $this->_sent_order_complete_mail($order);
                 endif;
@@ -1640,13 +1631,10 @@ class Shopping extends MY_Controller{
                 $this->session->set_flashdata("message","Some error happen, please try again later!");
                 redirect(BASE_URL.'shiping/my-cart');
             endif;
-        endforeach;
     }
     
     function process_mpesa_success_single_order($PaymentDataArr){
-        //pre($PaymentDataArr);
         foreach ($PaymentDataArr['orders'] AS $k => $v):
-            //$paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$orderinfo,'order'=>$order,'cartId'=>$allCartArray);
             $order_update=array();
             $order_update['status'] = 1;
             $this->Order_model->update($order_update,$v);

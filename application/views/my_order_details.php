@@ -63,7 +63,7 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));
                                                     <thead>
                                                     <tr class="success">
                                                         <th>Billing Name</th>
-                                                        <th style="width: 35%;"><?=isset($orderinfo['billing']->firstName)?$orderinfo['billing']->firstName:''?> <?=isset($orderinfo['billing']->lastName)?$orderinfo['billing']->lastName:''?></th>
+                                                        <th style="width: 35%;"><?=isset($orderinfo['shipping']->firstName)?$orderinfo['shipping']->firstName:''?> <?=isset($orderinfo['shipping']->lastName)?$orderinfo['shipping']->lastName:''?></th>
                                                         <th>Shipping Name</th>
                                                         <th style="width: 35%;"><?=isset($orderinfo['shipping']->firstName)?$orderinfo['shipping']->firstName:''?> <?=isset($orderinfo['shipping']->lastName)?$orderinfo['shipping']->lastName:''?></th>
                                                       </tr>
@@ -72,12 +72,12 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));
                                                     </tbody>
                                                     <tr>
                                                         <td>Billing Address</td>
-                                                        <td><?=isset($orderinfo['billing']->address)?$orderinfo['billing']->address:''?><br>
-                                                            <?=isset($orderinfo['billing']->locality)?$orderinfo['billing']->locality:''?><br>
-                                                        City: <?=isset($orderinfo['billing']->cityTableData)?$orderinfo['billing']->cityTableData:''?><br>
-                                                        State :<?=isset($orderinfo['billing']->stateName)?$orderinfo['billing']->stateName:''?><br>
-                                                        PIN :<?=isset($orderinfo['billing']->zipTableData)?$orderinfo['billing']->zipTableData:''?><br>
-                                                        Country :<?=isset($orderinfo['billing']->countryName)?$orderinfo['billing']->countryName:''?> 
+                                                        <td><?=isset($orderinfo['shipping']->address)?$orderinfo['shipping']->address:''?><br>
+                                                            <?=isset($orderinfo['shipping']->locality)?$orderinfo['shipping']->locality:''?><br>
+                                                        City: <?=isset($orderinfo['shipping']->cityTableData)?$orderinfo['shipping']->cityTableData:''?><br>
+                                                        State :<?=isset($orderinfo['shipping']->stateName)?$orderinfo['shipping']->stateName:''?><br>
+                                                        PIN :<?=isset($orderinfo['shipping']->zipTableData)?$orderinfo['shipping']->zipTableData:''?><br>
+                                                        Country :<?=isset($orderinfo['shipping']->countryName)?$orderinfo['shipping']->countryName:''?> 
                                                         </td>
                                                         <td>Shipping Address</td>
                                                         <td><?=isset($orderinfo['shipping']->address)?$orderinfo['shipping']->address:''?><br>
