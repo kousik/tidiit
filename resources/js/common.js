@@ -1,4 +1,6 @@
-
+var path = location.pathname;
+var pathArr=path.split('/');
+var groupMeberPaymentRequest='';
 // add new validate method for phone number validation.
 jQuery.validator.addMethod("phoneno", function(value, element) {
 	return this.optional(element) || /^[0-9?=.\+\-\ ]+$/.test(value);
@@ -65,19 +67,20 @@ myJsMain.commonFunction = {
         return str;
     },
     showHowItWorksBox:function(){
-        if(myJsMain.isLogedIn==false){
+        if(myJsMain.isLogedIn==false && pathArr[1]=="" ){
             myJsMain.commonFunction.showPleaseWait();
+            jQuery.ajax({
+                type: "POST",
+                url: myJsMain.baseURL+'ajax/show_how_it_works/',
+                success: function(msg){
+                    myJsMain.commonFunction.hidePleaseWait();
+                    if(msg!=''){
+                        jQuery('#autoLoadHowItWorks').html(msg)
+                    }
+                }
+            });
         }
-        jQuery.ajax({
-           type: "POST",
-           url: myJsMain.baseURL+'ajax/show_how_it_works/',
-           success: function(msg){
-               myJsMain.commonFunction.hidePleaseWait();
-               if(msg!=''){
-                   jQuery('#autoLoadHowItWorks').html(msg)
-               }
-           }
-         });
+        
     },
     GeneratNewImage:function(){
         jQuery('#secret_img').html("");
