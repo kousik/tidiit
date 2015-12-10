@@ -51,7 +51,7 @@
                             foreach($DataArr AS $k){?>  
                         <tr>
                           <td><input type="checkbox" name="sel_pro"></td>
-                          <td><a href="#">Edit</a> / 
+                          <td><a href="<?php echo BASE_URL.'product/edit_product/'.$k->productId*999999;?>">Edit</a> / 
                               <a href="javascript:void(0);" class="deleteProduct"  title="Delete" data-productid="<?php echo $k->productId;?>">Delete</a> / 
                               <?php if($k->status==1){$action="Inactivate";}else{$action="Activate";}?>
                               <a href="javascript:void(0);" class="changeProductStatus"  title="Delete" data-productid="<?php echo $k->productId;?>" data-productstatus="<?php echo $k->status;?>">Make <?php echo $action;?></a>

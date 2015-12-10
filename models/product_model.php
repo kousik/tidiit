@@ -330,29 +330,16 @@ class Product_model extends CI_Model {
 	}
 	
 	public function add_product_tag($dataArr){
-		$productId=$dataArr["productId"];
-                if(!array_key_exists('tagStr', $dataArr)){return FALSE;}
-		$tagArr=explode(',',$dataArr["tagStr"]);
-                if(empty($tagArr)){return FALSE;}
-		foreach($tagArr AS $k){
-			$tagId=0;
-			$productTagArr=array();
-			$tagDataArr=array();
-			$tagDataArr=$this->get_tag_id_by_tag($k);
-			if(count($tagDataArr)>0){
-				$productTagArr=array('productId'=>$productId,'tagId'=>$tagDataArr[0]->tagId);
-				$this->add_tag_product($productTagArr);
-			}else{
-				if($k!=""){
-					$tagId=$this->add_tag($k);
-					if($tagId>0){
-						$productTagArr=array('productId'=>$productId,'tagId'=>$tagId);
-						$this->add_tag_product($productTagArr);	
-					}
-				}
-			}
-		}
-		return true;
+            $productId=$dataArr["productId"];
+            if(!array_key_exists('tagStr', $dataArr)){return FALSE;}
+            $tagArr=explode(',',$dataArr["tagStr"]);
+            if(empty($tagArr)){return FALSE;}
+            foreach($tagArr AS $k){
+                if($this->is_product_tag_added($k,$productId)==FALSE){
+                    $this->add_tag_product(array('productId'=>$productId,'tag'=>$k));
+                }
+            }
+            return true;
 	}
         
         public function add_category_tag($dataArr){
@@ -407,15 +394,17 @@ class Product_model extends CI_Model {
 		}
 		return true;
 	}
-	
-	public function is_product_tag_exists($productId,$tagId){
-		$sql="SELECT * FROM product_tag WHERE `productId`='".$productId."' AND `tagId`='".$tagId."'";
-		$dataArr=$this->db->query($sql)->result();
-		if(count($dataArr)>0){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
+        public function get_tag_by_product_id($productId){
+            return $this->db->select('GROUP_CONCAT(`tag`) AS productTag',false)->from($this->_table_tag)->where('productId',$productId)->get()->row();
+        }
+        public function is_product_tag_added($productId,$tag){
+            $sql="SELECT * FROM product_tag WHERE `productId`='".$productId."' AND `tag`='".$tag."'";
+            $dataArr=$this->db->query($sql)->result();
+            if(count($dataArr)>0){
+                return TRUE;
+            }else{
+                return FALSE;
+            }
 	}	
 	public function add_tag($tag){
 		$dataArr=array('name'=>$this->db->escape_str($tag));
@@ -441,7 +430,7 @@ class Product_model extends CI_Model {
 	}
 	
 	public function details($id){
-		$sql="SELECT p.*,b.title AS brandTitle FROM `product` AS p JOIN `product_brand` AS pb ON(p.productId=pb.productId) "
+		$sql="SELECT p.*,b.title AS brandTitle,b.brandId FROM `product` AS p JOIN `product_brand` AS pb ON(p.productId=pb.productId) "
                         . " JOIN `brand` AS b ON(pb.brandId=b.brandId) WHERE p.productId='".$id."' ";
 		//die($sql);
 		return $this->db->query($sql)->result();
@@ -587,7 +576,7 @@ class Product_model extends CI_Model {
     }
     
     function get_products_price($produtcId){
-        return $this->db->from($this->_table_price)->where('productId',$produtcId)->get()->result();
+        return $this->db->from($this->_table_price)->where('productId',$produtcId)->order_by('qty','asc')->get()->result();
     }
     
     function get_products_price_details_by_id($productPriceId){        

@@ -25,12 +25,6 @@ class Product extends MY_Controller{
         $this->config->load('product');
         $data=$this->_get_logedin_template();
         $this->load->model('User_model');
-        //$this->load->library('My_Services');
-        //$ServiceData=My_Services::request_services('User_model','get_user_page_type',array(4));
-        //$ServiceData=My_Services::request_services('User_model','change_user_status',array(4,1));
-        //pre($ServiceData);die;
-        //$pageTypeData=$this->User_model->get_user_page_type($this->session->userdata('FE_SESSION_VAR'));
-        //pre($pageTypeData);die;
         if(empty($categoryId)){
             //$productPageType=$pageTypeData[0]->pageType;
             $menuArr=array();
@@ -43,7 +37,6 @@ class Product extends MY_Controller{
             $menuArr=array();
             $TopCategoryData=$this->Category_model->get_top_category_for_product_list();
             $categoryDetailsArr=$this->Category_model->get_details_by_id($categoryId);
-            $productPageTypeArr=  $this->config->item('productPageTypeArr');
             $data['brandArr']=$this->Brand_model->get_all();
             $data['categoryId']=$categoryId;
             $productPageTypeArr=$this->Product_model->get_page_template();
@@ -57,6 +50,7 @@ class Product extends MY_Controller{
             }
             //pre($productPageTypeArr[$categoryDetailsArr[0]->view]);die;
             $viewPage='add_product_'.$templateName;
+            //echo substr($templateName,0,-4);die;
             $data['productPageType']=substr($templateName,0,-4);
             //echo $viewPage;die;
             if (file_exists(APPPATH."views/$viewPage")){
@@ -267,182 +261,50 @@ class Product extends MY_Controller{
         }
 
     }
-
-    public function view_edit($ProductID=0){
-            if($ProductID==0){
-                    $this->session->set_flashdata('Message','Invalid Course selected,Please try again.');
-                    redirect(base_url().'admin/product/viewlist');
-            }else{
-                    $data=$this->_show_admin_logedin_layout();
-                    $data['ckeditor'] = array(
-                            //ID of the textarea that will be replaced
-                            'id' 	=> 	'Description',
-                            'path'	=>	$this->config->item('SiteJSURL').'ckeditor',
-                            'judhipath'	=>	$this->config->item('SiteJSURL'),
-                            //Optionnal values
-                            'config' => array(
-                                    'toolbar' 	=> 	"Full", 	//Using the Full toolbar
-                                    'width' 	=> 	"90%",	//Setting a custom width
-                                    'height' 	=> 	'250px',	//Setting a custom height
-                            ),
-                            //Replacing styles from the "Styles tool"
-                            'styles' => array(
-                                    //Creating a new style named "style 1"
-                                    'style 1' => array (
-                                            'name' 		=> 	'Blue Title',
-                                            'element' 	=> 	'h2',
-                                            'styles' => array(
-                                                    'color' 	=> 	'Blue',
-                                                    'font-weight' 	=> 	'bold'
-                                            )
-                                    ),
-                                    //Creating a new style named "style 2"
-                                    'style 2' => array (
-                                            'name' 	=> 	'Red Title',
-                                            'element' 	=> 	'h2',
-                                            'styles' => array(
-                                                    'color' 		=> 	'Red',
-                                                    'font-weight' 		=> 	'bold',
-                                                    'text-decoration'	=> 	'underline'
-                                            )
-                                    )
-                            )
-                    );
-                    $details=$this->Product_model->details($ProductID);
-
-                    $menuArr=array();
-                    $TopCategoryData=$this->Category_model->get_top_category_for_product_list();
-                    //$AllButtomCategoryData=$this->Category_model->buttom_category_for_product_list();
-                    foreach($TopCategoryData as $k){
-                        $SubCateory=$this->Category_model->get_subcategory_by_category_id($k->categoryId);
-                        if(count($SubCateory)>0){
-                            foreach($SubCateory as $kk => $vv){
-                                $menuArr[$vv->categoryId]=$k->categoryName.' -> '.$vv->categoryName;
-                                $ThirdCateory=$this->Category_model->get_subcategory_by_category_id($vv->categoryId);
-                                if(count($ThirdCateory)>0){
-                                    foreach($ThirdCateory AS $k3 => $v3){
-                                        // now going for 4rath
-                                        $menuArr[$v3->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName;
-                                        $FourthCateory=$this->Category_model->get_subcategory_by_category_id($v3->categoryId);
-                                        if(count($FourthCateory)>0){ //print_r($v3);die;
-                                            foreach($FourthCateory AS $k4 => $v4){
-                                                $menuArr[$v4->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName.' -> '.$v4->categoryName;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    $data['CategoryData']=$menuArr;
-
-                    $data['ProductData']=$details;
-
-                    $TagData=$this->Product_model->get_tag_by_product_id($details[0]->ProductID);
-                    $TagStr='';
-                    foreach($TagData as $k){
-                            $TagStr .= $k->name.',';
-                    }
-                    $data['TagStr']=substr($TagStr,0,-1);
-                    //$data['dataArr']=$this->Course_model->get_details_by_id($CourseID);
-                    $this->load->view('admin/product_edit',$data);
+    
+    public function edit_product($productId){
+        $productDetails=$this->Product_model->details($productId/999999);
+        $categoryDetailsArr=$this->Category_model->get_details_by_id($productDetails[0]->categoryId);
+        $productPageTypeArr=$this->Product_model->get_page_template();
+        //pre($productPageTypeArr);die;
+        $templateName='';
+        foreach($productPageTypeArr As $k){
+            if($k->productViewTemplateID==$categoryDetailsArr[0]->view){
+                $templateName=$k->templateFileName;
+                break;
             }
+        }
+        $functionName='edit_'.substr($templateName,0,-4);
+        $this->$functionName($productId/999999);
     }
+    
+    function edit_mobile($productId){
+        $this->config->load('product');
+        $data=$this->_get_logedin_template();
+        $this->load->model('User_model');
+        $productPriceArr=$this->Product_model->get_products_price($productId);
+        $productImageArr=$this->Product_model->get_products_images($productId);
+        //pre($productImgageArr); //die;
+        $productDetails=$this->Product_model->details($productId);
+        $allTagArr=$this->Product_model->get_tag_by_product_id($productId);
+        $details=$productDetails[0];
+        //pre($details);
+        $data['detail']=$details;
+        $data['bulkQty']=$productPriceArr[0]->qty;
+        $data['bulkPrice']=$productPriceArr[0]->price;
+        $data['totalPriceRowAdded']=count($productPriceArr);
+        $data['productPriceView']=  $this->get_price_data_for_edit($productPriceArr,'mobile');
+        $data['brandArr']=$this->Brand_model->get_all();
+        $data['tag']=$allTagArr->productTag;
+        $data['productImageArr']=$productImageArr;
+        $data['categoryId']=$productDetails[0]->categoryId;
+        $data['productPageType']='mobile';
+        $this->load->view('edit_mobile',$data);
+    }
+    
 
     public function edit(){
-            $categoryId=$this->input->post('SubcategoryId',TRUE);
-            $Title=$this->input->post('Title',TRUE);
-            $Description=$this->input->post('Description',TRUE);
-            $ShortDescription=$this->input->post('ShortDescription',TRUE);
-            $Price=$this->input->post('Price',TRUE);
-            $Weight=$this->input->post('Weight',TRUE);
-            $Quantity=$this->input->post('Quantity',TRUE);
-            $MinQuantity=$this->input->post('MinQuantity',TRUE);
-            $Tag=$this->input->post('Tag',TRUE);
-            $MetaKeyWord=$this->input->post('MetaKeyword',TRUE);
-            $MetaTitle=$this->input->post('MetaTitle',TRUE);
-            $MetaDescription=$this->input->post('MetaDescription',TRUE);
-            $Status=$this->input->post('Status',TRUE);
-            $ProductID=$this->input->post('ProductID',TRUE);
-            $RequireShipping=$this->input->post('RequireShipping',TRUE);
-            $Model=$this->input->post('Model',TRUE);
-
-            /*if(strlen($Title)>27){
-                $this->session->set_flashdata('Message','Product name should be less than 27 Character');
-                redirect(base_url().'admin/product/viewlist');
-            }*/
-
-            //die($ProductID);
-            $dataArr=array(
-            'categoryId'=>$categoryId,
-            'Title'=>$Title,
-            'ShortDescription'=>$ShortDescription,
-            'Description'=>$Description,
-            'Quantity'=>$Quantity,
-            'MinQuantity'=>$MinQuantity,
-            'Price'=>$Price,
-            'Model'=>$Model,
-            'Weight'=>$Weight,
-            'MetaTitle'=>$MetaTitle,
-            'MetaKeyword'=>$MetaKeyWord,
-            'MetaDescription'=>$MetaDescription,
-            'FreeShipping'=>$RequireShipping,
-            'Status'=>$Status
-            );
-            //echo $ProductID.'<br>';
-            //echo '<pre>';print_r($dataArr);die;
-
-            $ParrentDataArr=$this->Category_model->get_all_parrent_details($categoryId);
-            //pre($ParrentDataArr);
-            if($ParrentDataArr[0]->SecondParentcategoryId==""){
-                $dataArr['categoryId1']=$ParrentDataArr[0]->FirstParentcategoryId;
-                $dataArr['categoryId2']=$categoryId;
-            }else{
-                $dataArr['categoryId1']=$ParrentDataArr[0]->SecondParentcategoryId;
-                $dataArr['categoryId2']=$ParrentDataArr[0]->FirstParentcategoryId;
-                $dataArr['categoryId3']=$categoryId;
-            }
-
-            //pre($dataArr);die;
-
-            $this->Product_model->edit($dataArr,$ProductID);
-            $ProductDetails=$this->Product_model->details($ProductID);
-            $oldImmage=$ProductDetails[0]->Image;
-            $filename="";
-            if($_FILES["ProductImage"]["name"]!=""){
-                    $file=$_FILES["ProductImage"];
-                    $filename=time().'.'.end(explode('.',$file["name"]));
-                    //$storePath=$this->config->item('ResourcesPath');
-                    $this->product_image_resize($file,$filename);
-                    $ImageDataArr=array('Image'=>$filename);
-                    /*if(move_uploaded_file($file["tmp_name"],$storePath.'product/'.$filename)){
-                            //echo 'file uploaded ====';
-                            $ImageDataArr=array('Image'=>$filename);
-                            if($this->Product_model->edit_product_image($ImageDataArr,$ProductID)){
-                                    //echo 'file data updated =======';
-                                    @unlink($storePath.'product/'.$oldImmage);
-                                    //echo 'old file removed';die;
-
-                            }
-                    }*/
-                    $ImageDataArr=array('Image'=>$filename);
-                    if($this->Product_model->edit_product_image($ImageDataArr,$ProductID)){
-                    //echo 'file data updated =======';
-                            $this->delete_product_file($oldImmage);
-                            //@unlink($storePath.'product/'.$oldImmage);
-                            //echo 'old file removed';die;
-                    }
-            }
-
-            $ProductTagArr=array('ProductID'=>$ProductID,'TagStr'=>$Tag);
-            //echo '<pre>';print_r($ProductTagArr);die;
-            $this->Product_model->edit_product_tag($ProductTagArr);
-
-            $CategoryTagArr=array('categoryId'=>$ParrentDataArr[0]->FirstParentcategoryId,'TagStr'=>$Tag);
-            $this->Product_model->add_category_tag($CategoryTagArr);
-
-            $this->session->set_flashdata('Message','Product updated successfully.');
-            redirect(base_url().'admin/product/viewlist');
+            
     }
     
     function update_stock(){
@@ -727,6 +589,46 @@ class Product extends MY_Controller{
         $Image4=$PHOTOPATH. '700X700/';
         @unlink($Image4.$fileName);
         return TRUE;
+    }
+    
+    function get_price_data_for_edit($productPriceArr,$productPageType){
+        $this->config->load('product');
+        $priceRangeSettingsArr=$this->config->item('priceRangeSettings');
+        $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
+        $priceOption='';
+        for($i=$priceRangeSettingsDataArr['start'];$i<$priceRangeSettingsDataArr['end'];$i=$i+$priceRangeSettingsDataArr['consistencyNo']){
+            $priceOption.='<option value="'.$i.'?>">'.$i.'</option>';
+        }
+        ob_start();
+        $price_row=0;
+        foreach ($productPriceArr AS $k =>$v){ 
+            if($k==0){continue;}
+            $price_row++;?>
+           <div class="col-sm-12"  style="padding:0;margin-top:5px;" id="remove_price_quantity_for_product_<?php echo $price_row;?>">
+                   <div class="col-sm-12" style="padding:0;">
+                           <div class="col-sm-6" style="padding:0;"><label style="margin-top:8px;" for="bulkQty_<?php echo $price_row;?>">Quantity <?php echo $price_row;?></label></div>
+                           <div class="col-sm-6"  style="padding:0;">
+                                   <select class="required" id="bulkQty_<?php echo $price_row;?>" name="bulkQty_<?php echo $price_row;?>" style="width:auto;">
+                                           <option value="">-- Select --</option>
+                                           <?php for($i=$priceRangeSettingsDataArr['start'];$i<$priceRangeSettingsDataArr['end'];$i=$i+$priceRangeSettingsDataArr['consistencyNo']){?>
+                                           <option value="<?php echo $i;?>" <?php if($i==$v->qty){?>selected<?php }?>><?php echo $i;?></option>
+                                           <?php }?>
+                                   </select>
+                           </div>
+                   </div>
+                   <div class="col-sm-12"  style="padding:0;height: 5px;"></div>
+                   <div class="col-sm-12" style="padding:0;">
+                           <div class="col-sm-6" style="padding:0;"><label for="price_<?php echo $price_row;?>">Price <?php echo $price_row;?></label></div>
+                                   <div class="col-sm-3" style="padding:0;"><input type="text" class="form-control required" id="price_<?php echo $price_row;?>" placeholder="Price" value="<?php echo $v->price;?>" name="price_<?php echo $price_row;?>"  style="width:auto;"></div>
+                                   <div class="col-sm-1" style="padding:0;"></div>
+                                   <div class="col-sm-2" style="padding:0;"><button class="removePriceRow" type="button" alt="<?php echo $price_row;?>">Remove Row</button></div>
+                           </div>
+                   </div>					
+           <?php
+        }
+        $retView=ob_get_contents();
+        ob_end_clean();
+        return $retView;
     }
 }
 ?>
