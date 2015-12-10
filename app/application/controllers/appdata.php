@@ -288,6 +288,32 @@ class Appdata extends REST_Controller {
         
     }
     
+    function change_my_password_post(){
+        $userId=$this->post('userId');
+        $oldPassword=$this->post('oldPassword');
+        $newPassword=$this->post('newPassword');
+        $newConfirmPassword=$this->post('newConfirmPassword');
+        if($userId =="" && $oldPassword=="" && $newPassword =="" && $newConfirmPassword ==""):
+            $this->response(array('error' => 'Please provide all data.'), 400); return FALSE;
+        else:
+            if($newPassword==$newConfirmPassword):
+                if($this->user->check_old_password($userId,$oldPassword)==TRUE):
+                    $dataArr=array('password'=>  base64_encode($newPassword).'~'.md5('tidiit'));
+                    $this->user->edit($dataArr,$userId);
+                    $result['message']="Your password has changed successfully.";
+                    $result['timestamp'] = (string)mktime();
+                    header('Content-type: application/json');
+                    echo json_encode($result);
+                else:
+                    $this->response(array('error' => 'Invalid old password provided,try again.'), 400); return FALSE;
+                endif;
+            else:    
+                $this->response(array('error' => 'New password and confirm password is not matching,try again.'), 400); return FALSE;
+            endif;
+            
+        endif;
+    }
+    
     function get_main_menu(){
         $mainMenuArr=array();
         $TopCategoryData=$this->category->get_top_category_for_product_list(TRUE);

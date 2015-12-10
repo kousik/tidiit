@@ -688,4 +688,13 @@ class User_model extends CI_Model {
             return explode(',', $rs[0]->productTypeCateoryId);
         }
     }
+    
+    function check_old_password($password,$userId){
+        $rs=$this->db->from($this->_table)->where('userId',$userId)->where('password', base64_encode($password).'~'.md5('tidiit'))->get()->result();
+        if(count($rs)>0):
+            return TRUE;
+        else:
+            return FALSE;
+        endif;
+    }
 }
