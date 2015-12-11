@@ -10,6 +10,7 @@ class Appdata extends REST_Controller {
         $this->load->model('Cms_model','cms');
         $this->load->model('Product_model','product');
         $this->load->model('Category_model','category');
+        $this->load->model('Country');
     }
     
     function testservice_get(){
@@ -196,7 +197,12 @@ class Appdata extends REST_Controller {
                 }
             }
         }
-        $result['CatArr']=$menuArr;
+        $categoryMenyArr=array();
+        foreach($menuArr As $k => $v){
+            $categoryMenyArr[]=array('categoryId'=>$k,'categoryName'=>$v);
+        }
+        
+        $result['CatArr']=  $categoryMenyArr;
         $my_groups = $this->user->get_my_groups_apps($userId);
         $result['myGroups']=$my_groups;
         $result['timestamp'] = (string)mktime();
@@ -233,8 +239,6 @@ class Appdata extends REST_Controller {
         }
         $result['countryDataArr']=$this->Country->get_all1();
         $result['userShippingDataDetails']=$userShippingDataDetails;
-        $topCategoryDataArr=$this->category->get_top_category_for_product_list();
-        $result['topCategoryDataArr']=$topCategoryDataArr;
         $rs=$this->user->get_my_product_type($userId);
         //pre($rs); //die;
         $result['userProductTypeArr']=$rs;
@@ -297,7 +301,7 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Please provide all data.'), 400); return FALSE;
         else:
             if($newPassword==$newConfirmPassword):
-                if($this->user->check_old_password($userId,$oldPassword)==TRUE):
+                if($this->user->check_old_password($oldPassword,$userId)==TRUE):
                     $dataArr=array('password'=>  base64_encode($newPassword).'~'.md5('tidiit'));
                     $this->user->edit($dataArr,$userId);
                     $result['message']="Your password has changed successfully.";
@@ -312,6 +316,33 @@ class Appdata extends REST_Controller {
             endif;
             
         endif;
+    }
+    
+    function get_city_by_country_get(){
+        $countryId=$this->get('countryId');
+        $result=array();
+        $result['cityArr']=  $this->Country->get_all_city1($countryId,true);
+        $result['timestamp'] = (string)mktime();
+        header('Content-type: application/json');
+        echo json_encode($result);
+    }
+    
+    function get_zip_by_city_get(){
+        $cityId=$this->get('cityId');
+        $result=array();
+        $result['zipArr']=  $this->Country->get_all_zip1($cityId,TRUE);
+        $result['timestamp'] = (string)mktime();
+        header('Content-type: application/json');
+        echo json_encode($result);
+    }
+    
+    function get_locality_by_zip_get(){
+        $zipId=$this->get('zipId');
+        $result=array();
+        $result['localityArr']=  $this->Country->get_all_locality1($zipId,TRUE);
+        $result['timestamp'] = (string)mktime();
+        header('Content-type: application/json');
+        echo json_encode($result);
     }
     
     function get_main_menu(){
@@ -383,6 +414,8 @@ class Appdata extends REST_Controller {
         $this->email->message($message);
         $this->email->send();
     }
+    
+    
 }
     
 ?>

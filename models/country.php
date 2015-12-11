@@ -103,8 +103,11 @@ class Country extends CI_Model {
             return $this->db->query($sql)->result();
         }
         
-        function get_all_city1($stateId){
-            return $this->db->from($this->_table_city)->where('countryId',$stateId)->where('status',1)->get()->result();
+        function get_all_city1($countryId,$app=false){
+            if($app==FALSE)
+                return $this->db->from($this->_table_city)->where('countryId',$countryId)->where('status',1)->get()->result();
+            else
+                return $this->db->from($this->_table_city)->where('countryId',$countryId)->where('status',1)->get()->result_array();
         }
         
         function edit_state($dataArr,$stateId){
@@ -169,8 +172,11 @@ class Country extends CI_Model {
             return $this->db->query($sql)->result();
         }
         
-        function get_all_zip1($cityId){
-            return $this->db->from($this->_table_zip)->where('cityId',$cityId)->where('status',1)->get()->result();
+        function get_all_zip1($cityId,$app=FALSE){
+            if($app==FALSE)
+                return $this->db->from($this->_table_zip)->where('cityId',$cityId)->where('status',1)->get()->result();
+            else
+                return $this->db->from($this->_table_zip)->where('cityId',$cityId)->where('status',1)->get()->result_array();
         }
         
         function zip_details($zipId){
@@ -193,8 +199,11 @@ class Country extends CI_Model {
             return $this->db->query($sql)->result();
         }
         
-        function get_all_locality1($zipId){
-            return $this->db->from($this->_table_locality)->where('zipId',$zipId)->where('status',1)->get()->result();
+        function get_all_locality1($zipId,$app=FALSE){
+            if($app==FALSE)
+                return $this->db->from($this->_table_locality)->where('zipId',$zipId)->where('status',1)->get()->result();
+            else
+                return $this->db->from($this->_table_locality)->where('zipId',$zipId)->where('status',1)->get()->result_array();
         }
         
         function locality_details($localityId){
