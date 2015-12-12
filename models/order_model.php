@@ -46,7 +46,9 @@ class Order_model extends CI_Model {
         
         public function get_single_order_by_id($orderId){
             $this->db->limit(1);
-            $orderData = $this->db->select('*')->from($this->_table)->where('orderId',$orderId)->get()->result(); 
+            $this->db->select('o.*,p.paymentType')->from($this->_table.' o');
+            $this->db->join('payment p','o.orderId=p.orderId','left');
+            $orderData = $this->db->where('o.orderId',$orderId)->get()->result(); 
             //echo $str = $this->db->last_query();
             //print_r($orderData);
             $order = !empty($orderData)?$orderData[0]:false;
@@ -178,7 +180,7 @@ class Order_model extends CI_Model {
             $OrderStatus=$this->input->post('HiddenFilterOrderStatus',TRUE);
             $sql='SELECT o.*,u1.email FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) '
                     . ' JOIN `user` AS u ON(u.userId=ps.userId)'
-                    . ' JOIN `user` AS u1 ON(u1.userId=o.userId) WHERE o.status >1 AND u.userId='.$this->session->userdata('FE_SESSION_VAR').' AND o.parrentOrderID=0 ';
+                    . ' JOIN `user` AS u1 ON(u1.userId=o.userId) WHERE o.status >1 AND u.userId='.$this->session->userdata('FE_SESSION_VAR').' ';//.' AND o.parrentOrderID=0 ';
 
             /*if($UserName!=""){
                 $sql .= " AND u.UserName='".$UserName."'";
@@ -231,8 +233,11 @@ class Order_model extends CI_Model {
         }
         
 	
-	public function get_state(){
+	public function get_state($app=FALSE){
+            if($app==FALSE)
 		return $this->db->select('*')->from($this->_state)->where('OrderStateID <','6')->order_by('OrderStateID')->get()->result();
+            else
+                return $this->db->select('*')->from($this->_state)->where('OrderStateID <','6')->order_by('OrderStateID')->get()->result_array();
 	}
 	
 	public function change_state($OrderID,$OrderStateID){

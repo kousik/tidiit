@@ -1377,6 +1377,13 @@ class Shopping extends MY_Controller{
             $data['group']= false;
         endif;
         $data['order']= $order;
+        $orderStatusobj=$this->Order_model->get_state();
+        $stateArr=array();
+        foreach($orderStatusobj As $k){
+            $stateArr[$k->orderStateId]=$k->name;
+        }
+        $data['status']= $stateArr;
+        $data['order']= $order;
         $data['userMenuActive']= '';
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
         $this->load->view('my_order_details',$data);

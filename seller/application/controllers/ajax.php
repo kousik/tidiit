@@ -75,7 +75,6 @@ class Ajax extends MY_Controller{
         }
     }
 
-
     public function check_registration(){
         // sleep for 10 seconds
         //sleep(5);
@@ -255,5 +254,23 @@ class Ajax extends MY_Controller{
 </script>';
             echo $html;die;
         }
+    }
+    
+    function show_order_details(){
+        $this->load->model('Order_model');
+        $orderId=$this->input->post('orderId',TRUE);
+        $data=  $this->load_default_resources();
+        $order=$this->Order_model->get_single_order_by_id($orderId);
+        $data['order']=$order;
+        $data['orderId']=$orderId;
+        $data['group'] = $this->User_model->get_group_by_id($order->groupId);
+        $orderStatusobj=$this->Order_model->get_state();
+        $stateArr=array();
+        foreach($orderStatusobj As $k){
+            $stateArr[$k->orderStateId]=$k->name;
+        }
+        $data['status']= $stateArr;
+        //pre($data);die;
+        echo json_encode(array('content'=>$this->load->view('order_details',$data,true)));die;
     }
 }

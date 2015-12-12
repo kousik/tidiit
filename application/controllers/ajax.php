@@ -641,7 +641,7 @@ class Ajax extends MY_Controller{
         $categoryId=$this->input->post('categoryId',TRUE);
         $dataArr=$this->category->get_subcategory_by_category_id($categoryId);
         if(empty($dataArr)){
-            echo '';die;
+            echo json_encode(array('content'=>''));die;
         }else{
             $html='';
             foreach($dataArr AS $k):

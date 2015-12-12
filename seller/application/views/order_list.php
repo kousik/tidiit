@@ -37,11 +37,13 @@
                       <thead>
                         <tr>
                           <th width="15"></th>
-                          <th width="150">Action</th>
+                          <th width="100">Action</th>
                           <th>Status</th>
                           <th>Order ID</th>
+                          <th>Order Type</th>
+                          <th width="50">Leader Order Id</th>
                           <th>Order Data</th>
-                          <th>Order Owner Username</th>
+                          <th>Order Owner Email</th>
                           <th>Order Quantity</th>
                           <th>Order Amount</th>
                         </tr>
@@ -52,12 +54,14 @@
                         <tr>
                           <td><input type="checkbox" name="sel_pro"></td>
                           <td>
-                              <a href="javascript:void(0);" class="viewOrderDetails"  title="Cancel" data-productid="<?php echo $k->orderId;?>">View Details</a> <br />
-                              <a href="javascript:void(0);" class="cancelOrder"  title="Cancel" data-productid="<?php echo $k->orderId;?>">Cancel</a> <br />
-                              <a href="javascript:void(0);" class="changeOrderStatus"  title="Delete" data-productid="<?php echo $k->orderId;?>" data-productstatus="<?php echo $k->status;?>">Update Status</a>
+                              <a href="javascript:void(0);" class="viewOrderDetails"  title="Cancel" data-orderid="<?php echo $k->orderId;?>">View Details</a> <br />
+                              <a href="javascript:void(0);" class="cancelOrder"  title="Cancel" data-orderid="<?php echo $k->orderId;?>">Cancel</a> <br />
+                              <a href="javascript:void(0);" class="changeOrderStatus"  title="Delete" data-orderid="<?php echo $k->orderId;?>" data-productstatus="<?php echo $k->status;?>">Update Status</a>
                           </td>
-                          <td><?php foreach($OrderStateDataArr AS $kk){ if($kk->orderStateId==$k->status){echo $kk->name ;break;}}?></td>
+                          <td><?php echo $status[$k->status];?></td>
                           <td><?php echo $k->orderId;?></td>
+                          <td><?php echo ($k->orderType=='GROUP')?'Buying Club':'Single';?></td>
+                          <td><?php if($k->orderType=='GROUP'){if($k->parrentOrderID==0){echo $k->orderId;}else{echo $k->parrentOrderID;}}?></td>
                           <td><?php echo date('d-m-Y',strtotime($k->orderDate));?></td>
                           <td><?php echo $k->email;?></td>
                           <td><?php echo $k->productQty; ?></td>
@@ -79,6 +83,7 @@
       </div><!-- /#content -->
     </div>
     <?php echo $footer;?>
+    <div id="model_order_details"></div>
 </body>
 </html>
 <script src="<?php echo SiteJSURL;?>jquery.dataTables.min.js"></script>
@@ -98,6 +103,19 @@
         var productid = $(this).data('productid');
         var productstatus = $(this).data('productstatus');
        location.href= myJsMain.baseURL+'product/change_status/'+productid+'/'+productstatus;
+    });
+    
+    $('.viewOrderDetails').on("click",function(){
+       var orderid = $(this).data('orderid'); 
+       $.post( myJsMain.baseURL+'ajax/show_order_details/', {
+            orderId: orderid
+        },
+        function(data){
+            //console.log(data.content);
+            //jqout.parent('div').empty();
+            //jqout.parent('div').html(oldHtmlContent);
+            $('#model_order_details').html(data.content);
+        }, 'json' );
     });
 }); 
     $(function() {

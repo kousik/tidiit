@@ -138,7 +138,12 @@ class User extends MY_Controller{
         $data['per_page'] = '5';
         
         
-        
+        $orderStatusobj=$this->Order_model->get_state();
+        $stateArr=array();
+        foreach($orderStatusobj As $k){
+            $stateArr[$k->orderStateId]=$k->name;
+        }
+        $data['status']= $stateArr;
         $data['userMenuActive']=4;
         $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
         $this->load->view('my_orders',$data);

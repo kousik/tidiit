@@ -2,7 +2,6 @@
 $CI =& get_instance();
 $CI->load->model('Product_model');
 $CI->load->model('Order_model');
-$status = array('0'=>'Delete','1'=>'Order Running', '2'=>'Order Approved', '4'=>'Out of Delivery', '5'=>'Delivered', '6'=>'Cancel Requested', '7'=>'Cancelled', '3'=>'Order Processing');
 $orderinfo = unserialize(base64_decode($order->orderInfo));
 ?>
 <script src="<?php echo SiteJSURL;?>user-all-my-js.js" type="text/javascript"></script>
@@ -53,8 +52,8 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));
                                                         <td>Order #TIDIIT-OD-<?=$order->orderId?></td>
                                                         <td><?=$order->orderType=='GROUP'?'Buyer Club':'Self'?></td>
                                                         <td><i class="fa fa-rupee"></i><?=$order->subTotalAmount?></td>
-                                                        <td>Paid</td>
-                                                        <td><span style="color: #009900;">Yes</span></td>
+                                                        <td><?php echo ($order->paymentType=='settlementOnDelivery')?'Settlement On Delivery':'Paid';?></td>
+                                                        <td><?php echo ($order->paymentType=='settlementOnDelivery')?'<span style="color: #009900;">No</span>':'<span style="color: #009900;">Yes</span>';?></td>
                                                         <td><span class="label label-info"><?=$status[$order->status];?></span> (<?=$order->orderDate;?>)</td>
                                                     </tr>
                                                 </table>
