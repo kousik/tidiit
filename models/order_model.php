@@ -173,7 +173,7 @@ class Order_model extends CI_Model {
 		return TRUE;
 	}
 	
-	public function admin_list($per_page,$offcet=0){
+	public function seller_list($per_page,$offcet=0){
             $FromDate=$this->input->post('HiddenFilterFromDate',TRUE);
             $ToDate=$this->input->post('HiddenFilterToDate',TRUE);
             $UserName=$this->input->post('HiddenFilterUserName',TRUE);
@@ -212,7 +212,7 @@ class Order_model extends CI_Model {
 	}
         
         
-        public function get_admin_total(){
+        public function seller_list_total(){
             $FromDate=$this->input->post('HiddenFilterFromDate',TRUE);
             $ToDate=$this->input->post('HiddenFilterToDate',TRUE);
             $UserName=$this->input->post('HiddenFilterUserName',TRUE);

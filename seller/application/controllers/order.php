@@ -20,7 +20,7 @@ class Order extends MY_Controller{
             $per_page=20;
             $PaginationConfig=array(
                 'base_url'=>base_url() . "admin/order/viewlist",
-                'total_rows'=>$this->Order_model->get_admin_total(),
+                'total_rows'=>$this->Order_model->seller_list_total(),
                 'per_page'=>$per_page,
                 'num_links'=>15,
                 'uri_segment'=>4
@@ -34,7 +34,7 @@ class Order extends MY_Controller{
             }else{
                 $offcet=$per_page*($page-1);
             }
-            $orderDataArr=$this->Order_model->admin_list($per_page,$offcet);
+            $orderDataArr=$this->Order_model->seller_list($per_page,$offcet);
             $orderStatusobj=$this->Order_model->get_state();
             $stateArr=array();
             foreach($orderStatusobj As $k){ 

@@ -273,4 +273,17 @@ class Ajax extends MY_Controller{
         //pre($data);die;
         echo json_encode(array('content'=>$this->load->view('order_details',$data,true)));die;
     }
+    
+    function show_order_group_details(){
+        $this->load->model('Order_model');
+        $groupId=$this->input->post('groupId',TRUE);
+        $data=  $this->load_default_resources();
+        $groupData=$this->User_model->get_group_by_id($groupId);
+        //pre($groupData);die;
+        $data['group']= $groupData;
+        $data['groupId']= $groupId;
+        $data['groupTitle']= $groupData->groupTitle;
+        //pre($data);die;
+        echo json_encode(array('content'=>$this->load->view('order_group_details',$data,true)));die;
+    }
 }

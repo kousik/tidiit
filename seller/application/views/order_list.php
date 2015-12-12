@@ -55,12 +55,14 @@
                           <td><input type="checkbox" name="sel_pro"></td>
                           <td>
                               <a href="javascript:void(0);" class="viewOrderDetails"  title="Cancel" data-orderid="<?php echo $k->orderId;?>">View Details</a> <br />
+                              <?php if($k->orderType == 'SINGLE' && $k->status < 4):?>
                               <a href="javascript:void(0);" class="cancelOrder"  title="Cancel" data-orderid="<?php echo $k->orderId;?>">Cancel</a> <br />
+                              <?php endif;?>
                               <a href="javascript:void(0);" class="changeOrderStatus"  title="Delete" data-orderid="<?php echo $k->orderId;?>" data-productstatus="<?php echo $k->status;?>">Update Status</a>
                           </td>
                           <td><?php echo $status[$k->status];?></td>
                           <td><?php echo $k->orderId;?></td>
-                          <td><?php echo ($k->orderType=='GROUP')?'Buying Club':'Single';?></td>
+                          <td><?php if($k->orderType=='GROUP'){?><button class="btn btn-success showGroupDetails" data-groupid="<?php echo $k->groupId;?>"><i class="fa fa-arrow-left"></i>Buying Club</button><?php }else{echo 'Single';}?></td>
                           <td><?php if($k->orderType=='GROUP'){if($k->parrentOrderID==0){echo $k->orderId;}else{echo $k->parrentOrderID;}}?></td>
                           <td><?php echo date('d-m-Y',strtotime($k->orderDate));?></td>
                           <td><?php echo $k->email;?></td>
@@ -84,6 +86,7 @@
     </div>
     <?php echo $footer;?>
     <div id="model_order_details"></div>
+    <div id="group_details"></div>
 </body>
 </html>
 <script src="<?php echo SiteJSURL;?>jquery.dataTables.min.js"></script>
@@ -117,6 +120,17 @@
             $('#model_order_details').html(data.content);
         }, 'json' );
     });
+    
+    $('.showGroupDetails').on("click",function(){
+       var groupId = $(this).data('groupid'); 
+       $.post( myJsMain.baseURL+'ajax/show_order_group_details/', {
+            groupId: groupId
+        },
+        function(data){
+            $('#model_order_details').html(data.content);
+        }, 'json' );
+    });
+    
 }); 
     $(function() {
       Metis.MetisTable();
