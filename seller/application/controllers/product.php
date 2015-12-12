@@ -374,7 +374,7 @@ class Product extends MY_Controller{
             $productId=$this->input->post('productId',TRUE);
             $total_price_row_added=$this->input->post('total_price_row_added',TRUE);
 
-            $status=$this->input->post('status',TRUE);
+            //$status=$this->input->post('status',TRUE);
             $this->form_validation->set_rules($config); 
             if($this->form_validation->run() == FALSE):
                 $data=validation_errors();
@@ -418,7 +418,7 @@ class Product extends MY_Controller{
                     'processorBrand'=>$processorBrand,'internalMemory'=>$internalMemory,'expandableMemory'=>$expandableMemory,'memoryCardSlot'=>$memoryCardSlot,
                     'batteryCapacity'=>$batteryCapacity,'talkTime'=>$talkTime,'standbyTime'=>$standbyTime,'warrantyType'=>$warrantyType,'taxable'=>$taxable,
                     'warrantyDuration'=>$warrantyDuration,'minQty'=>$minQty,'qty'=>$qty,'length'=>$length,'width'=>$width,
-                    'height'=>$height,'lengthClass'=>$lengthClass,'weight'=>$weight,'weightClass'=>$weightClass,'status'=>$status,
+                    'height'=>$height,'lengthClass'=>$lengthClass,'weight'=>$weight,'weightClass'=>$weightClass,
                     'lowestPrice'=>$lowestPrice,'heighestPrice'=>$heighestPrice);
                 $ParrentDataArr=$this->Category_model->get_all_parrent_details($categoryId);
                 //pre($ParrentDataArr);
