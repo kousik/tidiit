@@ -842,12 +842,16 @@ No</label>
                           <div data-provides="fileinput" class="fileinput fileinput-new">
                             <div class="field">
                                 <label class="main">Picture:</label>
-                                <?php //echo $this->config->item('ResourcesPath').'product/100X100/'.$productImgageArr[0]->image;die;?>
-                                <?php if(file_exists($this->config->item('ResourcesPath').'product/100X100/'.$productImageArr[0]->image)): ?>
-                                <img src="<?php echo SiteResourcesURL.'product/100X100/'.$productImageArr[0]->image;?>" class="showFileElement"/>
-                                <input id="img1" name="img1" type="file" style="display:none;" class="removeFileNow"> 
+                                <?php if(key_exists(1, $productImageArr)):
+                                    if(file_exists($this->config->item('ResourcesPath').'product/100X100/'.$productImageArr[0]->image)): ?>
+                                   <input type="hidden" name="oldImgFile1" value="<?php echo $productImageArr[0]->image;?>" >
+                                   <img src="<?php echo SiteResourcesURL.'product/100X100/'.$productImageArr[0]->image;?>" class="showFileElement"/>
+                                   <input id="img1" name="img1" type="file" style="display:none;" class="removeFileNow"> 
+                                   <?php else:?> 
+                                   <input id="img1" name="img1" type="file">                            
+                                   <?php endif;?>
                                 <?php else:?> 
-                                <input id="img1" name="img1" type="file">                            
+                                    <input id="img1" name="img1" type="file">                            
                                 <?php endif;?>
                                 <span class="error"></span>
                             </div>                            
@@ -861,6 +865,7 @@ No</label>
                                 <label class="main">Picture:</label>
                                 <?php if(key_exists(1, $productImageArr)):
                                     if(file_exists($this->config->item('ResourcesPath').'product/100X100/'.$productImageArr[1]->image)): ?> 
+                                    <input type="hidden" name="oldImgFile2" value="<?php echo $productImageArr[1]->image;?>" >
                                     <img src="<?php echo SiteResourcesURL.'product/100X100/'.$productImageArr[1]->image;?>" class="showFileElement"/>
                                     <input id="img2" name="img2" type="file" style="display:none;" class="removeFileNow"> 
                                     <?php else:?>
@@ -882,6 +887,7 @@ No</label>
                                 <label class="main">Picture:</label>                            
                                 <?php if(key_exists(2, $productImageArr)):
                                     if(file_exists($this->config->item('ResourcesPath').'product/100X100/'.$productImageArr[2]->image)): ?> 
+                                <input type="hidden" name="oldImgFile3" value="<?php echo $productImageArr[2]->image;?>" >
                                     <img src="<?php echo SiteResourcesURL.'product/100X100/'.$productImageArr[2]->image;?>" class="showFileElement"/>
                                     <input id="img3" name="img3" type="file" style="display:none;" class="removeFileNow"> 
                                     <?php else:?>
@@ -904,6 +910,7 @@ No</label>
                                 <label class="main">Picture:</label>                            
                                 <?php if(key_exists(3, $productImageArr)):
                                     if(file_exists($this->config->item('ResourcesPath').'product/100X100/'.$productImageArr[3]->image)): ?> 
+                                <input type="hidden" name="oldImgFile4" value="<?php echo $productImageArr[3]->image;?>" >
                                     <img src="<?php echo SiteResourcesURL.'product/100X100/'.$productImageArr[3]->image;?>" class="showFileElement"/>
                                     <input id="img4" name="img4" type="file" style="display:none;" class="removeFileNow"> 
                                     <?php else:?>
@@ -926,6 +933,7 @@ No</label>
                                 <label class="main">Picture:</label>                            
                                 <?php if(key_exists(4, $productImageArr)):
                                     if(file_exists($this->config->item('ResourcesPath').'product/100X100/'.$productImageArr[4]->image)): ?> 
+                                <input type="hidden" name="oldImgFile5" value="<?php echo $productImageArr[4]->image;?>" >
                                     <img src="<?php echo SiteResourcesURL.'product/100X100/'.$productImageArr[4]->image;?>" class="showFileElement"/>
                                     <input id="img5" name="img5" type="file" style="display:none;" class="removeFileNow"> 
                                     <?php else:?>
@@ -989,7 +997,6 @@ No</label>
         
     jQuery(document).ready(function(){
         $('.showFileElement').click(function(){
-            //alert($(this).next().html());
             $(this).next().css('display','block');
             $(this).next().next().css('display','block');
         });

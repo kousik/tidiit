@@ -69,6 +69,12 @@ if ( ! function_exists('multiple_array_search')){
     }
 }
 
+if ( ! function_exists('sortingProductPriceArr')){
+    function sortingProductPriceArr($a, $b){
+        return $a['qty'] - $b['qty'];
+    }
+}
+
 if(!function_exists('user_role_check')){
     function user_role_check($controller,$method){
         $CI=&get_instance();
@@ -115,7 +121,6 @@ if ( ! function_exists('title_more_string')){
         return $str;
     }
 }
-
 
 if ( ! function_exists('return_current_country_code')){
     function return_current_country_code(){

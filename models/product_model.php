@@ -173,6 +173,12 @@ class Product_model extends CI_Model {
             return $this->db->insert_id();
         }
         
+        function edit_brand($DataArr,$productId){
+            $this->db->where('productId',$productId);
+            $this->db->update($this->_table_brand,$DataArr);
+            return TRUE;		
+        }
+        
         function add_product_category($dataArr){
             $rs=$this->db->from($this->_table_category)->where('categoryId',$dataArr['categoryId'])->where('productId',$dataArr['productId'])->get()->result();
             if(count($rs)==0){
@@ -182,7 +188,7 @@ class Product_model extends CI_Model {
                 return FALSE;
             }
         }
-	
+        
         function add_product_owner($dataArr){
 		$this->db->insert($this->_table_seller,$dataArr);
 		return $this->db->insert_id();
@@ -288,7 +294,16 @@ class Product_model extends CI_Model {
 		return $this->db->insert_id();
 	}
         
+        function edit_image_product($dataArr,$productId){
+            $this->db->insert_batch($this->_table_image,$dataArr);
+            return $this->db->insert_id();
+        }
         
+        function remove_product_by_file($FileName,$productId){
+            $this->db->where('productId',$productId);
+            $this->db->where('image',$FileName);
+            $this->db->delete($this->_table_image); 
+        }
 	
 	public function edit_product_image($dataArr,$productId){
 		$this->db->where('productId',$productId);
@@ -311,6 +326,13 @@ class Product_model extends CI_Model {
             $this->db->insert_batch($this->_table_price,$dataArr);
             return $this->db->insert_id();
 	}
+        
+        public function edit_product_price($dataArr,$productId){
+            $this->db->where('productId',$productId);
+            $this->db->delete($this->_table_price);
+            $this->db->insert_batch($this->_table_price,$dataArr);
+            return $this->db->insert_id();
+        }
 	
 	public function add_country($dataArr){
 		$this->db->insert($this->_table_country,$dataArr);
@@ -366,35 +388,7 @@ class Product_model extends CI_Model {
             pre($categoryTagArr);
             return true;
 	}
-	public function edit_product_tag($dataArr){
-		$productId=$dataArr["productId"];
-		$tagArr=explode(',',$dataArr["tagStr"]);
-                //echo '<pre>';print_r($tagArr);die;
-		foreach($tagArr AS $k){
-			$tagId=0;
-			$productTagArr=array();
-			$tagDataArr=array();
-                        //echo $k;die;
-			$tagDataArr=$this->get_tag_id_by_tag($k);
-                        //echo '<pre>';print_r($tagDataArr);die;
-			if(count($tagDataArr)>0){
-				if($this->is_product_tag_exists($productId,$tagDataArr[0]->tagId)==FALSE){
-					$productTagArr=array('productId'=>$productId,'tagId'=>$tagDataArr[0]->tagId);
-					$this->add_tag_product($productTagArr);
-				}
-			}else{
-				if($k!=""){
-					$tagId=$this->add_tag($k);
-					if($tagId>0){
-						$productTagArr=array('productId'=>$productId,'tagId'=>$tagId);
-						$this->add_tag_product($productTagArr);	
-					}
-				}
-			}
-		}
-		return true;
-	}
-        public function get_tag_by_product_id($productId){
+	public function get_tag_by_product_id($productId){
             return $this->db->select('GROUP_CONCAT(`tag`) AS productTag',false)->from($this->_table_tag)->where('productId',$productId)->get()->row();
         }
         public function is_product_tag_added($productId,$tag){
@@ -604,5 +598,21 @@ class Product_model extends CI_Model {
     function update_product_quantity_after_order_process($productId,$qty){
         $detailsArr=  $this->details($productId);
         $this->edit(array('qty'=>(int)($detailsArr[0]->qty-$qty)), $productId);
+    }
+    
+    function edit_product_tag($dataArr){
+        $productId=$dataArr["productId"];
+        if(!array_key_exists('tagStr', $dataArr)){return FALSE;}
+        $tagArr=explode(',',$dataArr["tagStr"]);
+        if(empty($tagArr)){return FALSE;}
+        $tagDataArr=array();
+        foreach($tagArr AS $k){
+            if($this->is_product_tag_added($productId,$k)==FALSE){
+                $tagDataArr[]=array('productId'=>$productId,'tag'=>$k);
+            }
+        }
+        if(!empty($tagDataArr))
+            $this->db->insert_batch($this->_table_tag,$tagDataArr);
+        return true;
     }
 }
