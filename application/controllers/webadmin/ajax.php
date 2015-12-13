@@ -129,4 +129,35 @@ class Ajax extends MY_Controller{
                 echo 0;die;
         }
     }
+    
+    function show_order_details(){
+        $this->load->model('Order_model');
+        $orderId=$this->input->post('orderId',TRUE);
+        $data=  $this->load_default_resources();
+        $order=$this->Order_model->get_single_order_by_id($orderId);
+        $data['order']=$order;
+        $data['orderId']=$orderId;
+        $data['group'] = $this->User_model->get_group_by_id($order->groupId);
+        $orderStatusobj=$this->Order_model->get_state();
+        $stateArr=array();
+        foreach($orderStatusobj As $k){
+            $stateArr[$k->orderStateId]=$k->name;
+        }
+        $data['status']= $stateArr;
+        //pre($data);die;
+        echo json_encode(array('content'=>$this->load->view('webadmin/order_details',$data,true)));die;
+    }
+    
+    function show_order_group_details(){
+        $this->load->model('Order_model');
+        $groupId=$this->input->post('groupId',TRUE);
+        $data=  $this->load_default_resources();
+        $groupData=$this->User_model->get_group_by_id($groupId);
+        //pre($groupData);die;
+        $data['group']= $groupData;
+        $data['groupId']= $groupId;
+        $data['groupTitle']= $groupData->groupTitle;
+        //pre($data);die;
+        echo json_encode(array('content'=>$this->load->view('webadmin/order_group_details',$data,true)));die;
+    }
 }

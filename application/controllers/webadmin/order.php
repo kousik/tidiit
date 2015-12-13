@@ -17,10 +17,10 @@ class Order extends MY_Controller{
 	public function viewlist(){
 		$data=$this->_show_admin_logedin_layout();
                 
-                $per_page=20;
+                $per_page=500;
                 $PaginationConfig=array(
-                    'base_url'=>base_url() . "admin/order/viewlist",
-                    'total_rows'=>$this->Order_model->get_admin_total(),
+                    'base_url'=>base_url() . "webadmin/order/viewlist",
+                    'total_rows'=>$this->Order_model->admin_list_total(),
                     'per_page'=>$per_page,
                     'num_links'=>15,
                     'uri_segment'=>4
@@ -36,9 +36,12 @@ class Order extends MY_Controller{
                 }
                 
 		$data['OrderStateDataArr']=$this->Order_model->get_state();
-		$data['DataArr']=$this->Order_model->admin_list($per_page,$offcet);
+                $dataArr=$this->Order_model->admin_list($per_page,$offcet);
+                //pre($dataArr);die;
+		$data['DataArr']=$dataArr;
+		$data['$OrderStateDataArr']=$this->Order_model->get_state();
                 $data["links"] = $this->pagination->create_links();
-		$this->load->view('admin/order_list',$data);
+		$this->load->view('webadmin/order_list',$data);
 	}
         
         public function viewUncompleteList(){
