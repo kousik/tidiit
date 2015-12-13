@@ -59,7 +59,10 @@
             <tr height="20" bgcolor="#DFDFDF">
               <td  style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/brand/viewlist';?>">Brand manager</a> </td>
             </tr>
-      </table>
+            <tr height="20" bgcolor="#DFDFDF">
+              <td  style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/logistics/viewlist';?>">Logistics manager</a> </td>
+            </tr>
+  </table>
       
       </td>
   </tr>

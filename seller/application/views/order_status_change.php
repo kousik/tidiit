@@ -146,6 +146,18 @@
                                             <td>:</td>
                                             <td><textarea name="note" id="note"></textarea></td>
                                         </tr>
+                                        <tr id="showHideShippedElement2" style="display:none;">
+                                            <td>Select Logistics Partner</td>
+                                            <td>:</td>
+                                            <td>
+                                                <select name="logisticsId" id="logisticsId" class="logisticsId">
+                                                    <option value="">Select</option>
+                                                    <?php foreach($logisticsData As $k): ?>
+                                                    <option value="<?php echo $k->logisticsId;?>"><?php echo $k->title;?></option>
+                                                    <?php endforeach;?>
+                                                </select>
+                                            </td>
+                                        </tr>
                                         <tr id="showHideShippedElement" style="display:none;">
                                             <td>Enter your Air Way Bill Number</td>
                                             <td>:</td>
@@ -185,9 +197,11 @@
             if($(this).val()==4){
                 $('#showHideShippedElement').show();
                 $('#showHideShippedElement1').show();
+                $('#showHideShippedElement2').show();
             }else{
                 $('#showHideShippedElement').hide();
                 $('#showHideShippedElement1').hide();
+                $('#showHideShippedElement2').hide();
             }
         });
     });

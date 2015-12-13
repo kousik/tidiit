@@ -289,12 +289,14 @@ class Ajax extends MY_Controller{
     
     function change_order_state(){
         $this->load->model('Order_model');
+        $this->load->model('Logistics_model');
         $orderId=$this->input->post('orderId',TRUE);
         $data=  $this->load_default_resources();
         $order=$this->Order_model->get_single_order_by_id($orderId);
         $data['order']=$order;
         $data['orderId']=$orderId;
         $data['group'] = $this->User_model->get_group_by_id($order->groupId);
+        $data['logisticsData'] = $this->Logistics_model->get_all_admin();
         $orderStatusobj=$this->Order_model->get_state1();
         $stateArr=array();
         foreach($orderStatusobj As $k){
