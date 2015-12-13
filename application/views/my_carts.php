@@ -53,7 +53,6 @@ $CI->load->model('Product_model');
                                             <div class="js-message" role="alert" style="display: none;"></div>
                                             <div class="clearfix"></div>
                                             <?php if($is_single):?>
-                                            <br>
                                             <h4>Single Order</h4><br>
                                             <table id="cart" class="table table-hover table-condensed">
                                                 <thead>
@@ -111,7 +110,7 @@ $CI->load->model('Product_model');
                                             </table>
                                             <?php endif;?>
                                             <?php if($is_group):?>
-                                            <h4>Group Order</h4><br>
+                                            <h4>Group Order</h4>
                                             <table id="cart" class="table table-hover table-condensed">
                                                 <thead>
                                                     <tr>

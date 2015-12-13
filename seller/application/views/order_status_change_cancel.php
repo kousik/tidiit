@@ -16,7 +16,7 @@
                             <table class="table table-striped" id='js-print-container'>
                                 <thead>
                                 <tr class="active">
-                                    <th><a href="javascript://">Order #TIDIIT-OD-<?=$order->orderId?></a> <?php if($order->orderType == 'SINGLE' && $order->status < 4):?><a class="btn btn-danger btn-xs pull-right" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-times"></i> Cancel Order</a><?php endif;?><?php if($order->status == 5):?><a class="btn btn-info btn-xs pull-right no-print" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-file-text-o"></i> View Invoice</a><?php endif;?></th>
+                                    <th><a href="javascript://">Order #TIDIIT-OD-<?=$order->orderId?></a> <?php if($order->status == 5):?><a class="btn btn-info btn-xs pull-right no-print" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-file-text-o"></i> View Invoice</a><?php endif;?></th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -117,42 +117,12 @@
                                                 <td><?=isset($order->productQty)?$order->productQty:'0'?></td>
                                                 <td><i class="fa fa-rupee"></i><?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></td>
                                             </tr>
-                                            <tr> 
-                                                <td colspan="5"></td>
-                                                <td>Order Sub Total</td>
-                                                <td><i class="fa fa-rupee"></i><?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></td>
-                                            </tr>
-                                            <tr> 
-                                                <td colspan="5"></td>
-                                                <td>Order Discount</td>
-                                                <td><i class="fa fa-rupee"></i><?=isset($order->discountAmount)?$order->discountAmount:''?></td>
-                                            </tr>
-                                            <tr> 
-                                                <td colspan="5"></td>
-                                                <td>Shipping ()</td>
-                                                <td><i class="fa fa-rupee"></i><?=isset($order->shippingamount)?$order->shippingamount:''?></td>
-                                            </tr>
-                                            <tr> 
-                                                <td colspan="5"></td>
-                                                <td>Tax</td>
-                                                <td><i class="fa fa-rupee"></i><?=isset($order->taxAmount)?$order->taxAmount:''?></td>
-                                            </tr>
-                                            <tr> 
-                                                <td colspan="5"></td>
-                                                <td>Order Total</td>
-                                                <td><i class="fa fa-rupee"></i><?=isset($order->orderAmount)?$order->orderAmount:''?></td>
-                                            </tr>
-                                            <tr> 
-                                                <td colspan="5"></td>
-                                                <td>Paid</td>
-                                                <td><i class="fa fa-rupee"></i><?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></td>
-                                            </tr>
                                         </table>  
-
-                                    <?php /*<table class="table no-print">
+                                        <form name="orderStatesChange" id="orderStatesChange" action="<?php echo BASE_URL.'order/state_change_cancel/';?>" method="post">
+                                        <table class="table no-print">
                                         <thead>
                                         <tr class="info">
-                                            <th>Manage Order</th>
+                                            <th>Update  Order Status</th>
                                             <th></th>
                                             <th></th>
                                           </tr>
@@ -160,16 +130,15 @@
                                         <tbody>
                                         </tbody>
                                         <tr>
-                                            <td align='middle'>
-                                                <span id='btnPrint' style='cursor: pointer;' data-text="Tidiit.com - Order Information - TIDIIT-OD-<?=$order->orderId;?>"><i class="fa fa-print"></i><br>
-                                                    PRINT ORDER</span>
-                                            </td>
-                                            <td align='middle'><?php if($order->status == 5):?><a data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-envelope"></i><br>EMAIL INVOICE</a><?php endif;?></td>
-                                            <td align='middle'><span><a href="<?=BASE_URL?>contact-us"><i class="fa fa-phone-square"></i><br>
-                                                        CONTACT US</a></span></td>
+                                            <td style="width:35%">Enter the reason to cancel the order</td>
+                                            <td style="width:5%">:</td>
+                                            <td style="width:60%"><textarea name="note" id="note" class="required"></textarea></td>
                                         </tr>
-                                    </table>*/?>
+                                        <tr><td colspan="3">&nbsp; <input type="hidden" name="orderId" value="<?php echo $orderId;?>"></td></tr>
+                                        <tr><td>&nbsp;</td><td>&nbsp;</td><td><button class="btn btn-warning" type="submit"><i class="fa fa-arrow-left"></i> Submit</button></td></tr>
 
+                                    </table>
+                                        </form>        
                                     </td>
                                 </tr>
                                 </tbody>
@@ -190,5 +159,14 @@
 <script type="text/javascript">
     jQuery(document).ready(function(){
         jQuery('#myModalLogin').modal('show');
+        jQuery('#status').on('change',function(){
+            if($(this).val()==4){
+                $('#showHideShippedElement').show();
+                $('#showHideShippedElement1').show();
+            }else{
+                $('#showHideShippedElement').hide();
+                $('#showHideShippedElement1').hide();
+            }
+        });
     });
 </script>

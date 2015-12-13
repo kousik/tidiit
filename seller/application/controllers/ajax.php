@@ -286,4 +286,40 @@ class Ajax extends MY_Controller{
         //pre($data);die;
         echo json_encode(array('content'=>$this->load->view('order_group_details',$data,true)));die;
     }
+    
+    function change_order_state(){
+        $this->load->model('Order_model');
+        $orderId=$this->input->post('orderId',TRUE);
+        $data=  $this->load_default_resources();
+        $order=$this->Order_model->get_single_order_by_id($orderId);
+        $data['order']=$order;
+        $data['orderId']=$orderId;
+        $data['group'] = $this->User_model->get_group_by_id($order->groupId);
+        $orderStatusobj=$this->Order_model->get_state1();
+        $stateArr=array();
+        foreach($orderStatusobj As $k){
+            $stateArr[$k->orderStateId]=$k->name;
+        }
+        $data['status']= $stateArr;
+        //pre($data);die;
+        echo json_encode(array('content'=>$this->load->view('order_status_change',$data,true)));die;
+    }
+    
+    function change_order_state_cancel(){
+        $this->load->model('Order_model');
+        $orderId=$this->input->post('orderId',TRUE);
+        $data=  $this->load_default_resources();
+        $order=$this->Order_model->get_single_order_by_id($orderId);
+        $data['order']=$order;
+        $data['orderId']=$orderId;
+        $data['group'] = $this->User_model->get_group_by_id($order->groupId);
+        $orderStatusobj=$this->Order_model->get_state1();
+        $stateArr=array();
+        foreach($orderStatusobj As $k){
+            $stateArr[$k->orderStateId]=$k->name;
+        }
+        $data['status']= $stateArr;
+        //pre($data);die;
+        echo json_encode(array('content'=>$this->load->view('order_status_change_cancel',$data,true)));die;
+    }
 }

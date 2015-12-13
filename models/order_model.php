@@ -235,10 +235,18 @@ class Order_model extends CI_Model {
 	
 	public function get_state($app=FALSE){
             if($app==FALSE)
-		return $this->db->select('*')->from($this->_state)->where('OrderStateID <','6')->order_by('OrderStateID')->get()->result();
+		return $this->db->select('*')->from($this->_state)->where('OrderStateID <','8')->order_by('OrderStateID')->get()->result();
             else
-                return $this->db->select('*')->from($this->_state)->where('OrderStateID <','6')->order_by('OrderStateID')->get()->result_array();
+                return $this->db->select('*')->from($this->_state)->where('OrderStateID <','8')->order_by('OrderStateID')->get()->result_array();
 	}
+        
+        public function get_state1($app=FALSE){
+            if($app==FALSE)
+		return $this->db->select('*')->from($this->_state)->where('OrderStateID <','7')->order_by('OrderStateID')->get()->result();
+            else
+                return $this->db->select('*')->from($this->_state)->where('OrderStateID <','7')->order_by('OrderStateID')->get()->result_array();
+	}
+        
 	
 	public function change_state($OrderID,$OrderStateID){
 		$this->db->where('OrderID',$OrderID);

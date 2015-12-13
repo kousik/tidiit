@@ -41,7 +41,7 @@
                           <th>Status</th>
                           <th>Order ID</th>
                           <th>Order Type</th>
-                          <th width="50">Leader Order Id</th>
+                          <th width="50">Parrent Order Id</th>
                           <th>Order Data</th>
                           <th>Order Owner Email</th>
                           <th>Order Quantity</th>
@@ -56,9 +56,9 @@
                           <td>
                               <a href="javascript:void(0);" class="viewOrderDetails"  title="Cancel" data-orderid="<?php echo $k->orderId;?>">View Details</a> <br />
                               <?php if($k->orderType == 'SINGLE' && $k->status < 4):?>
-                              <a href="javascript:void(0);" class="cancelOrder"  title="Cancel" data-orderid="<?php echo $k->orderId;?>">Cancel</a> <br />
+                              <a href="javascript:void(0);" class="changeOrderStateCancel"  title="Cancel" data-orderid="<?php echo $k->orderId;?>">Cancel</a> <br />
                               <?php endif;?>
-                              <a href="javascript:void(0);" class="changeOrderStatus"  title="Delete" data-orderid="<?php echo $k->orderId;?>" data-productstatus="<?php echo $k->status;?>">Update Status</a>
+                              <a href="javascript:void(0);" class="changeOrderState"  title="Delete" data-orderid="<?php echo $k->orderId;?>" data-productstatus="<?php echo $k->status;?>">Update Status</a>
                           </td>
                           <td><?php echo $status[$k->status];?></td>
                           <td><?php echo $k->orderId;?></td>
@@ -85,8 +85,7 @@
       </div><!-- /#content -->
     </div>
     <?php echo $footer;?>
-    <div id="model_order_details"></div>
-    <div id="group_details"></div>
+    <div id="modal_order_details"></div>
 </body>
 </html>
 <script src="<?php echo SiteJSURL;?>jquery.dataTables.min.js"></script>
@@ -114,10 +113,7 @@
             orderId: orderid
         },
         function(data){
-            //console.log(data.content);
-            //jqout.parent('div').empty();
-            //jqout.parent('div').html(oldHtmlContent);
-            $('#model_order_details').html(data.content);
+            $('#modal_order_details').html(data.content);
         }, 'json' );
     });
     
@@ -127,10 +123,29 @@
             groupId: groupId
         },
         function(data){
-            $('#model_order_details').html(data.content);
+            $('#modal_order_details').html(data.content);
         }, 'json' );
     });
     
+    $('.changeOrderState').on("click",function(){
+       var orderid = $(this).data('orderid'); 
+       $.post( myJsMain.baseURL+'ajax/change_order_state/', {
+            orderId: orderid
+        },
+        function(data){
+            $('#modal_order_details').html(data.content);
+        }, 'json' );
+    });
+    
+    $('.changeOrderStateCancel').on("click",function(){
+       var orderid = $(this).data('orderid'); 
+       $.post( myJsMain.baseURL+'ajax/change_order_state_cancel/', {
+            orderId: orderid
+        },
+        function(data){
+            $('#modal_order_details').html(data.content);
+        }, 'json' );
+    });
 }); 
     $(function() {
       Metis.MetisTable();

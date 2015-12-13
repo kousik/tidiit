@@ -61,23 +61,23 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));
                                                  <table class="table table-bordered table-hover">
                                                     <thead>
                                                     <tr class="success">
-                                                        <th>Billing Name</th>
-                                                        <th style="width: 35%;"><?=isset($orderinfo['shipping']->firstName)?$orderinfo['shipping']->firstName:''?> <?=isset($orderinfo['shipping']->lastName)?$orderinfo['shipping']->lastName:''?></th>
+                                                        <?php /*<th>Billing Name</th>
+                                                        <th style="width: 35%;"><?=isset($orderinfo['shipping']->firstName)?$orderinfo['shipping']->firstName:''?> <?=isset($orderinfo['shipping']->lastName)?$orderinfo['shipping']->lastName:''?></th>*/?>
                                                         <th>Shipping Name</th>
-                                                        <th style="width: 35%;"><?=isset($orderinfo['shipping']->firstName)?$orderinfo['shipping']->firstName:''?> <?=isset($orderinfo['shipping']->lastName)?$orderinfo['shipping']->lastName:''?></th>
+                                                        <th style="width: 70%;"><?=isset($orderinfo['shipping']->firstName)?$orderinfo['shipping']->firstName:''?> <?=isset($orderinfo['shipping']->lastName)?$orderinfo['shipping']->lastName:''?></th>
                                                       </tr>
                                                     </thead>
                                                     <tbody>
                                                     </tbody>
                                                     <tr>
-                                                        <td>Billing Address</td>
+                                                        <?php /*<td>Billing Address</td>
                                                         <td><?=isset($orderinfo['shipping']->address)?$orderinfo['shipping']->address:''?><br>
                                                             <?=isset($orderinfo['shipping']->locality)?$orderinfo['shipping']->locality:''?><br>
                                                         City: <?=isset($orderinfo['shipping']->city)?$orderinfo['shipping']->city:''?><br>
                                                         State :<?=isset($orderinfo['shipping']->stateName)?$orderinfo['shipping']->stateName:''?><br>
                                                         PIN :<?=isset($orderinfo['shipping']->zip)?$orderinfo['shipping']->zip:''?><br>
                                                         Country :<?=isset($orderinfo['shipping']->countryName)?$orderinfo['shipping']->countryName:''?> 
-                                                        </td>
+                                                        </td>*/?>
                                                         <td>Shipping Address</td>
                                                         <td><?=isset($orderinfo['shipping']->address)?$orderinfo['shipping']->address:''?><br>
                                                             <?=isset($orderinfo['shipping']->locality)?$orderinfo['shipping']->locality:''?><br>
@@ -88,14 +88,14 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));
                                                         <b>Landmark</b> :<?=isset($orderinfo['shipping']->landmark)?$orderinfo['shipping']->landmark:''?></td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Billing Phone</td>
-                                                        <td><?=isset($orderinfo['billing']->contactNo)?$orderinfo['billing']->contactNo:''?></td>
+                                                        <?php /*<td>Billing Phone</td>
+                                                        <td><?=isset($orderinfo['billing']->contactNo)?$orderinfo['billing']->contactNo:''?></td>*/ ?>
                                                         <td>Shipping Phone</td>
                                                         <td><?=isset($orderinfo['shipping']->contactNo)?$orderinfo['shipping']->contactNo:''?></td>
                                                     </tr>
                                                     <tr>
-                                                        <td>E-Mail</td>
-                                                        <td><?=isset($orderinfo['billing']->email)?$orderinfo['billing']->email:''?></td>
+                                                        <?php /*<td>E-Mail</td>
+                                                        <td><?=isset($orderinfo['billing']->email)?$orderinfo['billing']->email:''?></td>*/?>
                                                         <td>E-Mail</td>
                                                         <td><?=isset($orderinfo['billing']->email)?$orderinfo['billing']->email:''?></td>
                                                     </tr>
