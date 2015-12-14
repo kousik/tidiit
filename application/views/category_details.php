@@ -29,7 +29,7 @@
 
             <div class="block block-layered-nav block-layered-nav--no-filters">
               <!--<div class="block-title"> <strong><span>Shop By</span></strong> </div>-->
-              <div class="block-content toggle-content">
+              <div class="block-content toggle-content js-add-widget">
                   <div class="brand_sec">
                       <div class="sub_hdng">
                           <h3>Price</h3>
@@ -180,7 +180,7 @@
               
               <div class="bst_sllng">
                 <h2><?=$currCat->categoryName?></h2>
-                <div class="row">
+                <div class="row js-product-area">
                     <?php if(isset($products['products']) && $products['products']):?>
                     <?php foreach($products['products'] as $pkey => $pro):?>
                     <div class="item col-md-3 col-sm-3 col-xs-6">
@@ -221,8 +221,15 @@
                     </div>
                     <?php endforeach;?>
                     <?php else:?>
-                    <div class="alert alert-danger" role="alert"><h1><i class="fa fa-exclamation-triangle"></i> &nbsp; &nbsp; Oops! No products found as per your wish!</h1></div>
+                    <div class="alert alert-danger" role="alert"><h3><i class="fa fa-exclamation-triangle"></i> &nbsp; &nbsp; Oops! No products found as per your wish!</h3></div>
                     <?php endif;?>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3">
+                        <button class="btn btn-info btn-lg btn-block load_more" <?php if($show_loads):?>style="display: none;"<?php endif;?>>Load more...</button>
+                        <div class="animation_image" style="display:none;"><img src="<?php echo SiteImagesURL;?>ajax-loader.gif"> Loading...</div>
+                    </div>
                 </div>
               </div>
           </div>
@@ -235,6 +242,7 @@
 <script type="text/javascript" src="<?php echo SiteJSURL;?>jassor/jssor.slider.js"></script> 
 <script src="<?php echo SiteJSURL;?>ion.rangeSlider.js"></script> 
 <script type="text/javascript">
+    total_pages = <?=$total_pages?>;
 jQuery(document).ready(function () {
     jQuery(".category_inner").click(function(){
             jQuery('.cate_cont').toggle();

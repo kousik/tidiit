@@ -1,6 +1,13 @@
 var path = location.pathname;
 var pathArr=path.split('/');
 var groupMeberPaymentRequest='';
+
+var track_click = 1; 
+	
+var total_pages;
+
+var offPage = 0;
+
 // add new validate method for phone number validation.
 jQuery.validator.addMethod("phoneno", function(value, element) {
 	return this.optional(element) || /^[0-9?=.\+\-\ ]+$/.test(value);
@@ -277,19 +284,11 @@ $(document).ready(function () {
         $(this).addClass('active');
         //changeUrlParam ('sort', sort);
         queryString.push('sort', sort);
-        /*$.post( myJsMain.baseURL+'ajax/get_single_group/', {
-            groupId: groupId,
-            orderId: $(this).val()
-        },
-        function(data){ 
-            if(data.contents){
-                $('div.js-display-exisit-group').empty();
-                $('div.js-display-selected-group').html(data.contents);
-            }
-        }, 'json' );*/
+        getRefinedPro(1,1);
     });     
     
-    $("ul#brand input[class='brandsort']").click(function(){ 
+    $( "body" ).delegate( "ul#brand input[class='brandsort']", "click", function() {
+    //$("ul#brand input[class='brandsort']").click(function(){ 
         var jqout = $(this);
         var brands = [];
         
@@ -305,6 +304,7 @@ $(document).ready(function () {
         
         //changeUrlParam ('brand', brand);
         queryString.push('brand', brand);
+        getRefinedPro(1,1);
     }); 
     
     $( ".jslider-pointer" ).mouseup( function() {
@@ -312,9 +312,73 @@ $(document).ready(function () {
         var price = prices.split(";");
         price = price.join("|");
         queryString.push('range', price);
+        getRefinedPro(1,1);
     } );
+    
+    
+    $(".load_more").click(function (e) { //user clicks on button	
+        $(this).hide(); //hide load more button on click
+        $('.animation_image').show(); //show loading image
+
+        if(track_click <= total_pages){ 
+            getRefinedPro(track_click,0);
+            //console.log(track_click);
+        }
+         
+        if(track_click >= total_pages-1){
+            //$(".load_more").attr("disabled", "disabled");
+            $(".load_more").hide();
+        }
+
+    });
 });    
     
+    
+function getRefinedPro(offPage,cls){
+    var curUrl = window.location.href;
+    $.get( 
+        curUrl,
+        {  page: offPage,
+           cls: cls,
+           stype: "ajax" 
+        },
+        function(data) {
+            //console.log(data);
+            $(".load_more").show();
+            total_pages = data.total_pages;
+            if (!$('ul#brand li').length) {
+                $("div.js-add-widget").append(data.brands);
+            }
+            
+            if(data.products){ 
+                if(data.cls){
+                    $("div.js-product-area").empty();
+                    $("div.js-product-area").html(data.products);
+                    track_click = 1;
+                } else {
+                    $("div.js-product-area").append(data.products);
+                    track_click++;
+                }                
+                $('.animation_image').hide();
+            } else {
+                if(data.cls){
+                    $("div.js-product-area").empty();  
+                    var htm = '<div class="alert alert-danger" role="alert"><h3><i class="fa fa-exclamation-triangle"></i> &nbsp; &nbsp; Oops! No products found as per your search criteria!</h3></div>';
+                    $("div.js-product-area").html(htm);
+                }
+                $('.animation_image').hide();
+                $(".load_more").hide();
+            }
+            
+            //console.log(track_click);
+            if(track_click == total_pages){
+                $('.animation_image').hide();
+                $(".load_more").hide();
+            }
+        },
+        'json'
+    ); 
+}
     
 
 

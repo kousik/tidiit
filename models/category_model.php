@@ -285,8 +285,6 @@ WHERE c.categoryId =".$categoryId;
         $plimit = '';
         if($offset >= 0 && $limit):
             $plimit = ' LIMIT '.$offset.', '.$limit;
-        else:
-            $plimit = ' LIMIT 0, 12';
         endif;
         
         $where_str = 'p.status = 1 ';
