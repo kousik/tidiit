@@ -34,6 +34,7 @@
         <!-- owl carousel CSS -->
     	<link href="<?php echo SiteCSSURL;?>owl.carousel.css" rel="stylesheet">
         <link href="<?php echo SiteCSSURL;?>owl.theme.css" rel="stylesheet">
+        <link href="<?php echo SiteCSSURL;?>community.css" rel="stylesheet">
         <?php /*<link href="<?php echo SiteCSSURL;?>login.css" rel="stylesheet" type="text/css" media="all" /> */?>
         <script type="text/javascript">
         //<![CDATA[
@@ -55,6 +56,7 @@
         <script src="<?php echo SiteJSURL;?>bootstrap.min.js"></script>
         <script src="<?php echo SiteJSURL;?>jquery-ui.min.js"></script>
         <script src="<?php echo SiteJSURL;?>jQuery.print.js" type="text/javascript"></script>
+        <script src="<?php echo SiteResourcesURL;?>third-party/forms/jquery.form.js"></script>
         
         <!-- General JS fiies end here-->
         
@@ -68,4 +70,5 @@
         <?php /*<script src="<?php echo SiteJSURL;?>jzaefferer-jquery-form-validatation.js"></script>*/?>
         <script src="<?php echo SiteJSURL;?>common.js"></script>
         <script src="<?php echo SiteJSURL;?>forgot-password-login-registration.js"></script>
+        <script src="<?php echo SiteJSURL;?>form.js"></script>
     </head>

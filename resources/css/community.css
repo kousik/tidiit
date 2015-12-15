@@ -1,0 +1,33 @@
+/*
+AJAX load
+*/
+.etf-hub-form-loader{display:none;}
+span.ajax-loading { display: none; background-position: 92% 50%; background-repeat: no-repeat; padding-right: 30px!important; background-image: url(../images/form-images/ajax-loader.gif); }
+div.et-ajax-loader { background: url(../images/form-images/ajax-loader.gif) center left no-repeat !important; padding: 10px; display: none; z-index: 9999; vertical-align: middle; }
+div.et-ajax-loader span{ margin-left: 10px;background: #FFF; }
+
+div.et-ajax-loader-dupe { background: url(../images/form-images/ajax-loader.gif) center left no-repeat !important; padding: 10px; display: none; z-index: 9999; vertical-align: middle; }
+div.et-ajax-loader-dupe span{ margin-left: 10px;background: #FFF; }
+
+div.et-ajax-loader-tres { background: url(../images/form-images/ajax-loader.gif) center left no-repeat !important; padding: 10px; display: none; z-index: 9999; vertical-align: middle; }
+div.et-ajax-loader-tres span{ margin-left: 10px;background: #FFF; }
+
+div.et-ajax-loader-global { background: url(../images/form-images/ajax-loader.gif) center left no-repeat !important; padding: 10px; display: none; z-index: 9999; vertical-align: middle; }
+div.et-ajax-loader-global span{ margin-left: 10px;}
+
+/*Info Boxes*/
+p.box, div.box {margin:1em 0 1.5em 0; padding:9px 10px 9px 50px; border-width:1px 0 1px 0; border-style:solid;color:#555;text-shadow:none;}
+.box.none {border-width:0;}
+.box.full {border-width:1px;}
+.box.medium {padding:18px 20px 18px 50px; font-size:1.1em;}
+.box.large {padding:25px 27px 25px 50px; font-size:1.2em; }
+.box.rounded { -webkit-border-radius: 15px; -moz-border-radius: 15px; border-radius: 15px; }
+.box.alert { border-color:#f0baa2; background:#ffd9c8 url(../images/form-images/ico-alert.png) no-repeat 20px 45%; }
+.box.download { border-color:#d4ebaf; background:#edfcd5 url(../images/form-images/ico-download.png) no-repeat 20px 45%; }
+.box.tick { border-color:#d4ebaf; background:#edfcd5 url(../images/form-images/ico-tick.png) no-repeat 20px 45%; }
+.box.info { border-color:#ccc; background:#eee url(../images/form-images/ico-info.png) no-repeat 20px 45%; }
+.box.note { border-color:#efe3ae; background:#fef6d2 url(../images/form-images/ico-note.png) no-repeat 20px 45%; }
+.box.normal { border-color:#ccc; background:#eee; padding:9px 15px;}
+.box.normal-amber{ border-color:#efe3ae; background:#fef6d2; padding:9px 15px; }
+.box.normal-green{ border-color:#d4ebaf; background:#edfcd5; padding:9px 15px;  }
+
