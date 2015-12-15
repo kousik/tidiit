@@ -442,7 +442,7 @@ jQuery(document).ready(function(){
         $("#js-print-container").print({
 
             // Use Global styles
-            globalStyles : true, 
+            globalStyles : false, 
 
             // Add link with attrbute media=print
             mediaPrint : false, 
@@ -451,7 +451,7 @@ jQuery(document).ready(function(){
             stylesheet : "http://fonts.googleapis.com/css?family=Inconsolata", 
 
             //Print in a hidden iframe
-            iframe : true, 
+            iframe : false, 
 
             // Don't print this
             noPrintSelector : ".no-print,.btn",
@@ -465,8 +465,6 @@ jQuery(document).ready(function(){
             // Manually add form values
             manuallyCopyFormValues: true,
 
-            // resolves after print and restructure the code for better maintainability
-            deferred: $.Deferred(),
 
             // timeout
             timeout: 250
