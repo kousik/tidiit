@@ -366,6 +366,28 @@ class Appdata extends REST_Controller {
         echo json_encode($result);
     }
     
+    function my_finance_post(){
+        $userId=$this->post('userId');
+        $mpesaFullName=$this->post('mpesaFullName');
+        $mpesaAccount=$this->post('mpesaAccount');
+        if($userId =="" && $mpesaFullName=="" && $mpesaAccount ==""):
+            $this->response(array('error' => 'Please provide all data.'), 400); return FALSE;
+        else:
+            $isAdded=$this->user->get_finance_info($userId);
+            if(empty($isAdded)){
+                $this->user->add_finance(array('mpesaFullName'=>$mpesaFullName,'mpesaAccount'=>$mpesaAccount,'userId'=>$userId));
+            }else{
+                $this->user->edit_finance(array('mpesaFullName'=>$mpesaFullName,'mpesaAccount'=>$mpesaAccount),$userId);
+            }
+            $result['message']="Your finance information has updated successfully.";
+            $result['timestamp'] = (string)mktime();
+            header('Content-type: application/json');
+            echo json_encode($result);
+        endif;
+    }
+    
+    
+    
     function get_main_menu(){
         $mainMenuArr=array();
         $TopCategoryData=$this->category->get_top_category_for_product_list(TRUE);
