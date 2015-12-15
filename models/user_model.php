@@ -440,21 +440,21 @@ class User_model extends CI_Model {
                 if($users):                        
                     foreach($users as $ukey => $usrId):
                         if($usrId):
-                            $udatas = $this->get_details_by_id($usrId);
+                            $udatas = $this->get_details_by_id($usrId,TRUE);
                             $udata[] = $udatas[0];
                         endif;
                     endforeach;
                 endif;
                 $grp['users'] = $udata;
 
-                $getgpadmin = $this->get_details_by_id($userId);
+                $getgpadmin = $this->get_details_by_id($userId,true);
 
                 $grp['admin'] = $getgpadmin[0];
                 $grp['hide'] = null;
-                $groups[$grp['groupId']] = $grp;
+                $groups[] = $grp;
             endforeach;
 
-            $in_groups = $this->get_my_on_groups($userId);
+            $in_groups = $this->get_my_on_groups_apps($userId);
             if($in_groups && !$df):
                 $result = array_merge($groups, $in_groups);
             else:
@@ -463,7 +463,7 @@ class User_model extends CI_Model {
             
             return $result;
         else:
-            return false;
+            return array();
         endif;
     }
     
@@ -521,7 +521,7 @@ class User_model extends CI_Model {
                 $getgpadmin = $this->get_details_by_id($grp['groupAdminId']); 
                 $grp['admin'] = $getgpadmin[0];
                 $grp['hide'] = true;
-                $groups[$grp->groupId] = $grp;
+                $groups[] = $grp;
             endforeach;
             return $groups;
         else:

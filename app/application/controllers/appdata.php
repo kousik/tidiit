@@ -207,13 +207,14 @@ class Appdata extends REST_Controller {
         
         $result['CatArr']=  $categoryMenyArr;
         $myGroupDataArr=$this->user->get_my_groups_apps($userId);
+        /*pre($myGroupDataArr);die;
         $myGroupDataArrNew= array();
         $l=0;
         foreach ($myGroupDataArr AS $k => $v):
             $myGroupDataArrNew[]=$v;
-        endforeach;
+        endforeach;*/
         //pre($myGroupDataArrNew);die;
-        $my_groups = $myGroupDataArrNew;
+        $my_groups = $myGroupDataArr;
         $result['myGroups']=$my_groups;
         $result['timestamp'] = (string)mktime();
         header('Content-type: application/json');
