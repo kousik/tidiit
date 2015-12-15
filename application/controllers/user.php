@@ -184,6 +184,7 @@ class User extends MY_Controller{
         //$data['CatArr']=$this->Category_model->get_all(0);
         $user = $this->_get_current_user_details();
         $my_groups = $this->User_model->get_my_groups();
+        //pre($my_groups);die;
         $data['myGroups']=$my_groups;
         $data['user']=$user;
         $data['userMenuActive']=5;

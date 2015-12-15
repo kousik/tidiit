@@ -42,7 +42,7 @@ class Appdata extends REST_Controller {
             //$slider2=$this->banner->get_home_slider(2,TRUE);
             $noOfItem=  $this->siteconfig->get_value_by_name('MOBILE_APP_HOME_PAGE_SLIDER_ITEM_NO');
             $newArrivalsData=  $this->product->get_recent($noOfItem,TRUE);
-            
+            pre($newArrivalsData);die;
             $result['slider1']=$slider1;
             //$result['slider2']=$slider2;
             $result['category_menu']=$this->get_main_menu();
@@ -161,8 +161,11 @@ class Appdata extends REST_Controller {
             $myProfileDataArr=array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo,
                     'email'=>$email,'DOB'=>$DOB,'mobile'=>$mobile,'fax'=>$fax,'aboutMe'=>$aboutMe);
             $this->user->edit($myProfileDataArr,$userId);
+            $result=  $this->get_default_urls();
+            $result['message']="Profile data updated successfully.";
+            $result['timestamp'] = (string)mktime();
             header('Content-type: application/json');
-            echo json_encode(array('Messaage'=>'Profile data updated successfully'));
+            echo json_encode($result);
         endif;
     }
     
@@ -203,7 +206,14 @@ class Appdata extends REST_Controller {
         }
         
         $result['CatArr']=  $categoryMenyArr;
-        $my_groups = $this->user->get_my_groups_apps($userId);
+        $myGroupDataArr=$this->user->get_my_groups_apps($userId);
+        $myGroupDataArrNew= array();
+        $l=0;
+        foreach ($myGroupDataArr AS $k => $v):
+            $myGroupDataArrNew[]=$v;
+        endforeach;
+        //pre($myGroupDataArrNew);die;
+        $my_groups = $myGroupDataArrNew;
         $result['myGroups']=$my_groups;
         $result['timestamp'] = (string)mktime();
         header('Content-type: application/json');

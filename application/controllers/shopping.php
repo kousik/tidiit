@@ -1316,7 +1316,7 @@ class Shopping extends MY_Controller{
                         $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'single'));
                         $mail_template_view_data=$this->load_default_resources();
                         $mail_template_view_data['single_order_success']=$mail_template_data;
-                        $this->_global_tidiit_mail($recv_email, "Confirmation mail for your Tidiit order no - TIDIIT-OD-".$orderId, $mail_template_view_data,'single_order_success');
+                        $this->_global_tidiit_mail($recv_email, "Your Tidiit order - TIDIIT-OD-".$orderId, $mail_template_view_data.' has placed successfully','single_order_success');
                         $this->_sent_single_order_complete_mail($orderId);
                     endif;
                 endif;
@@ -1408,7 +1408,7 @@ class Shopping extends MY_Controller{
             $adminMailData['orderParrentId']=$order->parrentOrderID;
             $adminMailData['userFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
             //pre($adminMailData);die;
-            $this->_global_tidiit_mail($orderInfoDataArr['group']->admin->email, "Confirmation mail for your Tidiit Buying Club order no - TIDIIT-OD-".$order->parrentOrderID, $adminMailData,'group_order_success',$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName);
+            $this->_global_tidiit_mail($orderInfoDataArr['group']->admin->email, "Your  Buying Club order - TIDIIT-OD-".$order->parrentOrderID.' has placed successfully.', $adminMailData,'group_order_success',$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName);
             
             /// for seller
             $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
@@ -1445,7 +1445,7 @@ class Shopping extends MY_Controller{
                 }
                 //echo '<br>$order id '.$k->orderId.'<br>';
                 $adminMailData['userFullName']=$userFullName;
-                $this->_global_tidiit_mail($email, "Confirmation mail for your Buying Club Tidiit order no - TIDIIT-OD-".$k->orderId, $adminMailData,'group_order_success',$userFullName);
+                $this->_global_tidiit_mail($email, "Your Buying Club Tidiit order TIDIIT-OD-".$k->orderId.' has placed successfully', $adminMailData,'group_order_success',$userFullName);
                 
                 //echo '<br>$order id '.$k->orderId.'<br>';
                 /// for seller

@@ -72,92 +72,54 @@ class Order extends MY_Controller{
             $this->load->view('admin/order_list1',$data);
 	}
 	
-	public function update_state(){
-		$OrderStateID=$this->input->post('OrderStateID',TRUE);
-		$ShortMessage=$this->input->post('ShortMessage',TRUE);
-		$TrackingURL=$this->input->post('TrackingURL',TRUE);
-		$OrderID=$this->input->post('OrderID',TRUE);
-		//echo 'kkk';die;
-                
-		if($OrderID>0){
-                        $HistoryDataArr=array();
-                        $HistoryDataArr[]=array('OrderID'=>$OrderID,'State'=>$OrderStateID);
-                        $this->Order_model->add_history($HistoryDataArr);
-                        //pre('rrr');die;
-			$this->Order_model->change_state($OrderID,$OrderStateID);
-			$OrderDetailsForMail=$this->Order_model->details($OrderID);
-                        
-			$body_ex='';
-			if($OrderStateID==3){
-				if($TrackingURL==""){
-					$this->session->set_flashdata('Message','Invalid tracking url provided.');
-					redirect(base_url().'admin/order/viewlist');
-				}
-			}
-			$OrderDetails=$this->Order_model->details($OrderID);
-			$this->load->library('email');
-			
-                        $SupportEmail=$this->Siteconfig_model->get_value_by_name('SupportEmail');
-                        
-			$this->email->from($SupportEmail, 'Daily Plaza Support');
-			$this->email->to($OrderDetails[0]->Email,$OrderDetails[0]->FirstName.' '.$OrderDetails[0]->LastName);
-			
-			//$this->email->cc('another@another-example.com');
-			//$this->email->bcc('them@their-example.com');
-
-			$this->email->subject('Your order status change information from Daily Plaza.');
-			
-                        echo '$OrderStateID = '.$OrderStateID;die;
-                        
-			if($OrderStateID==2){
-				$msg=$this->order_process_email_body($OrderID);
-			}else if($OrderStateID==3){
-				$msg=$this->order_shipped_email_body($OrderID,$TrackingURL);
-				$DataArr=$this->Order_model->get_cart_details_by_order($OrderID);
-				$BatchDataArr=array();
-				foreach($DataArr As $k){
-					$TempDataArr=array('OrderID'=>$OrderID,'UserID'=>$k->UserID,'TrackingURL'=>$TrackingURL,'ProductID'=>$k->ProductID,'Qty'=>$k->Qty);
-					//print_r($TempDataArr);die;
-					$BatchDataArr[]=$TempDataArr;
-				}
-				//print_r($BatchDataArr);die;
-				$this->Order_model->add_shipped_history($BatchDataArr);
-			}elseif($OrderStateID=4){
-				$msg=$this->order_complete_email_body($OrderID,$OrderDetails[0]->FirstName,$OrderDetails[0]->LastName);
-			}
-			
-			//$msg .= $body_ex;
-			//$msg .= 'If you need any more assistance please fill free to put email by customercare@dailyplaza.com.<br>';
-			//$msg .= '<br><br>Thanks,<br>Daily Plaza Team';
-			$this->email->message($msg);
-
-			$this->email->send();
-			
-			
-			
-			////message to admin.
-			$this->load->model('Siteconfig_model');
-			$AdminEmail=$this->Siteconfig_model->get_value_by_name('AdminMail');
-			
-			$OrderDetailsForMail=$this->Order_model->details($OrderID);
-			
-			$this->email->from('no-reply@daily-plaza.com', 'Daily Plaza Administrator');
-			$this->email->to($AdminEmail,'Admin Email');
-			
-			//$this->email->cc('another@another-example.com');
-			//$this->email->bcc('them@their-example.com');
-
-			$this->email->subject('Order status change notification.');
-			$msg='Hi ,<br><br>Order of Invoice No : '.$OrderDetailsForMail[0]->InvoiceNo.', vide Order Amount : '.$OrderDetailsForMail[0]->OrderAmount.'.Order Id is  : '.$OrderDetailsForMail[0]->OrderID.'. has been changed to '.$OrderDetailsForMail[0]->OrderStateName.'.<br> ';
-			$msg .= '<br><br>Thanks,<br>Daily Plaza Team';
-			$this->email->message($msg);
-
-			$this->email->send();
-			$this->session->set_flashdata('Message','Order status change successfully.');
-		}else{
-			$this->session->set_flashdata('Message','Invalid Order Index for status change,Please try again.');
-		}
-		redirect(base_url().'admin/order/viewlist');
-	}
+        function state_change(){
+            $status=  $this->input->post('status',TRUE);
+            $orderId=  $this->input->post('orderId',TRUE);
+            if($status=="" || $orderId==""):
+                $this->session->set_flashdata('Message',"Please provide order index and select order status type.");
+                redirect(BASE_URL.'order/viewlist/');
+            elseif($status==4):
+                $config=array(
+                    array('field'   => 'logisticsId','label'   => 'Select Logistics Partner','rules'   => 'trim|required|xss_clean'),  
+                    array('field'   => 'awbNo','label'   => 'Enter your Air Way Bill Number','rules'   => 'trim|required|xss_clean'),
+                    array('field'   => 'trackingURL','label'   => 'Enter your tracking URL','rules'   => 'trim|required|xss_clean')
+                );
+                $this->form_validation->set_rules($config); 
+                if($this->form_validation->run() == FALSE){
+                    $data=validation_errors();
+                    $this->session->set_flashdata('Message',$data);
+                    redirect(BASE_URL.'order/viewlist/');
+                }
+            endif;
+            $logisticsId=  $this->input->post('logisticsId',TRUE);
+            $awbNo=  $this->input->post('awbNo',TRUE);
+            $trackingURL=  $this->input->post('trackingURL',TRUE);
+            
+            if($status==3):
+                $this->order_confirm($orderId);
+            elseif($status==4):
+                $this->order_shipped($orderId,$logisticsId,$awbNo,$trackingURL);
+            endif;
+        }
+        
+        function order_confirm($orderId){
+            $order=$this->Order_model->get_single_order_by_id($orderId);
+            if($order->orderType=='GROUP'):
+                $this->group_order_confirm_mail($order);
+            else:
+                $this->single_order_confirm_mail($order);
+            endif;
+        }
+        
+        function single_order_confirm_mail($order){
+            
+        }
+        
+        function group_order_confirm_mail($order){
+            
+        }
 	
+        function order_shipped($orderId,$logisticsId,$awbNo,$trackingURL){
+            
+        }
 }

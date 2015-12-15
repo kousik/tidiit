@@ -378,11 +378,12 @@ class User_model extends CI_Model {
     
     function get_my_groups_apps($userId,$df = false){
         $this->db->order_by('groupId','desc');
-        $datas = $this->db->from($this->_group)->where('groupAdminId =',$userId)->get()->result();
+        
+        $datas = $this->db->from($this->_group)->where('groupAdminId =',$userId)->get()->result_array();
         if($datas):
             $groups = array();
             foreach($datas as $key => $grp):
-                $users = explode(",", $grp->groupUsers);
+                $users = explode(",", $grp['groupUsers']);
                 $udata = array();
                 if($users):                        
                     foreach($users as $ukey => $usrId):
@@ -392,22 +393,23 @@ class User_model extends CI_Model {
                         endif;
                     endforeach;
                 endif;
-                $grp->users = $udata;
+                $grp['users'] = $udata;
 
                 $getgpadmin = $this->get_details_by_id($userId);
 
-                $grp->admin = $getgpadmin[0];
-                $grp->hide = false;
-                $groups[$grp->groupId] = $grp;
+                $grp['admin'] = $getgpadmin[0];
+                $grp['hide'] = null;
+                $groups[$grp['groupId']] = $grp;
             endforeach;
 
-            $in_groups = $this->get_my_on_groups();
+            $in_groups = $this->get_my_on_groups($userId);
             if($in_groups && !$df):
                 $result = array_merge($groups, $in_groups);
             else:
                 $result = $groups;
             endif;
-            return (object)$result;
+            
+            return $result;
         else:
             return false;
         endif;
@@ -418,14 +420,21 @@ class User_model extends CI_Model {
      * 
      * @return boolean
      */
-    public function get_my_on_groups(){
-        $query = $this->db->query("SELECT *  FROM `{$this->_group}` WHERE FIND_IN_SET('{$this->session->userdata('FE_SESSION_VAR')}',groupUsers) > 0 ORDER BY `groupId` DESC  ");
-        $datas = $query->result();
+    public function get_my_on_groups($userId=0){
+        if($userId==0):
+            $query = $this->db->query("SELECT *  FROM `{$this->_group}` WHERE FIND_IN_SET('{$this->session->userdata('FE_SESSION_VAR')}',groupUsers) > 0 ORDER BY `groupId` DESC  ");
+            $datas = $query->result();
+        else:
+            $query = $this->db->query("SELECT *  FROM `{$this->_group}` WHERE FIND_IN_SET('{$userId}',groupUsers) > 0 ORDER BY `groupId` DESC  ");
+            $datas = $query->result_array();
+        endif;
+            
+        
 
         if($datas):
             $groups = array();
             foreach($datas as $key => $grp):
-                $users = explode(",", $grp->groupUsers);
+                $users = explode(",", $grp['groupUsers']);
                 $udata = array();
                 if($users):                        
                     foreach($users as $ukey => $usrId):
@@ -433,12 +442,19 @@ class User_model extends CI_Model {
                         $udata[] = $udatas[0];
                     endforeach;
                 endif;
-                $grp->users = $udata;
-
-                $getgpadmin = $this->get_details_by_id($grp->groupAdminId); 
-                $grp->admin = $getgpadmin[0];
-                $grp->hide = true;
-                $groups[$grp->groupId] = $grp;
+                $grp['users'] = $udata;
+                
+                if($userId==0):
+                    $getgpadmin = $this->get_details_by_id($grp->groupAdminId); 
+                    $grp['admin'] = $getgpadmin[0];
+                    $grp['hide'] = true;
+                    $groups[$grp->groupId] = $grp;
+                else:
+                    $getgpadmin = $this->get_details_by_id($grp['groupAdminId']); 
+                    $grp['admin'] = $getgpadmin[0];
+                    $grp['hide'] = true;
+                    $groups[$grp['groupId']] = $grp;
+                endif;
             endforeach;
             return $groups;
         else:
