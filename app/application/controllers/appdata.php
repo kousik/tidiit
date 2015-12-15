@@ -355,6 +355,16 @@ class Appdata extends REST_Controller {
         echo json_encode($result);
     }
     
+    function get_all_user_by_locality_except_me_get(){
+        $localityId=$this->get('localityId');
+        $userId=$this->get('userId');
+        $result=array();
+        $result['localityArr']=  $this->user->get_all_users_by_locality($localityId,$userId);
+        $result['timestamp'] = (string)mktime();
+        header('Content-type: application/json');
+        echo json_encode($result);
+    }
+    
     function get_main_menu(){
         $mainMenuArr=array();
         $TopCategoryData=$this->category->get_top_category_for_product_list(TRUE);

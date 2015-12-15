@@ -41,13 +41,19 @@ class User_model extends CI_Model {
         return TRUE;		
     }
 
-    public function get_user_type(){
-        return $this->db->from($this->_table_type)->get()->result();
+    public function get_user_type($app=false){
+        if($app==FALSE)
+            return $this->db->from($this->_table_type)->get()->result();
+        else
+            return $this->db->from($this->_table_type)->get()->result_array();
     }
 
-    public function get_user_type_except_buyer_seller(){
+    public function get_user_type_except_buyer_seller($app=FALSE){
          $names = array('buyer', 'seller');
-        return $this->db->from($this->_table_type)->where_not_in('userType', $names)->get()->result();
+         if($app==FALSE)
+            return $this->db->from($this->_table_type)->where_not_in('userType', $names)->get()->result();
+         else
+             return $this->db->from($this->_table_type)->where_not_in('userType', $names)->get()->result_array();
     }
 
     public function change_user_status($userId,$status){
@@ -56,12 +62,18 @@ class User_model extends CI_Model {
         return TRUE;
     }
 
-    public function get_details_by_id($userId){
-        return $this->db->from($this->_table)->where('userId',$userId)->get()->result();
+    public function get_details_by_id($userId,$app=false){
+        if($app==FALSE)
+            return $this->db->from($this->_table)->where('userId',$userId)->get()->result();
+        else
+            return $this->db->from($this->_table)->where('userId',$userId)->get()->result_array();
     }
 
-    public function get_active_user(){
+    public function get_active_user($app=false){
+        if($app==FALSE)
             return $this->db->select('*')->from($this->_table)->where('status <','2')->get()->result();
+        else
+            return $this->db->select('*')->from($this->_table)->where('status <','2')->get()->result_array();
     }
 
     public function check_user_email_exists($email){
@@ -181,7 +193,7 @@ class User_model extends CI_Model {
         if($userId==0)
             return $this->db->where('sa.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
         else
-            return $this->db->where('sa.userId',$userId)->get()->result();
+            return $this->db->where('sa.userId',$userId)->get()->result_array();
     }
 
 
@@ -190,10 +202,13 @@ class User_model extends CI_Model {
             return $this->db->query($sql)->result();
     }
 
-    public function get_user_info_by_username($userName){
+    public function get_user_info_by_username($userName,$app=false){
             $this->db->select('*')->from($this->_table)->where('userName',$userName);
             $query=$this->db->get();
-            return $query->result();
+            if($app==FALSE)
+                return $query->result();
+            else
+                return $query->result_array();
     }
 
     public function check_email_exists($email){
@@ -221,33 +236,55 @@ class User_model extends CI_Model {
     }
 
 
-    public function get_user_page_type($userId){
-        return $this->db->from($this->_page_type)->where('userId',$userId)->get()->result();
+    public function get_user_page_type($userId,$app=false){
+        if($app==FALSE)
+            return $this->db->from($this->_page_type)->where('userId',$userId)->get()->result();
+        else
+            return $this->db->from($this->_page_type)->where('userId',$userId)->get()->result_array();
     }
 
-    function get_billing_address(){
+    function get_billing_address($userId=0){
         $this->db->select('ba.*,c.countryName,s.stateName,ci.city AS cityTableData,z.zip AS zipTableData,l.locality,u.firstName,u.lastName,u.email');
         $this->db->from($this->_bill_address.' ba')->join($this->_table.' u','ba.userId=u.userId','left join');
         $this->db->join($this->_table_country.' c','ba.countryId=c.countryId','left join');
         $this->db->join($this->_table_state.' s','ba.stateId=s.stateId','left join')->join($this->_table_city.' ci','ba.cityId=ci.cityId','left join');
         $this->db->join($this->_table_zip.' z','ba.zipId=z.zipId','left join');
         $this->db->join($this->_table_locality.' l','ba.localityId=l.localityId','left join');
-        return $this->db->where('ba.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+        if($userId==0):
+            return $this->db->where('ba.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+        else:
+            return $this->db->where('ba.userId',$userId)->get()->result_array();
+        endif;
     }
 
-    function is_billing_address_added(){
-        return $this->db->get_where($this->_bill_address,array('userId'=>$this->session->userdata('FE_SESSION_VAR')))->result();
+    function is_billing_address_added($userId=0){
+        if($userId==0)
+            return $this->db->get_where($this->_bill_address,array('userId'=>$this->session->userdata('FE_SESSION_VAR')))->result();
+        else
+            return $this->db->get_where($this->_bill_address,array('userId'=>$userId))->result_array();
     }
 
-    function get_all_users_by_locality($localityId){
-        $this->db->where('userId !=', $this->session->userdata('FE_SESSION_VAR'));
-        $this->db->select('userId')->from($this->_shipping_address)->where('localityId',$localityId);
-        $query=$this->db->get();
-        $data = $query->result();
+    function get_all_users_by_locality($localityId,$userId=0){
+        if($userId==0):
+            $this->db->where('userId !=', $this->session->userdata('FE_SESSION_VAR'));
+            $this->db->select('userId')->from($this->_shipping_address)->where('localityId',$localityId);
+            $query=$this->db->get();
+            $data = $query->result();
+        else:
+            $this->db->where('userId !=',$userId);
+            $this->db->select('userId')->from($this->_shipping_address)->where('localityId',$localityId);
+            $query=$this->db->get();
+            $data = $query->result_array();
+        endif;    
         if($data): 
             $udata = array();
             foreach($data as $key => $usr):
-                $udatas = $this->get_details_by_id($usr->userId);
+                if($userId==0):
+                    $udatas = $this->get_details_by_id($usr->userId);
+                else:
+                    $udatas = $this->get_details_by_id($usr['userId'],true);
+                endif;
+                
                 if(!empty($udatas))
                     $udata[] = $udatas[0];
             endforeach;
@@ -313,24 +350,39 @@ class User_model extends CI_Model {
      * @param type $groupId
      * @return type
      */
-    public function get_group_by_id($groupId){
+    public function get_group_by_id($groupId,$app=FALSE){
         $this->db->limit(1);
-        $groupData = $this->db->select('*')->from($this->_group)->where('groupId',$groupId)->get()->result();     
+        if($app==FALSE)
+            $groupData = $this->db->select('*')->from($this->_group)->where('groupId',$groupId)->get()->result();     
+        else
+            $groupData = $this->db->select('*')->from($this->_group)->where('groupId',$groupId)->get()->result_array();     
         if(!$groupData):
             return false;
         endif;
         $group = $groupData[0];
-        $users = explode(",", $group->groupUsers);
+        if($app==FALSE)
+            $users = explode(",", $group->groupUsers);
+        else
+            $users = explode(",", $group['groupUsers']);
         $udata = array();
         if($users):                        
             foreach($users as $ukey => $usrId):
-                $udatas = $this->get_details_by_id($usrId);
+                if($app==FALSE)
+                    $udatas = $this->get_details_by_id($usrId);
+                else
+                    $udatas = $this->get_details_by_id($usrId,TRUE);
                 $udata[] = $udatas[0];
             endforeach;
         endif;
-        $group->users = $udata;
-        $getgpadmin = $this->get_details_by_id($group->groupAdminId); 
-        $group->admin = $getgpadmin[0];
+        if($app==FALSE):
+            $group->users = $udata;
+            $getgpadmin = $this->get_details_by_id($group->groupAdminId); 
+            $group->admin = $getgpadmin[0];
+        else:
+            $group['users'] = $udata;
+            $getgpadmin = $this->get_details_by_id($group->groupAdminId,TRUE); 
+            $group['admin'] = $getgpadmin[0];
+        endif;    
         return $group;
     }
     
@@ -420,52 +472,10 @@ class User_model extends CI_Model {
      * 
      * @return boolean
      */
-    public function get_my_on_groups($userId=0){
-        if($userId==0):
-            $query = $this->db->query("SELECT *  FROM `{$this->_group}` WHERE FIND_IN_SET('{$this->session->userdata('FE_SESSION_VAR')}',groupUsers) > 0 ORDER BY `groupId` DESC  ");
-            $datas = $query->result();
-        else:
-            $query = $this->db->query("SELECT *  FROM `{$this->_group}` WHERE FIND_IN_SET('{$userId}',groupUsers) > 0 ORDER BY `groupId` DESC  ");
-            $datas = $query->result_array();
-        endif;
-            
-        
-
-        if($datas):
-            $groups = array();
-            foreach($datas as $key => $grp):
-                $users = explode(",", $grp['groupUsers']);
-                $udata = array();
-                if($users):                        
-                    foreach($users as $ukey => $usrId):
-                        $udatas = $this->get_details_by_id($usrId);
-                        $udata[] = $udatas[0];
-                    endforeach;
-                endif;
-                $grp['users'] = $udata;
-                
-                if($userId==0):
-                    $getgpadmin = $this->get_details_by_id($grp->groupAdminId); 
-                    $grp['admin'] = $getgpadmin[0];
-                    $grp['hide'] = true;
-                    $groups[$grp->groupId] = $grp;
-                else:
-                    $getgpadmin = $this->get_details_by_id($grp['groupAdminId']); 
-                    $grp['admin'] = $getgpadmin[0];
-                    $grp['hide'] = true;
-                    $groups[$grp['groupId']] = $grp;
-                endif;
-            endforeach;
-            return $groups;
-        else:
-            return false;
-        endif;
-    }
-    
-    public function get_my_on_groups_apps($userId){
-        $query = $this->db->query("SELECT *  FROM `{$this->_group}` WHERE FIND_IN_SET('{$userId}',groupUsers) > 0 ORDER BY `groupId` DESC  ");
+    public function get_my_on_groups(){
+        $query = $this->db->query("SELECT *  FROM `{$this->_group}` WHERE FIND_IN_SET('{$this->session->userdata('FE_SESSION_VAR')}',groupUsers) > 0 ORDER BY `groupId` DESC  ");
         $datas = $query->result();
-
+        
         if($datas):
             $groups = array();
             foreach($datas as $key => $grp):
@@ -478,10 +488,39 @@ class User_model extends CI_Model {
                     endforeach;
                 endif;
                 $grp->users = $udata;
-
+                
                 $getgpadmin = $this->get_details_by_id($grp->groupAdminId); 
-                $grp->admin = $getgpadmin[0];
+                $grp->admin= $getgpadmin[0];
                 $grp->hide = true;
+                $groups[$grp->groupId] = $grp;
+                
+            endforeach;
+            return $groups;
+        else:
+            return false;
+        endif;
+    }
+    
+    public function get_my_on_groups_apps($userId){
+        $query = $this->db->query("SELECT *  FROM `{$this->_group}` WHERE FIND_IN_SET('{$userId}',groupUsers) > 0 ORDER BY `groupId` DESC  ");
+        $datas = $query->result_array();
+
+        if($datas):
+            $groups = array();
+            foreach($datas as $key => $grp):
+                $users = explode(",", $grp['groupUsers']);
+                $udata = array();
+                if($users):                        
+                    foreach($users as $ukey => $usrId):
+                        $udatas = $this->get_details_by_id($usrId,true);
+                        $udata[] = $udatas[0];
+                    endforeach;
+                endif;
+                $grp['users'] = $udata;
+
+                $getgpadmin = $this->get_details_by_id($grp['groupAdminId']); 
+                $grp['admin'] = $getgpadmin[0];
+                $grp['hide'] = true;
                 $groups[$grp->groupId] = $grp;
             endforeach;
             return $groups;
@@ -547,9 +586,33 @@ class User_model extends CI_Model {
      * @param type $receiverId
      * @return type
      */
-    public function notification_my_unread($receiverId){
+    public function notification_all_my_app($offset = null, $limit = null, $cond){
+        $this->db->from($this->_notification);
+        foreach($cond as $key=>$val){
+                $this->db->where($key,$val);
+        }
+        
+        if($limit != null){
+            $this->db->limit($limit, $offset);
+        }
         $this->db->order_by('createDate','desc');
-        return $this->db->get_where($this->_notification,array('status'=>1, 'receiverId'=>$receiverId, 'isRead' => 0))->result();
+        $query = $this->db->get();
+        $this->result = $query->result_array();
+        //echo $str = $this->db->last_query();
+        return $this->result;
+    }
+    
+    /**
+     * 
+     * @param type $receiverId
+     * @return type
+     */
+    public function notification_my_unread($receiverId,$app=false){
+        $this->db->order_by('createDate','desc');
+        if($app==FALSE)
+            return $this->db->get_where($this->_notification,array('status'=>1, 'receiverId'=>$receiverId, 'isRead' => 0))->result();
+        else
+            return $this->db->get_where($this->_notification,array('status'=>1, 'receiverId'=>$receiverId, 'isRead' => 0))->result_array();
     }
     
     /**
@@ -565,9 +628,12 @@ class User_model extends CI_Model {
         }
     }
     
-    function notification_single($id){
+    function notification_single($id,$app=false){
         $query = $this->db->get_where($this->_notification,array('id'=>$id));
-        $result = $query->result();
+        if($app==FALSE)
+            $result = $query->result();
+        else
+            $result = $query->result_array();
 	return $result?$result[0]:false;
     }
     
@@ -583,15 +649,18 @@ class User_model extends CI_Model {
      * 
      * @return type
      */
-    function is_shipping_address_added(){
-        return $this->db->get_where($this->_shipping_address,array('userId'=>$this->session->userdata('FE_SESSION_VAR')))->result();
+    function is_shipping_address_added($userId=0){
+        if($userId==0)
+            return $this->db->get_where($this->_shipping_address,array('userId'=>$this->session->userdata('FE_SESSION_VAR')))->result();
+        else
+            return $this->db->get_where($this->_shipping_address,array('userId'=>$userId))->result_array();
     }
 
     function get_finance_info($userId=0){
         if($userId==0)
             return $this->db->get_where($this->_finance,array('userId'=>  $this->session->userdata('FE_SESSION_VAR')))->result();
         else
-            return $this->db->get_where($this->_finance,array('userId'=>  $userId))->result();
+            return $this->db->get_where($this->_finance,array('userId'=>  $userId))->result_array();
     }
 
     public function add_finance($dataArray){
