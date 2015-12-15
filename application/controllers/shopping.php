@@ -1668,4 +1668,62 @@ class Shopping extends MY_Controller{
         unset($_SESSION['PaymentData']);
         redirect(BASE_URL.'shopping/success/');
     }
+    
+    function order_cancel_process_view($orderId){
+        if(!$orderId):
+            redirect(BASE_URL.'404_override');
+        endif;
+        $orderId = base64_decode($orderId);
+        $orderId = $orderId/226201;
+        
+        $SEODataArr=array();
+        $data=$this->_get_logedin_template($SEODataArr);
+        $user = $this->_get_current_user_details(); 
+        
+        $order = $this->Order_model->get_single_order_by_id($orderId);
+        if(!$order):
+            $this->session->set_flashdata('error', 'Invalid url!');            
+            redirect(BASE_URL.'shopping/ord-message');
+        endif;
+        $data['order'] = $this->Order_model->get_single_order_by_id($orderId);
+        if($order->status == 6):
+            $this->session->set_flashdata('error', 'You ahave already applied for cancellation. It is now precessing status.');            
+            redirect(BASE_URL.'shopping/ord-message');
+        endif;
+        $data['user']=$user;
+        $data['userMenuActive']= '';
+        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);        
+        $this->load->view('single_order/cancel_order',$data);
+    }
+    
+    function order_cancel_processing(){
+        $orderId    = $this->input->post('orderId');
+        $reason     = $this->input->post('reason');
+        $comments   = $this->input->post('comments');
+        $orderId    = base64_decode($orderId);
+        $orderId    = $orderId/226201;
+        $order      = $this->Order_model->get_single_order_by_id($orderId);
+        if(!$order):
+            echo '-1<p class="box alert">Invalid form submission! Please try after sometime.</p>';
+            die;
+        endif;
+        
+        if(!$reason):
+            echo '-1<p class="box alert">Please select a reason!</p>';
+            die;
+        endif;
+        
+        if($reason == "Other Reasons" && !$comments):
+            echo '-1<p class="box alert">Please write your other reason in comment box!</p>';
+            die;
+        endif;
+        $this->Order_model->update(array('status'=> 6), $orderId);
+        
+        //One mail to customer for cancel processing
+        
+        //One mail to Seller - Admin for cancel request
+        
+        die;        
+    }
+    
 }

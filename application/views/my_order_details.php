@@ -27,7 +27,7 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));
                                         <table class="table table-striped" id='js-print-container'>
                                             <thead>
                                             <tr class="active">
-                                                <th><a href="javascript://">Order #TIDIIT-OD-<?=$order->orderId?></a> <?php if($order->orderType == 'SINGLE' && $order->status < 4):?><a class="btn btn-danger btn-xs pull-right" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-times"></i> Cancel Order</a><?php endif;?><?php if($order->status == 5):?><a class="btn btn-info btn-xs pull-right no-print" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-file-text-o"></i> View Invoice</a><?php endif;?></th>
+                                                <th><a href="javascript://">Order #TIDIIT-OD-<?=$order->orderId?></a> <?php if($order->orderType == 'SINGLE' && $order->status < 4):?><a class="btn btn-danger btn-xs pull-right" href="<?=BASE_URL?>order/cancellation/<?=base64_encode($order->orderId*226201);?>" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-times"></i> Cancel Order</a><?php endif;?><?php if($order->status == 5):?><a class="btn btn-info btn-xs pull-right no-print" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-file-text-o"></i> View Invoice</a><?php endif;?></th>
                                               </tr>
                                             </thead>
                                             <tbody>
