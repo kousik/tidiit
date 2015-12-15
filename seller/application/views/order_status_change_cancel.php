@@ -7,7 +7,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Order Cancel for :<?php echo $orderId;?></h4>
       </div>
-        <form action="#" method="post" name="add_groups" class="form-horizontal" id="add_groups"> 
+        <form name="orderStatesChange" id="orderStatesChange" action="<?php echo BASE_URL.'order/state_change_cancel/';?>" method="post">
             <div class="modal-body">
                 <div class="col-md-12 col-sm-12"> 
                     <div class="gen_infmtn">
@@ -118,7 +118,7 @@
                                                 <td><i class="fa fa-rupee"></i><?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></td>
                                             </tr>
                                         </table>  
-                                        <form name="orderStatesChange" id="orderStatesChange" action="<?php echo BASE_URL.'order/state_change_cancel/';?>" method="post">
+                                        
                                         <table class="table no-print">
                                         <thead>
                                         <tr class="info">
@@ -138,7 +138,6 @@
                                         <tr><td>&nbsp;</td><td>&nbsp;</td><td><button class="btn btn-warning" type="submit"><i class="fa fa-arrow-left"></i> Submit</button></td></tr>
 
                                     </table>
-                                        </form>        
                                     </td>
                                 </tr>
                                 </tbody>
@@ -159,14 +158,6 @@
 <script type="text/javascript">
     jQuery(document).ready(function(){
         jQuery('#myModalLogin').modal('show');
-        jQuery('#status').on('change',function(){
-            if($(this).val()==4){
-                $('#showHideShippedElement').show();
-                $('#showHideShippedElement1').show();
-            }else{
-                $('#showHideShippedElement').hide();
-                $('#showHideShippedElement1').hide();
-            }
-        });
+        jQuery("#orderStatesChange").validate();
     });
 </script>

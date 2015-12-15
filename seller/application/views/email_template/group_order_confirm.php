@@ -38,7 +38,7 @@
                     <br />
                     <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">Thank you for your order!. <br />
                     <br />
-                    We will send you email once the order will confirm by seller and one more mail,the items in your order have been shipped. Meanwhile, you can check the status of your order on Tidiit.com</font> <br /></td>
+                    We will send you another email once the items in your order have been shipped. Meanwhile, you can check the status of your order on Tidiit.com</font> <br /></td>
                   <td width="10%">&nbsp;</td>
                 </tr>
                 <tr>

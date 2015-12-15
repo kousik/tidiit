@@ -1,5 +1,5 @@
 <?php $orderinfo = unserialize(base64_decode($order->orderInfo));?>
-<!-- Modal -->
+<!-- Modal --><style>label.error{color: red;padding-left: 5px;}</style>
 <div class="modal fade" id="myModalLogin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -7,7 +7,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Order Status Change for :<?php echo $orderId;?></h4>
       </div>
-        <form action="#" method="post" name="add_groups" class="form-horizontal" id="add_groups"> 
+        
             <div class="modal-body">
                 <div class="col-md-12 col-sm-12"> 
                     <div class="gen_infmtn">
@@ -15,9 +15,9 @@
                             <div class="panel panel-default">
                             <table class="table table-striped" id='js-print-container'>
                                 <thead>
-                                <tr class="active">
-                                    <th><a href="javascript://">Order #TIDIIT-OD-<?=$order->orderId?></a> <?php if($order->orderType == 'SINGLE' && $order->status < 4):?><a class="btn btn-danger btn-xs pull-right" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-times"></i> Cancel Order</a><?php endif;?><?php if($order->status == 5):?><a class="btn btn-info btn-xs pull-right no-print" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-file-text-o"></i> View Invoice</a><?php endif;?></th>
-                                  </tr>
+                                    <tr class="active">
+                                        <th><a href="javascript://">Order #TIDIIT-OD-<?=$order->orderId?></a> <?php if($order->orderType == 'SINGLE' && $order->status < 4):?><a class="btn btn-danger btn-xs pull-right" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-times"></i> Cancel Order</a><?php endif;?><?php if($order->status == 5):?><a class="btn btn-info btn-xs pull-right no-print" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-file-text-o"></i> View Invoice</a><?php endif;?></th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
@@ -133,11 +133,10 @@
                                             <td style="width:30%">Select Order Status</td>
                                             <td style="width:5%">:</td>
                                             <td style="width:65%">
-                                                <select name="status" id="status">
+                                                <select name="status" id="status" class="required">
                                                     <option value="">Select</option>
-                                                    <?php foreach ($status As $k =>$v): if($k<3){continue;}?>
-                                                    <option value="<?php echo $k;?>" <?php if($order->status==$k){?>selected<?php }?>><?php echo $v;?></option>
-                                                    <?php endforeach;?>
+                                                    <option value="3" <?php if($order->status==3){?>selected<?php }?>>Confirm</option>
+                                                    <option value="4" <?php if($order->status==3){?>selected<?php }?>>Shipped</option>
                                                 </select>
                                             </td>
                                         </tr>
@@ -185,7 +184,7 @@
                 </div>    
             </div>
         <div class="modal-footer">&nbsp;</div>
-      </form>    
+    
     </div>
   </div>
 </div>
@@ -193,6 +192,7 @@
 <script type="text/javascript">
     jQuery(document).ready(function(){
         jQuery('#myModalLogin').modal('show');
+        jQuery("#orderStatesChange").validate();
         jQuery('#status').on('change',function(){
             if($(this).val()==4){
                 $('#showHideShippedElement').show();
