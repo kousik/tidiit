@@ -401,7 +401,7 @@ class User_model extends CI_Model {
                 $groups[$grp->groupId] = $grp;
             endforeach;
 
-            $in_groups = $this->get_my_on_groups();
+            $in_groups = $this->get_my_on_groups($userId);
             if($in_groups && !$df):
                 $result = array_merge($groups, $in_groups);
             else:
@@ -418,8 +418,11 @@ class User_model extends CI_Model {
      * 
      * @return boolean
      */
-    public function get_my_on_groups(){
-        $query = $this->db->query("SELECT *  FROM `{$this->_group}` WHERE FIND_IN_SET('{$this->session->userdata('FE_SESSION_VAR')}',groupUsers) > 0 ORDER BY `groupId` DESC  ");
+    public function get_my_on_groups($userId=0){
+        if($userId==0)
+            $query = $this->db->query("SELECT *  FROM `{$this->_group}` WHERE FIND_IN_SET('{$this->session->userdata('FE_SESSION_VAR')}',groupUsers) > 0 ORDER BY `groupId` DESC  ");
+        else
+            $query = $this->db->query("SELECT *  FROM `{$this->_group}` WHERE FIND_IN_SET('{$userId}',groupUsers) > 0 ORDER BY `groupId` DESC  ");
         $datas = $query->result();
 
         if($datas):
