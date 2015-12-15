@@ -16,17 +16,16 @@
     <div class="categrs_bannr">
       <div class="row">
         <div class="col-md-3 col-sm-12 padng_right_none">
-         <div class="cate_cont" style="display:none;">
-            <?php echo $main_menu;?>
-         </div>
-            <ul class="categrs left_nav">
+         <div class="cate_cont">
+            <ul class="dropdown-menu multi-level fixed-menu fixed-menu-cat">
             <?php foreach($s_widget_cats as $key => $cat):?>
             <li>
-                <a href="<?php echo BASE_URL.'products/'.my_seo_freindly_url($cat->categoryName).'/?cpid='.base64_encode($cat->categoryId*226201);?>&sort=popular" <?php if($cat->categoryId == $currCat->categoryId):?> class="active"<?php endif;?>><?php echo $cat->categoryName;?> &ensp;<i class="fa fa-angle-right dsktp"></i><i class="fa fa-angle-down mobl_vrsn"></i></a>
+                <a href="<?php echo BASE_URL.'products/'.my_seo_freindly_url($cat->categoryName).'/?cpid='.base64_encode($cat->categoryId*226201);?>&sort=popular" <?php if($cat->categoryId == $currCat->categoryId):?> class="active"<?php endif;?>><?php echo $cat->categoryName;?></a>
             </li>
             <?php endforeach; ?>
             </ul>
-
+         </div>
+            
             <div class="block block-layered-nav block-layered-nav--no-filters">
               <!--<div class="block-title"> <strong><span>Shop By</span></strong> </div>-->
               <div class="block-content toggle-content js-add-widget">
@@ -244,10 +243,10 @@
 <script type="text/javascript">
     total_pages = <?=$total_pages?>;
 jQuery(document).ready(function () {
-    jQuery(".category_inner").click(function(){
+    /*jQuery(".category_inner").click(function(){
             jQuery('.cate_cont').toggle();
             jQuery('.left_nav').toggle();
-        });
+        });*/
     var owl = $("#owl-demo4");		
     owl.owlCarousel({		
           items : 3, //10 items above 1000px browser width
