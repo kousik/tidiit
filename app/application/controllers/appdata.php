@@ -42,7 +42,7 @@ class Appdata extends REST_Controller {
             //$slider2=$this->banner->get_home_slider(2,TRUE);
             $noOfItem=  $this->siteconfig->get_value_by_name('MOBILE_APP_HOME_PAGE_SLIDER_ITEM_NO');
             $newArrivalsData=  $this->product->get_recent($noOfItem,TRUE);
-            pre($newArrivalsData);die;
+            //pre($newArrivalsData);die;
             $result['slider1']=$slider1;
             //$result['slider2']=$slider2;
             $result['category_menu']=$this->get_main_menu();
