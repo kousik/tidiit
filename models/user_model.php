@@ -782,4 +782,9 @@ class User_model extends CI_Model {
             return FALSE;
         endif;
     }
+    
+    function testtestFun(){
+        
+    }
+    
 }
