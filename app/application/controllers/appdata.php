@@ -207,13 +207,14 @@ class Appdata extends REST_Controller {
         
         $result['CatArr']=  $categoryMenyArr;
         $myGroupDataArr=$this->user->get_my_groups_apps($userId);
+        /*pre($myGroupDataArr);die;
         $myGroupDataArrNew= array();
         $l=0;
         foreach ($myGroupDataArr AS $k => $v):
             $myGroupDataArrNew[]=$v;
-        endforeach;
+        endforeach;*/
         //pre($myGroupDataArrNew);die;
-        $my_groups = $myGroupDataArrNew;
+        $my_groups = $myGroupDataArr;
         $result['myGroups']=$my_groups;
         $result['timestamp'] = (string)mktime();
         header('Content-type: application/json');
@@ -354,6 +355,38 @@ class Appdata extends REST_Controller {
         header('Content-type: application/json');
         echo json_encode($result);
     }
+    
+    function get_all_user_by_locality_except_me_get(){
+        $localityId=$this->get('localityId');
+        $userId=$this->get('userId');
+        $result=array();
+        $result['localityArr']=  $this->user->get_all_users_by_locality($localityId,$userId);
+        $result['timestamp'] = (string)mktime();
+        header('Content-type: application/json');
+        echo json_encode($result);
+    }
+    
+    function my_finance_post(){
+        $userId=$this->post('userId');
+        $mpesaFullName=$this->post('mpesaFullName');
+        $mpesaAccount=$this->post('mpesaAccount');
+        if($userId =="" && $mpesaFullName=="" && $mpesaAccount ==""):
+            $this->response(array('error' => 'Please provide all data.'), 400); return FALSE;
+        else:
+            $isAdded=$this->user->get_finance_info($userId);
+            if(empty($isAdded)){
+                $this->user->add_finance(array('mpesaFullName'=>$mpesaFullName,'mpesaAccount'=>$mpesaAccount,'userId'=>$userId));
+            }else{
+                $this->user->edit_finance(array('mpesaFullName'=>$mpesaFullName,'mpesaAccount'=>$mpesaAccount),$userId);
+            }
+            $result['message']="Your finance information has updated successfully.";
+            $result['timestamp'] = (string)mktime();
+            header('Content-type: application/json');
+            echo json_encode($result);
+        endif;
+    }
+    
+    
     
     function get_main_menu(){
         $mainMenuArr=array();
