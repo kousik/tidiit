@@ -122,7 +122,7 @@ class Category extends MY_Controller{
             else:
                 $data['cls'] = 0;
             endif;
-            $brnd = isset($_GET['brand'])?$_GET['brand']:array();
+            $brnd = isset($_GET['brand'])?explode("|", $_GET['brand']):array();
             $data['products'] = $this->create_product_view($products);
             $data['brands'] = $this->display_brands_view($total_rows['brands'],$brnd);
             echo json_encode($data);die;
