@@ -162,7 +162,7 @@ class Appdata extends REST_Controller {
                     'email'=>$email,'DOB'=>$DOB,'mobile'=>$mobile,'fax'=>$fax,'aboutMe'=>$aboutMe);
             $this->user->edit($myProfileDataArr,$userId);
             header('Content-type: application/json');
-            echo json_encode(array('Messaage'=>'Profile data updated successfully'));
+            echo json_encode(array('Message'=>'Profile data updated successfully'));
         endif;
     }
     
