@@ -1685,7 +1685,7 @@ class Shopping extends MY_Controller{
             $this->session->set_flashdata('error', 'Invalid url!');            
             redirect(BASE_URL.'shopping/ord-message');
         endif;
-        $data['order'] = $this->Order_model->get_single_order_by_id($orderId);
+        $data['order'] = $order;
         if($order->status == 6):
             $this->session->set_flashdata('error', 'You ahave already applied for cancellation. It is now precessing status.');            
             redirect(BASE_URL.'shopping/ord-message');

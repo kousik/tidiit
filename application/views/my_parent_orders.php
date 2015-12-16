@@ -17,12 +17,12 @@ $CI->load->model('Order_model');
                     <div class="tab_dashbord">
                     	<div class="active row">
                         	<div class="col-md-12 col-sm-12">
-                                <form action="#" method="get">
+                                
                                     <div class="gen_infmtn">
-                                        <h6>My Orders</h6>
+                                        <h6>My Buyer Clubs Orders</h6>
                                         <div class="row">
                                             <?php if($orders):?>
-                                            <table class="table table-striped notyfy-table">
+                                            <table class="table table-striped ">
                                                 <thead>
                                                 <tr>
                                                     <th>Order ID</th>
@@ -30,7 +30,7 @@ $CI->load->model('Order_model');
                                                     <th>Total Price</th>
                                                     <th>Order Date</th>
                                                     <th>Status</th>
-                                                    <th>&nbsp;</th>
+                                                    <?php /*?><th>&nbsp;</th><?php */?>
                                                   </tr>
                                                 </thead>
                                                 <tbody>
@@ -54,7 +54,7 @@ $CI->load->model('Order_model');
                                                     <td><b><i class="fa fa-rupee"></i> <?=$order->orderAmount;?></b></td>
                                                     <td><i class="fa fa-clock-o"></i><?=date('F j, Y, g:i a' , strtotime($order->orderDate));?></td>
                                                     <td><span class="label label-info"><?=$order->orderType;?> - <?=$status[$order->status];?></span></td>
-                                                    <td align="right">
+                                                    <?php /*?><td align="right">
                                                     <?php if($porder):?>
                                                         <a class="btn btn-warning btn-xs" href="<?=BASE_URL?>my-orders/parent/<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-eye"></i> Parent Order</a>
                                                     <?php endif;?>
@@ -62,7 +62,7 @@ $CI->load->model('Order_model');
                                                         <a class="btn btn-danger btn-xs" href="<?=BASE_URL?>order/cancellation/<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-times"></i> Cancel Order</a>
                                                     <?php endif;?>
                                                     <a class="btn btn-success btn-xs js-view-order" href="<?php echo BASE_URL.'order/details/'.base64_encode($order->orderId*226201);?>"><i class="fa fa-eye"></i> Order</a>
-                                                    </td>
+                                                    </td><?php */?>
                                                 </tr>
                                             
                                             <?php endforeach;?>
@@ -74,8 +74,9 @@ $CI->load->model('Order_model');
                                             </div> 
                                             <?php endif;?>
                                         </div>
+                                        <a href="<?=BASE_URL?>my-orders"><button class="btn btn-warning"><i class="fa fa-arrow-left"></i> Back</button> </a>
                                     </div>  
-                                </form>
+                             
                             </div>    
                         </div>
                     </div>
