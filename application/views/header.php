@@ -93,7 +93,8 @@
                             <div class="all_catgrs mobl_vrsn" style="cursor: pointer"><h3>All Categories</h3></div>
                     </div>-->
                     <div class="col-md-3 padng_right_none">
-                        <div class="all_catgrs category_inner"><h3>All Categories <span class="down_srrow">&nbsp;</span></h3>
+                        <div class="all_catgrs category_inner"><h3 data-toggle="dropdown">All Categories <span class="down_srrow">&nbsp;</span></h3>
+                            <?=$float_menu?>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-8">

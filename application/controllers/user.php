@@ -352,4 +352,33 @@ class User extends MY_Controller{
         echo json_encode( $data );
         die;
     }
+    
+    function my_parent_orders($orderId){
+        $this->load->model('Country');
+        $this->load->model('Order_model');
+        
+        $orderId = base64_decode($orderId);
+        $orderId = $orderId/226201;
+        
+        $SEODataArr=array();
+        $data=$this->_get_logedin_template($SEODataArr);
+        $order = $this->Order_model->get_single_order_by_id($orderId);
+        if(!$order):
+            $this->session->set_flashdata('error', 'Invalid url!');            
+            redirect(BASE_URL.'shopping/ord-message');
+        endif;
+        
+        
+        $orders = $this->Order_model->get_parent_order($orderId);
+        $data['orders'] = $orders;
+        $orderStatusobj=$this->Order_model->get_state();
+        $stateArr=array();
+        foreach($orderStatusobj As $k){
+            $stateArr[$k->orderStateId]=$k->name;
+        }
+        $data['status']= $stateArr;
+        $data['userMenuActive']=4;
+        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $this->load->view('my_parent_orders',$data);
+    }
 }

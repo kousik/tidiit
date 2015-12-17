@@ -442,7 +442,7 @@ jQuery(document).ready(function(){
         $("#js-print-container").print({
 
             // Use Global styles
-            globalStyles : false, 
+            globalStyles : true, 
 
             // Add link with attrbute media=print
             mediaPrint : false, 
