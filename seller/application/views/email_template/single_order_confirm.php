@@ -1,4 +1,4 @@
-<?php $orderInfo=$single_order_success['TEMPLATE_ORDER_SUCCESS_ORDER_INFO'];?>
+<?php $orderInfo=$single_order_confirm['TEMPLATE_ORDER_CONFIRM_ORDER_INFO'];?>
 <div bgcolor="#8d8e90">
   <table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#8d8e90">
     <tr>
@@ -37,8 +37,9 @@
                   <td width="10%">&nbsp;</td>
                   <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $orderInfo['shipping']->firstName.' '.$orderInfo['shipping']->lastName;?>,</em></strong></font><br />
                     <br />
-                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">Thank you for your order!. <br />
+                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">Thanks for shopping with Tidiit Inc Ltd. <br />
                     <br />
+					<?php echo $SellerName;?> has confirmed that the following items for your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $single_order_confirm['TEMPLATE_ORDER_CONFIRM_ORDER_ID'];?></span></a> will be serviced by them. 
                     We will send you another email once the items in your order have been shipped. Meanwhile, you can check the status of your order on Tidiit.com</font> <br /></td>
                   <td width="10%">&nbsp;</td>
                 </tr>
@@ -49,7 +50,7 @@
                           <td align="left" valign="top" style="background-color:#FFFFFF;display:block;clear:both;padding:20px 20px 0 20px;" bgcolor=""><table border="0" cellspacing="0" cellpadding="0" width="100%" style="">
                               <tbody>
                                 <tr>
-                                  <td colspan="4" width="100%" align="middle" valign="top"><p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;"><?php echo $single_order_success['TEMPLATE_ORDER_SUCCESS_ORDER_ID'];?></span></a> </p>
+                                  <td colspan="4" width="100%" align="middle" valign="top"><p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $single_order_confirm['TEMPLATE_ORDER_CONFIRM_ORDER_ID'];?></span></a> </p>
                                     <br>
                                   </td>
                                 </tr>

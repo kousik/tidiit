@@ -49,7 +49,7 @@
                               <tbody>
                                 <tr>
                                   <td colspan="4" width="100%" align="middle" valign="top">
-								  <p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;"><?php echo $orderDetails[0]->orderId;?></span></a> and Master order is <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;"><?php echo $orderParrentId?></span></a></p>
+								  <p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?></span></a> and Master order is <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderParrentId?></span></a></p>
                                     <br />
                                   </td>
                                 </tr>

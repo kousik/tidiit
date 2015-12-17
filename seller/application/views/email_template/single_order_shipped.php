@@ -1,4 +1,4 @@
-<?php $orderInfo=$single_order_success['TEMPLATE_ORDER_SUCCESS_ORDER_INFO'];?>
+<?php $orderInfo=$single_order_shipped['TEMPLATE_SHIPPED_ORDER_INFO'];?>
 <div bgcolor="#8d8e90">
   <table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#8d8e90">
     <tr>
@@ -37,9 +37,13 @@
                   <td width="10%">&nbsp;</td>
                   <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $orderInfo['shipping']->firstName.' '.$orderInfo['shipping']->lastName;?>,</em></strong></font><br />
                     <br />
-                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">Thank you for your order!. <br />
+                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">Thanks for shopping with Tidiit Inc Ltd. <br />
                     <br />
-                    We will send you email once the order will confirm by seller and one more mail,the items in your order have been shipped. Meanwhile, you can check the status of your order on Tidiit.com</font> <br /></td>
+					<?php echo $SellerName;?> has shipped your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $single_order_shipped['TEMPLATE_SHIPPED_ORDER_ID'];?></span></a> for delivery.<br /><br /> Please find the shipping deails as below.<br /><br />
+					<span>Logistic company name : <strong><?php echo $single_order_shipped['TEMPLATE_SHIPPED_ORDER_SHIPPED_INFO']['logisticsName'];?></strong></span><br />
+					<span>Air way bill number : <strong><?php echo $single_order_shipped['TEMPLATE_SHIPPED_ORDER_SHIPPED_INFO']['awbNo'];?></strong></span><br />
+					<span><a style="text-decoration:underline;" target="_blank" href="<?php echo $single_order_shipped['TEMPLATE_SHIPPED_ORDER_SHIPPED_INFO']['trackingURL'];?>"><span style="color:#565656;font-size:13px;">Click</span></a> here to check your item status.</span><br />
+					Meanwhile, you can check the status of your order on Tidiit.com</font> <br /></td>
                   <td width="10%">&nbsp;</td>
                 </tr>
                 <tr>
@@ -49,7 +53,7 @@
                           <td align="left" valign="top" style="background-color:#FFFFFF;display:block;clear:both;padding:20px 20px 0 20px;" bgcolor=""><table border="0" cellspacing="0" cellpadding="0" width="100%" style="">
                               <tbody>
                                 <tr>
-                                  <td colspan="4" width="100%" align="middle" valign="top"><p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $single_order_success['TEMPLATE_ORDER_SUCCESS_ORDER_ID'];?></span></a> </p>
+                                  <td colspan="4" width="100%" align="middle" valign="top"><p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $single_order_shipped['TEMPLATE_SHIPPED_ORDER_ID'];?></span></a> </p>
                                     <br>
                                   </td>
                                 </tr>

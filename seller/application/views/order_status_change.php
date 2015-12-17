@@ -1,4 +1,11 @@
-<?php $orderinfo = unserialize(base64_decode($order->orderInfo));?>
+<?php $orderinfo = unserialize(base64_decode($order->orderInfo));
+$logisticId='';$trackingURL='';$awbNo='';$note='';
+if(!empty($latestOrderState)){
+    $logisticId=$latestOrderState['logisticsId'];
+    $trackingURL=$latestOrderState['trackingURL'];
+    $awbNo=$latestOrderState['awbNo'];
+    $note=$latestOrderState['note'];
+}?>
 <!-- Modal --><style>label.error{color: red;padding-left: 5px;}</style>
 <div class="modal fade" id="myModalLogin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog modal-lg" role="document">
@@ -22,7 +29,7 @@
                                 <tbody>
                                 <tr>
                                     <td>
-                                        <p><i class="fa fa-sort-desc"></i> Order Details</p>
+                                        <p><i class="fa fa-sort-desc"></i> Order Details &nbsp;<a href="#top">Go</a></p>
                                      <table class="table">
                                         <thead>
                                         <tr class="info">
@@ -136,14 +143,14 @@
                                                 <select name="status" id="status" class="required">
                                                     <option value="">Select</option>
                                                     <option value="3" <?php if($order->status==3){?>selected<?php }?>>Confirm</option>
-                                                    <option value="4" <?php if($order->status==3){?>selected<?php }?>>Shipped</option>
+                                                    <option value="4" <?php if($order->status==4){?>selected<?php }?>>Shipped</option>
                                                 </select>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Enter your comment</td>
                                             <td>:</td>
-                                            <td><textarea name="note" id="note"></textarea></td>
+                                            <td><textarea name="note" id="note"><?php echo $note;?></textarea></td>
                                         </tr>
                                         <tr id="showHideShippedElement2" style="display:none;">
                                             <td>Select Logistics Partner</td>
@@ -152,7 +159,7 @@
                                                 <select name="logisticsId" id="logisticsId" class="logisticsId">
                                                     <option value="">Select</option>
                                                     <?php foreach($logisticsData As $k): ?>
-                                                    <option value="<?php echo $k->logisticsId;?>"><?php echo $k->title;?></option>
+                                                    <option value="<?php echo $k->logisticsId;?>" <?php if($logisticId==$k->logisticsId){?>selected<?php }?>><?php echo $k->title;?></option>
                                                     <?php endforeach;?>
                                                 </select>
                                             </td>
@@ -160,12 +167,12 @@
                                         <tr id="showHideShippedElement" style="display:none;">
                                             <td>Enter your Air Way Bill Number</td>
                                             <td>:</td>
-                                            <td><input type="text" name="awbNo" id="awbNo" class="required"/></td>
+                                            <td><input type="text" name="awbNo" id="awbNo" class="required" value="<?php echo $awbNo;?>"/></td>
                                         </tr>
                                         <tr id="showHideShippedElement1" style="display:none;">
                                             <td>Enter your tracking URL</td>
                                             <td>:</td>
-                                            <td><input type="text" name="trackingURL" id="trackingURL" class="required"/></td>
+                                            <td><input type="text" name="trackingURL" id="trackingURL" class="required" value="<?php echo $trackingURL;?>"/></td>
                                         </tr>
                                         <tr><td colspan="3">&nbsp; <input type="hidden" name="orderId" value="<?php echo $orderId;?>"></td></tr>
                                         <tr><td>&nbsp;</td><td>&nbsp;</td><td><button class="btn btn-warning" type="submit"><i class="fa fa-arrow-left"></i> Submit</button></td></tr>
@@ -204,5 +211,11 @@
                 $('#showHideShippedElement2').hide();
             }
         });
+        <?php if($order->status==4){?>
+                $('#showHideShippedElement').show();
+                $('#showHideShippedElement1').show();
+                $('#showHideShippedElement2').show();
+        <?php }?>
+            
     });
 </script>

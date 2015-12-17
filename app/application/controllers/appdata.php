@@ -386,7 +386,91 @@ class Appdata extends REST_Controller {
         endif;
     }
     
+    function add_new_group_post(){
+        $groupAdminId=$this->post('userId');
+        $groupTitle=$this->post('groupTitle');
+        $productType=$this->post('productType');
+        $groupUsers=$this->post('groupUsers');
+        $colors = array('red','maroon','purple','green','blue');
+        $rand_keys = array_rand($colors, 1);
+        $groupColor = $colors[$rand_keys];
+        
+        $notify = array();
+        
+        if(!$groupUsersArr):
+            echo json_encode(array('result'=>'bad','msg'=>'Please select the at least one Buyer club member!'));die;
+        endif;
+        $groupDataArr=array('groupAdminId'=>$groupAdminId,'groupTitle'=>$groupTitle,'productType'=>$productType,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor);
+        $groupId = $this->user->group_add($groupDataArr);
+        $userDetails=$this->user->get_details_by_id($groupAdminId,TRUE);
+        if($groupId):
+            if($groupUsersArr):
+                foreach($groupUsersArr as $guser):
+                    $notify['senderId'] = $groupAdminId;
+                    $notify['receiverId'] = $guser;
+                    $notify['nType'] = "GROUP-ADD";
+                    $notify['nTitle'] = $groupTitle;
+                    $notify['adminName'] = $userDetails[0]['firstName'].' '.$userDetails[0]['lastName'];
+                    $notify['adminEmail'] = $userDetails[0]['email'];
+                    $notify['adminContactNo'] = $userDetails[0]['contactNo'];
+                    $this->send_notification($notify);
+                endforeach;
+            endif;
+            echo json_encode(array('result'=>'good','gid'=>$groupId));die; 
+        else:    
+            echo json_encode(array('result'=>'bad','msg'=>'Some error happen. Please try again!'));die;
+        endif;
+    }
     
+    
+    function send_notification($data){
+        $type = $data['nType'];
+        switch($type){
+            case 'GROUP-ADD':
+                $data['nMessage'] = "Hi, <br /> You Have added in my newly created Buying Club <strong>[".$data['nTitle']."]</strong> by ".$data['adminName'].".<br />Group Leader email id is ".$data['adminEmail'].".<br />Group Leader contact number is ".$data['adminContactNo'].".";
+                $data['isEmail'] = true;
+                $data['isMobMessage'] = true;
+                $data['createDate'] = date('Y-m-d H:i:s');
+                break;
+            case 'GROUP-MODIFY':
+                $data['nMessage'] = "Hi, <br> Buying Club <strong>[".$data['nTitle']."]</strong> has been modified.";
+                $data['isEmail'] = true;
+                $data['isMobMessage'] = true;
+                $data['createDate'] = date('Y-m-d H:i:s');
+                break;
+            case 'GROUP-MODIFY-NEW':
+                $data['nMessage'] = "Hi, <br> You Have added in my Buying Club <strong>[".$data['nTitle']."]</strong>.My name is ".$data['adminName'].".<br />My email id is ".$data['adminEmail'].".<br />My contact number is ".$data['adminContactNo'].".";
+                $data['isEmail'] = true;
+                $data['isMobMessage'] = true;
+                $data['createDate'] = date('Y-m-d H:i:s');
+                break;
+            case 'GROUP-MODIFY-DELETE':
+                $data['nMessage'] = "Hi, <br> You are not part of this Buying Club <strong>[".$data['nTitle']."]</strong>";
+                $data['isEmail'] = true;
+                $data['isMobMessage'] = true;
+                $data['createDate'] = date('Y-m-d H:i:s');
+                break;
+        }
+        
+        
+        $data['isRead'] = 0;
+        $data['status'] = 1;
+        
+        
+        
+        if($data['isMobMessage']):
+            //Send Mobile message
+            unset($data['isMobMessage']);
+        endif;
+        
+        if($data['isEmail']):
+            //Send Email message
+            unset($data['isEmail']);
+        endif;
+        
+        $this->user->notification_add($data);
+    
+    }
     
     function get_main_menu(){
         $mainMenuArr=array();

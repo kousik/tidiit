@@ -10,7 +10,6 @@ class Logistics_model extends CI_Model{
         return $this->db->get($this->_table)->result();
     }
 
-
     public function add($dataArr){
             $this->db->insert($this->_table,$dataArr);
             return $this->db->insert_id();
@@ -32,5 +31,9 @@ class Logistics_model extends CI_Model{
     public function delete($logisticsId){
             $this->db->delete($this->_table, array('logisticsId' => $logisticsId)); 
             return TRUE;
+    }
+    
+    function details($logisticsId){
+        return $this->db->where('logisticsId',$logisticsId)->get($this->_table)->result_array();                
     }
 }

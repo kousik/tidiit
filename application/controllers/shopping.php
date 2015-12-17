@@ -1316,7 +1316,7 @@ class Shopping extends MY_Controller{
                         $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'single'));
                         $mail_template_view_data=$this->load_default_resources();
                         $mail_template_view_data['single_order_success']=$mail_template_data;
-                        $this->_global_tidiit_mail($recv_email, "Your Tidiit order - TIDIIT-OD-".$orderId, $mail_template_view_data.' has placed successfully','single_order_success');
+                        $this->_global_tidiit_mail($recv_email, "Your Tidiit order - TIDIIT-OD-".$orderId.' has placed successfully', $mail_template_view_data,'single_order_success');
                         $this->_sent_single_order_complete_mail($orderId);
                     endif;
                 endif;
@@ -1662,7 +1662,7 @@ class Shopping extends MY_Controller{
             
             $mail_template_view_data=$this->load_default_resources();
             $mail_template_view_data['single_order_success']=$mail_template_data;
-            $this->_global_tidiit_mail($recv_email, "Confirmation mail for your Tidiit order no - TIDIIT-OD-".$v, $mail_template_view_data,'single_order_success');
+            $this->_global_tidiit_mail($recv_email, "Your Tidiit order no - TIDIIT-OD-".$v.' has placed successfully', $mail_template_view_data,'single_order_success');
             $this->_sent_single_order_complete_mail($v);
         endforeach;
         unset($_SESSION['PaymentData']);

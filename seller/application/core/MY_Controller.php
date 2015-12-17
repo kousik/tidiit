@@ -178,11 +178,13 @@ class MY_Controller extends CI_Controller {
         
     function _global_tidiit_mail($to,$subject,$dataResources,$tempplateName="",$toName=""){
         $message='';
+        //echo $tempplateName;
         if($tempplateName==""){
             $message=$dataResources;
         }else{
             $message=  $this->load->view('email_template/'.$tempplateName,$dataResources,TRUE);
         }
+        //echo $message;die;
         $this->load->library('email');
         $this->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
         if($toName!="")

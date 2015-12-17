@@ -35,6 +35,7 @@ class Ajax extends MY_Controller{
                 $this->session->set_userdata('FE_SESSION_VAR_FNAME',$DataArr[0]->firstName);
                 //$this->session->set_userdata('FE_SESSION_USERNAME_VAR',$UserName);
                 $this->session->set_userdata('FE_SESSION_VAR_TYPE','seller');
+                $this->session->set_userdata('FE_SESSION_UDATA',$DataArr[0]);
                 $this->User_model->add_login_history(array('userId'=>$DataArr[0]->userId));
                 echo json_encode(array('result'=>'good','url'=>BASE_URL.'index/home/'));die; 
             }else{
@@ -135,9 +136,11 @@ class Ajax extends MY_Controller{
                         $this->User_model->subscribe($email);
                     }
                 }
-                
+                $DataArr=$this->User_model->get_details_by_id($userId);
                 $this->session->set_userdata('FE_SESSION_VAR',$userId);
                 $this->session->set_userdata('FE_SESSION_USERNAME_VAR',$userName);
+                $this->session->set_userdata('FE_SESSION_VAR_FNAME',$firstName);
+                $this->session->set_userdata('FE_SESSION_UDATA',$DataArr[0]);
                 
                 $mail_template_data=array();
                 $mail_template_data['TEMPLATE_CREATE_USER_EAMIL']=$email;
@@ -298,11 +301,13 @@ class Ajax extends MY_Controller{
         $data['group'] = $this->User_model->get_group_by_id($order->groupId);
         $data['logisticsData'] = $this->Logistics_model->get_all_admin();
         $orderStatusobj=$this->Order_model->get_state1();
+        $latestOrderState=$this->Order_model->current_order_state_history($orderId);
         $stateArr=array();
         foreach($orderStatusobj As $k){
             $stateArr[$k->orderStateId]=$k->name;
         }
         $data['status']= $stateArr;
+        $data['latestOrderState']= $latestOrderState;
         //pre($data);die;
         echo json_encode(array('content'=>$this->load->view('order_status_change',$data,true)));die;
     }
