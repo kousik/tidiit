@@ -1067,6 +1067,7 @@ jQuery(document).ready(function(){
           .toggleClass('valid', ! invalid)
           .text(invalid ? (invalid +' invalid fields') : 'All good!');
           if(invalid==0){
+              myJsMain.commonFunction.showPleaseWait();
               //alert('submiting form');
                 /*for ( instance in CKEDITOR.instances )
                     CKEDITOR.instances[instance].updateElement();
