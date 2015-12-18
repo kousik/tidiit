@@ -42,10 +42,11 @@ class Index extends MY_Controller {
                 $outForDeliveryOrders++;
             }else if($k->status==6){
                 $successOrders++;
-            }else if($k->status==7){
+            }else if($k->status==0){
                 $cancelOrders++;
             }
         }
+        //echo $cancelOrders;die;
         $data['placeOrders']=$placeOrders;
         $data['confirmOrders']=$confirmOrders;
         $data['shippedOrders']=$shippedOrders;

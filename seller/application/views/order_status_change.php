@@ -29,7 +29,7 @@ if(!empty($latestOrderState)){
                                 <tbody>
                                 <tr>
                                     <td>
-                                        <p><i class="fa fa-sort-desc"></i> Order Details &nbsp;<a href="#top">Go</a></p>
+                                        <p><i class="fa fa-sort-desc"></i> Order Details</p>
                                      <table class="table">
                                         <thead>
                                         <tr class="info">
@@ -216,6 +216,8 @@ if(!empty($latestOrderState)){
                 $('#showHideShippedElement1').show();
                 $('#showHideShippedElement2').show();
         <?php }?>
-            
+        $('#orderStatesChange').submit(function(e) {
+            myJsMain.commonFunction.showPleaseWait();
+        });   
     });
 </script>

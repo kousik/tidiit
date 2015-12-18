@@ -180,7 +180,7 @@ class Order_model extends CI_Model {
         $OrderStatus=$this->input->post('HiddenFilterOrderStatus',TRUE);
         $sql='SELECT o.*,u1.email FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) '
                 . ' JOIN `user` AS u ON(u.userId=ps.userId)'
-                . ' JOIN `user` AS u1 ON(u1.userId=o.userId) WHERE o.status >1 AND u.userId='.$this->session->userdata('FE_SESSION_VAR').' ';//.' AND o.parrentorderId=0 ';
+                . ' JOIN `user` AS u1 ON(u1.userId=o.userId) WHERE o.status !=1 AND u.userId='.$this->session->userdata('FE_SESSION_VAR').' ';//.' AND o.parrentorderId=0 ';
 
         /*if($UserName!=""){
             $sql .= " AND u.UserName='".$UserName."'";
@@ -259,7 +259,7 @@ class Order_model extends CI_Model {
     }
 
     function get_order_for_statics(){
-        $sql='SELECT o.* FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) JOIN `user` AS u ON(u.userId=ps.userId) WHERE o.status >1 AND u.userId='.$this->session->userdata('FE_SESSION_VAR').' ';
+        $sql='SELECT o.* FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) JOIN `user` AS u ON(u.userId=ps.userId) WHERE o.status !=1 AND u.userId='.$this->session->userdata('FE_SESSION_VAR').' ';
         return $this->db->query($sql)->result();
     }
 

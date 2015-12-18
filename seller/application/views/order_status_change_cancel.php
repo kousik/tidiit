@@ -1,11 +1,11 @@
-<?php $orderinfo = unserialize(base64_decode($order->orderInfo));?>
+<?php $orderinfo = $order_cancel['TEMPLATE_ORDER_CANCEL_ORDER_INFO']; //unserialize(base64_decode($order->orderInfo));?>
 <!-- Modal -->
 <div class="modal fade" id="myModalLogin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Order Cancel for :<?php echo $orderId;?></h4>
+        <h4 class="modal-title" id="myModalLabel">Order Cancellation</h4>
       </div>
         <form name="orderStatesChange" id="orderStatesChange" action="<?php echo BASE_URL.'order/state_change_cancel/';?>" method="post">
             <div class="modal-body">
@@ -159,5 +159,8 @@
     jQuery(document).ready(function(){
         jQuery('#myModalLogin').modal('show');
         jQuery("#orderStatesChange").validate();
+        $('#orderStatesChange').submit(function(e) {
+            myJsMain.commonFunction.showPleaseWait();
+        });
     });
 </script>

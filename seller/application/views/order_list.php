@@ -55,10 +55,12 @@
                           <td><input type="checkbox" name="sel_pro"></td>
                           <td>
                               <a href="javascript:void(0);" class="viewOrderDetails"  title="Cancel" data-orderid="<?php echo $k->orderId;?>">View Details</a> <br />
-                              <?php if($k->orderType == 'SINGLE' && $k->status < 4):?>
+                              <?php if($k->orderType == 'SINGLE' && $k->status < 4 && $k->status!=0):?>
                               <a href="javascript:void(0);" class="changeOrderStateCancel"  title="Cancel" data-orderid="<?php echo $k->orderId;?>">Cancel</a> <br />
-                              <?php endif;?>
+                              <?php endif;
+                              if($k->status>0 && $k->status<4):?>
                               <a href="javascript:void(0);" class="changeOrderState"  title="Delete" data-orderid="<?php echo $k->orderId;?>" data-productstatus="<?php echo $k->status;?>">Update Status</a>
+                              <?php endif;?>
                           </td>
                           <td><?php echo $status[$k->status];?></td>
                           <td><?php echo $k->orderId;?></td>

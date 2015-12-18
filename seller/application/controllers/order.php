@@ -267,4 +267,55 @@ class Order extends MY_Controller{
             $this->_global_tidiit_mail($supportEmail, "Order no - TIDIIT-OD-".$order->orderId.' has shipped by '.$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName, $adminMailData,'support_single_order_shipped','Tidiit Inc Support');
             return TRUE;
         }
+        
+        function state_change_cancel(){
+            $orderId=  $this->input->post('orderId',TRUE);
+            $note=  $this->input->post('note',TRUE);
+            if($orderId=="" || $note==""):
+                $this->session->set_flashdata('Message',"Please provide order index and select order status type.");
+                redirect(BASE_URL.'order/viewlist/');
+            endif;
+            $this->Order_model->update(array('status'=>0),$orderId);
+            
+            $orderHistoryArr=array('orderId'=>$orderId,'state'=>0,'historyBy'=>2,'actionOwnerId'=>$this->session->userdata('FE_SESSION_VAR'),'note'=>$note);
+            $this->Order_model->add_history($orderHistoryArr);
+            //pre($orderHistoryArr);die;
+            $order=$this->Order_model->get_single_order_by_id($orderId);
+            $this->order_cancel_mail($order,$note);
+            $this->session->set_flashdata('Message',"Order no TIDIIT-OD-$orderId has cancelled successfully.");
+            redirect(BASE_URL.'order/viewlist/');
+        }
+        
+        function order_cancel_mail($order,$note){
+            $mail_template_data['TEMPLATE_ORDER_CANCEL_ORDER_INFO']=unserialize(base64_decode($order->orderInfo));
+            $mail_template_data['TEMPLATE_ORDER_CANCEL_ORDER_ID']=$order->orderId;
+            $mail_template_view_data=$this->load_default_resources();
+            $mail_template_view_data['order_cancel']=$mail_template_data;
+            $userDetails=  $this->User_model->get_details_by_id($order->userId);
+            $sellerDetails=  $this->User_model->get_details_by_id($this->session->userdata('FE_SESSION_VAR'));
+            //pre($order);pre($userDetails);pre($sellerDetails);
+            $mail_template_view_data['SellerName']=$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName;
+            $mail_template_view_data['cancelReason']=$note;
+            //echo $userDetails[0]->email;
+            $this->_global_tidiit_mail($userDetails[0]->email, "Your Tidiit order no - TIDIIT-OD-".$order->orderId.' has canceled', $mail_template_view_data,'order_cancel',$userDetails[0]->firstName.' '.$userDetails[0]->lastName);
+            
+            /// for tidiit support
+            $orderDetails=  array();
+            $orderDetails[]=$order;
+            //pre($orderDetails);die;
+            $adminMailData=  $this->load_default_resources();
+            $adminMailData['orderDetails']=$orderDetails;
+            $orderInfoDataArr=unserialize(base64_decode($order->orderInfo));
+            //pre($orderInfoDataArr);die;
+            $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
+            $adminMailData['userFullName']='Tidiit Inc Support';
+            $adminMailData['sellerFullName']=$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName;
+            $adminMailData['buyerFullName']=$userDetails[0]->firstName.' '.$userDetails[0]->lastName;
+            $adminMailData['cancelReason']=$note;
+            $this->load->model('Siteconfig_model','siteconfig');
+            //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
+            $supportEmail='judhisahoo@gmail.com';
+            $this->_global_tidiit_mail($supportEmail, "Order no - TIDIIT-OD-".$order->orderId.' has camceled by '.$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName, $adminMailData,'support_order_cancelled','Tidiit Inc Support');
+            return TRUE;
+        }
 }
