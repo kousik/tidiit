@@ -275,7 +275,7 @@ class Order extends MY_Controller{
                 $this->session->set_flashdata('Message',"Please provide order index and select order status type.");
                 redirect(BASE_URL.'order/viewlist/');
             endif;
-            $this->Order_model->update(array('status'=>0),$orderId);
+            $this->Order_model->update(array('status'=>7),$orderId);
             
             $orderHistoryArr=array('orderId'=>$orderId,'state'=>0,'historyBy'=>2,'actionOwnerId'=>$this->session->userdata('FE_SESSION_VAR'),'note'=>$note);
             $this->Order_model->add_history($orderHistoryArr);

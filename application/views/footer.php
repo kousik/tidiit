@@ -400,6 +400,9 @@
                 $('.bs-example-modal-lg button.close').trigger('click');
                  $('a.showLogin').trigger( "click" );
         <?php 
+        elseif($this->uri->segment('1')=='logistics'):?>
+                $('.bs-example-modal-lg1 button.close').trigger('click');
+        <?php
         endif;?>
     });
     

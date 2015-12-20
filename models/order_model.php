@@ -17,6 +17,8 @@ class Order_model extends CI_Model {
     private $_sod="settlement_on_delivery";
     private $_mpesa="mpesa";
     private $_netbanking="netbanking_data";
+    private $_out_for_delivery="order_out_for_delivery_pre_alert";
+    
 
 
     public $result=NULL;
@@ -46,7 +48,9 @@ class Order_model extends CI_Model {
 
     public function get_single_order_by_id($orderId){
         $this->db->limit(1);
-        $this->db->select('o.*,p.paymentType')->from($this->_table.' o');
+        $this->db->select('o.*,p.paymentType,s.email AS sellerEmail,s.firstName AS sellerFirstName,s.lastName AS sellerLastName,s1.email AS buyerEmail,s1.firstName AS buyerFirstName,s1.lastName AS buyerLastName');
+        $this->db->from($this->_table.' o');
+        $this->db->join('product_seller ps','o.productId=ps.productId')->join('user s','ps.userId=s.userId')->join('user s1','o.userId=s1.userId');
         $this->db->join('payment p','o.orderId=p.orderId','left');
         $orderData = $this->db->where('o.orderId',$orderId)->get()->result(); 
         //echo $str = $this->db->last_query();
@@ -107,7 +111,6 @@ class Order_model extends CI_Model {
 
     }
 
-
     public function get_parent_order($orderId){
         $this->db->select('*');
         $this->db->where('parrentorderId',$orderId);
@@ -120,7 +123,6 @@ class Order_model extends CI_Model {
             return false;
         endif;
     }
-
 
     public function order_group_status_update($orderId, $status, $parrentorderId){          
         if($parrentorderId):
@@ -156,8 +158,8 @@ class Order_model extends CI_Model {
 
 
     public function details($orderId){
-        $this->db->select('o.*,pp.qty AS productSlabPrice,pp.price AS productSlabPrice,s.email AS sellerEmail,s.firstName AS sellerFirstName,s.lastName AS sellerLastName');
-        $this->db->from($this->_table.' o')->join('product_price pp','o.productPriceId=pp.productPriceId');
+        $this->db->select('o.*,pp.qty AS productSlabPrice,pp.price AS productSlabPrice,s.email AS sellerEmail,s.firstName AS sellerFirstName,s.lastName AS sellerLastName,s1.email AS buyerEmail,s1.firstName AS buyerFirstName,s1.lastName AS buyerLastName');
+        $this->db->from($this->_table.' o')->join('product_price pp','o.productPriceId=pp.productPriceId')->join('user s1','o.userId=s1.userId');
         $this->db->join('product_seller ps','o.productId=ps.productId')->join('user s','ps.userId=s.userId');
         return $this->db->where('o.orderId',$orderId)->get()->result();
     }
@@ -443,5 +445,10 @@ class Order_model extends CI_Model {
         
     function current_order_state_history($orderId){
         return $this->db->from($this->_history)->where('orderId',$orderId)->order_by('actionDate','desc')->limit(1)->get()->row_array();
+    }
+    
+    function add_order_out_for_delivery($dataArr){
+        $this->db->insert($this->_out_for_delivery,$dataArr);
+        return $this->db->insert_id();
     }
 }

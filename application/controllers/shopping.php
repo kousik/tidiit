@@ -1528,6 +1528,7 @@ class Shopping extends MY_Controller{
             $order_update=array();
             if($prod_price_info->qty == $PaymentDataArr['aProductQty']):
                 $order_update['status'] = 2;
+                $order_update['isPaid'] = 1;
                 $this->Product_model->update_product_quantity_after_order_process($prod_price_info->productId,$prod_price_info->qty);
             else:
                 $order_update['status'] = 1;
@@ -1643,7 +1644,8 @@ class Shopping extends MY_Controller{
     function process_mpesa_success_single_order($PaymentDataArr){
         foreach ($PaymentDataArr['orders'] AS $k => $v):
             $order_update=array();
-            $order_update['status'] = 1;
+            $order_update['status'] = 2;
+            $order_update['isPaid'] = 1;
             $this->Order_model->update($order_update,$v);
             
             $order=$PaymentDataArr['orderInfo'][$v]['order'];
@@ -1686,8 +1688,8 @@ class Shopping extends MY_Controller{
             redirect(BASE_URL.'shopping/ord-message');
         endif;
         $data['order'] = $order;
-        if($order->status == 6):
-            $this->session->set_flashdata('error', 'You ahave already applied for cancellation. It is now precessing status.');            
+        if($order->status == 7):
+            $this->session->set_flashdata('error', 'You ahave already canceled the order.');            
             redirect(BASE_URL.'shopping/ord-message');
         endif;
         $data['user']=$user;
@@ -1717,7 +1719,7 @@ class Shopping extends MY_Controller{
             echo '-1<p class="box alert">Please write your other reason in comment box!</p>';
             die;
         endif;
-        $this->Order_model->update(array('status'=> 6), $orderId);
+        $this->Order_model->update(array('status'=> 7), $orderId);
         
         //One mail to customer for cancel processing
         
