@@ -34,11 +34,16 @@
             <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td width="10%">&nbsp;</td>
-                  <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $userFullName;?>,</em></strong></font><br />
+                  <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $sellerFullName;?>,</em></strong></font><br />
                     <br />
-                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px"><?php echo $buyerFullName;?> has  placed one Buying Club Order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?></span></a> for <?php echo $sellerFullName;?> <br />Master order number : <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderParrentId?></span></a></p>
+                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px"><?php echo $buyerFullName;?> had placed one Bouying Club Order. <p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Order number is : <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?></span></a> <?php if($orderDetails[0]->parrentOrderID>0){ ?>and Master order number : <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->parrentOrderID;?></span></a><?php }?><br /><br />This is a message regarding said order is out for delivery.<br />
                     <br />
-                    Selected product slab price is <?php echo $orderInfoDataArr['priceinfo']->price;?> and quantity <?php echo $orderInfoDataArr['priceinfo']->qty;?></font> <br /></td>
+					Delivery Company Name : <?php echo $deliveryCompanyName;?><br />
+					Delivery person name : <?php echo $deliveryStaffName;?><br />
+					Contact number of delivery person : <?php echo $deliveryStaffContactNo;?><br >
+					Email of delivery person : <?php echo $deliveryStaffEmail;?><br ></p>
+                    <br />
+                    Selected product slab price is <?php echo $orderInfoDataArr['priceinfo']->price;?> and qantity <?php echo $orderInfoDataArr['priceinfo']->qty;?></font> <br /></td>
                   <td width="10%">&nbsp;</td>
                 </tr>
                 <tr>
@@ -63,21 +68,6 @@
 										</font> 
 									</td>
                                   <td width="10%" align="middle" valign="top">&nbsp;</td>
-									<?php /*<td width="48%" align="middle" valign="top">
-										<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:15px; line-height:21px;font-weight:bold;">
-											Billing Address
-										</font>
-										<br />
-										<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px;">
-										<?php echo $orderInfoDataArr['billing']->firstName.' '.$orderInfoDataArr['billing']->firstName;?><br/>
-										<?php echo $orderInfoDataArr['billing']->email;?><br/>
-										<?php echo $orderInfoDataArr['billing']->address.' , '.$orderInfoDataArr['billing']->locality;?><br/>
-										<?php echo $orderInfoDataArr['billing']->city.' , '.$orderInfoDataArr['billing']->stateName;?><br/>
-										<?php echo $orderInfoDataArr['billing']->zip.' , '.$orderInfoDataArr['billing']->countryName;?><br/>
-										<br />
-										</font> 
-
-									</td>*/?>
                                 </tr>
                               </tbody>
                             </table></td>

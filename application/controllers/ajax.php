@@ -924,8 +924,8 @@ class Ajax extends MY_Controller{
             echo json_encode(array('result'=>'bad','msg'=>str_replace('</p>','',str_replace('<p>','',validation_errors()))));die;
         else:
             $outForDeliveryType=$this->input->post('outForDeliveryType',TRUE);
-            $orderId=$this->input->post('orderId',TRUE);
-            $logisticsId=$this->input->post('logisticsId',TRUE);
+            $orderId=trim($this->input->post('orderId',TRUE));
+            $logisticsId=trim($this->input->post('logisticsId',TRUE));
             $deliveryStaffName=$this->input->post('deliveryStaffName',TRUE);
             $deliveryStaffContactNo=$this->input->post('deliveryStaffContactNo',TRUE);
             $deliveryStaffEmail=$this->input->post('deliveryStaffEmail',TRUE);
@@ -952,18 +952,17 @@ class Ajax extends MY_Controller{
                     echo json_encode(array('result'=>'bad','msg'=>'Please select out for delivery days.'));die;
                 endif;    
                 $outForDeliveryDataArr['outForDeliveryDays']=$outForDeliveryDays;
+                $this->Order_model->add_order_out_for_delivery($dataArr); 
                 if($order->orderType=='GROUP'):
                     $this->_send_pre_alert_regarding_out_for_delivery_of_group($outForDeliveryDataArr);
                 else:
-                    $dataArr['outForDeliveryDays']=$outForDeliveryDays;
-                    $this->Order_model->add_order_out_for_delivery($dataArr); 
                     $this->_send_pre_alert_regarding_out_for_delivery($outForDeliveryDataArr);
                 endif;
             else:
+                $this->Order_model->add_order_out_for_delivery($dataArr);
                 if($order->orderType=='GROUP'):
                     $this->_send_alert_regarding_out_for_delivery_of_group($outForDeliveryDataArr);
                 else:
-                    $this->Order_model->add_order_out_for_delivery($dataArr);
                     $this->_send_alert_regarding_out_for_delivery($outForDeliveryDataArr);
                 endif;
             endif;
@@ -1012,7 +1011,43 @@ class Ajax extends MY_Controller{
      *  sending pre-alert of out for delivery for group order 
      */
     function _send_pre_alert_regarding_out_for_delivery_of_group($outForDeliveryDataArr){
+        $order=$outForDeliveryDataArr['order'];
+        $orderDetails=array();
+        $orderDetails[]=$order;
+        $orderInfo=unserialize(base64_decode($order->orderInfo));
+        $logisticDetails=$outForDeliveryDataArr['logisticDetails'];
+        $mail_template_view_data=$this->load_default_resources();
+        $mail_template_view_data['orderInfo']=$orderInfo;
+        $mail_template_view_data['orderId']=$order->orderId;
+        $mail_template_view_data['deliveryCompanyName']=$logisticDetails[0]['title'];
+        $mail_template_view_data['deliveryStaffName']=$outForDeliveryDataArr['deliveryStaffName'];
+        $mail_template_view_data['deliveryStaffContactNo']=$outForDeliveryDataArr['deliveryStaffContactNo'];
+        $mail_template_view_data['deliveryStaffEmail']=$outForDeliveryDataArr['deliveryStaffEmail'];
+        $mail_template_view_data['isPaid']=$order->isPaid;
+        $mail_template_view_data['orderDetails']=$orderDetails;
+        $buyerFullName=$order->buyerFirstName.' '.$order->buyerLastName;
+        $this->_global_tidiit_mail($order->buyerEmail, "Pre-alert to your Tidiit Buying Club order no - TIDIIT-OD-".$order->orderId.' before delivery', $mail_template_view_data,'group_order_out_for_delivery_pre_alert',$buyerFullName);
         
+        /// mail for group leader
+        $mail_template_view_data['buyerFullName']=$buyerFullName;
+        if($order->parrentOrderID>0):
+            $mail_template_view_data['leaderFullName']=$orderInfo['group']->admin->firstName.' '.$orderInfo['group']->admin->lastName;
+            $this->_global_tidiit_mail($orderInfo['group']->admin->email, "Pre-alert to your Tidiit Buying Club Member order no - TIDIIT-OD-".$order->orderId.' before delivery', $mail_template_view_data,'group_order_out_for_delivery_pre_alert_leader',$buyerFullName);    
+        endif;
+        
+        /// for seller
+        $mail_template_view_data['orderInfoDataArr']=unserialize(base64_decode($order->orderInfo));
+        $sellerFullName=$order->sellerFirstName.' '.$order->sellerFirstName;
+        $mail_template_view_data['sellerFullName']=$sellerFullName;
+        $this->_global_tidiit_mail($order->sellerEmail, "Pre-alert for Tidiit Buying Club order no - TIDIIT-OD-".$order->orderId.' before delivery', $mail_template_view_data,'seller_group_order_out_for_delivery_pre_alert',$sellerFullName);
+        
+        $mail_template_view_data['supportFullName']='Tidiit Inc Support';
+        $mail_template_view_data['sellerFullName']=$order->sellerFirstName.' '.$order->sellerLastName;
+        $this->load->model('Siteconfig_model','siteconfig');
+        //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
+        $supportEmail='judhisahoo@gmail.com';
+        $this->_global_tidiit_mail($supportEmail, "Pre-alert Tidiit Buying Club for Order no - TIDIIT-OD-".$order->orderId.' before delivery ', $mail_template_view_data,'support_group_order_out_for_delivery_pre_alert','Tidiit Inc Support');
+        return TRUE;
     }
     
     /****
@@ -1052,8 +1087,55 @@ class Ajax extends MY_Controller{
     }
     
     function _send_alert_regarding_out_for_delivery_of_group($outForDeliveryDataArr){
+        $order=$outForDeliveryDataArr['order'];
+        $orderDetails=array();
+        $orderDetails[]=$order;
+        $orderInfo=unserialize(base64_decode($order->orderInfo));
+        $logisticDetails=$outForDeliveryDataArr['logisticDetails'];
+        $mail_template_view_data=$this->load_default_resources();
+        $mail_template_view_data['orderInfo']=$orderInfo;
+        $mail_template_view_data['orderId']=$order->orderId;
+        $mail_template_view_data['deliveryCompanyName']=$logisticDetails[0]['title'];
+        $mail_template_view_data['deliveryStaffName']=$outForDeliveryDataArr['deliveryStaffName'];
+        $mail_template_view_data['deliveryStaffContactNo']=$outForDeliveryDataArr['deliveryStaffContactNo'];
+        $mail_template_view_data['deliveryStaffEmail']=$outForDeliveryDataArr['deliveryStaffEmail'];
+        $mail_template_view_data['isPaid']=$order->isPaid;
+        $mail_template_view_data['orderDetails']=$orderDetails;
+        $buyerFullName=$order->buyerFirstName.' '.$order->buyerLastName;
+        $this->_global_tidiit_mail($order->buyerEmail, "Your Tidiit Buying Club order no - TIDIIT-OD-".$order->orderId.' is ready for Out For Delivery', $mail_template_view_data,'group_order_out_for_delivery',$buyerFullName);
         
+        /// mail for group leader
+        $mail_template_view_data['buyerFullName']=$buyerFullName;
+        if($order->parrentOrderID>0):
+            $mail_template_view_data['leaderFullName']=$orderInfo['group']->admin->firstName.' '.$orderInfo['group']->admin->lastName;
+            $this->_global_tidiit_mail($orderInfo['group']->admin->email, "Your Tidiit Buying Club Member order no - TIDIIT-OD-".$order->orderId.' is ready for Out For Delivery', $mail_template_view_data,'group_order_out_for_delivery_leader',$buyerFullName);    
+        endif;
+        
+        /// for seller
+        $mail_template_view_data['orderInfoDataArr']=unserialize(base64_decode($order->orderInfo));
+        $sellerFullName=$order->sellerFirstName.' '.$order->sellerFirstName;
+        $mail_template_view_data['sellerFullName']=$sellerFullName;
+        $this->_global_tidiit_mail($order->sellerEmail, "Tidiit Buying Club order no - TIDIIT-OD-".$order->orderId.' is ready for Out For Delivery', $mail_template_view_data,'seller_group_order_out_for_delivery',$sellerFullName);
+        
+        $mail_template_view_data['supportFullName']='Tidiit Inc Support';
+        $mail_template_view_data['sellerFullName']=$order->sellerFirstName.' '.$order->sellerLastName;
+        $this->load->model('Siteconfig_model','siteconfig');
+        //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
+        $supportEmail='judhisahoo@gmail.com';
+        $this->_global_tidiit_mail($supportEmail, "Tidiit Buying Club for Order no - TIDIIT-OD-".$order->orderId.' is ready for Out For Delivery ', $mail_template_view_data,'support_group_order_out_for_delivery','Tidiit Inc Support');
+        return TRUE;
     }
     
-    
+    function check_order_id_for_logistic(){
+        $orderId=trim($this->input->post('orderId'));
+        $this->load->model('Order_model');
+        $orderDetails=$this->Order_model->details($orderId);
+        if(empty($orderDetails)){
+            echo json_encode(array('result'=>'bad','msg'=>'Invalid order id provide,please try again.')) ;die;
+        }else if($orderDetails[0]->status!=4){
+            echo json_encode(array('result'=>'bad','msg'=>'Enter order is yet not shipped or already delivered,please try again.'));die;
+        }else{
+            echo json_encode(array('result'=>'goods','msg'=>''));die;
+        }
+    }
 }

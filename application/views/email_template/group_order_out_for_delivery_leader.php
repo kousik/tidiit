@@ -34,11 +34,20 @@
             <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td width="10%">&nbsp;</td>
-                  <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $userFullName;?>,</em></strong></font><br />
+                  <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $leaderFullName;?>,</em></strong></font><br />
                     <br />
-                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px"><?php echo $buyerFullName;?> has  placed one Buying Club Order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?></span></a> for <?php echo $sellerFullName;?> <br />Master order number : <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderParrentId?></span></a></p>
+					<?php echo $buyerFullName?> had placed the Buying Club order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderId;?></span></a> under your Buying Club <strong><?php echo $orderInfo['group']->groupTitle?></strong>. <br />
+                    
+                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">
+					Master order no is <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->parrentOrderID;?></span></a><br />This is a maessage that order is ready to out for delivery. <br />
                     <br />
-                    Selected product slab price is <?php echo $orderInfoDataArr['priceinfo']->price;?> and quantity <?php echo $orderInfoDataArr['priceinfo']->qty;?></font> <br /></td>
+					Delivery Company Name : <?php echo $deliveryCompanyName;?><br />
+					Delivery person name : <?php echo $deliveryStaffName;?><br />
+					Contact number of delivery person : <?php echo $deliveryStaffContactNo;?><br >
+					Email of delivery person : <?php echo $deliveryStaffEmail;?><br >
+					<?php if($isPaid==0){?><br />
+					As your member <strong><?php echo $buyerFullName?></strong> had order order the item with <strong>Settle on Delivery</strong> Method,<br /> please discussion with member(<strong><?php echo $buyerFullName?></strong>) to make payment from his/her my account so logistics people delivery your item in your door step.
+					<?php }?>	</font> <br /></td>
                   <td width="10%">&nbsp;</td>
                 </tr>
                 <tr>
@@ -48,36 +57,9 @@
                           <td align="left" valign="top" style="background-color:#FFFFFF;display:block;clear:both;padding:20px 20px 0 20px;" bgcolor=""><table border="0" cellspacing="0" cellpadding="0" width="100%" style="">
                               <tbody>
                                 <tr>
-                                    <td width="10%" align="middle" valign="top">&nbsp;</td>
-									<td width="80%" align="middle" valign="top">
-										<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:15px; line-height:21px;font-weight:bold;">
-											Shipping Address
-										</font>
-										<br />
-										<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px;">
-										<?php echo $orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->firstName;?><br/>
-										<?php echo $orderInfoDataArr['shipping']->address.' , '.$orderInfoDataArr['shipping']->locality;?><br/>
-										<?php echo $orderInfoDataArr['shipping']->city.' , '.$orderInfoDataArr['shipping']->stateName;?><br/>
-										<?php echo $orderInfoDataArr['shipping']->zip.' , '.$orderInfoDataArr['shipping']->countryName;?><br/>
-										<br />
-										</font> 
-									</td>
-                                  <td width="10%" align="middle" valign="top">&nbsp;</td>
-									<?php /*<td width="48%" align="middle" valign="top">
-										<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:15px; line-height:21px;font-weight:bold;">
-											Billing Address
-										</font>
-										<br />
-										<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px;">
-										<?php echo $orderInfoDataArr['billing']->firstName.' '.$orderInfoDataArr['billing']->firstName;?><br/>
-										<?php echo $orderInfoDataArr['billing']->email;?><br/>
-										<?php echo $orderInfoDataArr['billing']->address.' , '.$orderInfoDataArr['billing']->locality;?><br/>
-										<?php echo $orderInfoDataArr['billing']->city.' , '.$orderInfoDataArr['billing']->stateName;?><br/>
-										<?php echo $orderInfoDataArr['billing']->zip.' , '.$orderInfoDataArr['billing']->countryName;?><br/>
-										<br />
-										</font> 
-
-									</td>*/?>
+                                  <td colspan="4" width="100%" align="middle" valign="top"><p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderId;?></span></a> </p>
+                                    <br>
+                                  </td>
                                 </tr>
                               </tbody>
                             </table></td>
@@ -89,27 +71,27 @@
                   <td colspan="3"><table class="ecxbody-wrapper" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px;border-left:solid 1px #e6e6e6;border-right:solid 1px #e6e6e6;">
                       <tbody>
                         <tr>
-                          <td valign="top" align="center" class="col" width="250" style="background-color:#ffffff;"><table border="0" cellspacing="0" cellpadding="0" width="100%">
+                          <td valign="top" align="center" class="col" width="350" style="background-color:#ffffff;"><table border="0" cellspacing="0" cellpadding="0" width="100%">
                               <tbody>
                                 <tr>
                                   <td width="40%" style="padding-left:20px;text-align:center;" valign="middle" align="center">
 								  <a style="text-decoration:none;" target="_blank" href="#<?php echo $MainSiteBaseURL.'product/details/';?>">
-								  <img border="0" src="<?php echo $SiteProductImageURL. $orderInfoDataArr['pimage']->image;?>">
+								  <img border="0" src="<?php echo $SiteProductImageURL. $orderInfo['pimage']->image;?>">
 								  </a> 
 								  </td>
-                                  <td width="60%" align="center" valign="top" style="padding:12px 15px 0 10px;vertical-align:top;min-width:100px;"><p style="padding:0;"> <a style="text-decoration:none;color:#565656;" target="_blank" href="#"> <span style="color:#565656;font-size:13px;"><?php echo $orderInfoDataArr['pdetail']->title;?></span> </a> </p></td>
+                                  <td width="60%" align="center" valign="top" style="padding:12px 15px 0 10px;vertical-align:top;min-width:100px;"><p style="padding:0;"> <a style="text-decoration:none;color:#565656;" target="_blank" href="#"> <span style="color:#565656;font-size:13px;"><?php echo $orderInfo['pdetail']->title;?></span> </a> </p></td>
                                 </tr>
                               </tbody>
                             </table></td>
-                          <td valign="top" align="center" class="col" width="350" style="background-color:#ffffff;"><table border="0" cellspacing="0" cellpadding="0" width="100%">
+                          <td valign="top" align="center" class="col" width="250" style="background-color:#ffffff;"><table border="0" cellspacing="0" cellpadding="0" width="100%">
                               <tbody>
                                 <tr>
                                   <td width="33%" valign="top" align="center" style="padding:12px 10px 0 10px;text-align:center;"><p style="white-space:nowrap;padding:0;color:#848484;font-size:12px;">Item Price</p>
-                                    <p style="white-space:nowrap;padding:7px 0 0 0;color:#565656;font-size:13px;"> Rs. <?php echo $orderDetails[0]->orderAmount/$orderDetails[0]->productQty;?> </p></td>
-                                  <td width=33%" valign="top" align="center" style="padding:12px 10px 0 10px;text-align:center;"><p style="padding:0;color:#848484;font-size:12px;">Quantity</p>
-                                    <p style="padding:7px 0 0 0;color:#565656;font-size:13px;"> <?php echo $orderDetails[0]->productQty;?> </p></td>
+                                    <p style="white-space:nowrap;padding:7px 0 0 0;color:#565656;font-size:13px;"> Rs. <?php echo $orderInfo['priceinfo']->price/$orderInfo['priceinfo']->qty;?> </p></td>
+                                  <td width="33%" valign="top" align="center" style="padding:12px 10px 0 10px;text-align:center;"><p style="padding:0;color:#848484;font-size:12px;">Quantity</p>
+                                    <p style="padding:7px 0 0 0;color:#565656;font-size:13px;"> <?php echo $orderInfo['priceinfo']->qty;?> </p></td>
                                   <td width="33%" valign="top" align="center" style="padding:12px 20px 0 10px;text-align:center;"><p style="white-space:nowrap;padding:0;color:#848484;font-size:12px;">Subtotal </p>
-                                    <p style="white-space:nowrap;padding:7px 0 0 0;color:#565656;font-size:13px;"> Rs. <?php echo $orderDetails[0]->orderAmount;?> </p></td>
+                                    <p style="white-space:nowrap;padding:7px 0 0 0;color:#565656;font-size:13px;"> Rs. <?php echo $orderInfo['priceinfo']->price;?> </p></td>
                                 </tr>
                               </tbody>
                             </table></td>
@@ -118,6 +100,22 @@
                     </table></td>
                 </tr>
 				<tr>
+                  <td width="10%">&nbsp;</td>
+                  <td width="80%" align="left" valign="top">
+				  	<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:15px; line-height:21px">
+						Item will delivered at bellow address
+					</font>
+                    <br />
+                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">
+					<?php echo $orderInfo['shipping']->firstName.' '.$orderInfo['shipping']->firstName;?><br/>
+                    <?php echo $orderInfo['shipping']->address.' , '.$orderInfo['shipping']->locality;?><br/>
+                    <?php echo $orderInfo['shipping']->city.' , '.$orderInfo['shipping']->stateName;?><br/>
+                    <?php echo $orderInfo['shipping']->zip.' , '.$orderInfo['shipping']->countryName;?><br/>
+					<br />
+                    </font> </td>
+                  <td width="10%">&nbsp;</td>
+                </tr>
+                <tr>
                   <td width="10%">&nbsp;</td>
                   <td width="80%" align="left" valign="top"><br />
                     <br />
@@ -151,8 +149,6 @@
                   <td width="14%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><a href= "<?php echo $MainSiteBaseURL;?>" style="color:#010203; text-decoration:none"><strong>24x7 Customer Support </strong></a></font></td>
                   <td width="2%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><strong>|</strong></font></td>
                   <td width="9%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><a href= "<?php echo $MainSiteBaseURL;?>" style="color:#010203; text-decoration:none"><strong>Buyer Protection</strong></a></font></td>
-                  <!--<td width="2%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><strong>|</strong></font></td>
-<td width="10%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><a href= "http://yourlink" style="color:#010203; text-decoration:none"><strong>PRESS </strong></a></font></td>-->
                   <td width="2%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><strong>|</strong></font></td>
                   <td width="11%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><a href= "<?php echo $MainSiteBaseURL;?>" style="color:#010203; text-decoration:none"><strong>Flexible Payment Options</strong></a></font></td>
                   <td width="2%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><strong>|</strong></font></td>

@@ -34,9 +34,23 @@
             <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td width="10%">&nbsp;</td>
-                  <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $userFullName;?>,</em></strong></font><br />
+                  <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $supportFullName;?>,</em></strong></font><br />
                     <br />
-                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px"><?php echo $buyerFullName;?> has  placed one Buying Club Order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?></span></a> for <?php echo $sellerFullName;?> <br />Master order number : <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderParrentId?></span></a></p>
+                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">
+						This is a pre-alert before out of delivery of Buying Club order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?></span></a> for <?php echo $buyerFullName;?>
+						<br /><br /><strong>Delivery Person Details as below.</strong>
+                    <br />
+					Delivery Company Name : <?php echo $deliveryCompanyName;?><br />
+					Delivery person name : <?php echo $deliveryStaffName;?><br />
+					Contact number of delivery person : <?php echo $deliveryStaffContactNo;?><br />
+					Email of delivery person : <?php echo $deliveryStaffEmail;?><br /><br />
+						<?php if($orderDetails[0]->parrentOrderID>0){?><br />
+						Master order number : <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->parrentOrderID;?></span></a>
+						<?php }?>
+						<?php if($isPaid==0){?><br />
+						<?php echo $buyerFullName;?> has placed the above order by <strong>Settlement on delivery</strong> method.<br />Follow up the process <strong><?php echo $buyerFullName; ?></strong> <?php if($orderDetails[0]->parrentOrderID>0){ ?> and <strong><?php echo $leaderFullName;?></strong><?php }?> regarding payment before the order process for delviery.
+					<?php }?><br />
+						</p>
                     <br />
                     Selected product slab price is <?php echo $orderInfoDataArr['priceinfo']->price;?> and quantity <?php echo $orderInfoDataArr['priceinfo']->qty;?></font> <br /></td>
                   <td width="10%">&nbsp;</td>

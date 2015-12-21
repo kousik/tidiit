@@ -449,21 +449,41 @@
 <script type="text/javascript">
     jQuery(document).ready(function(){
         var oldSubmitStatusTidiitConfirm1=false;
-        $('#outForDeliveryForm').validate();
-        $('#myModalOutForDelivery').modal('show');
-        $('#outForDeliveryType').on('change',function(){
-            if($(this).val()=='preAlert'){
-                $('#pre_alert').fadeIn('show');
+        jQuery('#outForDeliveryForm').validate();
+        jQuery('#myModalOutForDelivery').modal('show');
+        jQuery('#outForDeliveryType').on('change',function(){
+            if(jQuery(this).val()=='preAlert'){
+                jQuery('#pre_alert').fadeIn('show');
             }else{
-                $('#pre_alert').fadeOut('show');
+                jQuery('#pre_alert').fadeOut('show');
             }
         });
         
-        $('#outForDeliveryForm').submit(function(e) { 
+        jQuery('#outForDeliveryForm').submit(function(e) { 
             e.preventDefault();
-            if ($(this).valid()) {
-                askBeforeSubmitOutForDevelyr('Tidiit out for deliery','Are you sure to submit the data ?',200,$(this),myJsMain.baseURL+'ajax/submit_out_for_delivery',outForDeliveryFormCallback);;
+            if (jQuery(this).valid()) {
+                askBeforeSubmitOutForDevelyr('Tidiit out for deliery','Are you sure to submit the data ?',200,jQuery(this),myJsMain.baseURL+'ajax/submit_out_for_delivery',outForDeliveryFormCallback);;
             }
+        });
+        
+        var myCartId='<?php echo time();?>';
+        jQuery('#orderId').on('blur',function(){
+            jqOut=jQuery(this);
+            if(jqOut.val().trim()==''){
+                myJsMain.commonFunction.tidiitAlert('Tidiit Out For Delivery','Please enter the value for order id',200);
+                return false;
+            }
+            myJsMain.commonFunction.showPleaseWait();
+            $.post( myJsMain.baseURL+'ajax/check_order_id_for_logistic/', {
+                orderId: jqOut.val(),cartId:myCartId
+            },
+            function(data){
+                myJsMain.commonFunction.hidePleaseWait();
+                if(data.result=='bad'){
+                    myJsMain.commonFunction.tidiitAlert('Tidiit Out For Delivery',data.msg,200);
+                    jqOut.val('');
+                }
+            }, 'json' );
         });
     });
     
@@ -471,8 +491,8 @@
         if(height==0){
             height=175;
         }
-        $('#dialog-confirm-message-text').text(confirmMessaage);
-        $( "#dialog-confirm" ).dialog({
+        jQuery('#dialog-confirm-message-text').text(confirmMessaage);
+        jQuery( "#dialog-confirm" ).dialog({
             resizable: false,
             height:height,
             width:450,
@@ -481,12 +501,12 @@
             dialogClass: 'success-dialog',
             buttons: {
                 "OK": function() {
-                    $( this ).dialog( "close" );
+                    jQuery( this ).dialog( "close" );
                     myJsMain.commonFunction.showPleaseWait();
                     myJsMain.commonFunction.ajaxSubmit($this,url,calBackFun);
                 },
                 Cancel: function() {
-                    $( this ).dialog( "close" );
+                    jQuery( this ).dialog( "close" );
                 }
             }
         });
