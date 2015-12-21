@@ -156,7 +156,7 @@ class Shopping extends MY_Controller{
         $my_groups = $this->User_model->get_my_groups();
         $data['myGroups']=$my_groups;
         $data['user']=$user;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('group_order/group_order',$data);
     }
     
@@ -284,7 +284,7 @@ class Shopping extends MY_Controller{
         $my_groups = $this->User_model->get_my_groups();
         $data['myGroups']=$my_groups;
         $data['user']=$user;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('group_order/group_order',$data);
     }
     
@@ -525,7 +525,7 @@ class Shopping extends MY_Controller{
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $data['userMenuActive']= '';
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('group_order/group_order_success',$data);
     }
     
@@ -536,7 +536,7 @@ class Shopping extends MY_Controller{
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $data['userMenuActive']= '';
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('group_order/order_default_message',$data);
     }
 
@@ -907,7 +907,7 @@ class Shopping extends MY_Controller{
         $data['priceInfo'] = $prod_price_info;
         $data['userMenuActive']=7;        
         $data['user']=$user;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('group_order/group_order_parent',$data);
     }
     
@@ -1025,7 +1025,7 @@ class Shopping extends MY_Controller{
         $data['order']= $order;
         $data['group']= $group;
         $data['userMenuActive']= '';
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('group_order/re_order_process',$data);
     }
     
@@ -1152,7 +1152,7 @@ class Shopping extends MY_Controller{
         
         $data['userMenuActive']=7; 
         $data['user']=$user;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('single_order/single_order_checkout',$data);
     }
     
@@ -1344,8 +1344,8 @@ class Shopping extends MY_Controller{
         $user = $this->_get_current_user_details();         
         $data['user']= $user;
         $data['userMenuActive']= '';
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
-        $this->load->view('my_carts',$data);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
+        $this->load->view('my/my_carts',$data);
     }
     
     function view_order_details($orderId){
@@ -1385,8 +1385,8 @@ class Shopping extends MY_Controller{
         $data['status']= $stateArr;
         $data['order']= $order;
         $data['userMenuActive']= '';
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
-        $this->load->view('my_order_details',$data);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
+        $this->load->view('my/my_order_details',$data);
     }
     
     /*
@@ -1497,7 +1497,7 @@ class Shopping extends MY_Controller{
         $SEODataArr=array();
         $data = $this->_get_logedin_template($SEODataArr);
         $data['userMenuActive']=1;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $data['orderId']=$orderIdArr[0];
         $this->load->view('payment/mpesa',$data);
     }
@@ -1694,7 +1694,7 @@ class Shopping extends MY_Controller{
         endif;
         $data['user']=$user;
         $data['userMenuActive']= '';
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);        
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);        
         $this->load->view('single_order/cancel_order',$data);
     }
     

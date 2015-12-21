@@ -13,16 +13,16 @@ class User extends MY_Controller{
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $data['userMenuActive']=8;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
-        $this->load->view('edit_profile',$data);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
+        $this->load->view('my/edit_profile',$data);
     }
     
     function my_account(){
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $data['userMenuActive']=1;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
-        $this->load->view('myaccount',$data);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
+        $this->load->view('my/myaccount',$data);
     }
     
     function my_shipping_address(){
@@ -31,7 +31,7 @@ class User extends MY_Controller{
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $data['userMenuActive']=2;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $userShippingDataDetails=$this->User_model->get_user_shipping_information();
         if(empty($userShippingDataDetails)){
             $userShippingDataDetails[0]=new stdClass();
@@ -66,7 +66,7 @@ class User extends MY_Controller{
             //echo $billingAddressProductTypeHtml;die;
             $data['billingAddressProductTypeHtml']=$billingAddressProductTypeHtml;
         }
-        $this->load->view('my_shipping_address',$data);
+        $this->load->view('my/my_shipping_address',$data);
     }
     
     function my_billing_address(){
@@ -103,7 +103,7 @@ class User extends MY_Controller{
         //pre($countryDataArr);die;
         $data['countryDataArr']=$this->Country->get_all1();
         $data['userMenuActive']=3;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $topCategoryDataArr=$this->category->get_top_category_for_product_list();
         $data['topCategoryDataArr']=$topCategoryDataArr;
         $rs=$this->User_model->get_my_product_type();
@@ -114,7 +114,7 @@ class User extends MY_Controller{
             //echo $billingAddressProductTypeHtml;die;
             $data['billingAddressProductTypeHtml']=$billingAddressProductTypeHtml;
         }
-        $this->load->view('my_billing_address',$data);
+        $this->load->view('my/my_billing_address',$data);
     }
     
     function my_orders($rid = 0){
@@ -133,7 +133,7 @@ class User extends MY_Controller{
         $data['orders'] = $orders;
         $total_rows = $this->Order_model->get_my_all_orders_with_parent($rid,null,$cond);
         $config['total_rows'] = (!empty($total_rows)?count($total_rows):0); 
-        $data['pagignation'] = $this->global_pagination('my-orders',$config);
+        $data['pagignation'] = $this->global_pagination('my/my-orders',$config);
         $data['rid'] = $rid;
         $data['per_page'] = '5';
         
@@ -145,8 +145,8 @@ class User extends MY_Controller{
         }
         $data['status']= $stateArr;
         $data['userMenuActive']=4;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
-        $this->load->view('my_orders',$data);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
+        $this->load->view('my/my_orders',$data);
     }
     
     function my_groups(){
@@ -188,10 +188,9 @@ class User extends MY_Controller{
         $data['myGroups']=$my_groups;
         $data['user']=$user;
         $data['userMenuActive']=5;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
-        $this->load->view('my_groups',$data);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
+        $this->load->view('my/my_groups',$data);
     }
-    
     
     function edit_groups($groupId){
         if(!$groupId):
@@ -239,8 +238,8 @@ class User extends MY_Controller{
         $data['reorder'] = 1;
         $data['user']=$user;
         $data['userMenuActive']=5;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
-        $this->load->view('my_group_edit',$data);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
+        $this->load->view('my/my_group_edit',$data);
     }
     
     function edit_groups_re_order($groupId, $orderId){
@@ -290,7 +289,7 @@ class User extends MY_Controller{
         $data['user']=$user;
         $data['reorder'] = 1;
         $data['userMenuActive']=5;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('my_group_edit',$data);
     }
         
@@ -302,7 +301,7 @@ class User extends MY_Controller{
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $data['userMenuActive']=6;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $financeDataArr=$this->User_model->get_finance_info();
         if(empty($financeDataArr)){
             $financeDataArr[0]=new stdClass();
@@ -310,17 +309,17 @@ class User extends MY_Controller{
             $financeDataArr[0]->mpesaAccount="";
         }
         $data['financeDataArr']=$financeDataArr;
-        $this->load->view('my_finance',$data);
+        $this->load->view('my/my_finance',$data);
     }
     
     function my_profile(){
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $data['userMenuActive']=8;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $userDataArr=$this->User_model->get_details_by_id($this->session->userdata('FE_SESSION_VAR'));
         $data['userDataArr']=$this->User_model->get_details_by_id($this->session->userdata('FE_SESSION_VAR'));
-        $this->load->view('edit_profile',$data);
+        $this->load->view('my/edit_profile',$data);
     }
     
     function recusive_category($newCateoryArr,$categoryId){
@@ -378,7 +377,7 @@ class User extends MY_Controller{
         }
         $data['status']= $stateArr;
         $data['userMenuActive']=4;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
-        $this->load->view('my_parent_orders',$data);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
+        $this->load->view('my/my_parent_orders',$data);
     }
 }

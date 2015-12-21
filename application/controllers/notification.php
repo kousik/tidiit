@@ -37,7 +37,7 @@ class Notification extends MY_Controller{
         $data['rid'] = $rid;
         $data['per_page'] = '8';
         $data['userMenuActive']= 9;
-        $data['userMenu']=  $this->load->view('my_menu',$data,TRUE);
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('notification/notification_my',$data);
     }
     

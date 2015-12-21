@@ -217,7 +217,9 @@ if(!empty($latestOrderState)){
                 $('#showHideShippedElement2').show();
         <?php }?>
         $('#orderStatesChange').submit(function(e) {
-            myJsMain.commonFunction.showPleaseWait();
+            if ($(this).valid()) {
+                myJsMain.commonFunction.showPleaseWait();
+            }
         });   
     });
 </script>
