@@ -1828,7 +1828,7 @@ class Shopping extends MY_Controller{
 
                 $mail_template_view_data=$this->load_default_resources();
                 $mail_template_view_data['group_order_start']=$mail_template_data;
-                $this->_global_tidiit_mail($recv_email, $group->admin->firstName.' '.$group->admin->lastName.' completed payment before delivery for Buying Club Order', $mail_template_view_data,'group_order_sod_final_payment');
+                $this->_global_tidiit_mail($recv_email, 'Payment has submitedted before delivery for Buying Club Order', $mail_template_view_data,'group_order_sod_final_payment');
                 $this->User_model->notification_add($data);   
             endforeach;
             
@@ -1859,7 +1859,7 @@ class Shopping extends MY_Controller{
 
                 $mail_template_view_data=$this->load_default_resources();
                 $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
-                $this->_global_tidiit_mail($recv_email,"$recv_name has completed his payment(Tidiit Buying Club Order) before delivery", $mail_template_view_data,'group_order_group_member_sod_final_payment');
+                $this->_global_tidiit_mail($recv_email,"Payment submited for Tidiit Bying Club order  before delivery", $mail_template_view_data,'group_order_group_member_sod_final_payment');
                 if($me->userId != $usr->userId):
                     $this->User_model->notification_add($data);
                 endif;
@@ -1877,7 +1877,7 @@ class Shopping extends MY_Controller{
                 $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
             }
             $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
-            $this->_global_tidiit_mail($recv_email,"One of your Buying Club(Tidiit) member($recv_name) has completed his payment  before delivery", $mail_template_view_data,'group_order_group_member_sod_final_payment',$leaderName);
+            $this->_global_tidiit_mail($recv_email,"Payment has submited for Tidiit Buying Club order before delivery", $mail_template_view_data,'group_order_group_member_sod_final_payment',$leaderName);
             $this->User_model->notification_add($data);
         endif;
 
@@ -1923,7 +1923,7 @@ class Shopping extends MY_Controller{
             
             $mail_template_view_data=$this->load_default_resources();
             $mail_template_view_data['single_order_success']=$mail_template_data;
-            $this->_global_tidiit_mail($recv_email, "Payment process completed for your Tidiit order no - TIDIIT-OD-".$v, $mail_template_view_data,'single_order_success_sod_final_payment',$recv_name);
+            $this->_global_tidiit_mail($recv_email, "Payment has completed for your Tidiit order no - TIDIIT-OD-".$v, $mail_template_view_data,'single_order_success_sod_final_payment',$recv_name);
             $this->_sent_single_order_complete_mail_sod_final_payment($v);
         endforeach;
         /// here to preocess SMS to logistics partner
@@ -1932,7 +1932,7 @@ class Shopping extends MY_Controller{
         
         /// here send mail to logistic partner
         $mailBody="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
-        $this->_global_tidiit_mail($PaymentDataArr['logisticsData']['deliveryStaffEmail'],'Tidiit payment completed for Order '.$tidiitStr,$mailBody,'',$recv_name);
+        $this->_global_tidiit_mail($PaymentDataArr['logisticsData']['deliveryStaffEmail'],'Tidiit payment submited  for Order '.$tidiitStr,$mailBody,'',$recv_name);
         unset($_SESSION['PaymentData']);
         $this->session->set_flashdata('message','Thanks for the payment before order is Out for delivery');
         redirect(BASE_URL.'my-orders/');
@@ -1950,7 +1950,7 @@ class Shopping extends MY_Controller{
         $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
         $buyerFullName=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
         $adminMailData['buyerFullName']=$buyerFullName;
-        $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Payment has submited for order no - TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'seller_single_order_success_sod_final_payment',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
+        $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Payment has submited for Tidiit order no - TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'seller_single_order_success_sod_final_payment',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
 
         /// for support
         $adminMailData['userFullName']='Tidiit Inc Support';
@@ -1959,7 +1959,7 @@ class Shopping extends MY_Controller{
         $this->load->model('Siteconfig_model','siteconfig');
         //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
         $supportEmail='judhisahoo@gmail.com';
-        $this->_global_tidiit_mail($supportEmail, "Payment has submited for Order no - TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'support_single_order_success_sod_final_payment','Tidiit Inc Support');
+        $this->_global_tidiit_mail($supportEmail, "Payment has submited for Tidiit Order no - TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'support_single_order_success_sod_final_payment','Tidiit Inc Support');
         //die;
         
         return TRUE;
@@ -1981,7 +1981,7 @@ class Shopping extends MY_Controller{
         $adminMailData['orderParrentId']=$order->parrentOrderID;
         $adminMailData['userFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
         //pre($adminMailData);die;
-        $this->_global_tidiit_mail($orderInfoDataArr['group']->admin->email, "$currentUserFullName  has completed payment in your Buying Club order - TIDIIT-OD-".$order->orderId.' before delivery.', $adminMailData,'group_order_success_sod_final_payment',$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName);
+        $this->_global_tidiit_mail($orderInfoDataArr['group']->admin->email, "Payment has submited for Tiidit Buying Club order - TIDIIT-OD-".$order->orderId.' before delivery.', $adminMailData,'group_order_success_sod_final_payment',$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName);
 
         /// for seller
         $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
@@ -1995,7 +1995,7 @@ class Shopping extends MY_Controller{
         $this->load->model('Siteconfig_model','siteconfig');
         //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
         $supportEmail='judhisahoo@gmail.com';
-        $this->_global_tidiit_mail($supportEmail, "$currentUserFullName has completed the payment for the Buying Club order no - TIDIIT-OD-".$order->orderId.' before delivery.', $adminMailData,'support_group_order_success_sod_final_payment','Tidiit Inc Support');
+        $this->_global_tidiit_mail($supportEmail, "Payment has submited for Tidiit Buying Club order no - TIDIIT-OD-".$order->orderId.' before delivery.', $adminMailData,'support_group_order_success_sod_final_payment','Tidiit Inc Support');
     }
     
     function _sent_order_complete_mail_sod_final_payment($order){
@@ -2020,7 +2020,7 @@ class Shopping extends MY_Controller{
             /// for seller
             $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
             $adminMailData['buyerFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
-            $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "$currentUserFullName has completed the payment for the Buying Club order no - TIDIIT-OD-".$order->parrentOrderID.' before delivery.', $adminMailData,'seller_group_order_success',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
+            $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Payment has submited for the Buying Club order no - TIDIIT-OD-".$order->parrentOrderID.' before delivery.', $adminMailData,'seller_group_order_success',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
             
             /// for support
             $adminMailData['userFullName']='Tidiit Inc Support';
@@ -2029,7 +2029,7 @@ class Shopping extends MY_Controller{
             $this->load->model('Siteconfig_model','siteconfig');
             //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
             $supportEmail='judhisahoo@gmail.com';
-            $this->_global_tidiit_mail($supportEmail, "$currentUserFullName has completed the payment for the Buying Club order no - TIDIIT-OD-".$order->parrentOrderID.' before delivery.', $adminMailData,'support_group_order_success_sod_final_payment','Tidiit Inc Support');
+            $this->_global_tidiit_mail($supportEmail, "Payment has submited for the Tidiit Buying Club order no - TIDIIT-OD-".$order->parrentOrderID.' before delivery.', $adminMailData,'support_group_order_success_sod_final_payment','Tidiit Inc Support');
             //die;
             ///mail to Buyer CLub
             $allChieldOrdersData=$this->Order_model->get_all_chield_order($order->parrentOrderID);
@@ -2052,13 +2052,13 @@ class Shopping extends MY_Controller{
                 }
                 //echo '<br>$order id '.$k->orderId.'<br>';
                 $adminMailData['userFullName']=$userFullName;
-                $this->_global_tidiit_mail($email, "$currentUserFullName  has completed payment in your Buying Club Tidiit order TIDIIT-OD-".$k->orderId.' before delivery.', $adminMailData,'group_order_success_sod_final_payment',$userFullName);
+                $this->_global_tidiit_mail($email, "Payment has completed for your Tidiit Buying Club Tidiit order TIDIIT-OD-".$k->orderId.' before delivery.', $adminMailData,'group_order_success_sod_final_payment',$userFullName);
                 
                 //echo '<br>$order id '.$k->orderId.'<br>';
                 /// for seller
                 $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
                 $adminMailData['buyerFullName']=$userFullName;
-                $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "$currentUserFullName  has completed payment in your Buying Club order no - TIDIIT-OD-".$k->orderId.' before delivery.', $adminMailData,'seller_group_order_success_sod_final_payment',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
+                $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Payment has completed for your Tidiit Buying Club order no - TIDIIT-OD-".$k->orderId.' before delivery.', $adminMailData,'seller_group_order_success_sod_final_payment',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
                 
                 //echo '<br>$order id '.$k->orderId.'<br>';
                 /// for support
@@ -2068,7 +2068,7 @@ class Shopping extends MY_Controller{
                 $this->load->model('Siteconfig_model','siteconfig');
                 //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
                 $supportEmail='judhisahoo@gmail.com';
-                $this->_global_tidiit_mail($supportEmail, "$currentUserFullName  has completed payment in your Buying Club order no - TIDIIT-OD-".$k->orderId.' before delivery.', $adminMailData,'support_group_order_success_sod_final_payment','Tidiit Inc Support');
+                $this->_global_tidiit_mail($supportEmail, "Payment has completed for your Tidiit Buying Club order no - TIDIIT-OD-".$k->orderId.' before delivery.', $adminMailData,'support_group_order_success_sod_final_payment','Tidiit Inc Support');
             }
         }else{
             die('comming else part');
