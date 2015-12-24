@@ -43,7 +43,7 @@
 					Contact number of delivery person : <?php echo $deliveryStaffContactNo;?><br >
 					Email of delivery person : <?php echo $deliveryStaffEmail;?><br >
 					<!--Will delivery by : <br />-->
-					<?php if($isPaid==1){?><br />
+					<?php if($isPaid==0){?><br />
 					As you had order order the item with <strong>Settlement on Delivery</strong> Method,<br /> please process the payment  from your my order section.<br /> logistics people delivery your item in your door step.
 					<?php }?>	</font> <br /></td>
                   <td width="10%">&nbsp;</td>

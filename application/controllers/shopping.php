@@ -1950,7 +1950,7 @@ class Shopping extends MY_Controller{
         $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
         $buyerFullName=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
         $adminMailData['buyerFullName']=$buyerFullName;
-        $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "$buyerFullName  has completed payment for order no - TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'seller_single_order_success_sod_final_payment',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
+        $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Payment has submited for order no - TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'seller_single_order_success_sod_final_payment',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
 
         /// for support
         $adminMailData['userFullName']='Tidiit Inc Support';
@@ -1959,7 +1959,7 @@ class Shopping extends MY_Controller{
         $this->load->model('Siteconfig_model','siteconfig');
         //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
         $supportEmail='judhisahoo@gmail.com';
-        $this->_global_tidiit_mail($supportEmail, "$buyerFullName  has completed Order no - TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'support_single_order_success_sod_final_payment','Tidiit Inc Support');
+        $this->_global_tidiit_mail($supportEmail, "Payment has submited for Order no - TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'support_single_order_success_sod_final_payment','Tidiit Inc Support');
         //die;
         
         return TRUE;

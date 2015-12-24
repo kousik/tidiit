@@ -25,7 +25,6 @@ class MY_location_track
         $this->CI->load->library('session');
         $userLocation="";
         $userLocation=$this->CI->session->userdata('FE_SESSION_USER_LOCATION_VAR');
-        
         if(!defined($userLocation)){
             $userLocation="";
         }
@@ -35,8 +34,69 @@ class MY_location_track
                 $cIP='117.214.82.169';
             }
             
-            $cLocationvar=file_get_contents("http://ipinfo.io/$cIP/country");
-            $this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR',trim($cLocationvar));
+            $params = getopt('l:i:');
+            if (!isset($params['l'])) $params['l'] = 'puDQd5MDgVxy';
+            //if (!isset($params['i'])) $params['i'] = '24.24.24.24';
+            if (!isset($params['i'])) $params['i'] = $cIP; //'122.177.246.210';
+            //if (!isset($params['i'])) $params['i'] = '122.177.246.210';
+            
+            //$cLocationvar=file_get_contents("http://ipinfo.io/$cIP/country");
+            
+            $query = 'http://geoip.maxmind.com/a?' . http_build_query($params);
+
+            $insights_keys =
+              array(
+                'country_code',
+                'country_name',
+                'region_code',
+                'region_name',
+                'city_name',
+                'latitude',
+                'longitude',
+                'metro_code',
+                'area_code',
+                'time_zone',
+                'continent_code',
+                'postal_code',
+                'isp_name',
+                'organization_name',
+                'domain',
+                'as_number',
+                'netspeed',
+                'user_type',
+                'accuracy_radius',
+                'country_confidence',
+                'city_confidence',
+                'region_confidence',
+                'postal_confidence',
+                'error'
+                );
+
+            $curl = curl_init();
+            curl_setopt_array(
+                $curl,
+                array(
+                    CURLOPT_URL => $query,
+                    CURLOPT_USERAGENT => 'MaxMind PHP Sample',
+                    CURLOPT_RETURNTRANSFER => true
+                )
+            );
+
+            $resp = curl_exec($curl);
+
+            if (curl_errno($curl)) {
+                throw new Exception(
+                    'GeoIP request failed with a curl_errno of '
+                    . curl_errno($curl)
+                );
+            }
+
+            $insights_values = str_getcsv($resp);
+            $insights_values = array_pad($insights_values, sizeof($insights_keys), '');
+            $insights = array_combine($insights_keys, $insights_values);
+            //echo $insights['country_code'];die;
+            //$this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR',trim($cLocationvar));
+            $this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR',$insights['country_code']);
         }
     }
 

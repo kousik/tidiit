@@ -1067,7 +1067,7 @@ class Ajax extends MY_Controller{
         $mail_template_view_data['deliveryStaffEmail']=$outForDeliveryDataArr['deliveryStaffEmail'];
         $mail_template_view_data['isPaid']=$order->isPaid;
         $buyerFullName=$order->buyerFirstName.' '.$order->buyerLastName;
-        $this->_global_tidiit_mail($order->buyerEmail, "Your Tidiit order no - TIDIIT-OD-".$order->orderId.'is ready now to Out For Delivery', $mail_template_view_data,'single_order_out_for_delivery',$buyerFullName);
+        $this->_global_tidiit_mail($order->buyerEmail, "Your Tidiit order no - TIDIIT-OD-".$order->orderId.' is ready now to Out For Delivery', $mail_template_view_data,'single_order_out_for_delivery',$buyerFullName);
         
         /// for seller
         $mail_template_view_data['orderInfoDataArr']=unserialize(base64_decode($order->orderInfo));

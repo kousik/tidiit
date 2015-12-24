@@ -45,7 +45,7 @@
 					Contact number of delivery person : <?php echo $deliveryStaffContactNo;?><br />
 					Email of delivery person : <?php echo $deliveryStaffEmail;?><br >
 					<?php if($isPaid==0){?><br />
-						Follow up the payment collection before the order gone for delviery.<br />
+						Follow up the payment collection before the order gone for delivery.<br />
 					<?php }?><br />
 					</font> <br />
 					</p>
