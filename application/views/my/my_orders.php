@@ -61,10 +61,12 @@ $CI->load->model('Order_model');
                                                     <?php if($order->orderType == 'SINGLE' && $order->status < 4):?>
                                                         <a class="btn btn-danger btn-xs" href="<?=BASE_URL?>order/cancellation/<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-times"></i> Cancel Order</a>
                                                     <?php endif;?>
+                                                    <?php if($order->isPaid==0):?>
+                                                        <a class="btn btn-success btn-xs js-sod-payment-order" href="javascript:void(0);" data-payamount="<?=$order->orderAmount;?>" data-paymentid="<?php echo base64_encode($order->orderId*226201);?>"><i class="fa fa-credit-card"></i> Pay Now</a>
+                                                    <?php endif;?>    
                                                     <a class="btn btn-success btn-xs js-view-order" href="<?php echo BASE_URL.'order/details/'.base64_encode($order->orderId*226201);?>"><i class="fa fa-eye"></i> Order</a>
                                                     </td>
                                                 </tr>
-                                            
                                             <?php endforeach;?>
                                             </tbody>
                                             </table>
@@ -86,13 +88,21 @@ $CI->load->model('Order_model');
     </div>
   </div>
 </article>
+<div id="sod_payment_final_input_view"></div>
 <?php echo $footer;?>
 <script type="text/javascript">
     jQuery(document).ready(function(){
-        /*jQuery("body").delegate('.js-group-cart-remove', "click", function(e){
-            e.preventDefault();
-            var orderId = jQuery(this).attr('data-orderid');
-            window.location.href = myJsMain.baseURL+'order/view/'+orderId;
-        });  */  
+        jQuery('.js-sod-payment-order').on('click',function(){
+            var jqout = $(this);
+            jQuery.post( myJsMain.baseURL+'ajax/sod_payment_final_input_view/', {
+                paymentid: $(this).data('paymentid'),orderGenId:'<?php time();?>',payAmount:$(this).data('payamount')
+            },
+            function(data){
+                if(data.result=='good'){
+                    jQuery('#sod_payment_final_input_view').html(data.content);
+                }
+            }, 'json' );
+        });
+        
     });
 </script>    

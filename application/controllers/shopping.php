@@ -496,7 +496,7 @@ class Shopping extends MY_Controller{
                     $this->User_model->notification_add($data);
                 endif;
             else:
-                $paymentDataArr = array('orders'=>$orderId,'orderType'=>'group','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$pevorder,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>$cartId);      
+                $paymentDataArr = array('orders'=>$orderId,'orderType'=>'group','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$pevorder,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>$cartId,'final_return'=>'no');      
                 $_SESSION['PaymentData'] = $paymentDataArr;     
             endif;
             
@@ -1327,7 +1327,7 @@ class Shopping extends MY_Controller{
             if($paymentType=='sod'):
                 redirect(BASE_URL.'shopping/success/');
             else:
-                $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$allOrderInfoArray);
+                $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$allOrderInfoArray,'final_return'=>'no');
                 $_SESSION['PaymentData'] = $paymentDataArr;
                 $this->_mpesa_process($allOrderArray);
             endif;            
@@ -1511,9 +1511,17 @@ class Shopping extends MY_Controller{
             $orderType = $PaymentDataArr['orderType'];
             if($orderType=='group'):
                 $orderDataArr = $PaymentDataArr;
-                $this->process_mpesa_success_group_order($orderDataArr);
+                if($PaymentDataArr['final_return']=='no'):
+                    $this->process_mpesa_success_group_order($orderDataArr);
+                else:
+                    $this->process_mpesa_success_group_order_final($orderDataArr);
+                endif;
             else:
-                $this->process_mpesa_success_single_order(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo']));
+                if($PaymentDataArr['final_return']=='no'):
+                    $this->process_mpesa_success_single_order(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo']));
+                else:
+                    $this->process_mpesa_success_single_order_final(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo'],'logisticsData'=>$PaymentDataArr['logisticsData']));
+                endif;
             endif;
         else:
             // fail
@@ -1728,4 +1736,344 @@ class Shopping extends MY_Controller{
         die;        
     }
     
+    function complete_payment(){
+        $config = array(
+            array('field'   => 'deliveryStaffEmail','label'   => 'Delivery Staff Email','rules'=> 'trim|required|xss_clean|valid_email'),
+            array('field'   => 'deliveryStaffContactNo','label'   => 'Delivery Staff Contact No','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'deliveryStaffName','label'   => 'Delivery Staff Name','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'paymentOption','label'   => 'Select Payment Method','rules'   => 'trim|required|xss_clean|'),
+            array('field'   => 'orderId','label'   => 'Order Index','rules'   => 'trim|required|xss_clean|')
+         );
+        //initialise the rules with validatiion helper
+        $this->form_validation->set_rules($config); 
+        //checking validation
+        if($this->form_validation->run() == FALSE):
+            echo json_encode(array('result'=>'bad','msg'=>str_replace('</p>','',str_replace('<p>','',validation_errors()))));die;
+        else:
+            $orderId=trim($this->input->post('orderId',TRUE));
+            $deliveryStaffEmail=trim($this->input->post('deliveryStaffEmail',TRUE));
+            $deliveryStaffContactNo=trim($this->input->post('deliveryStaffContactNo',TRUE));
+            $deliveryStaffName=trim($this->input->post('deliveryStaffName',TRUE));
+            $paymentOption=trim($this->input->post('paymentOption',TRUE));
+            
+            $order=$this->Order_model->get_single_order_by_id($orderId);
+            $prod_price_info = $this->Product_model->get_products_price_details_by_id($order->productPriceId);
+            $group = $this->User_model->get_group_by_id($order->groupId);
+            $a = $this->_get_available_order_quantity($orderId);
+            $orderinfo=unserialize(base64_decode($order->orderInfo));
+            $logisticsData=array('deliveryStaffName'=>$deliveryStaffName,'deliveryStaffContactNo'=>$deliveryStaffContactNo,'deliveryStaffEmail'=>$deliveryStaffEmail);
+            //pre($order);die;
+            if($order->orderType=='SINGLE'):
+                $allOrderInfoArray=array();
+                $allOrderArray=array();
+                $allOrderInfoArray[$orderId]['orderInfo']=$orderinfo;
+                $allOrderInfoArray[$orderId]['order']=$order;
+                $allOrderInfoArray[$orderId]['cartId']='';
+                $allOrderArray[]=$orderId;
+                $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$order->orderAmount,'orderInfo'=>$allOrderInfoArray,'final_return'=>'yes','logisticsData'=>$logisticsData);
+            else:    
+                $paymentDataArr = array('orders'=>$orderId,'orderType'=>'group','paymentGatewayAmount'=>$order->orderAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$order,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>'','final_return'=>'yes','logisticsData'=>$logisticsData);      
+            endif;
+            $_SESSION['PaymentData'] = $paymentDataArr;
+            $this->_mpesa_process($orderId);
+        endif;
+    }
+    
+    function process_mpesa_success_group_order_final($PaymentDataArr){        
+        $orderId = $PaymentDataArr['orders'];
+        $pevorder = $PaymentDataArr['pevorder'];
+        $prod_price_info = $PaymentDataArr['prod_price_info'];
+
+        $order_update=array();
+        $order_update['isPaid'] = 1;
+
+        $update = $this->Order_model->update($order_update,$orderId);
+
+        //Notification
+        $order = $PaymentDataArr['order'];
+        $orderinfo = $PaymentDataArr['orderInfo'];
+
+        if($order->groupId):
+            $orderinfo['group'] = $PaymentDataArr['group'];
+        endif;
+        $group=$PaymentDataArr['group'];
+        $user = $this->_get_current_user_details(); 
+        $recv_email = $user->email;
+        $recv_name=$user->firstName.' '.$user->lastName;
+        $tidiitStr='TIDIIT-OD';
+        if($order->parrentOrderID == 0):
+            foreach($group->users as $key => $usr):
+                $mail_template_data=array();
+                $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                $data['receiverId'] = $usr->userId;
+                $data['nType'] = 'GROUP-ORDER';
+
+                $data['nTitle'] = '<b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>  completed payment before delivery';
+                $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
+                $data['nMessage'] = "Hi, ".$group->admin->firstName.' '.$group->admin->lastName."<br> completed his payment for buy the Buying Club order product.<br>";
+                $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
+                $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERAMT']=$order->orderAmount;;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERQTY']=$order->productQty;
+                $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+
+                $data['isRead'] = 0;
+                $data['status'] = 1;
+                $data['createDate'] = date('Y-m-d H:i:s');
+
+                //Send Email message
+                $recv_email = $usr->email;
+                $sender_email = $group->admin->email;
+
+                $mail_template_view_data=$this->load_default_resources();
+                $mail_template_view_data['group_order_start']=$mail_template_data;
+                $this->_global_tidiit_mail($recv_email, $group->admin->firstName.' '.$group->admin->lastName.' completed payment before delivery for Buying Club Order', $mail_template_view_data,'group_order_sod_final_payment');
+                $this->User_model->notification_add($data);   
+            endforeach;
+            
+        else:
+            $me = $this->_get_current_user_details();
+            $mail_template_data=array();
+            foreach($group->users as $key => $usr):
+                $mail_template_data=array();
+                $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                $data['receiverId'] = $usr->userId;
+                $data['nType'] = 'GROUP-ORDER';
+
+                $data['nTitle'] = '<b>'.$recv_name.'</b> completed payment before delivery for  Buying Club order';
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$usr->firstName.' '.$usr->lastName;
+                $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club.<br>";
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
+                $data['nMessage'] .= "";
+                $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+
+                $data['isRead'] = 0;
+                $data['status'] = 1;
+                $data['createDate'] = date('Y-m-d H:i:s');
+
+                //Send Email message
+                $recv_email = $usr->email;
+                $sender_email = $me->email;
+
+                $mail_template_view_data=$this->load_default_resources();
+                $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
+                $this->_global_tidiit_mail($recv_email,"$recv_name has completed his payment(Tidiit Buying Club Order) before delivery", $mail_template_view_data,'group_order_group_member_sod_final_payment');
+                if($me->userId != $usr->userId):
+                    $this->User_model->notification_add($data);
+                endif;
+            endforeach;
+            $data['receiverId'] = $group->admin->userId;
+            
+            //Send Email message
+            $recv_email = $group->admin->email;
+            $leaderName=$group->admin->firstName.' '.$group->admin->lastName;
+            $sender_email = $me->email;
+            $mail_template_view_data=$this->load_default_resources();
+            if(empty($mail_template_data)){
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$me->firstName.' '.$me->lastName;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
+            }
+            $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
+            $this->_global_tidiit_mail($recv_email,"One of your Buying Club(Tidiit) member($recv_name) has completed his payment  before delivery", $mail_template_view_data,'group_order_group_member_sod_final_payment',$leaderName);
+            $this->User_model->notification_add($data);
+        endif;
+
+        $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+
+        $this->Order_model->edit_payment(array('paymentType'=>'mPesa','mPesaId'=>$mPesaId),$orderId);
+        $logisticMobileNo=$PaymentDataArr['logisticsData']['deliveryStaffContactNo'];
+        $sms="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].'. '.$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.'-'.$orderId.' please process the delivery.';
+
+        /// here send mail to logistic partner
+        $mailBody="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'-'.$orderId.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
+        $this->_global_tidiit_mail($PaymentDataArr['logisticsData']['deliveryStaffEmail'],'Tidiit payment completed for Order '.$tidiitStr.'-'.$orderId,$mailBody,'',$recv_name);
+        
+        $this->_sent_order_complete_mail_sod_final_payment1($this->Order_model->get_single_order_by_id($orderId));
+        
+        unset($_SESSION['PaymentData']);
+        $this->session->set_flashdata('message','Thanks for the payment before order is Out for delivery');
+        redirect(BASE_URL.'my-orders/');
+    }
+    
+    function process_mpesa_success_single_order_final($PaymentDataArr){
+        $orderId=0;
+        $tidiitStrChr='TIDIIT-OD';
+        $tidiitStr='';
+        //Send Email message
+        $user = $this->_get_current_user_details(); 
+        $recv_email = $user->email;
+        $recv_name=$user->firstName.' '.$user->lastName;
+        foreach ($PaymentDataArr['orders'] AS $k => $v):
+            $orderId=$v;
+            $tidiitStr.=$tidiitStrChr.'-'.$v.',';
+            $order_update=array();
+            $order_update['isPaid'] = 1;
+            $this->Order_model->update($order_update,$v);
+            
+            $order=$PaymentDataArr['orderInfo'][$v]['order'];
+            $orderinfo=$PaymentDataArr['orderInfo'][$v]['orderInfo'];
+            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
+            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$v;
+            
+            $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+            $this->Order_model->edit_payment(array('paymentType'=>'mPesa','mPesaId'=>$mPesaId),$v);
+            
+            $mail_template_view_data=$this->load_default_resources();
+            $mail_template_view_data['single_order_success']=$mail_template_data;
+            $this->_global_tidiit_mail($recv_email, "Payment process completed for your Tidiit order no - TIDIIT-OD-".$v, $mail_template_view_data,'single_order_success_sod_final_payment',$recv_name);
+            $this->_sent_single_order_complete_mail_sod_final_payment($v);
+        endforeach;
+        /// here to preocess SMS to logistics partner
+        $logisticMobileNo=$PaymentDataArr['logisticsData']['deliveryStaffContactNo'];
+        $sms="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].'. '.$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.' please process the delivery.';
+        
+        /// here send mail to logistic partner
+        $mailBody="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
+        $this->_global_tidiit_mail($PaymentDataArr['logisticsData']['deliveryStaffEmail'],'Tidiit payment completed for Order '.$tidiitStr,$mailBody,'',$recv_name);
+        unset($_SESSION['PaymentData']);
+        $this->session->set_flashdata('message','Thanks for the payment before order is Out for delivery');
+        redirect(BASE_URL.'my-orders/');
+    }
+    
+    function _sent_single_order_complete_mail_sod_final_payment($orderId){
+        $orderDetails=  $this->Order_model->details($orderId);
+        //pre($orderDetails);die;
+        $adminMailData=  $this->load_default_resources();
+        $adminMailData['orderDetails']=$orderDetails;
+        $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
+        //pre($orderInfoDataArr);die;
+        $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
+        /// for seller
+        $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+        $buyerFullName=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
+        $adminMailData['buyerFullName']=$buyerFullName;
+        $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "$buyerFullName  has completed payment for order no - TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'seller_single_order_success_sod_final_payment',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
+
+        /// for support
+        $adminMailData['userFullName']='Tidiit Inc Support';
+        $adminMailData['sellerFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+        $adminMailData['buyerFullName']=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
+        $this->load->model('Siteconfig_model','siteconfig');
+        //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
+        $supportEmail='judhisahoo@gmail.com';
+        $this->_global_tidiit_mail($supportEmail, "$buyerFullName  has completed Order no - TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'support_single_order_success_sod_final_payment','Tidiit Inc Support');
+        //die;
+        
+        return TRUE;
+    }
+    
+    function _sent_order_complete_mail_sod_final_payment1($order){
+        $sessionUserData=  $this->_get_current_user_details();
+        $currentUserFullName=$sessionUserData->firstName.' '.$sessionUserData->lastName;
+        if($order->parrentOrderID==0)
+            $orderDetails=  $this->Order_model->details($order->orderId);
+        else
+            $orderDetails=  $this->Order_model->details($order->parrentOrderID);
+        //pre($orderDetails);die;
+        $adminMailData=  $this->load_default_resources();
+        $adminMailData['orderDetails']=$orderDetails;
+        $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
+        //pre($orderInfoDataArr);die;
+        $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
+        $adminMailData['orderParrentId']=$order->parrentOrderID;
+        $adminMailData['userFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
+        //pre($adminMailData);die;
+        $this->_global_tidiit_mail($orderInfoDataArr['group']->admin->email, "$currentUserFullName  has completed payment in your Buying Club order - TIDIIT-OD-".$order->orderId.' before delivery.', $adminMailData,'group_order_success_sod_final_payment',$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName);
+
+        /// for seller
+        $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+        $adminMailData['buyerFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
+        $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Payment submited for the Buying Club order no - TIDIIT-OD-".$order->orderId.' before delivery.', $adminMailData,'seller_group_order_success_sod_final_payment',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
+        
+        /// for support
+        $adminMailData['userFullName']='Tidiit Inc Support';
+        $adminMailData['sellerFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+        $adminMailData['buyerFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
+        $this->load->model('Siteconfig_model','siteconfig');
+        //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
+        $supportEmail='judhisahoo@gmail.com';
+        $this->_global_tidiit_mail($supportEmail, "$currentUserFullName has completed the payment for the Buying Club order no - TIDIIT-OD-".$order->orderId.' before delivery.', $adminMailData,'support_group_order_success_sod_final_payment','Tidiit Inc Support');
+    }
+    
+    function _sent_order_complete_mail_sod_final_payment($order){
+        //return TRUE;
+        $sessionUserData=  $this->_get_current_user_details();
+        $currentUserFullName=$sessionUserData->firstName.' '.$sessionUserData->lastName;
+        if($order->parrentOrderID>0){
+            //echo '$order id '.$order->parrentOrderID;
+            /// mail to leader and seller and support
+            $orderDetails=  $this->Order_model->details($order->parrentOrderID);
+            //pre($orderDetails);die;
+            $adminMailData=  $this->load_default_resources();
+            $adminMailData['orderDetails']=$orderDetails;
+            $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
+            //pre($orderInfoDataArr);die;
+            $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
+            $adminMailData['orderParrentId']=$order->parrentOrderID;
+            $adminMailData['userFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
+            //pre($adminMailData);die;
+            //$this->_global_tidiit_mail($orderInfoDataArr['group']->admin->email, "$currentUserFullName  has completed payment in your Buying Club order - TIDIIT-OD-".$order->orderId.' before delivery.', $adminMailData,'group_order_success_sod_final_payment',$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName);
+            
+            /// for seller
+            $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+            $adminMailData['buyerFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
+            $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "$currentUserFullName has completed the payment for the Buying Club order no - TIDIIT-OD-".$order->parrentOrderID.' before delivery.', $adminMailData,'seller_group_order_success',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
+            
+            /// for support
+            $adminMailData['userFullName']='Tidiit Inc Support';
+            $adminMailData['sellerFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+            $adminMailData['buyerFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
+            $this->load->model('Siteconfig_model','siteconfig');
+            //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
+            $supportEmail='judhisahoo@gmail.com';
+            $this->_global_tidiit_mail($supportEmail, "$currentUserFullName has completed the payment for the Buying Club order no - TIDIIT-OD-".$order->parrentOrderID.' before delivery.', $adminMailData,'support_group_order_success_sod_final_payment','Tidiit Inc Support');
+            //die;
+            ///mail to Buyer CLub
+            $allChieldOrdersData=$this->Order_model->get_all_chield_order($order->parrentOrderID);
+            foreach($allChieldOrdersData AS $k){
+                $orderDetails=  $this->Order_model->details($k->orderId);
+                $adminMailData=array();
+                $adminMailData=  $this->load_default_resources();
+                $adminMailData['orderDetails']=$orderDetails;
+                $orderInfoDataArr=unserialize(base64_decode($k->orderInfo));
+                $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
+                $adminMailData['orderParrentId']=$k->parrentOrderID;
+                //pre($orderInfoDataArr);die;
+                foreach($orderInfoDataArr['group']->users AS $kk){
+                    $email='';$userFullName='';
+                    if($kk->userId==$orderDetails[0]->userId){
+                        $email=$kk->email;
+                        $userFullName=$kk->firstName.' '.$kk->lastName;
+                        break;
+                    }
+                }
+                //echo '<br>$order id '.$k->orderId.'<br>';
+                $adminMailData['userFullName']=$userFullName;
+                $this->_global_tidiit_mail($email, "$currentUserFullName  has completed payment in your Buying Club Tidiit order TIDIIT-OD-".$k->orderId.' before delivery.', $adminMailData,'group_order_success_sod_final_payment',$userFullName);
+                
+                //echo '<br>$order id '.$k->orderId.'<br>';
+                /// for seller
+                $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+                $adminMailData['buyerFullName']=$userFullName;
+                $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "$currentUserFullName  has completed payment in your Buying Club order no - TIDIIT-OD-".$k->orderId.' before delivery.', $adminMailData,'seller_group_order_success_sod_final_payment',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
+                
+                //echo '<br>$order id '.$k->orderId.'<br>';
+                /// for support
+                $adminMailData['userFullName']='Tidiit Inc Support';
+                $adminMailData['sellerFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+                $adminMailData['buyerFullName']=$userFullName;
+                $this->load->model('Siteconfig_model','siteconfig');
+                //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
+                $supportEmail='judhisahoo@gmail.com';
+                $this->_global_tidiit_mail($supportEmail, "$currentUserFullName  has completed payment in your Buying Club order no - TIDIIT-OD-".$k->orderId.' before delivery.', $adminMailData,'support_group_order_success_sod_final_payment','Tidiit Inc Support');
+            }
+        }else{
+            die('comming else part');
+        }
+            
+        return TRUE;
+    }
 }

@@ -1127,7 +1127,7 @@ class Ajax extends MY_Controller{
     }
     
     function check_order_id_for_logistic(){
-        $orderId=trim($this->input->post('orderId'));
+        $orderId=trim($this->input->post('orderId',TRUE));
         $this->load->model('Order_model');
         $orderDetails=$this->Order_model->details($orderId);
         if(empty($orderDetails)){
@@ -1137,5 +1137,17 @@ class Ajax extends MY_Controller{
         }else{
             echo json_encode(array('result'=>'goods','msg'=>''));die;
         }
+    }
+    
+    function sod_payment_final_input_view(){
+        $orderId=trim($this->input->post('paymentid',TRUE));
+        if($orderId!=""):
+            $data=array();
+            $data['orderId']=  (base64_decode($orderId))/226201;
+            $data['payAmount']=trim($this->input->post('payAmount',TRUE));
+            echo json_encode(array('result'=>'good','content'=>$this->load->view('sod_payment_final_input_view',$data,TRUE)));
+        else :
+            echo json_encode(array('result'=>'bad'));
+        endif;
     }
 }

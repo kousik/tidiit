@@ -451,4 +451,10 @@ class Order_model extends CI_Model {
         $this->db->insert($this->_out_for_delivery,$dataArr);
         return $this->db->insert_id();
     }
+    
+    public function edit_payment($dataArray,$orderId){
+        $this->db->where('orderId',$orderId);
+        $this->db->update($this->_payment,$dataArray);
+        return TRUE;		
+    }
 }
