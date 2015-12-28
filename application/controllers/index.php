@@ -81,6 +81,36 @@ class Index extends MY_Controller{
         $this->load->view('out_for_delivery',$data);
     }
     
+    function delivery_update(){
+        $SEODataArr=array();
+        if($this->is_loged_in()){
+            $data=$this->_get_logedin_template($SEODataArr);
+        }else{
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        }
+        $this->load->model('Banner_model');
+        $this->load->model('Faq_model');
+        /// Home Page slider data
+        $slider1=$this->Banner_model->get_home_slider();
+        //pre($slider1);die;
+        $data['slider1']=$slider1;
+        
+        $slider2=$this->Banner_model->get_home_slider(2);
+        //pre($slider2);die;
+        $data['slider2']=$slider2;
+        
+        $noOfItem=  $this->Siteconfig_model->get_value_by_name('HOME_PAGE_NEW_ARRIVAL_ITEM_NO');
+        $newArrivalsData=  $this->Product_model->get_recent($noOfItem);
+        $data['bestSelllingItem']=$newArrivalsData;
+        $data['newArrivals']=$newArrivalsData;
+        $data['featuredProducts']=$newArrivalsData;
+        $data['brandZoneArr']=$this->Brand_model->get_all();
+        $data['sellerDataArr']=$this->Faq_model->get_all('seller');
+        $data['buyerDataArr']=$this->Faq_model->get_all('buyer');
+        
+        $this->load->view('delivery',$data);
+    }
+    
     function logout(){
         $this->_logout();
         redirect(BASE_URL);

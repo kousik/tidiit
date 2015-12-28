@@ -38,7 +38,7 @@
                                          <tr>
                                             <td>Delivery Staff Name</td>
                                             <td>:</td>
-                                            <td><input id="deliveryStaffName" name="deliveryStaffName" type="text" class="form-control" required >
+                                            <td><input id="deliveryStaffName" name="deliveryStaffName" type="text" class="form-control">
                                                 <div>
                                                     <label id="deliveryStaffName-error" class="error" for="deliveryStaffName"></label>
                                                 </div>
@@ -47,7 +47,7 @@
                                         <tr>
                                             <td>Delivery Staff Contact No</td>
                                             <td>:</td>
-                                            <td><input id="deliveryStaffContactNo" name="deliveryStaffContactNo" type="text" class="form-control" required >
+                                            <td><input id="deliveryStaffContactNo" name="deliveryStaffContactNo" type="text" class="form-control">
                                                 <div>
                                                     <label id="deliveryStaffContactNo-error" class="error" for="deliveryStaffContactNo"></label>
                                                 </div>
@@ -56,7 +56,7 @@
                                         <tr>
                                             <td>Delivery Staff Email</td>
                                             <td>:</td>
-                                            <td><input id="deliveryStaffEmail" name="deliveryStaffEmail" type="email" class="form-control" required >
+                                            <td><input id="deliveryStaffEmail" name="deliveryStaffEmail" type="email" class="form-control">
                                                 <div>
                                                     <label id="deliveryStaffEmail-error" class="error" for="deliveryStaffEmail"></label>
                                                 </div>

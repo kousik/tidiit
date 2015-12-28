@@ -595,9 +595,8 @@ class Product_model extends CI_Model {
         return $this->db->get()->result();
     }
     
-    function update_product_quantity_after_order_process($productId,$qty){
-        $detailsArr=  $this->details($productId);
-        $this->edit(array('qty'=>(int)($detailsArr[0]->qty-$qty)), $productId);
+    function update_product_quantity($productId,$qty,$action='-'){
+        $this->db->query("UPDATE `product` SET `qty`=`qty`$action".$qty." WHERE `productId`=".$productId);
     }
     
     function edit_product_tag($dataArr){

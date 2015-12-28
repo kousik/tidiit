@@ -1,4 +1,6 @@
 <?php echo $html_heading; echo $header;?>
+<link href="<?php echo SiteCSSURL;?>jquery.datetimepicker.css" rel="stylesheet">
+<script src="<?php echo SiteJSURL;?>jquery.datetimepicker.full.min.js"></script>
 <style type="text/css">
     @media screen and (min-width: 768px) {
         .modal-dialog {
@@ -332,9 +334,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Out For Delivery / Pre-Alert</h4>
+        <h4 class="modal-title" id="myModalLabel">Delivery Update</h4>
       </div>
-        <form action="#" method="post" name="outForDeliveryForm" class="form-horizontal" id="outForDeliveryForm"> 
+        <form action="#" method="post" name="outForDeliveryForm" class="form-horizontal" id="outForDeliveryForm" enctype="multipart/form-data"> 
             <div class="modal-body">
                 <div class="col-md-12 col-sm-12"> 
                     <div class="gen_infmtn">
@@ -349,34 +351,6 @@
                                              <td style="width: 5%;">&nbsp;</td>
                                              <td style="width: 60%;">&nbsp;</td>
                                          </tr>
-                                        <tr>
-                                            <td>Select out for delivery type</td>
-                                            <td>:</td>
-                                            <td><select name="outForDeliveryType" id="outForDeliveryType">
-                                                    <option value="">Select</option>
-                                                    <option value="preAlert">Pre-alert</option>
-                                                    <option value="outForDelivery">Out for delivery</option>
-                                                </select>
-                                                <div>
-                                                    <label id="outForDeliveryType-error" class="error" for="outForDeliveryType"></label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr id="pre_alert" style="display:none;">
-                                            <td>Delivery days</td>
-                                            <td>:</td>
-                                            <td><select name="outForDeliveryDays" id="outForDeliveryDays">
-                                                    <option value="">Select</option>
-                                                    <!--<option value="1">Today</option> -->
-                                                    <option value="2">Tomorrow</option>
-                                                    <option value="3">After 2 days</option>
-                                                    <option value="4">After 3 days</option>
-                                                </select>
-                                                <div>
-                                                    <label id="outForDeliveryDays-error" class="error" for="outForDeliveryDays"></label>
-                                                </div>
-                                            </td>
-                                        </tr>
                                         <tr>
                                             <td>Enter the OrderID</td>
                                             <td>:</td>
@@ -422,11 +396,56 @@
                                                 </div>
                                             </td>
                                         </tr>
+										<tr>
+                                            <td>Receiver Name</td>
+                                            <td>:</td>
+                                            <td><input id="receiveStaffName" name="receiveStaffName" type="text" class="form-control" required >
+                                                <div>
+                                                    <label id="receiveStaffName-error" class="error" for="receiveStaffName"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Receiver Contact No</td>
+                                            <td>:</td>
+                                            <td><input id="receiveStaffContactNo" name="receiveStaffContactNo" type="text" class="form-control" required >
+                                                <div>
+                                                    <label id="receiveStaffContactNo-error" class="error" for="receiveStaffContactNo"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+										<tr>
+                                            <td>Receive Date Time</td>
+                                            <td>:</td>
+                                            <td><input id="receiveDateTime" name="receiveDateTime" type="text" class="form-control" required >
+                                                <div>
+                                                    <label id="receiveDateTime-error" class="error" for="receiveDateTime"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+					<!--<tr>
+                                            <td>Photo of time of delivery1</td>
+                                            <td>:</td>
+                                            <td><input id="photo1" name="photo1" type="file" class="form-control" required >
+                                                <div>
+                                                    <label id="photo1-error" class="error" for="photo1"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+										<tr>
+                                            <td>Photo of time of delivery2</td>
+                                            <td>:</td>
+                                            <td><input id="photo2" name="photo2" type="file" class="form-control" required >
+                                                <div>
+                                                    <label id="photo2-error" class="error" for="photo2"></label>
+                                                </div>
+                                            </td>
+                                        </tr> -->
                                         <tr>
                                              <td style="width: 35%;">&nbsp;</td>
                                              <td style="width: 5%;">&nbsp;</td>
                                              <td style="width: 60%;">
-                                                 <input type="submit" name="outForDeliverySubmit" id="outForDeliverySubmit" value="Submit" class="btn btn-default col-md-5"/>	
+                                                 <input type="submit" name="deliverySubmit" id="deliverySubmit" value="Submit" class="btn btn-default col-md-5"/>	
                                              </td>
                                          </tr>
                                     </table>
@@ -448,6 +467,7 @@
 <!-- /.modal -->
 <script type="text/javascript">
     jQuery(document).ready(function(){
+		jQuery('#receiveDateTime').datetimepicker({format:'d-m-Y H:i',mask:true});
         var oldSubmitStatusTidiitConfirm1=false;
         jQuery('#outForDeliveryForm').validate();
         jQuery('#myModalOutForDelivery').modal('show');
@@ -462,7 +482,7 @@
         jQuery('#outForDeliveryForm').submit(function(e) { 
             e.preventDefault();
             if (jQuery(this).valid()) {
-                askBeforeSubmitOutForDevelyr('Tidiit out for deliery','Are you sure to submit the data ?',200,jQuery(this),myJsMain.baseURL+'ajax/submit_out_for_delivery',outForDeliveryFormCallback);;
+                askBeforeSubmitOutForDevelyr('Tidiit Order Delivery','Are you sure to submit the data ?',200,jQuery(this),myJsMain.baseURL+'ajax/submit_delivery',outForDeliveryFormCallback);;
             }
         });
         
@@ -470,7 +490,7 @@
         jQuery('#orderId').on('blur',function(){
             jqOut=jQuery(this);
             if(jqOut.val().trim()==''){
-                myJsMain.commonFunction.tidiitAlert('Tidiit Out For Delivery','Please enter the value for order id',200);
+                myJsMain.commonFunction.tidiitAlert('Tidiit Order Delivery','Please enter the value for order id',200);
                 return false;
             }
             myJsMain.commonFunction.showPleaseWait();
@@ -480,15 +500,16 @@
             function(data){
                 myJsMain.commonFunction.hidePleaseWait();
                 if(data.result=='bad'){
-                    myJsMain.commonFunction.tidiitAlert('Tidiit Out For Delivery',data.msg,200);
+                    myJsMain.commonFunction.tidiitAlert('Tidiit Order Delivery',data.msg,200);
                     jqOut.val('');
                 }
             }, 'json' );
         });
+		
 		jQuery('#logisticsId').on('blur',function(){
             jqOut=jQuery(this);
             if(jqOut.val().trim()==''){
-                myJsMain.commonFunction.tidiitAlert('Tidiit Out For Delivery','Please enter the value for Logistics Tidiit Sign ID',200);
+                myJsMain.commonFunction.tidiitAlert('Tidiit Order Delivery','Please enter the value for Logistics Tidiit Sign ID',200);
                 return false;
             }
             myJsMain.commonFunction.showPleaseWait();
@@ -498,7 +519,7 @@
             function(data){
                 myJsMain.commonFunction.hidePleaseWait();
                 if(data.result=='bad'){
-                    myJsMain.commonFunction.tidiitAlert('Tidiit Out For Delivery',data.msg,200);
+                    myJsMain.commonFunction.tidiitAlert('Tidiit Order Delivery',data.msg,200);
                     jqOut.val('');
                 }
             }, 'json' );

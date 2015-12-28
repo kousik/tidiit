@@ -1,4 +1,4 @@
-<?php $orderinfo = $order_cancel['TEMPLATE_ORDER_CANCEL_ORDER_INFO']; //unserialize(base64_decode($order->orderInfo));?>
+<?php //$orderinfo = $order_cancel['TEMPLATE_ORDER_CANCEL_ORDER_INFO']; //unserialize(base64_decode($order->orderInfo));?>
 <!-- Modal -->
 <div class="modal fade" id="myModalLogin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog modal-lg" role="document">

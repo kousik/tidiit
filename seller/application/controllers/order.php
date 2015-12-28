@@ -173,7 +173,7 @@ class Order extends MY_Controller{
             $adminMailData['userFullName']=$userFullName;
             $adminMailData['sellerFullName']=$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName;
             //pre($adminMailData);die;
-            $this->_global_tidiit_mail($currentOrderUser->email, "Your Buying Club order - TIDIIT-OD-".$order->parrentOrderID.' has confirmed.', $adminMailData,'group_order_confirm',$userFullName);
+            $this->_global_tidiit_mail($currentOrderUser->email, "Your Buying Club order - TIDIIT-OD-".$order->orderId.' has confirmed.', $adminMailData,'group_order_confirm',$userFullName);
             
             
             $leaderFullName=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
@@ -276,11 +276,12 @@ class Order extends MY_Controller{
                 redirect(BASE_URL.'order/viewlist/');
             endif;
             $this->Order_model->update(array('status'=>7),$orderId);
-            
+            $order=$this->Order_model->get_single_order_by_id($orderId);
+            $this->Product_model->update_product_quantity($order->productId,$order->productQty,'+');
             $orderHistoryArr=array('orderId'=>$orderId,'state'=>0,'historyBy'=>2,'actionOwnerId'=>$this->session->userdata('FE_SESSION_VAR'),'note'=>$note);
             $this->Order_model->add_history($orderHistoryArr);
             //pre($orderHistoryArr);die;
-            $order=$this->Order_model->get_single_order_by_id($orderId);
+            
             $this->order_cancel_mail($order,$note);
             $this->session->set_flashdata('Message',"Order no TIDIIT-OD-$orderId has cancelled successfully.");
             redirect(BASE_URL.'order/viewlist/');
@@ -315,7 +316,7 @@ class Order extends MY_Controller{
             $this->load->model('Siteconfig_model','siteconfig');
             //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
             $supportEmail='judhisahoo@gmail.com';
-            $this->_global_tidiit_mail($supportEmail, "Order no - TIDIIT-OD-".$order->orderId.' has camceled by '.$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName, $adminMailData,'support_order_cancelled','Tidiit Inc Support');
+            $this->_global_tidiit_mail($supportEmail, "Order no - TIDIIT-OD-".$order->orderId.' has canceled by '.$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName, $adminMailData,'support_order_cancelled','Tidiit Inc Support');
             return TRUE;
         }
 }

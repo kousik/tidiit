@@ -32,7 +32,9 @@ class User_model extends CI_Model {
 
     public function add($dataArray){
         $this->db->insert($this->_table,$dataArray);
-        return $this->db->insert_id();
+        $userId=$this->db->insert_id();
+        $this->add_shipping(array('userId'=>$userId,'firstName'=>$dataArray['firstName'],'lastName'=>$dataArray['lastName']));
+        return $userId;
     }
 
     public function edit($DataArr,$userId){
@@ -84,7 +86,6 @@ class User_model extends CI_Model {
             return FALSE;
         }
     }
-
 
     public function check_username_exists($email,$userType){
         //SELECT userId FROM ".TABLEPREFIX."_user WHERE email='".$email."' AND status<2
@@ -142,8 +143,6 @@ class User_model extends CI_Model {
         return $rs;
     }
 
-
-
     public function get_user_for_admin(){
             $this->db->select('*')->from($this->_table)->where('userTypeId',1)->where('status',1);
             return $this->db->get()->result();
@@ -158,8 +157,6 @@ class User_model extends CI_Model {
         $this->order_update($userId);
         return TRUE;
     }
-
-
 
     public function add_biiling_info($dataArray){
         $this->db->insert($this->_bill_address,$dataArray);
@@ -186,14 +183,17 @@ class User_model extends CI_Model {
     /// this is for only guest user
     public function get_user_shipping_information($userId=0){
         $this->db->select('sa.*,c.countryName,s.stateName,ci.city,z.zip,l.locality');
-        $this->db->from($this->_shipping_address.' sa')->join($this->_table_country.' c','sa.countryId=c.countryId','left join');
-        $this->db->join($this->_table_state.' s','sa.stateId=s.stateId','left join')->join($this->_table_city.' ci','sa.cityId=ci.cityId','left join');
-        $this->db->join($this->_table_zip.' z','sa.zipId=z.zipId','left join');
-        $this->db->join($this->_table_locality.' l','sa.localityId=l.localityId','left join');
-        if($userId==0)
-            return $this->db->where('sa.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
-        else
+        $this->db->from($this->_shipping_address.' sa')->join($this->_table_country.' c','sa.countryId=c.countryId','left');
+        $this->db->join($this->_table_state.' s','sa.stateId=s.stateId','left')->join($this->_table_city.' ci','sa.cityId=ci.cityId','left');
+        $this->db->join($this->_table_zip.' z','sa.zipId=z.zipId','left');
+        $this->db->join($this->_table_locality.' l','sa.localityId=l.localityId','left');
+        if($userId==0):
+            $rs=$this->db->where('sa.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+            //echo $this->db->last_query();die;
+            return $rs;
+        else:
             return $this->db->where('sa.userId',$userId)->get()->result_array();
+        endif;
     }
 
 

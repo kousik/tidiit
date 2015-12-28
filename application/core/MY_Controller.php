@@ -12,6 +12,7 @@ class MY_Controller extends CI_Controller {
         $this->load->model('Product_model');
         $this->load->model('Category_model');
         $this->load->library('session');
+        $this->load->library('user_agent');
     }
 
     public function _logout(){
@@ -254,8 +255,7 @@ class MY_Controller extends CI_Controller {
                 $NewSessionID=uniqid();
                 $this->session->set_userdata('USER_SITE_SESSION_ID',$NewSessionID);
         }
-
-
+        
         if(empty($SEODataArr)){
             $data=$this->get_general_meta($data);
         }else{
@@ -282,10 +282,12 @@ class MY_Controller extends CI_Controller {
             $data['fbData']=$fbData;
         }
         //echo $this->uri->segment(1).' = '.$this->uri->segment(2);die;
-        
+        if($this->agent->is_mobile())
+            $data['isMobile']='yes';
+        else
+            $data['isMobile']='no';
         $data['categoryMenu']=  $this->get_category_menu();
         $data['html_heading']=$this->load->view('html_heading',$data,true);
-        //echo 'zzz1134588';die;
         return $data;
     }
     

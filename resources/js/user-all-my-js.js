@@ -108,6 +108,7 @@ myJsMain.my_shipping_address=function(){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         }else if(resultData.result=='good'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Shipping address updated successfully.",200);
+            location.href=resultData.url;
         }
     }
 }

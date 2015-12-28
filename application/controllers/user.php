@@ -33,6 +33,7 @@ class User extends MY_Controller{
         $data['userMenuActive']=2;
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $userShippingDataDetails=$this->User_model->get_user_shipping_information();
+        //pre($userShippingDataDetails);die;
         if(empty($userShippingDataDetails)){
             $userShippingDataDetails[0]=new stdClass();
             $userShippingDataDetails[0]->firstName="";

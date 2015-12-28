@@ -18,6 +18,7 @@ class Order_model extends CI_Model {
     private $_mpesa="mpesa";
     private $_netbanking="netbanking_data";
     private $_out_for_delivery="order_out_for_delivery_pre_alert";
+    private $_delivered_request="order_delivered_request";
     
 
 
@@ -208,9 +209,11 @@ class Order_model extends CI_Model {
         $ToDate=$this->input->post('HiddenFilterToDate',TRUE);
         $UserName=$this->input->post('HiddenFilterUserName',TRUE);
         $OrderStatus=$this->input->post('HiddenFilterOrderStatus',TRUE);
-        $sql='SELECT o.*,u1.email,u.email AS SellerEmail,os.name AS orderStatusType,p.paymentType FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) '
+        $sql='SELECT o.*,u1.email,u.email AS SellerEmail,os.name AS orderStatusType,p.paymentType,(select odr.orderDeliveredRequestId FROM `order_delivered_request` AS odr where o.orderId=odr.orderId order by odr.orderDeliveredRequestId DESC limit 0,1) AS orderDeliveredRequestId  '
+                . ' FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) '
                 . ' JOIN `user` AS u ON(u.userId=ps.userId) JOIN `user` AS u1 ON(u1.userId=o.userId) '
-                . ' JOIN `order_state` AS os ON(o.status=os.orderStateId) JOIN `payment` AS p ON(p.orderId=o.orderId)  WHERE o.status >1 ';
+                . ' JOIN `order_state` AS os ON(o.status=os.orderStateId) JOIN `payment` AS p ON(p.orderId=o.orderId) '
+                . ' LEFT JOIN `order_delivered_request` AS odr ON(o.orderId=odr.orderId)  WHERE o.status >1 ';
 
         /*if($UserName!=""){
             $sql .= " AND u.UserName='".$UserName."'";
@@ -256,7 +259,8 @@ class Order_model extends CI_Model {
         $ToDate=$this->input->post('HiddenFilterToDate',TRUE);
         $UserName=$this->input->post('HiddenFilterUserName',TRUE);
         $OrderStatus=$this->input->post('HiddenFilterOrderStatus',TRUE);
-        $sql='SELECT o.* FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) JOIN `user` AS u ON(u.userId=ps.userId) WHERE o.status >1 ';
+        $sql='SELECT o.* FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) '
+                . ' JOIN `user` AS u ON(u.userId=ps.userId) WHERE o.status >1 ';
         return count($this->db->query($sql)->result());
     }
 
@@ -456,5 +460,14 @@ class Order_model extends CI_Model {
         $this->db->where('orderId',$orderId);
         $this->db->update($this->_payment,$dataArray);
         return TRUE;		
+    }
+    
+    function get_product_price_details_by_orderid($orderId){
+        return $this->db->select("pp.productId,pp.qty")->from($this->_table.' AS o')->join('product_price AS pp','o.productPriceId=pp.productPriceId')->where('o.orderId',$orderId)->get()->result_array();
+    }
+    
+    function add_order_delivered_request($dataArr){
+        $this->db->insert($this->_delivered_request,$dataArr);
+        return $this->db->insert_id();
     }
 }

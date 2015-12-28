@@ -365,7 +365,7 @@ class Ajax extends MY_Controller{
                     $notify['nType'] = "GROUP-ADD";
                     $notify['nTitle'] = $groupTitle;
                     $notify['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
-                    $notify['adminEmail'] = $adminDataArr->email;
+                    $notify['adminEmail'] = $adminDataArr[0]->email;
                     $notify['adminContactNo'] = $adminDataArr[0]->contactNo;
                     $this->send_notification($notify);
                 endforeach;
@@ -425,7 +425,7 @@ class Ajax extends MY_Controller{
                 $notify['nType'] = "GROUP-MODIFY-NEW";
                 $notify['nTitle'] = $groupTitle;
                 $notify['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
-                $notify['adminEmail'] = $adminDataArr->email;
+                $notify['adminEmail'] = $adminDataArr[0]->email;
                 $notify['adminContactNo'] = $adminDataArr[0]->contactNo;
                 $this->send_notification($notify);
             endforeach;
@@ -632,6 +632,9 @@ class Ajax extends MY_Controller{
             //Send Email message
             unset($data['isEmail']);
         endif;
+        unset($data['adminName']);
+        unset($data['adminEmail']);
+        unset($data['adminContactNo']);
         
         $this->User_model->notification_add($data);
     
@@ -716,7 +719,7 @@ class Ajax extends MY_Controller{
                 }else{
                     $this->User_model->edit_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'address'=>$address,'stateId'=>$rs[0]->stateId),$userId);
                 }
-                echo json_encode(array('result'=>'good'));die; 
+                echo json_encode(array('result'=>'good','url'=>BASE_URL.'my-profile/'));die; 
             }
             
         }
@@ -832,8 +835,8 @@ class Ajax extends MY_Controller{
                 $contactNo=$this->input->post('contactNo',TRUE);
                 $email=$this->input->post('email',TRUE);
                 $rowDOB=$this->input->post('DOB',TRUE);
-                $dobArr=  explode('/', $rowDOB);
-                $DOB=$dobArr[2].'-'.$dobArr[0].'-'.$dobArr[1];
+                $dobArr=  explode('-', $rowDOB);
+                $DOB=$dobArr[2].'-'.$dobArr[1].'-'.$dobArr[0];
                 $mobile=$this->input->post('mobile',TRUE);
                 $fax=$this->input->post('fax',TRUE);
                 $aboutMe=$this->input->post('aboutMe',TRUE);
@@ -1139,6 +1142,17 @@ class Ajax extends MY_Controller{
         }
     }
     
+    function check_logistics_id_for_logistic(){
+        $logisticsId=trim($this->input->post('logisticsId',TRUE));
+        $this->load->model('Logistics_model');
+        $details=$this->Logistics_model->details($logisticsId);
+        if(empty($details)){
+            echo json_encode(array('result'=>'bad','msg'=>'Invalid logistics sign id provide,please try again.')) ;die;
+        }else{
+            echo json_encode(array('result'=>'goods','msg'=>''));die;
+        }
+    }
+    
     function sod_payment_final_input_view(){
         $orderId=trim($this->input->post('paymentid',TRUE));
         if($orderId!=""):
@@ -1149,5 +1163,134 @@ class Ajax extends MY_Controller{
         else :
             echo json_encode(array('result'=>'bad'));
         endif;
+    }
+    
+    
+    function submit_delivery(){
+        $config = array(
+            array('field'   => 'orderId','label'   => 'Enter the OrderID','rules'   => 'trim|required|xss_clean|'),
+            array('field'   => 'logisticsId','label'   => 'Logistics Tidiit Sign ID','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'deliveryStaffName','label'   => 'Delivery Staff Name','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'deliveryStaffContactNo','label'   => 'Delivery Staff Contact No','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'deliveryStaffEmail','label'   => 'Delivery Staff Email','rules'   => 'trim|required|xss_clean|valid_email'),
+            array('field'   => 'receiveStaffName','label'   => 'Receive Staff Name','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'receiveStaffContactNo','label'   => 'Receive Staff Contact No','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'receiveDateTime','label'   => 'Receive Date Time','rules'   => 'trim|required|xss_clean'),
+         );
+        
+        $this->form_validation->set_rules($config); 
+        //checking validation
+        if($this->form_validation->run() == FALSE):
+            //retun to login page with peroper error
+            echo json_encode(array('result'=>'bad','msg'=>str_replace('</p>','',str_replace('<p>','',validation_errors()))));die;
+        else:
+            $orderId=trim($this->input->post('orderId',TRUE));
+            $logisticsId=trim($this->input->post('logisticsId',TRUE));
+            $deliveryStaffName=$this->input->post('deliveryStaffName',TRUE);
+            $deliveryStaffContactNo=$this->input->post('deliveryStaffContactNo',TRUE);
+            $deliveryStaffEmail=$this->input->post('deliveryStaffEmail',TRUE);
+            $receiveStaffName=$this->input->post('receiveStaffName',TRUE);
+            $receiveStaffContactNo=$this->input->post('receiveStaffContactNo',TRUE);
+            $oldReceiveDateTime=$this->input->post('receiveDateTime',TRUE);
+            $receiveDateTimeArr=  explode(' ', $oldReceiveDateTime);
+            $receiveDateArr=  explode('-', $receiveDateTimeArr[0]);
+            $receiveDateTime=$receiveDateArr[2].'-'.$receiveDateArr[1].'-'.$receiveDateArr[0].' '.$receiveDateTimeArr[1].':00';
+            
+            if(empty($logisticDetails)):
+                echo json_encode(array('result'=>'bad','msg'=>'Invalid logistics data entered.'));die;
+            endif;
+            if(empty($order)):
+                echo json_encode(array('result'=>'bad','msg'=>'Invalid order data entered.'));die;
+            endif;
+            $dataArr=array('orderId'=>$orderId,'logisticsId'=>$logisticsId,'deliveryStaffName'=>$deliveryStaffName,
+                'deliveryStaffContactNo'=>$deliveryStaffContactNo,'IP'=>$this->input->ip_address(),'deliveryStaffEmail'=>$deliveryStaffEmail,
+                'receiveStaffName'=>$receiveStaffName,'receiveStaffContactNo'=>$receiveStaffContactNo,'receiveDateTime'=>$receiveDateTime);
+            $config['upload_path'] =$this->config->item('ResourcesPath').'order_delivery/original/';
+            $config['allowed_types'] = 'jpg|png|jpeg';
+            $config['file_name']	= strtolower(my_seo_freindly_url($orderId)).'-'.rand(1,9).'-'.time();
+            $config['max_size']	= '2047';
+            $config['max_width'] = '1550';
+            $config['max_height'] = '1550';
+            $upload_files=array();
+            $this->load->library('upload');
+            /*foreach ($_FILES as $fieldname => $fileObject){  //fieldname is the form field name
+                $this->upload->initialize($config);
+                if (!$this->upload->do_upload($fieldname)):
+                    foreach($upload_files AS $k){
+                        @unlink($this->config->item('ResourcesPath').'order_delivery/original/'.$k);
+                    }
+                    $errors = $this->upload->display_errors();
+                    //pre($errors);die;
+                    echo json_encode(array('result'=>'bad','msg'=>$errors));die;
+                else:
+                    $data=$this->upload->data();
+                    $this->order_delivery_image_resize($data['file_name']);
+                    $upload_files[]=$data['file_name'];
+                endif;
+            }
+            if(empty($upload_files) || count($upload_files)<2){
+                echo json_encode(array('result'=>'bad','msg'=>'You must upload 2 photo for tidiit order delivery proof.'));die;
+            }
+            $data['photo1']=$upload_files[0];
+            $data['photo2']=$upload_files[1];*/
+            $orderDeliveredRequestId=$this->Order_model->add_order_delivered_request($dataArr);
+            if($orderDeliveredRequestId):
+                echo json_encode(array('result'=>'good','msg'=>'Delivery information updated successfully.'));die;
+            else:    
+                echo json_encode(array('result'=>'good','msg'=>'Unknown error arises, please try again'));die;
+            endif;    
+        endif;
+    }
+    
+     public function order_delivery_image_resize($fileName){
+        $PHOTOPATH=$this->config->item('ResourcesPath').'order_delivery/';
+        $OriginalPath=$PHOTOPATH.'original/';
+        //echo '$OriginalPath :- '.$OriginalPath.'<br>';
+        $OriginalFilePath=$OriginalPath.$fileName;
+        //echo '$OriginalFilePath :- '.$OriginalFilePath.'<br>';
+
+        /// ************100X100***************
+        $config['image_library'] = 'gd2';
+        $config['source_image'] = $OriginalFilePath;
+        $config['new_image'] = $PHOTOPATH. '75X75/';
+        $config['width'] = 75;
+        $config['height'] = 75;
+        $config['maintain_ratio'] = true;
+        $config['master_dim'] = 'auto';
+        $config['create_thumb'] = FALSE;
+        $this->image_lib->initialize($config);
+        $this->load->library('image_lib', $config);
+        if($this->image_lib->resize()){
+                //echo '<br>thumb done for 100X100.';
+        }else{
+                $this->image_lib->display_errors();
+        }
+
+        $this->image_lib->clear();
+     }
+     
+     function show_order_details(){
+        $this->load->model('Order_model');
+        $orderId=$this->input->post('orderId',TRUE);
+        $data=  $this->load_default_resources();
+        $order=$this->Order_model->get_single_order_by_id($orderId);
+        $data['order']=$order;
+        $data['orderId']=$orderId;
+        $data['group'] = $this->User_model->get_group_by_id($order->groupId);
+        $orderStatusobj=$this->Order_model->get_state();
+        $stateArr=array();
+        foreach($orderStatusobj As $k){
+            $stateArr[$k->orderStateId]=$k->name;
+        }
+        $data['status']= $stateArr;
+        //pre($data);die;
+        echo json_encode(array('content'=>$this->load->view('order_details',$data,true)));die;
+     }
+     
+    function update_order_delivered(){
+        $this->load->model('Order_model');
+        $orderId=$this->input->post('orderId',TRUE);
+        $order=  $this->Order_model->get_single_order_by_id($orderId);
+        //if($order->)
     }
 }

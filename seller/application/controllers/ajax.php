@@ -318,6 +318,7 @@ class Ajax extends MY_Controller{
         $data=  $this->load_default_resources();
         $order=$this->Order_model->get_single_order_by_id($orderId);
         $data['order']=$order;
+        $data['orderinfo']=unserialize(base64_decode($order->orderInfo));
         $data['orderId']=$orderId;
         $data['group'] = $this->User_model->get_group_by_id($order->groupId);
         $orderStatusobj=$this->Order_model->get_state1();

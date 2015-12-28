@@ -111,12 +111,13 @@ myJsMain.commonFunction = {
         if(height==0){
             height=175;
         }
+        if(myJsMain.isMobile=='yes'){tidiitAlertBoxWidth=350;}else{tidiitAlertBoxWidth=450;}
         jQuery('#dialog-confirm-message-text').text(alertMessaage);
         //alert(alertMessaage);
         jQuery( "#dialog-confirm" ).dialog({
             resizable: false,
             height:height,
-            width:450,
+            width:tidiitAlertBoxWidth,
             modal: true,
             title:boxTitle,
             dialogClass: 'success-dialog',
@@ -131,11 +132,12 @@ myJsMain.commonFunction = {
         if(height==0){
             height=175;
         }
+        if(myJsMain.isMobile=='yes'){tidiitAlertBoxWidth=350;}else{tidiitAlertBoxWidth=450;}
         $('#dialog-confirm-message-text').text(confirmMessaage);
         $( "#dialog-confirm" ).dialog({
             resizable: false,
             height:height,
-            width:450,
+            width:tidiitAlertBoxWidth,
             modal: true,
             title:boxTitle,
             dialogClass: 'success-dialog',
@@ -153,11 +155,12 @@ myJsMain.commonFunction = {
         if(height==0){
             height=175;
         }
+        if(myJsMain.isMobile=='yes'){tidiitAlertBoxWidth=350;}else{tidiitAlertBoxWidth=450;}
         $('#dialog-confirm-message-text').text(confirmMessaage);
         $( "#dialog-confirm" ).dialog({
             resizable: false,
             height:height,
-            width:450,
+            width:tidiitAlertBoxWidth,
             modal: true,
             title:boxTitle,
             dialogClass: 'success-dialog',

@@ -842,7 +842,7 @@ jQuery(document).ready(function(){
               <span class="input-group-addon">
                 <input type="radio" name="ordertype" value="group">
               </span>
-              <label for="grp">Buyer Club Order</label>
+              <label for="grp">Buying Club Order</label>
             </div><!-- /input-group -->
             
             <div class="input-group order-labl form-group">

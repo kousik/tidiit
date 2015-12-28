@@ -78,6 +78,9 @@ $OrderTypeArr=array('1'=>'Website','2'=>'Mobile Web','3'=>"Mobile Apps");
                               <?php if($InerArr->orderType == 'SINGLE' && $InerArr->status < 4):?> &nbsp; 
                               <a href="javascript:void(0);" class="changeOrderStateCancel"  title="Cancel" data-orderid="<?php echo $InerArr->orderId;?>">Cancel</a>
                               <?php endif;?>
+                            <?php if($InerArr->orderDeliveredRequestId!=""):?>  
+                              <a href="javascript:void(0);" class="changeOrderStateDelivered"  title="Delivered" data-orderid="<?php echo $InerArr->orderId;?>">Set Delivered</a>
+                            <?php endif;?>  
                         </td>
                         <td><?php echo $InerArr->orderId;?></td>
                         <td><?php echo date('d-m-Y',strtotime($InerArr->orderDate));?></td>
@@ -100,20 +103,31 @@ $OrderTypeArr=array('1'=>'Website','2'=>'Mobile Web','3'=>"Mobile Apps");
 </table>
 <div id="modal_order_details"></div>
 <?php echo $AdminHomeRest;?>
-<script>
+<script type="text/javascript">
+$('body').on("click",'.viewOrderDetails',function(){ alert('rr');
+    var orderid = $(this).data('orderid'); 
+    $.post( myJsMain.baseURL+'ajax/show_order_details/', {
+         orderId: orderid
+     },
+     function(data){
+         $('#modal_order_details').html(data.content);
+     }, 'json' );
+ });
+ $('body').on("click",'.changeOrderStateDelivered',function(){
+    var orderid = $(this).data('orderid'); 
+    $.post( myJsMain.baseURL+'ajax/update_order_delivered/', {
+         orderId: orderid
+     },
+     function(data){
+         
+     }, 'json' );
+ });
 $(document).ready(function(){
         $("#example").dataTable({
-            "aLengthMenu": [2,5,10,15,20,25,50],"bSort": true
+            //"aLengthMenu": [2,5,10,15,20,25,50],"bSort": true
+            "aLengthMenu": [10,15,20,25,50],"bSort": true
         });
-        $('.viewOrderDetails').on("click",function(){
-            var orderid = $(this).data('orderid'); 
-            $.post( myJsMain.baseURL+'ajax/show_order_details/', {
-                 orderId: orderid
-             },
-             function(data){
-                 $('#modal_order_details').html(data.content);
-             }, 'json' );
-         });
+        
 
          //$('body .showGroupDetails').on("click",function(){
         jQuery("body").delegate('.showGroupDetails', "click", function(e){

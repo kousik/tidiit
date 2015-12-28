@@ -54,7 +54,7 @@
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label>Date of Birth</label>
-                                                        <input type="date" name="DOB" id="DOB" class="form-control" value="<?php echo ($userDataArr[0]->DOB!="") ? date('m/d/Y',strtotime($userDataArr[0]->DOB)) :"";?>" data-date-format="dd-mm-yy">
+                                                        <input type="text" name="DOB" id="DOB" class="form-control" value="<?php echo ($userDataArr[0]->DOB!="") ? date('d-m-Y',strtotime($userDataArr[0]->DOB)) :"";?>">
                                                     </div>
                                                 </div>
                                             </div>
@@ -85,6 +85,6 @@
 <script type="text/javascript">
     myJsMain.my_profile();
     jQuery(document).ready(function(){
-        jQuery('#DOB').datepicker();
+        jQuery('#DOB').datepicker({changeMonth: true,changeYear: true,dateFormat:"dd-mm-yy"});
     });
 </script>

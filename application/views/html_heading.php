@@ -46,6 +46,11 @@
             myJsMain.isLogedIn=false;
             <?php else:?>
             myJsMain.isLogedIn=true;
+            <?php endif;?>
+            <?php if($isMobile=='yes'):?>
+                myJsMain.isMobile='yes';
+            <?php else: ?>
+                myJsMain.isMobile='no';
             <?php endif;?>    
         //]]>
         manualClick=false;
