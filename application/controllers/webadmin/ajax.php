@@ -160,4 +160,55 @@ class Ajax extends MY_Controller{
         //pre($data);die;
         echo json_encode(array('content'=>$this->load->view('webadmin/order_group_details',$data,true)));die;
     }
+    
+    function update_order_delivered(){
+        $this->load->model('Logistics_model');
+        $this->load->model('Order_model');
+        $orderId=$this->input->post('orderId',TRUE);
+        $order=$this->Order_model->get_single_order_by_id($orderId);
+        if($order->orderType=='SINGLE'):
+            $this->single_order_delivered_mail($order);
+            $this->Order_model->update(array('status'=>6),$orderId);
+        else:    
+            $this->group_order_delivered_mail($order);
+            $this->Order_model->update(array('status'=>6),$orderId);
+        endif;
+        echo json_encode(array('result'=>'good'));die;
+    }
+    
+    function single_order_delivered_mail($order){
+        $orderId=$order->orderId;
+        $this->load->model('Order_model');
+        $orderDetails=  $this->Order_model->details($order->orderId);
+        $orderDeliveryDetails=  $this->Order_model->get_latest_delivery_details($order->orderId);
+        
+        //pre($orderDetails);die;
+        $adminMailData=  $this->load_default_resources();
+        $adminMailData['orderDetails']=$orderDetails;
+        $adminMailData['orderId']=$orderId;
+        $adminMailData['orderDeliveryDetails']=$orderDeliveryDetails;
+        $adminMailData['orderDeliveryPhotoURL']=SiteResourcesURL.'order_delivery/75X75/';
+        $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
+        //pre($orderInfoDataArr);die;
+        $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
+        $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
+        $sellerFullName=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+        $adminMailData['sellerFullName']=$sellerFullName;
+        $buyerFullName=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
+        $adminMailData['buyerFullName']=$buyerFullName;
+        
+        // for buyer
+        $this->_global_tidiit_mail($orderDetails[0]->buyerEmail,'Your Tidiit order TIDIIT-OD-'.$order->orderId.' has delivered successfully',$adminMailData,'single_order_delivered',$buyerFullName);
+                
+        /// for seller
+        $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Tidiit order TIDIIT-OD-".$order->orderId.' has delivered successfully', $adminMailData,'seller_single_order_delivered',$sellerFullName);
+
+        /// for support
+        $adminMailData['userFullName']='Tidiit Inc Support';
+        $this->load->model('Siteconfig_model','siteconfig');
+        //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
+        $supportEmail='judhisahoo@gmail.com';
+        $this->_global_tidiit_mail($supportEmail, "Tidiit Order TIDIIT-OD-".$order->orderId.' has delivered successfully', $adminMailData,'support_single_order_delivered','Tidiit Inc Support');
+        return TRUE;
+    }
 }

@@ -470,4 +470,9 @@ class Order_model extends CI_Model {
         $this->db->insert($this->_delivered_request,$dataArr);
         return $this->db->insert_id();
     }
+    
+    function get_latest_delivery_details($orderId){
+        $this->db->select('dr.*,l.title AS logisticsCompanyName')->from($this->_delivered_request.' AS dr')->join('logistics AS l','dr.logisticsId=l.logisticsId');
+        return $this->db->where('dr.orderId',$orderId)->order_by('dr.orderDeliveredRequestId','DESC')->limit(1)->get()->result_array();
+    }
 }

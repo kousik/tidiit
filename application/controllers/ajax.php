@@ -1196,10 +1196,15 @@ class Ajax extends MY_Controller{
             $receiveDateArr=  explode('-', $receiveDateTimeArr[0]);
             $receiveDateTime=$receiveDateArr[2].'-'.$receiveDateArr[1].'-'.$receiveDateArr[0].' '.$receiveDateTimeArr[1].':00';
             
+            $this->load->model('Logistics_model');
+            $logisticDetails=$this->Logistics_model->details($logisticsId);
+            $this->load->model('Order_model');
+            $orderDetails=$this->Order_model->details($orderId);
+            
             if(empty($logisticDetails)):
                 echo json_encode(array('result'=>'bad','msg'=>'Invalid logistics data entered.'));die;
             endif;
-            if(empty($order)):
+            if(empty($orderDetails)):
                 echo json_encode(array('result'=>'bad','msg'=>'Invalid order data entered.'));die;
             endif;
             $dataArr=array('orderId'=>$orderId,'logisticsId'=>$logisticsId,'deliveryStaffName'=>$deliveryStaffName,
@@ -1286,11 +1291,4 @@ class Ajax extends MY_Controller{
         //pre($data);die;
         echo json_encode(array('content'=>$this->load->view('order_details',$data,true)));die;
      }
-     
-    function update_order_delivered(){
-        $this->load->model('Order_model');
-        $orderId=$this->input->post('orderId',TRUE);
-        $order=  $this->Order_model->get_single_order_by_id($orderId);
-        //if($order->)
-    }
 }

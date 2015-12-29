@@ -104,90 +104,96 @@ $OrderTypeArr=array('1'=>'Website','2'=>'Mobile Web','3'=>"Mobile Apps");
 <div id="modal_order_details"></div>
 <?php echo $AdminHomeRest;?>
 <script type="text/javascript">
-$('body').on("click",'.viewOrderDetails',function(){ alert('rr');
-    var orderid = $(this).data('orderid'); 
-    $.post( myJsMain.baseURL+'ajax/show_order_details/', {
+jQuery('body').on("click",'.viewOrderDetails',function(){ alert('rr');
+    var orderid = jQuery(this).data('orderid'); 
+    jQuery.post( myJsMain.baseURL+'ajax/show_order_details/', {
          orderId: orderid
      },
      function(data){
-         $('#modal_order_details').html(data.content);
+         jQuery('#modal_order_details').html(data.content);
      }, 'json' );
  });
- $('body').on("click",'.changeOrderStateDelivered',function(){
-    var orderid = $(this).data('orderid'); 
-    $.post( myJsMain.baseURL+'ajax/update_order_delivered/', {
+ jQuery('body').on("click",'.changeOrderStateDelivered',function(){
+     myJsMain.commonFunction.showWebAdminPleaseWait();
+    var orderid = jQuery(this).data('orderid'); 
+    jqout=jQuery(this);
+    jQuery.post( myJsMain.baseURL+'ajax/update_order_delivered/', {
          orderId: orderid
      },
      function(data){
-         
+         myJsMain.commonFunction.hideWebAdminPleaseWait();
+         if(data.result=='good'){
+             jqout.html("");
+             myJsMain.commonFunction.tidiitAlert('Tidiit Order Update System','Select order update as delivered successfully.',200);
+         }
      }, 'json' );
  });
-$(document).ready(function(){
-        $("#example").dataTable({
+jQuery(document).ready(function(){
+        jQuery("#example").dataTable({
             //"aLengthMenu": [2,5,10,15,20,25,50],"bSort": true
             "aLengthMenu": [10,15,20,25,50],"bSort": true
         });
         
 
-         //$('body .showGroupDetails').on("click",function(){
+         //jQuery('body .showGroupDetails').on("click",function(){
         jQuery("body").delegate('.showGroupDetails', "click", function(e){
             var groupId = $(this).data('groupid'); 
-            $.post( myJsMain.baseURL+'ajax/show_order_group_details/', {
+            jQuery.post( myJsMain.baseURL+'ajax/show_order_group_details/', {
                  groupId: groupId
              },
              function(data){
-                 $('#modal_order_details').html(data.content);
+                 jQuery('#modal_order_details').html(data.content);
              }, 'json' );
          });
-	$("#AdminOrderStateChaneForm").validate();	
+	/*jQuery("#AdminOrderStateChaneForm").validate();	
 	
-        $("#FilterOrderFromDate").datepicker({
+        jQuery("#FilterOrderFromDate").datepicker({
             dateFormat:"yy-mm-dd",
             //changeMonth: true,
             //changeYear: true,
             yearRange: '1900:' + new Date().getFullYear(),
             onSelect: function(dateText) {
-                $('#HiddenFilterFromDate').val(dateText);
+                jQuery('#HiddenFilterFromDate').val(dateText);
             }
         });
         
-        $("#FilterOrderToDate").datepicker({
+        jQuery("#FilterOrderToDate").datepicker({
             dateFormat:"yy-mm-dd",
             //changeMonth: true,
             //changeYear: true,
             yearRange: '1900:' + new Date().getFullYear(),
             onSelect: function(dateText) {
-                $('#HiddenFilterToDate').val(dateText);
+                jQuery('#HiddenFilterToDate').val(dateText);
             }
         });
         
-        $('#FilterOrder').on('click',function(){
-           $('#HiddenFilterOrderStatus').val($('#FilterOrderStatus').val());
-           $('#HiddenFilterUserName').val($('#FilterUserName').val());
+        jQuery('#FilterOrder').on('click',function(){
+           jQuery('#HiddenFilterOrderStatus').val(jQuery('#FilterOrderStatus').val());
+           jQuery('#HiddenFilterUserName').val(jQuery('#FilterUserName').val());
            //alert('Order filter is under construction');return false;
-           $('#order_filter').submit();
+           jQuery('#order_filter').submit();
         });
 	
-	$('#CheckAll').on('click',function(){
-		$('input[name="OrderID[]"]').each(function(){
+	jQuery('#CheckAll').on('click',function(){
+		jQuery('input[name="OrderID[]"]').each(function(){
                 jQuery(this).prop( "checked", true );
         });	
-		$('#UnCheckAll').show();
+		jQuery('#UnCheckAll').show();
 		$(this).hide();
 	});
 	
-	$('#UnCheckAll').on('click',function(){
-		$('input[name="OrderID[]"]:checked').each(function(){
+	jQuery('#UnCheckAll').on('click',function(){
+		jQuery('input[name="OrderID[]"]:checked').each(function(){
                 jQuery(this).prop( "checked", false );
         });	
-		$('#CheckAll').show();
+		jQuery('#CheckAll').show();
 		$(this).hide();
 	});
 	
-	$('#BatchActive').on('click',function(){
+	jQuery('#BatchActive').on('click',function(){
 		var itemChecked=false;
 		var productIds= new Array();
-		$('input[name="ProductID[]"]').each(function(){
+		jQuery('input[name="ProductID[]"]').each(function(){
 			if ($(this).prop( "checked" )) {
 				productIds.push($(this).val());
 				itemChecked=true;
@@ -197,16 +203,16 @@ $(document).ready(function(){
 			alert('Please select item for batch active');
 			return false;
 		}else{
-			$('#batchaction_fun').val('batchactive');
-			$('#batchaction_id').val(productIds);
-			$('#order_list_form').submit();
+			jQuery('#batchaction_fun').val('batchactive');
+			jQuery('#batchaction_id').val(productIds);
+			jQuery('#order_list_form').submit();
 		}
 	});
 	
-	$('#BatchInActive').on('click',function(){
+	jQuery('#BatchInActive').on('click',function(){
 		var itemChecked=false;
 		var productIds= new Array();
-		$('input[name="ProductID[]"]').each(function(){
+		jQuery('input[name="ProductID[]"]').each(function(){
 			if ($(this).prop( "checked" )) {
 				productIds.push($(this).val());
 				itemChecked=true;
@@ -216,16 +222,16 @@ $(document).ready(function(){
 			alert('Please select item for batch active');
 			return false;
 		}else{
-			$('#batchaction_fun').val('batchinactive');
-			$('#batchaction_id').val(productIds);
-			$('#order_list_form').submit();
+			jQuery('#batchaction_fun').val('batchinactive');
+			jQuery('#batchaction_id').val(productIds);
+			jQuery('#order_list_form').submit();
 		}
 	});
 	
-	$('#BatchDelete').on('click',function(){
+	jQuery('#BatchDelete').on('click',function(){
 		var itemChecked=false;
 		var productIds= new Array();
-		$('input[name="ProductID[]"]').each(function(){
+		jQuery('input[name="ProductID[]"]').each(function(){
 			if ($(this).prop( "checked" )) {
 				productIds.push($(this).val());
 				itemChecked=true;
@@ -235,94 +241,94 @@ $(document).ready(function(){
 			alert('Please select item for batch active');
 			return false;
 		}else{
-			$('#batchaction_fun').val('batchdelete');
-			$('#batchaction_id').val(productIds);
-			$('#order_list_form').submit();
+			jQuery('#batchaction_fun').val('batchdelete');
+			jQuery('#batchaction_id').val(productIds);
+			jQuery('#order_list_form').submit();
 		}
 	});
 	
 	
 	
-	$('#OrderStateChangeCancelButton').on('click',function(){
-		$('#MessaeBox').html("");
-		$('#PageHeading').show();
-		$('#BatchActionRow').show();
-		$('#ListBox').fadeIn(3500);
-		//$('#AddBox').fadeIn(3500);
-		$('#OrderStateChangeDiv').fadeOut(500);
+	jQuery('#OrderStateChangeCancelButton').on('click',function(){
+		jQuery('#MessaeBox').html("");
+		jQuery('#PageHeading').show();
+		jQuery('#BatchActionRow').show();
+		jQuery('#ListBox').fadeIn(3500);
+		//jQuery('#AddBox').fadeIn(3500);
+		jQuery('#OrderStateChangeDiv').fadeOut(500);
 	});
 	
-	$('#OrderStateID').on('change',function(){
+	jQuery('#OrderStateID').on('change',function(){
 		if($(this).val()==3){
-			$('#UrlTrackSpaceTR').show();
-			$('#UrlTrackTR').show();
+			jQuery('#UrlTrackSpaceTR').show();
+			jQuery('#UrlTrackTR').show();
 		}else{
-			$('#UrlTrackSpaceTR').hide();
-			$('#UrlTrackTR').hide();
+			jQuery('#UrlTrackSpaceTR').hide();
+			jQuery('#UrlTrackTR').hide();
 		}
 	});
 	
-	$('.OrderStateChangetLink').on('click',function(){
+	jQuery('.OrderStateChangetLink').on('click',function(){
 		var OrderIDAndStateArr=$(this).attr('alt').split('^');
-		$('#OrderID').val(OrderIDAndStateArr[0]);
-		$('#OrderStateID').val(OrderIDAndStateArr[1]);
+		jQuery('#OrderID').val(OrderIDAndStateArr[0]);
+		jQuery('#OrderStateID').val(OrderIDAndStateArr[1]);
 		
-		$('#MessaeBox').html("");
-		$('#PageHeading').hide();
-		$('#BatchActionRow').hide();
-		$('#ListBox').fadeOut(1500);
-		//$('#AddBox').fadeIn(3500);
-		$('#OrderStateChangeDiv').fadeIn(1500);
-		var ajaxLoader='<img src="<?php echo $SiteImagesURL.'admin/ajax_img.gif';?>" alt=""/>';
-		$('#OrderItemDetails').html(ajaxLoader);
-		var OrderItemDetailsAjaxURL='<?php echo base_url()."admin/ajax/order_items"?>';
+		jQuery('#MessaeBox').html("");
+		jQuery('#PageHeading').hide();
+		jQuery('#BatchActionRow').hide();
+		jQuery('#ListBox').fadeOut(1500);
+		//jQuery('#AddBox').fadeIn(3500);
+		jQuery('#OrderStateChangeDiv').fadeIn(1500);
+		var ajaxLoader='<img src="<?php //echo $SiteImagesURL.'admin/ajax_img.gif';?>" alt=""/>';
+		jQuery('#OrderItemDetails').html(ajaxLoader);
+		var OrderItemDetailsAjaxURL='<?php ///echo base_url()."admin/ajax/order_items"?>';
 		var OrderItemDetailsAjaxData='OrderID='+OrderIDAndStateArr[0];
 		$.ajax({
 			type:"POST",
 			url:OrderItemDetailsAjaxURL,
 			data:OrderItemDetailsAjaxData,
 			success:function(msg){
-				$('#OrderItemDetails').html(msg);
+				jQuery('#OrderItemDetails').html(msg);
 			}
 		});
 	});
 	
-	$('.ViewInvoice').on('click',function(){
-		var img='<img src="<?php echo $SiteImagesURL.'admin/ajax_img.gif';?>" alt=""/>';
-		$('#ViewInvoiceDataDiv').html(img);
+	jQuery('.ViewInvoice').on('click',function(){
+		var img='<img src="<?php //echo $SiteImagesURL.'admin/ajax_img.gif';?>" alt=""/>';
+		jQuery('#ViewInvoiceDataDiv').html(img);
 		
-		var ViewImvoiceURL='<?php echo base_url().'admin/ajax/show_invoice';?>';
+		var ViewImvoiceURL='<?php //echo base_url().'admin/ajax/show_invoice';?>';
 		var ViewImvoiceData='OrderID='+$(this).attr('alt');
 		$.ajax({
 			type:"POST",
 			url:ViewImvoiceURL,
 			data:ViewImvoiceData,
 			success:function(msg){
-				$('#ViewInvoiceDataDiv').html(msg);
+				jQuery('#ViewInvoiceDataDiv').html(msg);
 				
-				$('#MessaeBox').html("");
-				$('#PageHeading').hide();
-				$('#BatchActionRow').hide();
-				$('#ListBox').fadeOut(1500);
-				//$('#AddBox').fadeIn(3500);
-				$('#ViewInvoiceDiv').fadeIn(1500);
+				jQuery('#MessaeBox').html("");
+				jQuery('#PageHeading').hide();
+				jQuery('#BatchActionRow').hide();
+				jQuery('#ListBox').fadeOut(1500);
+				//jQuery('#AddBox').fadeIn(3500);
+				jQuery('#ViewInvoiceDiv').fadeIn(1500);
 			}
 		});
 		
 	});
 	
-	$('#ViewInvoiceDivCloseButton').on('click',function(){
-		$('#MessaeBox').html("");
-		$('#PageHeading').show();
-		$('#BatchActionRow').show();
-		$('#ListBox').fadeIn(1500);
-		//$('#AddBox').fadeIn(3500);
-		$('#ViewInvoiceDataDiv').html('');
-		$('#ViewInvoiceDiv').fadeOut(1500);
-	});
+	jQuery('#ViewInvoiceDivCloseButton').on('click',function(){
+		jQuery('#MessaeBox').html("");
+		jQuery('#PageHeading').show();
+		jQuery('#BatchActionRow').show();
+		jQuery('#ListBox').fadeIn(1500);
+		//jQuery('#AddBox').fadeIn(3500);
+		jQuery('#ViewInvoiceDataDiv').html('');
+		jQuery('#ViewInvoiceDiv').fadeOut(1500);
+	});*/
         
-        $('#ShowAllOrder').on('click',function(){
-           location.href='<?php echo base_url().'admin/order/viewlist';?>' 
+        jQuery('#ShowAllOrder').on('click',function(){
+           location.href='<?php echo base_url().'webadmin/order/viewlist';?>' 
         });
         
 });

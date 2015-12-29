@@ -28,6 +28,7 @@ jQuery.validator.addMethod("notEqual", function(value, element, param) {
 }, "Please specify a different (non-default) value");
 
 pleaseWaitDiv = $('<div class="modal" id="myLoadingModal" tabindex="-1" role="dialog" aria-labelledby="myLoadingModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false"><div class="modal-dialog"><div class="center-mod"><img alt="" src="'+myJsMain.baseURL+'resources/images/loader.gif" /></div></div>');
+pleaseWebadminWaitDiv = $('<div class="modal" id="myLoadingModal" tabindex="-1" role="dialog" aria-labelledby="myLoadingModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false"><div class="modal-dialog"><div class="center-mod"><img alt="" src="'+myJsMain.MainSiteBaseURL+'resources/images/loader.gif" /></div></div>');
 
 // js utility function to submit formm using ajax 
 myJsMain.commonFunction = {
@@ -181,7 +182,14 @@ myJsMain.commonFunction = {
     },
     hidePleaseWait: function () {
         pleaseWaitDiv.modal('hide');
+    },
+    showWebAdminPleaseWait: function() {
+        pleaseWebadminWaitDiv.modal('show');
+    },
+    hideWebAdminPleaseWait: function () {
+        pleaseWebadminWaitDiv.modal('hide');
     }
+    //MainSiteBaseURL
 };
 
 
