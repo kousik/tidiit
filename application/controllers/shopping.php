@@ -424,7 +424,7 @@ class Shopping extends MY_Controller{
                         $mail_template_data=array();
                         $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                         $data['receiverId'] = $usr->userId;
-                        $data['nType'] = 'GROUP-ORDER';
+                        $data['nType'] = 'BUYING-CLUB-ORDER';
 
                         $data['nTitle'] = 'New Buying Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
                         $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
@@ -457,11 +457,11 @@ class Shopping extends MY_Controller{
                             $mail_template_data=array();
                             $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                             $data['receiverId'] = $usr->userId;
-                            $data['nType'] = 'GROUP-ORDER';
+                            $data['nType'] = 'BUYING-CLUB-ORDER';
 
-                            $data['nTitle'] = 'Buyers club order continue by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+                            $data['nTitle'] = 'Buying Club order continue by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
                             $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$usr->firstName.' '.$usr->lastName;
-                            $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this buyers club.<br>";
+                            $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club.<br>";
                             $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
                             $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
                             $data['nMessage'] .= "";
@@ -477,7 +477,7 @@ class Shopping extends MY_Controller{
 
                             $mail_template_view_data=$this->load_default_resources();
                             $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
-                            $this->_global_tidiit_mail($recv_email,"One buyers club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+                            $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                             $this->User_model->notification_add($data);
                         endif;
                     endforeach;
@@ -492,7 +492,7 @@ class Shopping extends MY_Controller{
                         $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
                     }
                     $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
-                    $this->_global_tidiit_mail($recv_email,"One buyers club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+                    $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                     $this->User_model->notification_add($data);
                 endif;
             else:
@@ -738,12 +738,12 @@ class Shopping extends MY_Controller{
         $availQty = $prod_price_info->qty - $a[0]->productQty;
         
         if($prod_price_info->qty == $availQty):
-            $this->session->set_flashdata('error', 'This buyers club order process already done. There is no available quantity for you. Please contact your buyers club administrator!');
+            $this->session->set_flashdata('error', 'This Buying Club order process already done. There is no available quantity for you. Please contact your Buying Club Leader!');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
         
         if(!$this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$data['order']->groupId)):
-            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this buyers club.');
+            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this Buying Club.');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
         //Order first step
@@ -774,7 +774,7 @@ class Shopping extends MY_Controller{
                 $this->Order_model->update($order_data,$exists_order->orderId);
                 $parentOrderId = $exists_order->orderId;
             else:
-                $this->session->set_flashdata('error', 'This buyers club order process already done. Please try to process for new order!');
+                $this->session->set_flashdata('error', 'This Buying Club order process already done. Please try to process for new order!');
                 redirect(BASE_URL.'shopping/ord-message');
             endif;
         
@@ -835,7 +835,7 @@ class Shopping extends MY_Controller{
             redirect(BASE_URL.'404_override');
         endif;
         if(!$this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$data['order']->groupId)):
-            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this buyers club.');
+            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this Buying Club.');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
         
@@ -929,12 +929,12 @@ class Shopping extends MY_Controller{
         $availQty = $prod_price_info->qty - $a[0]->productQty;
         
         if(!$availQty):
-            $this->session->set_flashdata('msg', 'Order already completed by other members of this buyers club.');
+            $this->session->set_flashdata('msg', 'Order already completed by other members of this Buying Club.');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
         
         if(!$this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$order->groupId)):
-            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this buying club.');
+            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this Buying Club.');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
         
@@ -946,8 +946,8 @@ class Shopping extends MY_Controller{
                 if($me->userId != $usr->userId):
                     $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                     $data['receiverId'] = $usr->userId;
-                    $data['nType'] = 'GROUP-ORDER-DECLINE';
-                    $data['nTitle'] = 'Buyers club order [TIDIIT-OD-'.$order->orderId.'] cancel by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+                    $data['nType'] = 'BUYING-CLUB-ORDER-DECLINE';
+                    $data['nTitle'] = 'Buying Club order [TIDIIT-OD-'.$order->orderId.'] cancel by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
                     $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ORDER_ID']=$order->orderId;
                     $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ADMIN_NAME']=$usr->firstName.' '.$usr->lastName;
                     $data['nMessage'] = "Hi, <br> Sorry! I can not process this Buying Club order right now.<br>";
@@ -963,7 +963,7 @@ class Shopping extends MY_Controller{
                     $sender_email = $me->email;
                     $mail_template_view_data=$this->load_default_resources();
                     $mail_template_view_data['group_order_decline']=$mail_template_data;
-                    $this->_global_tidiit_mail($recv_email, "Buyers club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline');
+                    $this->_global_tidiit_mail($recv_email, "Buying Club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline');
                     
                     $this->User_model->notification_add($data);
                 endif;
@@ -974,8 +974,8 @@ class Shopping extends MY_Controller{
             $mail_template_data=array();
             $mail_template_data=array();
             $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
-            $data['nType'] = 'GROUP-ORDER-DECLINE';
-            $data['nTitle'] = 'Buyers club order [TIDIIT-OD-'.$order->orderId.'] cancel by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+            $data['nType'] = 'BUYING-CLUB-ORDER-DECLINE';
+            $data['nTitle'] = 'Buying Club order [TIDIIT-OD-'.$order->orderId.'] cancel by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
             $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ORDER_ID']=$order->orderId;
             $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ADMIN_NAME']=$usr->firstName.' '.$usr->lastName;
             $data['nMessage'] = "Hi, <br> Sorry! I can not process this order right now.<br>";
@@ -990,11 +990,11 @@ class Shopping extends MY_Controller{
             $sender_email = $me->email;
             $mail_template_view_data=$this->load_default_resources();
             $mail_template_view_data['group_order_decline']=$mail_template_data;
-            $this->_global_tidiit_mail($recv_email, "Buyers club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline_admin');
+            $this->_global_tidiit_mail($recv_email, "Buying Club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline_admin');
             $this->User_model->notification_add($data);
         endif;
         
-        $this->session->set_flashdata('msg', 'Thanks for buyers club order cancelation!');
+        $this->session->set_flashdata('msg', 'Sorry for Buying Club order cancelation!');
         redirect(BASE_URL.'shopping/ord-message');
         
     }
@@ -1017,7 +1017,7 @@ class Shopping extends MY_Controller{
         endif;
         
         if(!$this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$order->groupId)):
-            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this buyers club.');
+            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this Buying Club.');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
         
@@ -1049,7 +1049,7 @@ class Shopping extends MY_Controller{
         endif;
         
         if(!$this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$order->groupId)):
-            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this buyers club.');
+            $this->session->set_flashdata('error', 'You can not process this order because you are not member of this Buying Club.');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
         
@@ -1568,7 +1568,7 @@ class Shopping extends MY_Controller{
                         $mail_template_data=array();
                         $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                         $data['receiverId'] = $usr->userId;
-                        $data['nType'] = 'GROUP-ORDER';
+                        $data['nType'] = 'BUYING-CLUB-ORDER';
 
                         $data['nTitle'] = 'New Buying Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
                         $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
@@ -1601,11 +1601,11 @@ class Shopping extends MY_Controller{
                             $mail_template_data=array();
                             $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                             $data['receiverId'] = $usr->userId;
-                            $data['nType'] = 'GROUP-ORDER';
+                            $data['nType'] = 'BUYING-CLUB-ORDER';
 
-                            $data['nTitle'] = 'Buyers club order continue by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+                            $data['nTitle'] = 'Buying Club order continue by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
                             $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$usr->firstName.' '.$usr->lastName;
-                            $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this buyers club.<br>";
+                            $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club.<br>";
                             $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
                             $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
                             $data['nMessage'] .= "";
@@ -1621,7 +1621,7 @@ class Shopping extends MY_Controller{
 
                             $mail_template_view_data=$this->load_default_resources();
                             $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
-                            $this->_global_tidiit_mail($recv_email,"One buyers club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+                            $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                             $this->User_model->notification_add($data);
                         endif;
                     endforeach;
@@ -1636,7 +1636,7 @@ class Shopping extends MY_Controller{
                         $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
                     }
                     $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
-                    $this->_global_tidiit_mail($recv_email,"One buyers club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+                    $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                     $this->User_model->notification_add($data);
                 endif;
                 
@@ -1845,7 +1845,7 @@ class Shopping extends MY_Controller{
                 $mail_template_data=array();
                 $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                 $data['receiverId'] = $usr->userId;
-                $data['nType'] = 'GROUP-ORDER';
+                $data['nType'] = 'BUYING-CLUB-ORDER';
 
                 $data['nTitle'] = '<b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>  completed payment before delivery';
                 $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
@@ -1878,7 +1878,7 @@ class Shopping extends MY_Controller{
                 $mail_template_data=array();
                 $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                 $data['receiverId'] = $usr->userId;
-                $data['nType'] = 'GROUP-ORDER';
+                $data['nType'] = 'BUYING-CLUB-ORDER';
 
                 $data['nTitle'] = '<b>'.$recv_name.'</b> completed payment before delivery for  Buying Club order';
                 $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$usr->firstName.' '.$usr->lastName;

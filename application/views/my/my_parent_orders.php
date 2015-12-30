@@ -19,7 +19,7 @@ $CI->load->model('Order_model');
                         	<div class="col-md-12 col-sm-12">
                                 
                                     <div class="gen_infmtn">
-                                        <h6>My Buyer Clubs Orders</h6>
+                                        <h6>My Buying Clubs Orders</h6>
                                         <div class="row">
                                             <?php if($orders):?>
                                             <table class="table table-striped ">
@@ -88,12 +88,3 @@ $CI->load->model('Order_model');
   </div>
 </article>
 <?php echo $footer;?>
-<script type="text/javascript">
-    jQuery(document).ready(function(){
-        /*jQuery("body").delegate('.js-group-cart-remove', "click", function(e){
-            e.preventDefault();
-            var orderId = jQuery(this).attr('data-orderid');
-            window.location.href = myJsMain.baseURL+'order/view/'+orderId;
-        });  */  
-    });
-</script>    

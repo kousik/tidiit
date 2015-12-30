@@ -78,7 +78,7 @@
                   </div>
               </div>
                 <fieldset class="scheduler-border">
-                    <legend class="scheduler-border">Search club member by below filters </legend>
+                    <legend class="scheduler-border">Search Buying Club member by below filters </legend>
                     <div class="form-group">
                         <label for="locality" class="col-sm-3 control-label">Select Country :</label>
                         <div class="col-sm-7">

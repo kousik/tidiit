@@ -31,7 +31,7 @@ echo $html_heading; echo $header;?>
 
                                         <div class="gen_infmtn">
 
-                                            <h6>Buyer Club order ID <span class="label label-success"><?=$orderId?></span> </h6>
+                                            <h6>Buying Club order ID <span class="label label-success"><?=$orderId?></span> </h6>
 
                                         </div>
 
@@ -46,10 +46,10 @@ echo $html_heading; echo $header;?>
                                                 <div class="grp_title"><?= $group->groupTitle ?></div>
                                             </div>        
                                             <div class="col-md-6">
-                                                <h5><strong>Buyer Club Leader</strong></h5>
+                                                <h5><strong>Buying Club Leader</strong></h5>
                                                 <p class="text-left"><?= $group->admin->firstName ?> <?= $group->admin->lastName ?></p>
                                                 <?php if ($group->users): ?>
-                                                    <h5><strong>Buyer Club Users</strong></h5><?php foreach ($group->users as $ukey => $usr): ?>
+                                                    <h5><strong>Buying Club Users</strong></h5><?php foreach ($group->users as $ukey => $usr): ?>
                                                         <p class="text-left"><?= $usr->firstName ?> <?= $usr->lastName ?></p>
                                                     <?php endforeach;
                                                 endif;
@@ -62,7 +62,7 @@ echo $html_heading; echo $header;?>
                                                 <span class="input-group-addon">
                                                     <input type="radio"  name="selectgroup" id="optionsRadios1" class="js-order-group" value="exists">
                                                 </span>
-                                                <span class="group-label">Want to change above Buyer Club from your existing Buyer Club.</span>
+                                                <span class="group-label">Want to change above Buying Club from your existing Buying Club.</span>
                                             </label><!-- /input-group -->
 
 
@@ -70,7 +70,7 @@ echo $html_heading; echo $header;?>
                                                 <span class="input-group-addon">
                                                     <input type="radio"  name="selectgroup" id="optionsRadios2" class="js-order-group" value="new">
                                                 </span>
-                                                <span class="group-label">Want to create a new Buyer Club.
+                                                <span class="group-label">Want to create a new Buying Club.
                                                 </span>
                                             </label><!-- /input-group -->
                                             <?php else: ?>
@@ -78,7 +78,7 @@ echo $html_heading; echo $header;?>
                                                 <span class="input-group-addon">
                                                     <input type="radio"  name="selectgroup" id="optionsRadios1" class="js-order-group" value="exists">
                                                 </span>
-                                                <span class="group-label">Please select a group from your existing Buyer Club.</span>
+                                                <span class="group-label">Please select a Buying Club from your existing Buying Club.</span>
                                             </label><!-- /input-group -->
 
 
@@ -86,7 +86,7 @@ echo $html_heading; echo $header;?>
                                                 <span class="input-group-addon">
                                                     <input type="radio"  name="selectgroup" id="optionsRadios2" class="js-order-group" value="new">
                                                 </span>
-                                                <span class="group-label">Please create a new Buyer Club.
+                                                <span class="group-label">Please create a new Buying Club.
                                                 </span>
                                             </label><!-- /input-group -->
                                             <?php endif;?>
@@ -111,7 +111,7 @@ echo $html_heading; echo $header;?>
                                         
                                         <div class="clearfix"></div>
 
-                                        <button type="button" class="btn btn-primary pull-right js-group-order-process">Invite Buyer Club User to Process the Order</button>
+                                        <button type="button" class="btn btn-primary pull-right js-group-order-process">Invite Buying Club User to Process the Order</button>
                                         <div class="clearfix"></div>
                                     </div>                            
 
@@ -145,7 +145,7 @@ echo $html_heading; echo $header;?>
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Create New Buyer Club</h4>
+        <h4 class="modal-title" id="myModalLabel">Create New Buying Club</h4>
         
       </div>
       <form action="#" method="post" name="add_groups_for_order" class="form-horizontal" id="add_groups_for_order"> 
@@ -153,13 +153,13 @@ echo $html_heading; echo $header;?>
       <div class="modal-body">      
           <div class="js-message" style="display:none;"></div>
               <div class="form-group">
-                  <label for="groupTitle" class="col-sm-3 control-label">Buyer Club Name</label>
+                  <label for="groupTitle" class="col-sm-3 control-label">Buying Club Name</label>
                   <div class="col-sm-7">
                   <input type="text" class="form-control" id="groupTitle" name="groupTitle" placeholder="Jane Doe" required>
                   </div>
               </div>
                 <fieldset class="scheduler-border">
-                    <legend class="scheduler-border">Search club member by below filters </legend>
+                    <legend class="scheduler-border">Search Buying Club member by below filters </legend>
                     <div class="form-group">
                         <label for="locality" class="col-sm-3 control-label">Select Country :</label>
                         <div class="col-sm-7">

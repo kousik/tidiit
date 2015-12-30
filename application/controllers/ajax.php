@@ -362,7 +362,7 @@ class Ajax extends MY_Controller{
                 foreach($groupUsersArr as $guser):
                     $notify['senderId'] = $groupAdminId;
                     $notify['receiverId'] = $guser;
-                    $notify['nType'] = "GROUP-ADD";
+                    $notify['nType'] = "BUYING-CLUB-ADD";
                     $notify['nTitle'] = $groupTitle;
                     $notify['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
                     $notify['adminEmail'] = $adminDataArr[0]->email;
@@ -414,7 +414,7 @@ class Ajax extends MY_Controller{
             foreach($olduser as $ouser):
                 $notify['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                 $notify['receiverId'] = $ouser;
-                $notify['nType'] = "GROUP-MODIFY";
+                $notify['nType'] = "BUYING-CLUB-MODIFY";
                 $notify['nTitle'] = $groupTitle;
                 $this->send_notification($notify);
             endforeach;
@@ -422,7 +422,7 @@ class Ajax extends MY_Controller{
             foreach($newUser as $nuser):
                 $notify['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                 $notify['receiverId'] = $nuser;
-                $notify['nType'] = "GROUP-MODIFY-NEW";
+                $notify['nType'] = "BUYING-CLUB-MODIFY-NEW";
                 $notify['nTitle'] = $groupTitle;
                 $notify['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
                 $notify['adminEmail'] = $adminDataArr[0]->email;
@@ -433,7 +433,7 @@ class Ajax extends MY_Controller{
             foreach($deluser as $duser):
                 $notify['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                 $notify['receiverId'] = $duser;
-                $notify['nType'] = "GROUP-MODIFY-DELETE";
+                $notify['nType'] = "BUYING-CLUB-MODIFY-DELETE";
                 $notify['nTitle'] = $groupTitle;
                 $this->send_notification($notify);
             endforeach;
@@ -452,7 +452,7 @@ class Ajax extends MY_Controller{
                     $mail_template_data=array();
                     $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                     $data['receiverId'] = $usr->userId;
-                    $data['nType'] = 'GROUP-ORDER';
+                    $data['nType'] = 'BUYING-CLUB-ORDER';
                     $data['nTitle'] = 'Buying Club Re-order [TIDIIT-OD'.$order->orderId.'] running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
                     $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID']=$order->orderId;
                     $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ADMIN_NAME']=$group->admin->firstName.' '.$group->admin->lastName;
@@ -548,7 +548,7 @@ class Ajax extends MY_Controller{
                 <tr>
                     <th>Title</th>
                     <th>Buying Club Leader</th>
-                    <th>Users</th>
+                    <th>Buying Club Members</th>
                     <th>Select</th>
                 </tr>
             </thead>
@@ -591,25 +591,25 @@ class Ajax extends MY_Controller{
          */
         $type = $data['nType'];
         switch($type){
-            case 'GROUP-ADD':
+            case 'BUYING-CLUB-ADD':
                 $data['nMessage'] = "Hi, <br /> You Have added in my newly created Buying Club <strong>[".$data['nTitle']."]</strong> by ".$data['adminName'].".<br />Group Leader email id is ".$data['adminEmail'].".<br />Group Leader contact number is ".$data['adminContactNo'].".";
                 $data['isEmail'] = true;
                 $data['isMobMessage'] = true;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
-            case 'GROUP-MODIFY':
+            case 'BUYING-CLUB-MODIFY':
                 $data['nMessage'] = "Hi, <br> Buying Club <strong>[".$data['nTitle']."]</strong> has been modified.";
                 $data['isEmail'] = true;
                 $data['isMobMessage'] = true;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
-            case 'GROUP-MODIFY-NEW':
+            case 'BUYING-CLUB-MODIFY-NEW':
                 $data['nMessage'] = "Hi, <br> You Have added in my Buying Club <strong>[".$data['nTitle']."]</strong>.<br />My name is ".$data['adminName'].".<br />My email id is ".$data['adminEmail'].".<br />My contact number is ".$data['adminContactNo'].".";
                 $data['isEmail'] = true;
                 $data['isMobMessage'] = true;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
-            case 'GROUP-MODIFY-DELETE':
+            case 'BUYING-CLUB-MODIFY-DELETE':
                 $data['nMessage'] = "Hi, <br> You are not part of this Buying Club <strong>[".$data['nTitle']."]</strong>";
                 $data['isEmail'] = true;
                 $data['isMobMessage'] = true;
@@ -1031,7 +1031,7 @@ class Ajax extends MY_Controller{
     }
     
     /****
-     *  sending pre-alert of out for delivery for group order 
+     *  sending pre-alert of out for delivery for BUYING-CLUB order 
      */
     function _send_pre_alert_regarding_out_for_delivery_of_group($outForDeliveryDataArr){
         $order=$outForDeliveryDataArr['order'];

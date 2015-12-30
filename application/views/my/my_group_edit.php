@@ -15,7 +15,7 @@
                                     <div class="row">
                                         <div class="col-md-12 col-sm-12">
                                             <div class="js-message" style="display:none;"></div>
-                                            <div class="gen_infmtn"><h6><i class='fa fa-group'></i> Edit buyer club : <?= $group->groupTitle ?> </h6></div>
+                                            <div class="gen_infmtn"><h6><i class='fa fa-group'></i> Edit Buying club : <?= $group->groupTitle ?> </h6></div>
                                             <div class="create_grp">
                                                 <input type="hidden" name="reorder" value="<?=$reorder?>">
                                                 <input type="hidden" name="groupId" value="<?=$group->groupId?>">
@@ -23,7 +23,7 @@
                                                 <div class="row">
                                                     <div class="row">
                                                     <div class="col-md-12">
-                                                        <label for="groupTitle">Group Title</label>
+                                                        <label for="groupTitle">Buying Club Title</label>
                                                         <input type="text" class="form-control" id="groupTitle" name="groupTitle" placeholder="Jane Doe" value='<?= $group->groupTitle ?>' required>
                                                     </div>
                                                     </div>

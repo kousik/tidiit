@@ -38,7 +38,7 @@ echo $html_heading; echo $header;?>
 
                                         <div class="gen_infmtn">
 
-                                            <h6>Buyer Club order ID <span class="label label-success"><?=$orderId?></span> </h6>
+                                            <h6>Buying Club order ID <span class="label label-success"><?=$orderId?></span> </h6>
 
                                         </div>
 
@@ -53,10 +53,10 @@ echo $html_heading; echo $header;?>
                                                 <div class="grp_title"><?= $group->groupTitle ?></div>
                                             </div>        
                                             <div class="col-md-6">
-                                                <h5><strong>Buyer Club Leader</strong></h5>
+                                                <h5><strong>Buying Club Leader</strong></h5>
                                                 <p class="text-left"><?= $group->admin->firstName ?> <?= $group->admin->lastName ?></p>
                                                 <?php if ($group->users): ?>
-                                                    <h5><strong>Buyer Club Users</strong></h5><?php foreach ($group->users as $ukey => $usr): ?>
+                                                    <h5><strong>Buying Club Members</strong></h5><?php foreach ($group->users as $ukey => $usr): ?>
                                                         <p class="text-left"><?= $usr->firstName ?> <?= $usr->lastName ?></p>
                                                     <?php endforeach;
                                                 endif;
@@ -137,7 +137,7 @@ echo $html_heading; echo $header;?>
         jQuery("body").delegate('button.js-group-order-process', "click", function(e){
             var obj = $('input[id="js-order-info"]'); 
             if(!obj.attr('data-groupid')){
-                $('div.js-message').html('Please add a Buyer Club!');
+                $('div.js-message').html('Please add a Buying Club!');
                 //$('div.js-message').show();
                 $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
                 return;

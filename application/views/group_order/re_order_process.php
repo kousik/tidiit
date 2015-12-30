@@ -34,7 +34,7 @@ echo $html_heading; echo $header;?>
                                     <div class="col-md-12 col-sm-12">
                                         
                                         <div class="list-group gen_infmtn">
-                                            <h6>Buyer Club Re-order Process [TIDIIT-OD-<?=$order->orderId?>]</h6>
+                                            <h6>Buying Club Re-order Process [TIDIIT-OD-<?=$order->orderId?>]</h6>
                                             <div class="active row grouporder_id">
                                                 <h4> You can choose one of the below operation for this order.</h4>
                                                 <div class="col-xs-6 col-md-3"></div>

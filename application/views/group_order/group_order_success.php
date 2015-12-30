@@ -38,7 +38,7 @@ echo $html_heading; echo $header;?>
                                     <br /><br />
                                     <a href="<?=BASE_URL?>my-orders" class="btn btn-success"> View your orders</a>
                                     <br /><br />
-                                    Please follow up with your Buyer Club Member to complete the order by completing the full payment.<br />
+                                    Please follow up with your Buying Club Member to complete the order by completing the full payment.<br />
                                 </div>
                                 
                             </div>

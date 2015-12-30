@@ -50,7 +50,7 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));
                                                     </tbody>
                                                     <tr>
                                                         <td>Order #TIDIIT-OD-<?=$order->orderId?></td>
-                                                        <td><?=$order->orderType=='GROUP'?'Buyer Club':'Self'?></td>
+                                                        <td><?=$order->orderType=='GROUP'?'Buying Club':'Self'?></td>
                                                         <td><i class="fa fa-rupee"></i><?=$order->subTotalAmount?></td>
                                                         <td><?php echo ($order->paymentType=='settlementOnDelivery')?'Settlement On Delivery':'Paid';?></td>
                                                         <td><?php echo ($order->paymentType=='settlementOnDelivery')?'<span style="color: #009900;">No</span>':'<span style="color: #009900;">Yes</span>';?></td>
@@ -202,8 +202,3 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));
   </div>
 </article>
 <?php echo $footer;?>
-<script type="text/javascript">
-    jQuery(document).ready(function(){
-        
-    });
-</script>    
