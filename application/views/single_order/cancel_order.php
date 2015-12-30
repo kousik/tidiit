@@ -83,7 +83,7 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));?>
                                                     <div class="row">
                                                         <div class="col-md-6 col-md-offset-3">
                                                             <a class="btn btn-warning btn-xs btn-block" href="<?=BASE_URL?>"><i class="fa fa-home"></i> Keep shopping</a>
-                                                            <a class="btn btn-info btn-xs btn-block" href="<?=BASE_URL?>order/my-orders" ><i class="fa fa-bars"></i> View all orders</a>
+                                                            <a class="btn btn-info btn-xs btn-block" href="<?=BASE_URL?>my-orders" ><i class="fa fa-bars"></i> View all orders</a>
                                                         </div>
                                                     </div>
                                                 </div>

@@ -36,7 +36,7 @@
                   <td width="10%">&nbsp;</td>
                   <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $userFullName;?>,</em></strong></font><br />
                     <br />
-                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px"><?php echo $buyerFullName;?> has post one Order. <p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Order number is : <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?></span></a> for seller (<?php echo $sellerFullName;?>)</p>
+                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px"><?php echo $buyerFullName;?> had post one Order. <p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Order number is : <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?></span></a> for seller (<?php echo $sellerFullName;?>)</p>
 					<p>
 					<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">Tidiit order TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?> has delivered successfully. <br />
                     <br />

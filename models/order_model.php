@@ -475,4 +475,10 @@ class Order_model extends CI_Model {
         $this->db->select('dr.*,l.title AS logisticsCompanyName')->from($this->_delivered_request.' AS dr')->join('logistics AS l','dr.logisticsId=l.logisticsId');
         return $this->db->where('dr.orderId',$orderId)->order_by('dr.orderDeliveredRequestId','DESC')->limit(1)->get()->result_array();
     }
+    
+    function update_order_delivered_request($dataArr,$orderId){
+        $this->db->where('orderId',$orderId);
+        $this->db->update($this->_delivered_request,$dataArr);
+        return TRUE;		
+    }
 }

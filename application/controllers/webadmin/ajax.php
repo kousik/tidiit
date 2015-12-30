@@ -191,7 +191,6 @@ class Ajax extends MY_Controller{
         $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
         //pre($orderInfoDataArr);die;
         $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
-        $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
         $sellerFullName=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
         $adminMailData['sellerFullName']=$sellerFullName;
         $buyerFullName=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
@@ -210,5 +209,41 @@ class Ajax extends MY_Controller{
         $supportEmail='judhisahoo@gmail.com';
         $this->_global_tidiit_mail($supportEmail, "Tidiit Order TIDIIT-OD-".$order->orderId.' has delivered successfully', $adminMailData,'support_single_order_delivered','Tidiit Inc Support');
         return TRUE;
+    }
+    
+    function group_order_delivered_mail($order){
+        $orderDetails=  $this->Order_model->details($order->orderId);
+        $orderDeliveryDetails=  $this->Order_model->get_latest_delivery_details($order->orderId);
+        //pre($orderDetails);die;
+        $adminMailData=  $this->load_default_resources();
+        $adminMailData['orderDetails']=$orderDetails;
+        $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
+        //pre($orderInfoDataArr);die;
+        $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
+        $adminMailData['orderParrentId']=$order->parrentOrderID;
+        $adminMailData['orderDeliveryDetails']=$orderDeliveryDetails;
+        $orderLeaderFullName=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
+        $sellerFullName=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+        $buyerFullName=$orderDetails[0]->buyerFirstName.' '.$orderDetails[0]->buyerFirstName;
+        
+        $adminMailData['leaderFullName']=$orderLeaderFullName;
+        $adminMailData['sellerFullName']=$sellerFullName;
+        $adminMailData['buyerFullName']=$buyerFullName;
+        
+        $this->_global_tidiit_mail($orderDetails[0]->buyerEmail, "Tiidit Buying Club order - TIDIIT-OD-".$order->orderId.' has delivered successfully.', $adminMailData,'group_order_delivered',$buyerFullName);
+        
+        if($order->parrentOrderID>0):
+            $this->_global_tidiit_mail($orderInfoDataArr['group']->admin->email, "Tiidit Buying Club order - TIDIIT-OD-".$order->orderId.' has delivered successfully.', $adminMailData,'group_order_delivered_leader',$orderLeaderFullName);
+        endif;
+        
+        /// for seller
+        $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Tidiit Buying Club order TIDIIT-OD-".$order->orderId.' has delivered successfully.', $adminMailData,'seller_group_order_delivered',$sellerFullName);
+        
+        /// for support
+        $adminMailData['userFullName']='Tidiit Inc Support';
+        $this->load->model('Siteconfig_model','siteconfig');
+        //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
+        $supportEmail='judhisahoo@gmail.com';
+        $this->_global_tidiit_mail($supportEmail, "Tidiit Buying Club order TIDIIT-OD-".$order->orderId.' has delivered successfully.', $adminMailData,'support_group_order_delivered','Tidiit Inc Support');
     }
 }

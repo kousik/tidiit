@@ -34,13 +34,10 @@
             <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td width="10%">&nbsp;</td>
-                  <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $sellerFullName;?>,</em></strong></font><br />
+                  <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $leaderFullName;?>,</em></strong></font><br />
                     <br />
-                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px"><?php echo $buyerFullName;?> had post one Order. <p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Order number is : <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?></span></a></p>
-                    <br />
-					<p>
-					<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?> has delivered successfully. <br />
-                    <br />
+                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">Your <strong>Tidiit Buying Club</strong> member order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?></span></a> has delivered successfully.<br />
+					<br />
 					Delivery Company Name : <?php echo $orderDeliveryDetails[0]['logisticsCompanyName'];?><br />
 					Delivery person name : <?php echo $orderDeliveryDetails[0]['deliveryStaffName'];?><br />
 					Contact number of delivery person : <?php echo $orderDeliveryDetails[0]['deliveryStaffContactNo'];?><br >
@@ -50,10 +47,7 @@
 					Contact number of receive person : <?php echo $orderDeliveryDetails[0]['receiveStaffContactNo'];?><br >
 					Receive date and time : <?php echo date('d-m-Y',strtotime($orderDeliveryDetails[0]['receiveDateTime']));?><br >
 					<?php /*Delivery screen as phote : <img  src="<?php echo $orderDeliveryPhotoURL.$orderDeliveryDetails[0]['photo1'];?>" border="0"/><br /> <?php */?><br />
-					</font> <br />
-					</p>
-					<br/>
-                    Selected product slab price is <?php echo $orderInfoDataArr['priceinfo']->price;?> and quantity <?php echo $orderInfoDataArr['priceinfo']->qty;?></font> <br /></td>
+                    </font> <br /></td>
                   <td width="10%">&nbsp;</td>
                 </tr>
                 <tr>
@@ -63,21 +57,10 @@
                           <td align="left" valign="top" style="background-color:#FFFFFF;display:block;clear:both;padding:20px 20px 0 20px;" bgcolor=""><table border="0" cellspacing="0" cellpadding="0" width="100%" style="">
                               <tbody>
                                 <tr>
-                                    <td width="10%" align="middle" valign="top">&nbsp;</td>
-									<td width="80%" align="middle" valign="top">
-										<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:15px; line-height:21px;font-weight:bold;">
-											Shipping Address
-										</font>
-										<br />
-										<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px;">
-										<?php echo $orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->firstName;?><br/>
-										<?php echo $orderInfoDataArr['shipping']->address.' , '.$orderInfoDataArr['shipping']->locality;?><br/>
-										<?php echo $orderInfoDataArr['shipping']->city.' , '.$orderInfoDataArr['shipping']->stateName;?><br/>
-										<?php echo $orderInfoDataArr['shipping']->zip.' , '.$orderInfoDataArr['shipping']->countryName;?><br/>
-										<br />
-										</font> 
-									</td>
-                                  <td width="10%" align="middle" valign="top">&nbsp;</td>
+                                  <td colspan="4" width="100%" align="middle" valign="top">
+								  <p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of <strong>Tidiit Buying Club</strong> member order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?></span></a> and Master order is <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderParrentId?></span></a></p>
+                                    <br />
+                                  </td>
                                 </tr>
                               </tbody>
                             </table></td>
@@ -104,11 +87,13 @@
                           <td valign="top" align="center" class="col" width="350" style="background-color:#ffffff;"><table border="0" cellspacing="0" cellpadding="0" width="100%">
                               <tbody>
                                 <tr>
-                                  <td width="33%" valign="top" align="center" style="padding:12px 10px 0 10px;text-align:center;"><p style="white-space:nowrap;padding:0;color:#848484;font-size:12px;">Item Price</p>
+								  <td width="25%" valign="top" align="center" style="padding:12px 10px 0 10px;text-align:center;"><p style="padding:0;color:#848484;font-size:12px;">Buyer Club Quantity</p>
+                                    <p style="padding:7px 0 0 0;color:#565656;font-size:13px;"> <?php echo $orderInfoDataArr['priceinfo']->qty;?> </p></td>
+                                  <td width="25%" valign="top" align="center" style="padding:12px 10px 0 10px;text-align:center;"><p style="white-space:nowrap;padding:0;color:#848484;font-size:12px;">Item Price</p>
                                     <p style="white-space:nowrap;padding:7px 0 0 0;color:#565656;font-size:13px;"> Rs. <?php echo $orderDetails[0]->orderAmount/$orderDetails[0]->productQty;?> </p></td>
-                                  <td width=33%" valign="top" align="center" style="padding:12px 10px 0 10px;text-align:center;"><p style="padding:0;color:#848484;font-size:12px;">Quantity</p>
+                                  <td width=25%" valign="top" align="center" style="padding:12px 10px 0 10px;text-align:center;"><p style="padding:0;color:#848484;font-size:12px;">Quantity</p>
                                     <p style="padding:7px 0 0 0;color:#565656;font-size:13px;"> <?php echo $orderDetails[0]->productQty;?> </p></td>
-                                  <td width="33%" valign="top" align="center" style="padding:12px 20px 0 10px;text-align:center;"><p style="white-space:nowrap;padding:0;color:#848484;font-size:12px;">Subtotal </p>
+                                  <td width="25%" valign="top" align="center" style="padding:12px 20px 0 10px;text-align:center;"><p style="white-space:nowrap;padding:0;color:#848484;font-size:12px;">Subtotal </p>
                                     <p style="white-space:nowrap;padding:7px 0 0 0;color:#565656;font-size:13px;"> Rs. <?php echo $orderDetails[0]->orderAmount;?> </p></td>
                                 </tr>
                               </tbody>
@@ -118,6 +103,22 @@
                     </table></td>
                 </tr>
 				<tr>
+                  <td width="10%">&nbsp;</td>
+                  <td width="80%" align="left" valign="top">
+				  	<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:15px; line-height:21px;font-weight:bold;">
+						Item will delivered at bellow address
+					</font>
+                    <br />
+                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px;">
+					<?php echo $orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->firstName;?><br/>
+                    <?php echo $orderInfoDataArr['shipping']->address.' , '.$orderInfoDataArr['shipping']->locality;?><br/>
+                    <?php echo $orderInfoDataArr['shipping']->city.' , '.$orderInfoDataArr['shipping']->stateName;?><br/>
+                    <?php echo $orderInfoDataArr['shipping']->zip.' , '.$orderInfoDataArr['shipping']->countryName;?><br/>
+					<br />
+                    </font> </td>
+                  <td width="10%">&nbsp;</td>
+                </tr>
+                <tr>
                   <td width="10%">&nbsp;</td>
                   <td width="80%" align="left" valign="top"><br />
                     <br />

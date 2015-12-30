@@ -2,19 +2,9 @@
 <link href="<?php echo SiteCSSURL;?>jquery.datetimepicker.css" rel="stylesheet">
 <script src="<?php echo SiteJSURL;?>jquery.datetimepicker.full.min.js"></script>
 <style type="text/css">
-    @media screen and (min-width: 768px) {
-        .modal-dialog {
-          width: 700px; /* New width for default modal */
-        }
-        .modal-sm {
-          width: 350px; /* New width for small modal */
-        }
-    }
-    @media screen and (min-width: 992px) {
-        .modal-lg {
-          width: 750px; /* New width for large modal */
-        }
-    }
+    @media screen and (min-width: 768px) {.modal-dialog {width: 700px; /* New width for default modal */}.modal-sm {width: 350px; /* New width for small modal */}}
+    @media screen and (min-width: 992px) {.modal-lg {width: 750px; /* New width for large modal */}}
+    .modal {overflow-y: scroll;}
 </style>
         <div class="categrs_bannr">
             <div class="row">
@@ -494,7 +484,7 @@
                 return false;
             }
             myJsMain.commonFunction.showPleaseWait();
-            $.post( myJsMain.baseURL+'ajax/check_order_id_for_logistic/', {
+            $.post( myJsMain.baseURL+'ajax/check_order_id_for_logistic_delivery/', {
                 orderId: jqOut.val(),cartId:myCartId
             },
             function(data){
@@ -502,6 +492,9 @@
                 if(data.result=='bad'){
                     myJsMain.commonFunction.tidiitAlert('Tidiit Order Delivery',data.msg,200);
                     jqOut.val('');
+                }else{
+                    if(data.msg!='')
+                        myJsMain.commonFunction.tidiitAlert('Tidiit Order Delivery',data.msg,200);
                 }
             }, 'json' );
         });

@@ -39,17 +39,11 @@
                     <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px"><?php echo $buyerFullName;?> had post one Order. <p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Order number is : <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?></span></a></p>
                     <br />
 					<p>
-					<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?> has delivered successfully. <br />
-                    <br />
-					Delivery Company Name : <?php echo $orderDeliveryDetails[0]['logisticsCompanyName'];?><br />
-					Delivery person name : <?php echo $orderDeliveryDetails[0]['deliveryStaffName'];?><br />
-					Contact number of delivery person : <?php echo $orderDeliveryDetails[0]['deliveryStaffContactNo'];?><br >
-					Email of delivery person : <?php echo $orderDeliveryDetails[0]['deliveryStaffEmail'];?><br ><br />
-					<strong>Receive Staff Name at Buyer End</strong><br /><br />
-					Receive person name : <?php echo $orderDeliveryDetails[0]['receiveStaffName'];?><br />
-					Contact number of receive person : <?php echo $orderDeliveryDetails[0]['receiveStaffContactNo'];?><br >
-					Receive date and time : <?php echo date('d-m-Y',strtotime($orderDeliveryDetails[0]['receiveDateTime']));?><br >
-					<?php /*Delivery screen as phote : <img  src="<?php echo $orderDeliveryPhotoURL.$orderDeliveryDetails[0]['photo1'];?>" border="0"/><br /> <?php */?><br />
+					<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?> has cancled by <?php echo $buyerFullName;?>. <br />
+					<strong>Cancelation reason is : <?php echo $reason;?></strong><br />
+					<?php if($comments!=""){?>
+					<strong><?php echo $buyerFullName;?> comment for cancelation is :<?php echo $comments;?></strong><br />
+					<?php }?>
 					</font> <br />
 					</p>
 					<br/>

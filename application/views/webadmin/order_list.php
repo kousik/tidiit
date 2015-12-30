@@ -78,7 +78,7 @@ $OrderTypeArr=array('1'=>'Website','2'=>'Mobile Web','3'=>"Mobile Apps");
                               <?php if($InerArr->orderType == 'SINGLE' && $InerArr->status < 4):?> &nbsp; 
                               <a href="javascript:void(0);" class="changeOrderStateCancel"  title="Cancel" data-orderid="<?php echo $InerArr->orderId;?>">Cancel</a>
                               <?php endif;?>
-                            <?php if($InerArr->orderDeliveredRequestId!=""):?>  
+                            <?php if($InerArr->orderDeliveredRequestId!="" && $InerArr->status<6):?>  
                               <a href="javascript:void(0);" class="changeOrderStateDelivered"  title="Delivered" data-orderid="<?php echo $InerArr->orderId;?>">Set Delivered</a>
                             <?php endif;?>  
                         </td>

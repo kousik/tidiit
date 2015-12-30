@@ -1,18 +1,8 @@
 <?php echo $html_heading; echo $header;?>
 <style type="text/css">
-    @media screen and (min-width: 768px) {
-        .modal-dialog {
-          width: 700px; /* New width for default modal */
-        }
-        .modal-sm {
-          width: 350px; /* New width for small modal */
-        }
-    }
-    @media screen and (min-width: 992px) {
-        .modal-lg {
-          width: 750px; /* New width for large modal */
-        }
-    }
+    @media screen and (min-width: 768px) {.modal-dialog {width: 700px; /* New width for default modal */}.modal-sm {width: 350px; /* New width for small modal */}}
+    @media screen and (min-width: 992px) {.modal-lg {width: 750px; /* New width for large modal */}}
+    .modal {overflow-y: scroll;}
 </style>
         <div class="categrs_bannr">
             <div class="row">

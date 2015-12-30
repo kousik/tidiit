@@ -1736,11 +1736,43 @@ class Shopping extends MY_Controller{
         $this->Order_model->update(array('status'=> 7), $orderId);
         $order=$this->Order_model->get_single_order_by_id($orderId);
         $this->Product_model->update_product_quantity($order->productId,$order->productQty,'+');
-        //One mail to customer for cancel processing
-        
-        //One mail to Seller - Admin for cancel request
-        
+        $this->single_order_cancel_mail($order,$reason,$comments);
         die;        
+    }
+    
+    function single_order_cancel_mail($order,$reason,$comments=""){
+        $orderId=$order->orderId;
+        $this->load->model('Order_model');
+        $orderDetails=array();
+        $orderDetails[]=$order;  
+        
+        //pre($orderDetails);die;
+        $adminMailData=  $this->load_default_resources();
+        $adminMailData['orderDetails']=$orderDetails;
+        $adminMailData['reason']=$reason;
+        $adminMailData['comments']=$comments;
+        $adminMailData['orderId']=$orderId;
+        $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
+        //pre($orderInfoDataArr);die;
+        $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
+        $sellerFullName=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+        $adminMailData['sellerFullName']=$sellerFullName;
+        $buyerFullName=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
+        $adminMailData['buyerFullName']=$buyerFullName;
+        
+        // for buyer
+        $this->_global_tidiit_mail($orderDetails[0]->buyerEmail,'Your Tidiit order TIDIIT-OD-'.$order->orderId.' has canceled successfully',$adminMailData,'single_order_canceled',$buyerFullName);
+                
+        /// for seller
+        $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Tidiit order TIDIIT-OD-".$order->orderId.' has canceled by '.$buyerFullName, $adminMailData,'seller_single_order_canceled',$sellerFullName);
+
+        /// for support
+        $adminMailData['userFullName']='Tidiit Inc Support';
+        $this->load->model('Siteconfig_model','siteconfig');
+        //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
+        $supportEmail='judhisahoo@gmail.com';
+        $this->_global_tidiit_mail($supportEmail, "Tidiit Order TIDIIT-OD-".$order->orderId.' has canceled by '.$buyerFullName, $adminMailData,'support_single_order_delivered','Tidiit Inc Support');
+        return TRUE;
     }
     
     function complete_payment(){

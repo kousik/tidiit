@@ -910,10 +910,29 @@ class Ajax extends MY_Controller{
         }
     }
     
+    function valid_user_order_out_for_delivery(){
+        $orderId=trim($this->input->post('orderId',TRUE));
+        $this->load->model('Order_model');
+        $orderDetails=$this->Order_model->details($orderId);
+
+        if(empty($orderDetails)){
+            $this->form_validation->set_message('valid_user_order_for_delivery', 'Invalid Order Id.Please check the order id.');
+            return FALSE;
+        }else if($orderDetails[0]->status<4){
+            $this->form_validation->set_message('valid_user_order_for_delivery', 'Order Id '.$orderId.' is yet not shipped.Please check the order id.');
+            return FALSE;
+        }else if($orderDetails[0]->status>5){
+            $this->form_validation->set_message('valid_user_order_for_delivery', 'Order Id '.$orderId.' is delivered.Please check the order id.');
+            return FALSE;
+        }else{
+            return TRUE;
+        }
+    }
+    
     function submit_out_for_delivery(){
         $config = array(
             array('field'   => 'outForDeliveryType','label'   => 'Select out for delivery type','rules'=> 'trim|required|xss_clean'),
-            array('field'   => 'orderId','label'   => 'Enter the OrderID','rules'   => 'trim|required|xss_clean|'),
+            array('field'   => 'orderId','label'   => 'Enter the OrderID','rules'   => 'trim|required|xss_clean|callback_valid_user_order_out_for_delivery'),
             array('field'   => 'logisticsId','label'   => 'Logistics Tidiit Sign ID','rules'   => 'trim|required|xss_clean'),
             array('field'   => 'deliveryStaffName','label'   => 'Delivery Staff Name','rules'   => 'trim|required|xss_clean'),
             array('field'   => 'deliveryStaffContactNo','label'   => 'Delivery Staff Contact No','rules'   => 'trim|required|xss_clean'),
@@ -969,6 +988,7 @@ class Ajax extends MY_Controller{
                     $this->_send_alert_regarding_out_for_delivery($outForDeliveryDataArr);
                 endif;
             endif;
+            $this->Order_model->update(array('status'=>5),$orderId);
             echo json_encode(array('result'=>'good','msg'=>'Out of delivery intimated to Buyer successfully.'));die;
         endif;
     }
@@ -1135,10 +1155,30 @@ class Ajax extends MY_Controller{
         $orderDetails=$this->Order_model->details($orderId);
         if(empty($orderDetails)){
             echo json_encode(array('result'=>'bad','msg'=>'Invalid order id provide,please try again.')) ;die;
-        }else if($orderDetails[0]->status!=4){
+        }else if($orderDetails[0]->status<4 || $orderDetails[0]->status>5){
             echo json_encode(array('result'=>'bad','msg'=>'Enter order is yet not shipped or already delivered,please try again.'));die;
         }else{
             echo json_encode(array('result'=>'goods','msg'=>''));die;
+        }
+    }
+    
+    function check_order_id_for_logistic_delivery(){
+        $orderId=trim($this->input->post('orderId',TRUE));
+        $this->load->model('Order_model');
+        $orderDetails=$this->Order_model->details($orderId);
+        if(empty($orderDetails)){
+            echo json_encode(array('result'=>'bad','msg'=>$orderId.' is not valid order id,please try again.')) ;die;
+        }else if($orderDetails[0]->status<5){
+            echo json_encode(array('result'=>'bad','msg'=>'Order id '.$orderId.' is yet not out for delivery,please try again.'));die;
+        }else if($orderDetails[0]->status>5){
+            echo json_encode(array('result'=>'bad','msg'=>'Order id '.$orderId.' is already delivered,please try again.'));die;            
+        }else{
+            $deliveryRequestedArr=$this->Order_model->get_latest_delivery_details($orderId);
+            if(!empty($deliveryRequestedArr)){
+                echo json_encode(array('result'=>'good','msg'=>'Order id '.$orderId.' is already delivered,Are sure to update the data ?.'));die;            
+            }else{
+                echo json_encode(array('result'=>'goods','msg'=>''));die;
+            }
         }
     }
     
@@ -1165,10 +1205,28 @@ class Ajax extends MY_Controller{
         endif;
     }
     
+    function valid_user_order_for_delivery(){
+        $orderId=trim($this->input->post('orderId',TRUE));
+        $this->load->model('Order_model');
+        $orderDetails=$this->Order_model->details($orderId);
+
+        if(empty($orderDetails)){
+            $this->form_validation->set_message('valid_user_order_for_delivery', 'Invalid Order Id.Please check the order id.');
+            return FALSE;
+        }else if($orderDetails[0]->status<5){
+            $this->form_validation->set_message('valid_user_order_for_delivery', 'Order Id '.$orderId.' is yet not out delivery.Please check the order id.');
+            return FALSE;
+        }else if($orderDetails[0]->status>5){
+            $this->form_validation->set_message('valid_user_order_for_delivery', 'Order Id '.$orderId.' is delivered.Please check the order id.');
+            return FALSE;
+        }else{
+            return TRUE;
+        }
+    }
     
     function submit_delivery(){
         $config = array(
-            array('field'   => 'orderId','label'   => 'Enter the OrderID','rules'   => 'trim|required|xss_clean|'),
+            array('field'   => 'orderId','label'   => 'Enter the OrderID','rules'   => 'trim|required|xss_clean|callback_valid_user_order_for_delivery'),
             array('field'   => 'logisticsId','label'   => 'Logistics Tidiit Sign ID','rules'   => 'trim|required|xss_clean'),
             array('field'   => 'deliveryStaffName','label'   => 'Delivery Staff Name','rules'   => 'trim|required|xss_clean'),
             array('field'   => 'deliveryStaffContactNo','label'   => 'Delivery Staff Contact No','rules'   => 'trim|required|xss_clean'),
@@ -1198,14 +1256,12 @@ class Ajax extends MY_Controller{
             
             $this->load->model('Logistics_model');
             $logisticDetails=$this->Logistics_model->details($logisticsId);
+            
             $this->load->model('Order_model');
-            $orderDetails=$this->Order_model->details($orderId);
+            $oldDeliveryRequestDetails=$this->Order_model->get_latest_delivery_details($orderId);
             
             if(empty($logisticDetails)):
                 echo json_encode(array('result'=>'bad','msg'=>'Invalid logistics data entered.'));die;
-            endif;
-            if(empty($orderDetails)):
-                echo json_encode(array('result'=>'bad','msg'=>'Invalid order data entered.'));die;
             endif;
             $dataArr=array('orderId'=>$orderId,'logisticsId'=>$logisticsId,'deliveryStaffName'=>$deliveryStaffName,
                 'deliveryStaffContactNo'=>$deliveryStaffContactNo,'IP'=>$this->input->ip_address(),'deliveryStaffEmail'=>$deliveryStaffEmail,
@@ -1238,7 +1294,23 @@ class Ajax extends MY_Controller{
             }
             $data['photo1']=$upload_files[0];
             $data['photo2']=$upload_files[1];*/
-            $orderDeliveredRequestId=$this->Order_model->add_order_delivered_request($dataArr);
+            if(empty($oldDeliveryRequestDetails)):
+                $orderDeliveredRequestId=$this->Order_model->add_order_delivered_request($dataArr);
+            else:
+                //pre($oldDeliveryRequestDetails);die;
+                if($oldDeliveryRequestDetails[0]['photo1']!=""):
+                    if($data['photo1']!=""):
+                        $this->delete_delivery_image($oldDeliveryRequestDetails[0]['photo1']);
+                    endif;
+                endif;
+                if($oldDeliveryRequestDetails[0]['photo2']!=""):
+                    if($data['photo2']!=""):
+                        $this->delete_delivery_image($oldDeliveryRequestDetails[0]['photo2']);
+                    endif;
+                endif;
+                $this->Order_model->update_order_delivered_request($dataArr,$orderId);
+                $orderDeliveredRequestId=$oldDeliveryRequestDetails[0]['orderDeliveredRequestId'];
+            endif;
             if($orderDeliveredRequestId):
                 echo json_encode(array('result'=>'good','msg'=>'Delivery information updated successfully.'));die;
             else:    
@@ -1246,6 +1318,8 @@ class Ajax extends MY_Controller{
             endif;    
         endif;
     }
+    
+    
     
      public function order_delivery_image_resize($fileName){
         $PHOTOPATH=$this->config->item('ResourcesPath').'order_delivery/';
@@ -1274,6 +1348,13 @@ class Ajax extends MY_Controller{
         $this->image_lib->clear();
      }
      
+     public function delete_delivery_image($fileName){
+         $PHOTOPATH=$this->config->item('ResourcesPath').'order_delivery/';
+         @unlink($PHOTOPATH.'original/'.$fileName);
+         @unlink($PHOTOPATH.'75X75/'.$fileName);
+         return TRUE;
+     }
+             
      function show_order_details(){
         $this->load->model('Order_model');
         $orderId=$this->input->post('orderId',TRUE);
