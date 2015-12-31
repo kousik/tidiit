@@ -12,7 +12,7 @@
             <br style="clear:both;" />
             <div class="form-group field required">
                 <h2>Order List</h2>
-            <!--<div class="row dataTableBatchAction">
+            <?php /* ?><div class="row dataTableBatchAction">
                  <div class="col-md-1">
                  	<label>Action</label>
                  </div>
@@ -24,10 +24,10 @@
                         <option value="2">Bulk Active</option>
                         <option value="3">Bulk Inactive</option>
                       </select>
-                <!--<input type="hidden" autocomplete="off" /> 
+                <!--<input type="hidden" autocomplete="off" /> --->
                       
                  </div>
-            </div>--->
+            </div> <?php */ ?>
                  </div>
                <br style="clear:both;" />
                
@@ -88,8 +88,7 @@
     </div>
     <?php echo $footer;?>
     <div id="modal_order_details"></div>
-</body>
-</html>
+
 <script src="<?php echo SiteJSURL;?>jquery.dataTables.min.js"></script>
 <script src="<?php echo SiteJSURL;?>dataTables.bootstrap.js"></script>
 <script src="<?php echo SiteJSURL;?>jquery.tablesorter.min.js"></script>
@@ -151,7 +150,7 @@
 }); 
     $(function() {
       Metis.MetisTable();
-      Metis.metisSortable();
+      //Metis.metisSortable();
       
         /*$('.dataTableBatchAction').find('.ui-sortable').each(function(){
              $(this).removeClass('ui-sortable');
@@ -165,3 +164,5 @@
     });
 	
 </script>
+</body>
+</html>
