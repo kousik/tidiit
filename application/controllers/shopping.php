@@ -14,6 +14,7 @@ class Shopping extends MY_Controller{
         $this->load->model('Product_model');
         $this->load->model('Country');
         $this->load->library('session');
+        $this->load->library('tidiitrcode');
     }
        
     
@@ -67,7 +68,14 @@ class Shopping extends MY_Controller{
         if(!isset($data['orderId'])):
             $order_data['productQty'] = 0;
             $order_data['userId'] = $this->session->userdata('FE_SESSION_VAR');
-            $data['orderId']=$this->Order_model->add($order_data);
+            $qrCodeFileName=time().'-'.rand(1, 50).'.png';
+            $order_data['qrCodeImageFile']=$qrCodeFileName;
+            $orderId=$this->Order_model->add($order_data);
+            $data['orderId']=$orderId;
+            $params=array();
+            $params['data']=$orderId;
+            $params['savename']=$this->config->item('ResourcesPath').'qr_code/'.$qrCodeFileName;
+            $this->tidiitrcode->generate($params);
         endif;
         
         //$data['orderId'] = 0;
@@ -217,7 +225,15 @@ class Shopping extends MY_Controller{
         
         if(!isset($data['orderId'])):
             $order_data['productQty'] = 0;
-            $data['orderId']=$this->Order_model->add($order_data);
+            //$data['orderId']=$this->Order_model->add($order_data);
+            $qrCodeFileName=time().'-'.rand(1, 50).'.png';
+            $order_data['qrCodeImageFile']=$qrCodeFileName;
+            $orderId=$this->Order_model->add($order_data);
+            $data['orderId']=$orderId;
+            $params=array();
+            $params['data']=$orderId;
+            $params['savename']=$this->config->item('ResourcesPath').'qr_code/'.$qrCodeFileName;
+            $this->tidiitrcode->generate($params);
         endif;
         
         //$data['orderId'] = 0;
@@ -765,11 +781,26 @@ class Shopping extends MY_Controller{
                 $this->Order_model->update($order_data,$exists_order->orderId);
                 $parentOrderId = $exists_order->orderId;
             else:    
-                $parentOrderId = $this->Order_model->add($order_data);
+                //$parentOrderId = $this->Order_model->add($order_data);
+                $qrCodeFileName=time().'-'.rand(1, 50).'.png';
+                $order_data['qrCodeImageFile']=$qrCodeFileName;
+                $qrCodeOrderId=$this->Order_model->add($order_data);
+                $parentOrderId=$qrCodeOrderId;
+                $params=array();
+                $params['data']=$qrCodeOrderId;
+                $params['savename']=$this->config->item('ResourcesPath').'qr_code/'.$qrCodeFileName;
+                $this->tidiitrcode->generate($params);
             endif;
         else:
             if(!$exists_order):
-                $parentOrderId = $this->Order_model->add($order_data);        
+                $qrCodeFileName=time().'-'.rand(1, 50).'.png';
+                $order_data['qrCodeImageFile']=$qrCodeFileName;
+                $qrCodeOrderId=$this->Order_model->add($order_data);
+                $parentOrderId=$qrCodeOrderId;
+                $params=array();
+                $params['data']=$qrCodeOrderId;
+                $params['savename']=$this->config->item('ResourcesPath').'qr_code/'.$qrCodeFileName;
+                $this->tidiitrcode->generate($params);        
             elseif($exists_order && $exists_order->status == 0):
                 $this->Order_model->update($order_data,$exists_order->orderId);
                 $parentOrderId = $exists_order->orderId;
@@ -871,7 +902,15 @@ class Shopping extends MY_Controller{
         
         if(!isset($data['orderId'])):
             $order_data['productQty'] = 0;
-            $data['orderId']=$this->Order_model->add($order_data);
+            //$data['orderId']=$this->Order_model->add($order_data);
+            $qrCodeFileName=time().'-'.rand(1, 50).'.png';
+            $order_data['qrCodeImageFile']=$qrCodeFileName;
+            $orderId=$this->Order_model->add($order_data);
+            $data['orderId']=$orderId;
+            $params=array();
+            $params['data']=$orderId;
+            $params['savename']=$this->config->item('ResourcesPath').'qr_code/'.$qrCodeFileName;
+            $this->tidiitrcode->generate($params);
         endif;
         
         //$data['orderId'] = 0;
@@ -1286,7 +1325,15 @@ class Shopping extends MY_Controller{
                 //$userBillingDataDetails=$this->User_model->get_billing_address();
                 //$orderinfo['billing'] = $userBillingDataDetails[0];                
                 $order['orderInfo'] = base64_encode(serialize($orderinfo));
-                $orderId = $this->Order_model->add($order);
+                //$orderId = $this->Order_model->add($order);
+                $qrCodeFileName=time().'-'.rand(1, 50).'.png';
+                $order['qrCodeImageFile']=$qrCodeFileName;
+                $orderId=$this->Order_model->add($order);
+                //$data['orderId']=$orderId;
+                $params=array();
+                $params['data']=$orderId;
+                $params['savename']=$this->config->item('ResourcesPath').'qr_code/'.$qrCodeFileName;
+                $this->tidiitrcode->generate($params);
                 $orderinfo['orderId']=$orderId;
                 $allOrderArray[]=$orderId;
                 

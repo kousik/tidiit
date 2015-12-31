@@ -80,7 +80,7 @@ class Tidiitrcode
 			QRimage::$white = $params['white']; 
 		}
 		
-		$params['data'] = (isset($params['data'])) ? $params['data'] : 'QR Code Library';
+		$params['data'] = (isset($params['data'])) ? 'TIDIIT-'.$params['data'].'-OD' : 'QRCodeLibrary';
 		if (isset($params['savename'])) {
 			$level = 'L';
 			if (isset($params['level']) && in_array($params['level'], array('L','M','Q','H'))) $level = $params['level'];
