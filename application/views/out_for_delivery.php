@@ -452,7 +452,7 @@
         jQuery('#outForDeliveryForm').submit(function(e) { 
             e.preventDefault();
             if (jQuery(this).valid()) {
-                askBeforeSubmitOutForDevelyr('Tidiit out for deliery','Are you sure to submit the data ?',200,jQuery(this),myJsMain.baseURL+'ajax/submit_out_for_delivery',outForDeliveryFormCallback);;
+                askBeforeSubmitOutForDelivery('Tidiit out for deliery','Are you sure to submit the data ?',200,jQuery(this),myJsMain.baseURL+'ajax/submit_out_for_delivery',outForDeliveryFormCallback);;
             }
         });
         
@@ -495,7 +495,7 @@
         });
     });
     
-    function askBeforeSubmitOutForDevelyr(boxTitle,confirmMessaage,height,$this,url,calBackFun){
+    function askBeforeSubmitOutForDelivery(boxTitle,confirmMessaage,height,$this,url,calBackFun){
         if(height==0){
             height=175;
         }
@@ -525,7 +525,11 @@
         if(resultData.result=='bad'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         }else if(resultData.result=='good'){
-            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
+            userMsg=resultData.msg;
+            if(resultData.paymentType=='settlementOnDelivery'){
+                userMsg=userMsg+" Please confirm payment before delivery.";
+            }
+            myJsMain.commonFunction.tidiitAlert('Tidiit System Message',userMsg,200);
             location.href='<?php echo BASE_URL;?>';
         }
     }

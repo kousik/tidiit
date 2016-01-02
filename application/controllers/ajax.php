@@ -989,7 +989,8 @@ class Ajax extends MY_Controller{
                 endif;
             endif;
             $this->Order_model->update(array('status'=>5),$orderId);
-            echo json_encode(array('result'=>'good','msg'=>'Out of delivery intimated to Buyer successfully.'));die;
+            //$order=$this->Order_model->get_single_order_by_id($orderId);
+            echo json_encode(array('result'=>'good','msg'=>'Out of delivery intimated to Buyer successfully.','paymentType'=>$order->paymentType));die;
         endif;
     }
     
@@ -1172,6 +1173,8 @@ class Ajax extends MY_Controller{
             echo json_encode(array('result'=>'bad','msg'=>'Order id '.$orderId.' is yet not out for delivery,please try again.'));die;
         }else if($orderDetails[0]->status>5){
             echo json_encode(array('result'=>'bad','msg'=>'Order id '.$orderId.' is already delivered,please try again.'));die;            
+        }else if($orderDetails[0]->paymentType=='settlementOnDelivery'){
+            echo json_encode(array('result'=>'bad','msg'=>'Payment for Order id '.$orderId.' is yet not received,it can not update as DELIVERED.'));die;            
         }else{
             $deliveryRequestedArr=$this->Order_model->get_latest_delivery_details($orderId);
             if(!empty($deliveryRequestedArr)){
@@ -1218,6 +1221,9 @@ class Ajax extends MY_Controller{
             return FALSE;
         }else if($orderDetails[0]->status>5){
             $this->form_validation->set_message('valid_user_order_for_delivery', 'Order Id '.$orderId.' is delivered.Please check the order id.');
+            return FALSE;
+        }else if($orderDetails[0]->paymentType=='settlementOnDelivery'){
+            $this->form_validation->set_message('valid_user_order_for_delivery', 'Payment for Order id '.$orderId.' is yet not received,it can not update as DELIVERED.');
             return FALSE;
         }else{
             return TRUE;

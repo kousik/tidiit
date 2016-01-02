@@ -49,6 +49,7 @@ class Order_model extends CI_Model {
 
     public function get_single_order_by_id($orderId){
         $this->db->limit(1);
+        $this->db->order_by('orderUpdatedate','DESC');
         $this->db->select('o.*,p.paymentType,s.email AS sellerEmail,s.firstName AS sellerFirstName,s.lastName AS sellerLastName,s1.email AS buyerEmail,s1.firstName AS buyerFirstName,s1.lastName AS buyerLastName');
         $this->db->from($this->_table.' o');
         $this->db->join('product_seller ps','o.productId=ps.productId')->join('user s','ps.userId=s.userId')->join('user s1','o.userId=s1.userId');
@@ -159,10 +160,11 @@ class Order_model extends CI_Model {
 
 
     public function details($orderId){
-        $this->db->select('o.*,pp.qty AS productSlabPrice,pp.price AS productSlabPrice,s.email AS sellerEmail,s.firstName AS sellerFirstName,s.lastName AS sellerLastName,s1.email AS buyerEmail,s1.firstName AS buyerFirstName,s1.lastName AS buyerLastName');
+        $this->db->select('o.*,pp.qty AS productSlabPrice,pp.price AS productSlabPrice,s.email AS sellerEmail,s.firstName AS sellerFirstName, '
+                . 's.lastName AS sellerLastName,s1.email AS buyerEmail,s1.firstName AS buyerFirstName,s1.lastName AS buyerLastName,p.paymentType');
         $this->db->from($this->_table.' o')->join('product_price pp','o.productPriceId=pp.productPriceId')->join('user s1','o.userId=s1.userId');
-        $this->db->join('product_seller ps','o.productId=ps.productId')->join('user s','ps.userId=s.userId');
-        return $this->db->where('o.orderId',$orderId)->get()->result();
+        $this->db->join('product_seller ps','o.productId=ps.productId')->join('user s','ps.userId=s.userId')->join('`payment` As p','o.orderId=p.orderId','left');
+        return $this->db->where('o.orderId',$orderId)->order_by('orderUpdatedate','DESC')->get()->result();
     }
 
 
@@ -209,10 +211,11 @@ class Order_model extends CI_Model {
         $ToDate=$this->input->post('HiddenFilterToDate',TRUE);
         $UserName=$this->input->post('HiddenFilterUserName',TRUE);
         $OrderStatus=$this->input->post('HiddenFilterOrderStatus',TRUE);
-        $sql='SELECT o.*,u1.email,u.email AS SellerEmail,os.name AS orderStatusType,p.paymentType,(select odr.orderDeliveredRequestId FROM `order_delivered_request` AS odr where o.orderId=odr.orderId order by odr.orderDeliveredRequestId DESC limit 0,1) AS orderDeliveredRequestId  '
+        $sql='SELECT o.*,u1.email,u.email AS SellerEmail,os.name AS orderStatusType, (SELECT paymentType FROM `payment` As p WHERE p.orderId=o.orderId ORDER BY `paymentId` `DESC` LIMIT 0,1) AS paymentType, '
+                . ' (select odr.orderDeliveredRequestId FROM `order_delivered_request` AS odr where o.orderId=odr.orderId order by odr.orderDeliveredRequestId DESC limit 0,1) AS orderDeliveredRequestId  '
                 . ' FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) '
                 . ' JOIN `user` AS u ON(u.userId=ps.userId) JOIN `user` AS u1 ON(u1.userId=o.userId) '
-                . ' JOIN `order_state` AS os ON(o.status=os.orderStateId) JOIN `payment` AS p ON(p.orderId=o.orderId) '
+                . ' JOIN `order_state` AS os ON(o.status=os.orderStateId) '
                 . ' LEFT JOIN `order_delivered_request` AS odr ON(o.orderId=odr.orderId)  WHERE o.status >1 ';
 
         /*if($UserName!=""){
@@ -250,7 +253,8 @@ class Order_model extends CI_Model {
         $ToDate=$this->input->post('HiddenFilterToDate',TRUE);
         $UserName=$this->input->post('HiddenFilterUserName',TRUE);
         $OrderStatus=$this->input->post('HiddenFilterOrderStatus',TRUE);
-        $sql='SELECT o.* FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) JOIN `user` AS u ON(u.userId=ps.userId) WHERE o.status >1 AND u.userId='.$this->session->userdata('FE_SESSION_VAR').' ';
+        $sql='SELECT o.* FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) JOIN `user` AS u ON(u.userId=ps.userId) '
+                . ' WHERE o.status >1 AND u.userId='.$this->session->userdata('FE_SESSION_VAR').' ';
         return count($this->db->query($sql)->result());
     }
 

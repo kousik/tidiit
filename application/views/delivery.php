@@ -457,7 +457,7 @@
 <!-- /.modal -->
 <script type="text/javascript">
     jQuery(document).ready(function(){
-		jQuery('#receiveDateTime').datetimepicker({format:'d-m-Y H:i',mask:true});
+        jQuery('#receiveDateTime').datetimepicker({format:'d-m-Y H:i',mask:true});
         var oldSubmitStatusTidiitConfirm1=false;
         jQuery('#outForDeliveryForm').validate();
         jQuery('#myModalOutForDelivery').modal('show');
@@ -472,7 +472,7 @@
         jQuery('#outForDeliveryForm').submit(function(e) { 
             e.preventDefault();
             if (jQuery(this).valid()) {
-                askBeforeSubmitOutForDevelyr('Tidiit Order Delivery','Are you sure to submit the data ?',200,jQuery(this),myJsMain.baseURL+'ajax/submit_delivery',outForDeliveryFormCallback);;
+                askBeforeSubmitOutForDelivery('Tidiit Order Delivery','Are you sure to submit the data ?',200,jQuery(this),myJsMain.baseURL+'ajax/submit_delivery',outForDeliveryFormCallback);;
             }
         });
         
@@ -519,7 +519,7 @@
         });
     });
     
-    function askBeforeSubmitOutForDevelyr(boxTitle,confirmMessaage,height,$this,url,calBackFun){
+    function askBeforeSubmitOutForDelivery(boxTitle,confirmMessaage,height,$this,url,calBackFun){
         if(height==0){
             height=175;
         }
