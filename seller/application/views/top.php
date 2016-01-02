@@ -32,18 +32,22 @@
 
               <!-- .nav -->
               <ul class="nav navbar-nav">
-                <li class="active">
-                  <a href="<?php echo BASE_URL;?>">Dashboard</a> 
+                <li class="dropdown <?php if($this->uri->segment(1)=="" || $this->uri->segment(1)=='index'){ echo 'active';}?>">
+                  <a href="<?php echo BASE_URL;?>" class="dropdown-toggle" data-toggle="dropdown">Dashboard <b class="caret"></b></a> 
+                  <ul class="dropdown-menu">
+                        <li> <a href="<?php echo BASE_URL.'index/edit_profile/';?>">Update Profile</a>  </li>
+                        <li> <a href="<?php echo BASE_URL;?>index/edit_finance_info/">Update Finance Info</a>  </li>
+                  </ul>
                 </li>
-                <li class='dropdown '> 
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Inventory <b class="caret"></b></a>
+                <li class='dropdown <?php if($this->uri->segment(1)=="product"){ echo 'active';}?>' >
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Inventory <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li> <a href="<?php echo BASE_URL.'product/viewlist/';?>">Manage Inventory</a>  </li>
                         <li> <a href="<?php echo BASE_URL;?>product/add_product/">Add a Product</a>  </li>
                       </ul>                
                 </li>
                 
-                <li class='dropdown '> 
+                <li class='dropdown <?php if($this->uri->segment(1)=="order"){ echo 'active';}?>'> 
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Orders <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li> <a href="<?php echo BASE_URL;?>order/viewlist/">Manage Orders</a>  </li>

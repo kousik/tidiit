@@ -5,33 +5,49 @@
         <div id="content">
         <div class="outer">
           <div class="inner bg-light lter">
-              <div style="color: red; text-align: center; margin: 0 auto;padding-top: 10px;font-weight: bold;"><?php echo $this->session->flashdata('Message');?></div>
+            <div style="color: red; text-align: center; margin: 0 auto;padding-top: 10px;font-weight: bold;">
+                <div class="alert alert-success text-left" role="alert">
+                      <i class="fa fa-check"></i> <span class="text-center"><?php echo $this->session->flashdata('Message');?><span>
+                </div>
+            </div>
             <!--Begin Datatables
             <h4 class="reg_header">&nbsp;</h4>-->
             
-            <br style="clear:both;" />
             <div class="form-group field required">
-                <h2>Order List</h2>
-            <?php /* ?><div class="row dataTableBatchAction">
-                 <div class="col-md-1">
-                 	<label>Action</label>
+                <h2>Order List <?php echo ($OrderListType!="") ? $OrderListType : '' ;?></h2>
+                    <br style="clear:both;" />
+                    <div class="form-group field required text-center float-lt">
+                        <div class="row dataTableBatchAction">
+                            <div class="col-md-3">
+                                <select name="actionDropMultiple" class="form-control input" id="actionDropMultiple" >
+                                    <option value="0" >View As Order Status</option>
+                                    <option value="2">Process Orders</option>
+                                    <option value="3">Confirm Orders</option>
+                                    <option value="4">Shipped Orders</option>
+                                    <option value="5">Out For Delivery Orders</option>
+                                    <option value="6">Delivered Orders</option>
+                                    <option value="7">Canceled Orders</option>
+                                  </select>
+                            <!--<input type="hidden" autocomplete="off" />  -->
+
+                             </div>
+                            <!--<div class="col-md-1">
+                                    <label>Action</label>
+                             </div>
+
+                            <div class="col-md-2">
+                                <select name="actionDropMultiple" class="form-control input" id="actionDropMultiple" >
+                                    <option value="0" >Please Select</option>
+                                    <option value="1">Bulk Delete</option>
+                                    <option value="2">Bulk Active</option>
+                                    <option value="3">Bulk Inactive</option>
+                                  </select>
+                            <!--<input type="hidden" autocomplete="off" />  
+
+                             </div>-->
+                        </div>
+                    </div>
                  </div>
-                    
-                <div class="col-md-4">
-                    <select name="actionDrop" class="form-control input" id="actionDrop" >
-                        <option value="0" >Please Select</option>
-                        <option value="1">Bulk Delete</option>
-                        <option value="2">Bulk Active</option>
-                        <option value="3">Bulk Inactive</option>
-                      </select>
-                <!--<input type="hidden" autocomplete="off" /> --->
-                      
-                 </div>
-            </div> <?php */ ?>
-                 </div>
-               <br style="clear:both;" />
-               
-               
                   <div  id="div-2" class="body table-responsive">                   
                     <table id="dataTable" class="table table-bordered table-condensed table-hover table-striped">
                       <thead>
@@ -96,7 +112,10 @@
 <script src="<?php echo SiteJSURL;?>metis-file-map-sortable-datatable-pricing-progress.js"></script>
 <script type="text/javascript">
  $(function() {
-    $("#actionDrop").sortable(); $("#actionDrop").disableSelection();
+    $("#actionDrop").sortable();
+    jQuery('#actionDropMultiple').on('change',function(){
+        location.href='<?php echo BASE_URL.'order/viewlist/?HiddenFilterOrderStatus=';?>'+jQuery(this).val();
+    });
     $('.deleteProduct').on('click',function(){
         var productid = $(this).data('productid');
         myJsMain.commonFunction.tidiitConfirm("Tidiit Product Delete Confirmation",'Are you sure to delete this product ?',myJsMain.baseURL+'product/delete/'+productid,0);
@@ -150,17 +169,7 @@
 }); 
     $(function() {
       Metis.MetisTable();
-      //Metis.metisSortable();
       
-        /*$('.dataTableBatchAction').find('.ui-sortable').each(function(){
-             $(this).removeClass('ui-sortable');
-             $(this).children().removeAttr('class');
-             /*if($(this).children().is("select")){
-                 $($(this).children()+' option').each(function(){
-                     $(this).removeClass();
-                 });
-             }
-        });*/
     });
 	
 </script>

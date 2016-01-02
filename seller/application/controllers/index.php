@@ -104,5 +104,14 @@ class Index extends MY_Controller {
             $this->home();
         }
     }
-
+    
+    function edit_profile(){
+        $data = $this->_get_logedin_template();
+        $this->load->view('under_construction',$data);
+    }
+    
+    function edit_finance_info(){
+        $data = $this->_get_logedin_template();
+        $this->load->view('under_construction',$data);
+    }
 }

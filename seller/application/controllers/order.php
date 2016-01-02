@@ -16,7 +16,8 @@ class Order extends MY_Controller{
 	
 	public function viewlist(){
             $data=$this->_get_logedin_template();
-
+            $OrderStatus=$this->input->get_post('HiddenFilterOrderStatus',TRUE);
+            
             $per_page=20;
             $PaginationConfig=array(
                 'base_url'=>base_url() . "admin/order/viewlist",
@@ -39,7 +40,15 @@ class Order extends MY_Controller{
             $stateArr=array();
             foreach($orderStatusobj As $k){ 
                 $stateArr[$k->orderStateId]=$k->name;
+                if($OrderStatus==$k->orderStateId):
+                    $OrderStatusType=$k->name;
+                endif;
             }
+            if($OrderStatus!=""):
+                $data['OrderListType']= $OrderStatusType;
+            else:
+                $data['OrderListType']= "";
+            endif;
             $data['status']= $stateArr;
             $data['DataArr']=$orderDataArr;
             $data["links"] = $this->pagination->create_links();

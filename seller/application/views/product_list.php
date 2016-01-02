@@ -6,31 +6,40 @@
         <div class="outer">
           <div class="inner bg-light lter">
               <div style="color: red; text-align: center; margin: 0 auto;padding-top: 10px;font-weight: bold;">
-                  <div class="alert alert-success" role="alert"><i class="fa fa-check"></i> <?php echo $this->session->flashdata('Message');?></div>
+                  <div class="alert alert-success text-left" role="alert"><i class="fa fa-check"></i> <span class="text-center"><?php echo $this->session->flashdata('Message');?><span></div>
               </div>
             <!--Begin Datatables
             <h4 class="reg_header">&nbsp;</h4>-->
             
             <br style="clear:both;" />
-            <div class="form-group field required">
-            <div class="row dataTableBatchAction">
-                 <div class="col-md-1">
-                 	<label>Action</label>
-                 </div>
-                    
-                <div class="col-md-4">
-                    <select name="actionDrop" class="form-control input" id="actionDrop" >
-                        <option value="0" >Please Select</option>
-                        <option value="1">Bulk Delete</option>
-                        <option value="2">Bulk Active</option>
-                        <option value="3">Bulk Inactive</option>
-                      </select>
-                <!--<input type="hidden" autocomplete="off" />  -->
-                      
-                 </div>
-                 </div>
-                 </div>
-               <br style="clear:both;" />
+            <div class="form-group field required text-center float-lt">
+                <div class="row dataTableBatchAction">
+                    <div class="col-md-2">
+                        <select name="actionDropMultiple" class="form-control input" id="actionDropMultiple" >
+                            <option value="0" >View As Product Status</option>
+                            <option value="3">Active</option>
+                            <option value="3">Inactive</option>
+                          </select>
+                    <!--<input type="hidden" autocomplete="off" />  -->
+
+                     </div>
+                    <div class="col-md-1">
+                            <label>Action</label>
+                     </div>
+
+                    <div class="col-md-2">
+                        <select name="actionDropMultiple" class="form-control input" id="actionDropMultiple" >
+                            <option value="0" >Please Select</option>
+                            <option value="1">Bulk Delete</option>
+                            <option value="2">Bulk Active</option>
+                            <option value="3">Bulk Inactive</option>
+                          </select>
+                    <!--<input type="hidden" autocomplete="off" />  -->
+
+                     </div>
+                </div>
+            </div>
+            <br style="clear:both;" />
                
                
                   <div  id="div-2" class="body table-responsive">                   

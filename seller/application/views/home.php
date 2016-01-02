@@ -39,34 +39,34 @@
             </div>
             <hr>-->
             <div class="text-center">
-              <a class="quick-btn" href="#">
+              <a class="quick-btn" href="<?php echo BASE_URL.'order/viewlist/?HiddenFilterOrderStatus=2'?>">
                 <i class="fa fa-flag-checkered fa-2x"></i>
                 <span>Place Order</span> 
                 <span class="label label-danger"><?php echo $placeOrders;?></span> 
               </a>   
-              <a class="quick-btn" href="#">
+              <a class="quick-btn" href="<?php echo BASE_URL.'order/viewlist/?HiddenFilterOrderStatus=3'?>">
                 <i class="fa fa-check-square-o fa-2x"></i>
                 <span>Confirm Orders</span> 
                 <span class="label label-default"><?php echo $confirmOrders;?></span> 
               </a> 
-              <a class="quick-btn" href="#">
+              <a class="quick-btn" href="<?php echo BASE_URL.'order/viewlist/?HiddenFilterOrderStatus=4'?>">
                 <i class="fa fa-truck fa-2x"></i>
                 <span>Shipped Orders</span> 
                 <span class="label label-success"><?php echo $shippedOrders;?></span> 
               </a> 
-              <a class="quick-btn" href="#">
+              <a class="quick-btn" href="<?php echo BASE_URL.'order/viewlist/?HiddenFilterOrderStatus=5'?>">
                 <i class="fa fa-truck fa-2x"></i>
                 <span>Our for delivery <br /> Orders</span> 
                 <span class="label label-warning"><?php echo $outForDeliveryOrders;?></span> 
               </a> 
                 
-              <a class="quick-btn" href="#">
+              <a class="quick-btn" href="<?php echo BASE_URL.'order/viewlist/?HiddenFilterOrderStatus=6'?>">
                 <i class="fa fa-sun-o fa-2x"></i>
-                <span>Success Order</span> 
+                <span>Delivered Order</span> 
                 <span class="label label-warning"><?php echo $successOrders;?></span> 
               </a> 
               
-              <a class="quick-btn" href="#">
+              <a class="quick-btn" href="<?php echo BASE_URL.'order/viewlist/?HiddenFilterOrderStatus=7'?>">
                 <i class="fa fa-remove fa-2x"></i>
                 <span>Cancel Orders</span> 
                 <span class="label btn-metis-2"><?php echo $cancelOrders;?></span> 

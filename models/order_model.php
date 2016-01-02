@@ -179,26 +179,16 @@ class Order_model extends CI_Model {
     }
 
     public function seller_list($per_page,$offcet=0){
-        $FromDate=$this->input->post('HiddenFilterFromDate',TRUE);
-        $ToDate=$this->input->post('HiddenFilterToDate',TRUE);
-        $UserName=$this->input->post('HiddenFilterUserName',TRUE);
-        $OrderStatus=$this->input->post('HiddenFilterOrderStatus',TRUE);
+        $FromDate=$this->input->get_post('HiddenFilterFromDate',TRUE);
+        $ToDate=$this->input->get_post('HiddenFilterToDate',TRUE);
+        $UserName=$this->input->get_post('HiddenFilterUserName',TRUE);
+        $OrderStatus=$this->input->get_post('HiddenFilterOrderStatus',TRUE);
         $sql='SELECT o.*,u1.email FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) '
                 . ' JOIN `user` AS u ON(u.userId=ps.userId)'
                 . ' JOIN `user` AS u1 ON(u1.userId=o.userId) WHERE o.status !=1 AND u.userId='.$this->session->userdata('FE_SESSION_VAR').' ';//.' AND o.parrentorderId=0 ';
-
-        /*if($UserName!=""){
-            $sql .= " AND u.UserName='".$UserName."'";
-        }
-
-        if($OrderStatus!=""){
-            $sql .= " AND o.orderStateId='".$OrderStatus."'";
-        }
-
-        if($FromDate!="" && $ToDate!=""){
-            $sql .= " AND o.OrderDate BETWEEN '".$FromDate."' AND '".$ToDate."' ";
-        }*/
-
+        if($OrderStatus!=""):
+            $sql.=" AND o.status=$OrderStatus ";
+        endif;
         $sql .= 'ORDER BY o.orderId DESC';
         $sql.=" LIMIT $offcet,$per_page";
         $arr=$this->db->query($sql)->result();
