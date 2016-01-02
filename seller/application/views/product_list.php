@@ -82,8 +82,7 @@
       </div><!-- /#content -->
     </div>
     <?php echo $footer;?>
-</body>
-</html>
+
 <!-- Modal -->
 <div class="modal fade" id="myModalLogin123" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
@@ -119,7 +118,8 @@
 <script src="<?php echo SiteJSURL;?>metis-file-map-sortable-datatable-pricing-progress.js"></script>
 <script type="text/javascript">
  $(function() {
-    $("#actionDrop").sortable(); $("#actionDrop").disableSelection();
+    //$("#actionDrop").sortable(); 
+    //$("#actionDrop").disableSelection();
     $('.deleteProduct').on('click',function(){
         var productid = $(this).data('productid');
         myJsMain.commonFunction.tidiitConfirm("Tidiit Product Delete Confirmation",'Are you sure to delete this product ?',myJsMain.baseURL+'product/delete/'+productid,0);
@@ -141,8 +141,9 @@
 }); 
     $(function() {
       Metis.MetisTable();
-      Metis.metisSortable();
-      
+      //Metis.metisSortable();
+      //$('#actionDrop').removeClass('ui-sortable-handle');
+      //$('.dataTableBatchAction').find('div').removeClass('ui-sortable');
         /*$('.dataTableBatchAction').find('.ui-sortable').each(function(){
              $(this).removeClass('ui-sortable');
              $(this).children().removeAttr('class');
@@ -155,3 +156,5 @@
     });
 	
 </script>
+</body>
+</html>
