@@ -192,7 +192,7 @@ class Order_model extends CI_Model {
         $sql .= 'ORDER BY o.orderId DESC';
         $sql.=" LIMIT $offcet,$per_page";
         $arr=$this->db->query($sql)->result();
-        //echo $this->db->last_query(); //die;
+        echo $this->db->last_query(); //die;
         return $arr;
     }
 
@@ -201,25 +201,17 @@ class Order_model extends CI_Model {
         $ToDate=$this->input->post('HiddenFilterToDate',TRUE);
         $UserName=$this->input->post('HiddenFilterUserName',TRUE);
         $OrderStatus=$this->input->post('HiddenFilterOrderStatus',TRUE);
-        $sql='SELECT o.*,u1.email,u.email AS SellerEmail,os.name AS orderStatusType, (SELECT paymentType FROM `payment` As p WHERE p.orderId=o.orderId ORDER BY `paymentId` `DESC` LIMIT 0,1) AS paymentType, '
+        $sql='SELECT o.*,u1.email,u.email AS SellerEmail,os.name AS orderStatusType, (SELECT paymentType FROM `payment` As p WHERE p.orderId=o.orderId ORDER BY `paymentId` DESC LIMIT 0,1) AS paymentType, '
                 . ' (select odr.orderDeliveredRequestId FROM `order_delivered_request` AS odr where o.orderId=odr.orderId order by odr.orderDeliveredRequestId DESC limit 0,1) AS orderDeliveredRequestId  '
                 . ' FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) '
                 . ' JOIN `user` AS u ON(u.userId=ps.userId) JOIN `user` AS u1 ON(u1.userId=o.userId) '
                 . ' JOIN `order_state` AS os ON(o.status=os.orderStateId) '
                 . ' LEFT JOIN `order_delivered_request` AS odr ON(o.orderId=odr.orderId)  WHERE o.status >1 ';
 
-        /*if($UserName!=""){
-            $sql .= " AND u.UserName='".$UserName."'";
-        }
-
-        if($OrderStatus!=""){
-            $sql .= " AND o.orderStateId='".$OrderStatus."'";
-        }
-
-        if($FromDate!="" && $ToDate!=""){
-            $sql .= " AND o.OrderDate BETWEEN '".$FromDate."' AND '".$ToDate."' ";
-        }*/
-
+        if($OrderStatus!=""):
+            $sql.=" AND o.status=$OrderStatus ";
+        endif;
+        
         $sql .= 'ORDER BY o.orderId DESC';
         $sql.=" LIMIT $offcet,$per_page";
         $arr=$this->db->query($sql)->result();
