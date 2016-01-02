@@ -192,7 +192,7 @@ class Order_model extends CI_Model {
         $sql .= 'ORDER BY o.orderId DESC';
         $sql.=" LIMIT $offcet,$per_page";
         $arr=$this->db->query($sql)->result();
-        echo $this->db->last_query(); //die;
+        //echo $this->db->last_query(); //die;
         return $arr;
     }
 
