@@ -29,9 +29,9 @@
                                 </div>
                                 <div class="col-md-5 col-sm-5 padng_left_none">
                                     <ul class="sub_menu">
-                                        <li><a href="<?php echo BASE_URL.'buyer-protection/MTc==/';?>">Buyer Protection <i class="fa fa-angle-down"></i></a></li>
-                                        <li><a href="<?php echo BASE_URL.'help/MTU=/';?>">Help <i class="fa fa-angle-down"></i></a></li>
-                                        <li><a href="javascript:void(0);" class="showMyAccount">My Account <i class="fa fa-angle-down"></i></a></li>
+                                        <li><a href="<?php echo BASE_URL.'buyer-protection/MTc==/';?>">Buyer Protection <i class="fa fa-lock"></i></a></li>
+                                        <li><a href="<?php echo BASE_URL.'help/MTU=/';?>">Help <i class="fa fa-question-circle"></i></a></li>
+                                        <li><a href="javascript:void(0);" class="showMyAccount">My Account <i class="fa fa-user"></i></a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -41,11 +41,11 @@
                                 <div class="col-md-3 col-sm-6">
                                     <div class="icon_text">
                                         <div class="circle_brdr">
-                                            <span><i class="fa fa-bus"></i></span>
+                                            <span><i class="fa fa-diamond"></i></span>
                                         </div>
                                         <div class="content">
-                                            <h3>Discounted Shipping</h3>
-                                            <p>ON ORDER OVER $150</p>
+                                            <h3>More About Coupon</h3>
+                                            <p>Visit now</p>
                                         </div>
                                     </div>
                                 </div>
@@ -100,7 +100,7 @@
                     </div>
                     <div class="col-md-6 col-sm-8">
                         <ul class="main_menu">
-                            <li><a href="<?php echo BASE_URL.'hot-deals';?>">Hot Deals</a></li>
+                            <li><a href="<?php echo BASE_URL.'tidiit-payment-policy';?>">Tidiit Payment Policy</a></li>
                             <li><a href="<?php echo BASE_URL.'new-arrivals';?>">New Arrivals</a></li>
                             <li><a href="<?php echo BASE_URL.'brand-zone';?>">Brand Zone</a></li>
                             <li><a href="<?php echo BASE_URL.'customer-service';?>">Customer service</a></li>

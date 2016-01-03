@@ -32,7 +32,7 @@
                 <div class="col-md-6">
                     <div class="Scr_trstd">
                         <p><strong>100% Secure and Trusted Payment </strong></p>
-                        <span>We accept Net Banking, all major Credit cards, Debit cards, and Cash Cards. We also offer Cash on Delivery and India's largest selection of EMI options.</span>
+                        <span>We accept Net Banking, mPesa. We also offer Cash on Delivery.</span>
                         <img src="<?php echo SiteImagesURL; ?>trstd_pymnt.png" />
                     </div>
                 </div>

@@ -286,7 +286,7 @@
                     <div class="abot_box">
                         <img src="<?php echo SiteImagesURL;?>about_img.png" />
                         <a href="<?php echo BASE_URL.'content/about-us/'.  base64_encode(1);?>"><h3>About Tidiit</h3></a>
-                        <p>Lorem Ipsum is simply dummy text of the printing and type setting industry.</p>
+                        <p>&nbsp;</p>
                         <p><a href="<?php echo BASE_URL.'content/about-us/'.  base64_encode(1);?>">Learn More..</a></p>
                     </div>
                 </div>
@@ -294,7 +294,7 @@
                         <div class="abot_box">
                         <img src="<?php echo SiteImagesURL;?>faq_img.png" />
                         <a href="<?php echo BASE_URL.'seller-faq';?>"><h3>New Sellers FAQ</h3></a>
-                        <p><?php if(!empty($sellerDataArr)){echo $sellerDataArr[0]->question;}?></p>
+                        <p>&nbsp;</p>
                         <p><a href="<?php echo BASE_URL.'seller-faq';?>">Learn More..</a></p>
                     </div>
                 </div>
@@ -302,7 +302,7 @@
                         <div class="abot_box brdr_rit_none">
                         <img src="<?php echo SiteImagesURL;?>prtctn_img.png" />
                         <a href="<?php echo BASE_URL.'buyer-faq';?>"><h3>New Buyers FAQ</h3></a>
-                        <p><?php if(!empty($buyerDataArr)){echo $buyerDataArr[0]->question;}?></p>
+                        <p>&nbsp;</p>
                         <p><a href="<?php echo BASE_URL.'buyer-faq';?>">Learn More..</a></p>
                     </div>
                 </div>
