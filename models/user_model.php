@@ -19,6 +19,7 @@ class User_model extends CI_Model {
     private $_table_locality ="locality";
     private $_table_zip ="zip";
     private $_table_order = 'order';
+    private $_table_sms_history = 'sms_send_history';
 
 
     public $result=NULL;
@@ -781,6 +782,11 @@ class User_model extends CI_Model {
         else:
             return FALSE;
         endif;
+    }
+    
+    function add_sms_history($dataArray){
+        $this->db->insert($this->_table_sms_history,$dataArray);
+        return $this->db->insert_id();
     }
     
     function testtestFun(){

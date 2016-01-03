@@ -79,7 +79,7 @@
   </tr>
  
   <tr>
-    <td><form name="AdminEdit" id="AdminEdit" method="post" action="<?=base_url()?>admin/site_config/edit/">
+    <td><form name="AdminEdit" id="AdminEdit" method="post" action="<?=base_url()?>webadmin/site_config/edit/">
 <table width="90%" border="0" align="center" cellpadding="0" cellspacing="0" id="EditBox" style="display:none;">
   <tr>
     <th width="20%" align="left" valign="top" scope="col">&nbsp;</th>

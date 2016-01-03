@@ -223,6 +223,9 @@ class MY_Controller extends CI_Controller {
     }
 
     public function _show_admin_logedin_layout(){
+        if($this->_is_admin_loged_in()==FALSE){
+            redirect(BASE_URL.'webadmin/');
+        }
             $data=array();
             $data['SiteImagesURL']=$this->config->item('SiteImagesURL');
             $data['SiteCSSURL']=$this->config->item('SiteCSSURL');

@@ -29,7 +29,11 @@ class Siteconfig_model extends CI_Model {
 		$query = $this->db->get();
 		//echo  $this->db->last_query();
 		$this->result = $query->result();
-		return $this->result[0]->ConstantValue;
+                if(empty($this->result)):
+                    return "";
+                else:
+                    return $this->result[0]->ConstantValue;
+                endif;
 	}
 	
 	function get_country(){

@@ -144,7 +144,9 @@ class Appdata extends REST_Controller {
         $email=$this->post('email');
         $mobile=$this->post('mobile');
         $fax=$this->post('fax');
-        $DOB=$this->post('DOB');
+        $rowDOB=$this->post('DOB');
+        $dobArr=  explode('-',$rowDOB);
+        $DOB=$dobArr[2].'-'.$dobArr[1].'-'.$dobArr[0];
         $aboutMe=$this->post('aboutMe');
         $userId=$this->post('userId');
         
@@ -157,7 +159,6 @@ class Appdata extends REST_Controller {
         }
         
         if($email!="" && $contactNo!="" && $deviceToken!="" && $deviceType!="" && $UDID!="" && $userId!=""):
-            $this->load->model();
             $myProfileDataArr=array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo,
                     'email'=>$email,'DOB'=>$DOB,'mobile'=>$mobile,'fax'=>$fax,'aboutMe'=>$aboutMe);
             $this->user->edit($myProfileDataArr,$userId);
@@ -207,13 +208,6 @@ class Appdata extends REST_Controller {
         
         $result['CatArr']=  $categoryMenyArr;
         $myGroupDataArr=$this->user->get_my_groups_apps($userId);
-        /*pre($myGroupDataArr);die;
-        $myGroupDataArrNew= array();
-        $l=0;
-        foreach ($myGroupDataArr AS $k => $v):
-            $myGroupDataArrNew[]=$v;
-        endforeach;*/
-        //pre($myGroupDataArrNew);die;
         $my_groups = $myGroupDataArr;
         $result['myGroups']=$my_groups;
         $result['timestamp'] = (string)mktime();

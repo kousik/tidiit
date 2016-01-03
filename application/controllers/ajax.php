@@ -6,6 +6,7 @@ class Ajax extends MY_Controller{
         $this->load->model('User_model');
         $this->load->model('Product_model');
         $this->load->model('Category_model');
+        $this->load->model('Siteconfig_model');
         //parse_str($_SERVER['QUERY_STRING'],$_GET);
         $this->load->library('cart');
         $this->db->cache_off();
@@ -360,8 +361,11 @@ class Ajax extends MY_Controller{
         if($groupId):
             if($groupUsersArr):
                 foreach($groupUsersArr as $guser):
+                    $receiverDetails=$this->User_model->get_details_by_id($guser);
                     $notify['senderId'] = $groupAdminId;
                     $notify['receiverId'] = $guser;
+                    $notify['receiverMobileNumber'] = $receiverDetails[0]->mobile;
+                    $notify['senderMobileNumber'] = $adminDataArr[0]->mobile;
                     $notify['nType'] = "BUYING-CLUB-ADD";
                     $notify['nTitle'] = $groupTitle;
                     $notify['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
@@ -411,17 +415,23 @@ class Ajax extends MY_Controller{
         
         $groupIdUpdate = $this->User_model->group_update(array('groupTitle'=>$groupTitle,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor), $groupId);
         if($groupIdUpdate):
+            $adminDataArr=  $this->User_model->get_details_by_id($this->session->userdata('FE_SESSION_VAR'));
             foreach($olduser as $ouser):
+                $receiverDetails=$this->User_model->get_details_by_id($ouser);
                 $notify['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                 $notify['receiverId'] = $ouser;
                 $notify['nType'] = "BUYING-CLUB-MODIFY";
+                $notify['receiverMobileNumber'] = $receiverDetails[0]->mobile;
+                $notify['senderMobileNumber'] = $adminDataArr[0]->mobile;
                 $notify['nTitle'] = $groupTitle;
                 $this->send_notification($notify);
             endforeach;
-            $adminDataArr=  $this->User_model->get_details_by_id($this->session->userdata('FE_SESSION_VAR'));
             foreach($newUser as $nuser):
+                $receiverDetails=$this->User_model->get_details_by_id($nuser);
                 $notify['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                 $notify['receiverId'] = $nuser;
+                $notify['receiverMobileNumber'] = $receiverDetails[0]->mobile;
+                $notify['senderMobileNumber'] = $adminDataArr[0]->mobile;
                 $notify['nType'] = "BUYING-CLUB-MODIFY-NEW";
                 $notify['nTitle'] = $groupTitle;
                 $notify['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
@@ -431,9 +441,12 @@ class Ajax extends MY_Controller{
             endforeach;
 
             foreach($deluser as $duser):
+                $receiverDetails=$this->User_model->get_details_by_id($duser);
                 $notify['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                 $notify['receiverId'] = $duser;
                 $notify['nType'] = "BUYING-CLUB-MODIFY-DELETE";
+                $notify['receiverMobileNumber'] = $receiverDetails[0]->mobile;
+                $notify['senderMobileNumber'] = $adminDataArr[0]->mobile;
                 $notify['nTitle'] = $groupTitle;
                 $this->send_notification($notify);
             endforeach;
@@ -594,25 +607,33 @@ class Ajax extends MY_Controller{
             case 'BUYING-CLUB-ADD':
                 $data['nMessage'] = "Hi, <br /> You Have added in my newly created Buying Club <strong>[".$data['nTitle']."]</strong> by ".$data['adminName'].".<br />Group Leader email id is ".$data['adminEmail'].".<br />Group Leader contact number is ".$data['adminContactNo'].".";
                 $data['isEmail'] = true;
-                $data['isMobMessage'] = true;
+                if($this->Siteconfig_model->get_value_by_name('SMS_SEND_ALLOW')=='yes'):
+                    $data['isMobMessage'] = true;
+                endif;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
             case 'BUYING-CLUB-MODIFY':
                 $data['nMessage'] = "Hi, <br> Buying Club <strong>[".$data['nTitle']."]</strong> has been modified.";
                 $data['isEmail'] = true;
-                $data['isMobMessage'] = true;
+                if($this->Siteconfig_model->get_value_by_name('SMS_SEND_ALLOW')=='yes'):
+                    $data['isMobMessage'] = true;
+                endif;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
             case 'BUYING-CLUB-MODIFY-NEW':
                 $data['nMessage'] = "Hi, <br> You Have added in my Buying Club <strong>[".$data['nTitle']."]</strong>.<br />My name is ".$data['adminName'].".<br />My email id is ".$data['adminEmail'].".<br />My contact number is ".$data['adminContactNo'].".";
                 $data['isEmail'] = true;
-                $data['isMobMessage'] = true;
+                if($this->Siteconfig_model->get_value_by_name('SMS_SEND_ALLOW')=='yes'):
+                    $data['isMobMessage'] = true;
+                endif;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
             case 'BUYING-CLUB-MODIFY-DELETE':
                 $data['nMessage'] = "Hi, <br> You are not part of this Buying Club <strong>[".$data['nTitle']."]</strong>";
                 $data['isEmail'] = true;
-                $data['isMobMessage'] = true;
+                if($this->Siteconfig_model->get_value_by_name('SMS_SEND_ALLOW')=='yes'):
+                    $data['isMobMessage'] = true;
+                endif;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
         }
@@ -624,7 +645,18 @@ class Ajax extends MY_Controller{
         
         
         if($data['isMobMessage']):
+            $this->load->library('tidiitsms');
             //Send Mobile message
+            $smsAddHistoryDataArr=array();
+            $smsConfig=array('sms_text'=>$data['nMessage'],'receive_phone_number'=>$data['receiverMobileNumber']);
+            $smsResult=$this->tidiitsms->send_sms($smsConfig);
+            $smsAddHistoryDataArr=array('senderUserId'=>$data['senderId'],'receiverUserId'=>$data['receiverId'],
+                'senderPhoneNumber'=>$data['senderMobileNumber'],'receiverPhoneNumber'=>$data['receiverMobileNumber'],
+                'IP'=>  $this->input->ip_address(),'sms'=>$data['nMessage'],'sendActionType'=>$data['nType'],
+                'smsGatewaySenderId'=>$this->Siteconfig_model->get_value_by_name('SMS_GATEWAY_SENDERID'),'smsGatewayReturnData'=>$smsResult);
+                $this->User_model->add_sms_history($smsAddHistoryDataArr);
+            
+            
             unset($data['isMobMessage']);
         endif;
         
@@ -635,6 +667,7 @@ class Ajax extends MY_Controller{
         unset($data['adminName']);
         unset($data['adminEmail']);
         unset($data['adminContactNo']);
+        unset($data['receiverMobileNumber']);
         
         $this->User_model->notification_add($data);
     
