@@ -1,4 +1,3 @@
-<?php $orderInfo=$single_order_success['TEMPLATE_ORDER_SUCCESS_ORDER_INFO'];?>
 <div bgcolor="#8d8e90">
   <table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#8d8e90">
     <tr>
@@ -35,11 +34,20 @@
             <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td width="10%">&nbsp;</td>
-                  <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $orderInfo['shipping']->firstName.' '.$orderInfo['shipping']->lastName;?>,</em></strong></font><br />
+                  <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $leaderFullName;?>,</em></strong></font><br />
                     <br />
-                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">Thank you for your order!. <br />
+					<?php echo $buyerFullName?> had placed the Buying Club order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderId;?></span></a> under your Buying Club <strong><?php echo $orderInfo['group']->groupTitle?></strong>. <br />
+                    
+                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">
+					Master order no is <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->parrentOrderID;?></span></a><br />This is a maessage that order is ready to out for delivery. <br />
                     <br />
-                    We will send you email once the order will confirm by seller and one more mail,the items in your order have been shipped. Meanwhile, you can check the status of your order on Tidiit.com</font> <br /></td>
+					Delivery Company Name : <?php echo $deliveryCompanyName;?><br />
+					Delivery person name : <?php echo $deliveryStaffName;?><br />
+					Contact number of delivery person : <?php echo $deliveryStaffContactNo;?><br >
+					Email of delivery person : <?php echo $deliveryStaffEmail;?><br >
+					<?php if($isPaid==0){?><br />
+					As your member <strong><?php echo $buyerFullName?></strong> had order order the item with <strong>Settle on Delivery</strong> Method,<br /> please discussion with member(<strong><?php echo $buyerFullName?></strong>) to make payment from his/her my account so logistics people delivery your item in your door step.
+					<?php }?>	</font> <br /></td>
                   <td width="10%">&nbsp;</td>
                 </tr>
                 <tr>
@@ -49,24 +57,10 @@
                           <td align="left" valign="top" style="background-color:#FFFFFF;display:block;clear:both;padding:20px 20px 0 20px;" bgcolor=""><table border="0" cellspacing="0" cellpadding="0" width="100%" style="">
                               <tbody>
                                 <tr>
-                                  <td colspan="4" width="100%" align="middle" valign="top"><p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $single_order_success['TEMPLATE_ORDER_SUCCESS_ORDER_ID'];?></span></a> </p>
+                                  <td colspan="4" width="100%" align="middle" valign="top"><p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderId;?></span></a> </p>
                                     <br>
                                   </td>
                                 </tr>
-                                <?php /*<tr> 
-<td colspan="4" align="left" valign="top">
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-<tbody>
-<tr>
-<td valign="middle" align="left" rowspan="2" style="white-space:nowrap;padding-right:5px;font-size:13px;"> 
-Seller: <a style="color:#666;font-size:12px;text-decoration:none;" target="_blank" href="#"><span style="color:#666;">Jazzup</span></a> 
-</td> <td valign="middle" align="left">
-</td>
-</tr>
-</tbody> 
-</table> 
-</td>
-</tr>*/?>
                               </tbody>
                             </table></td>
                         </tr>
@@ -155,8 +149,6 @@ Seller: <a style="color:#666;font-size:12px;text-decoration:none;" target="_blan
                   <td width="14%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><a href= "<?php echo $MainSiteBaseURL;?>" style="color:#010203; text-decoration:none"><strong>24x7 Customer Support </strong></a></font></td>
                   <td width="2%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><strong>|</strong></font></td>
                   <td width="9%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><a href= "<?php echo $MainSiteBaseURL;?>" style="color:#010203; text-decoration:none"><strong>Buyer Protection</strong></a></font></td>
-                  <!--<td width="2%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><strong>|</strong></font></td>
-<td width="10%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><a href= "http://yourlink" style="color:#010203; text-decoration:none"><strong>PRESS </strong></a></font></td>-->
                   <td width="2%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><strong>|</strong></font></td>
                   <td width="11%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><a href= "<?php echo $MainSiteBaseURL;?>" style="color:#010203; text-decoration:none"><strong>Flexible Payment Options</strong></a></font></td>
                   <td width="2%" align="center"><font style="font-family:'Myriad Pro', Helvetica, Arial, sans-serif; color:#010203; font-size:9px; text-transform:uppercase"><strong>|</strong></font></td>

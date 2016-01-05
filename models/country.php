@@ -27,41 +27,52 @@ class Country extends CI_Model {
             return $this->db->get($this->_table)->result();
 	}	
         
-        function get_all1(){
+        function get_all1($app=FALSE){
             $this->db->order_by('countryName','asc');
-            return $this->db->get_where($this->_table,array('status'=>1))->result();
+            if($app)
+                return $this->db->get_where($this->_table,array('status'=>1))->result_array();
+            else
+                return $this->db->get_where($this->_table,array('status'=>1))->result();
         }
 	
-	function get_state_country($countryId){
-            return $this->db->from($this->_table_state)->where('countryId',$countryId)->get()->result();
+	function get_state_country($countryId,$app=FALSE){
+            if($app)
+                return $this->db->from($this->_table_state)->where('countryId',$countryId)->get()->result_array();
+            else    
+                return $this->db->from($this->_table_state)->where('countryId',$countryId)->get()->result();
 	}
         
-        function get_state_country1($countryId){
-            return $this->db->from($this->_table_state)->where('countryId',$countryId)->where('status',1)->get()->result();
+        function get_state_country1($countryId,$app=FALSE){
+            if($app)
+                return $this->db->from($this->_table_state)->where('countryId',$countryId)->where('status',1)->get()->result_array();
+            else    
+                return $this->db->from($this->_table_state)->where('countryId',$countryId)->where('status',1)->get()->result();
 	}
 	
-	function get_all_state(){
-            return  $this->db->get($this->_table_state)->result();
+	function get_all_state($app=FALSE){
+            if($app)
+                return  $this->db->get($this->_table_state)->result();
+            else    
+                return  $this->db->get($this->_table_state)->result();
 	}
 	
 	public function get_indian_state(){
             return $this->get_state_country(99);
 	}
 	
-	function get_usa_state(){
-            return $this->get_state_country(1);
+	
+	function get_country_name($id,$app=FALSE){
+            if($app)
+                return $this->db->select('CountryName')->from($this->_table)->where('CountryID',$id)->get()->result_array();
+            else    
+                return $this->db->select('CountryName')->from($this->_table)->where('CountryID',$id)->get()->result();
 	}
 	
-	function get_240(){
-            return $this->db->from($this->_table)->where('CountryID <>','1')->where('CountryID <>','99')->get()->result();
-	}
-	
-	function get_country_name($id){
-            return $this->db->select('CountryName')->from($this->_table)->where('CountryID',$id)->get()->result();
-	}
-	
-	function get_state_name($id){
-            return $this->db->select('stateName')->from($this->_table_state)->where('stateId',$id)->get()->result();
+	function get_state_name($id,$app=FALSE){
+            if($app)
+                return $this->db->select('stateName')->from($this->_table_state)->where('stateId',$id)->get()->result_array();
+           else 
+                return $this->db->select('stateName')->from($this->_table_state)->where('stateId',$id)->get()->result();
 	}
         
         function get_add_state($countryId,$stateName){
@@ -72,10 +83,6 @@ class Country extends CI_Model {
                 $this->db->insert($this->_table_state,array('countryId'=>$countryId,'stateName'=>$stateName));
                 return $this->db->insert_id();
             }
-        }
-        
-        function get_category_shipping_state($CountryName){
-            return $this->db->query("SELECT s . * FROM `state` AS s JOIN `country` AS c ON ( s.CountryID = c.CountryID ) WHERE c.CountryName LIKE '".$CountryName."'")->result();
         }
         
         function get_all_state_admin($countryId){
@@ -94,13 +101,19 @@ class Country extends CI_Model {
             return TRUE;
         }
         
-        function state_details($stateId){
-            return $this->db->from($this->_table_state)->where('stateId',$stateId)->get()->result();
+        function state_details($stateId,$app=FALSE){
+            if($app)
+                return $this->db->from($this->_table_state)->where('stateId',$stateId)->get()->result_array();
+            else
+                return $this->db->from($this->_table_state)->where('stateId',$stateId)->get()->result();
         }
         
-        function get_all_city($stateId){
+        function get_all_city($stateId,$app=FALSE){
             $sql="SELECT c.*,s.stateName,co.countryName FROM city AS c LEFT JOIN state AS s ON(c.stateId=s.stateId) LEFT JOIN country AS co ON(c.countryId=co.countryId) WHERE s.stateId=".$stateId;
-            return $this->db->query($sql)->result();
+            if($app)
+                return $this->db->query($sql)->resul_array();
+            else
+                return $this->db->query($sql)->result();
         }
         
         function get_all_city1($countryId,$app=false){
@@ -221,8 +234,11 @@ class Country extends CI_Model {
             return TRUE;
         }
         
-        function get_city_country($countryId){
-            return $this->db->get_where($this->_table_city,array('countryId'=>$countryId,'status'=>1))->result();
+        function get_city_country($countryId,$app=FALSE){
+            if($app)
+                return $this->db->get_where($this->_table_city,array('countryId'=>$countryId,'status'=>1))->result_array();
+            else    
+                return $this->db->get_where($this->_table_city,array('countryId'=>$countryId,'status'=>1))->result();
         }
         
 }

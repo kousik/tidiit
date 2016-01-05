@@ -38,7 +38,7 @@
                     <br />
                     <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">Thank you for your order!. <br />
                     <br />
-                    We will send you another email once the items in your order have been shipped. Meanwhile, you can check the status of your order on Tidiit.com</font> <br /></td>
+                    We will send you email once the order will confirm by seller and one more mail,the items in your order have been shipped. Meanwhile, you can check the status of your order on Tidiit.com</font> <br /></td>
                   <td width="10%">&nbsp;</td>
                 </tr>
                 <tr>
@@ -49,7 +49,7 @@
                               <tbody>
                                 <tr>
                                   <td colspan="4" width="100%" align="middle" valign="top">
-								  <p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;"><?php echo $orderDetails[0]->orderId;?></span></a> and Master order is <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;"><?php echo $orderParrentId?></span></a></p>
+								  <p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?></span></a> and Master order is <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderParrentId?></span></a></p>
                                     <br />
                                   </td>
                                 </tr>

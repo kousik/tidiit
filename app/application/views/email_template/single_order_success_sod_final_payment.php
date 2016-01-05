@@ -37,9 +37,7 @@
                   <td width="10%">&nbsp;</td>
                   <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $orderInfo['shipping']->firstName.' '.$orderInfo['shipping']->lastName;?>,</em></strong></font><br />
                     <br />
-                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">Thank you for your order!. <br />
-                    <br />
-                    We will send you email once the order will confirm by seller and one more mail,the items in your order have been shipped. Meanwhile, you can check the status of your order on Tidiit.com</font> <br /></td>
+                    </td>
                   <td width="10%">&nbsp;</td>
                 </tr>
                 <tr>
@@ -49,24 +47,10 @@
                           <td align="left" valign="top" style="background-color:#FFFFFF;display:block;clear:both;padding:20px 20px 0 20px;" bgcolor=""><table border="0" cellspacing="0" cellpadding="0" width="100%" style="">
                               <tbody>
                                 <tr>
-                                  <td colspan="4" width="100%" align="middle" valign="top"><p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $single_order_success['TEMPLATE_ORDER_SUCCESS_ORDER_ID'];?></span></a> </p>
+                                  <td colspan="4" width="100%" align="middle" valign="top"><p style="padding:0;color:#565656;line-height:22px;font-size:13px;">You have completed the payment for order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $single_order_success['TEMPLATE_ORDER_SUCCESS_ORDER_ID'];?></span></a> before delivery</p>
                                     <br>
                                   </td>
                                 </tr>
-                                <?php /*<tr> 
-<td colspan="4" align="left" valign="top">
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-<tbody>
-<tr>
-<td valign="middle" align="left" rowspan="2" style="white-space:nowrap;padding-right:5px;font-size:13px;"> 
-Seller: <a style="color:#666;font-size:12px;text-decoration:none;" target="_blank" href="#"><span style="color:#666;">Jazzup</span></a> 
-</td> <td valign="middle" align="left">
-</td>
-</tr>
-</tbody> 
-</table> 
-</td>
-</tr>*/?>
                               </tbody>
                             </table></td>
                         </tr>

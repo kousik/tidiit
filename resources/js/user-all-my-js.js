@@ -37,8 +37,6 @@ myJsMain.my_billing_address=function(){
     }
 };
 
-
-
 myJsMain.my_profile=function(){ 
     var myProfileValidationRules = {
         firstName: {required: true},

@@ -36,9 +36,9 @@
                   <td width="10%">&nbsp;</td>
                   <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $userFullName;?>,</em></strong></font><br />
                     <br />
-                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px"><?php echo $buyerFullName;?> has post one Bouying Club Order. <p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Order number is : <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;"><?php echo $orderDetails[0]->orderId;?></span></a> for seller (<?php echo $sellerFullName;?>)</p>
+                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px"><?php echo $buyerFullName;?> has post one Order. <p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Order number is : <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderDetails[0]->orderId;?></span></a> for seller (<?php echo $sellerFullName;?>)</p>
                     <br />
-                    Selected prodcut slab price is <?php echo $orderInfoDataArr['priceinfo']->price;?> and qanity <?php echo $orderInfoDataArr['priceinfo']->qty;?></font> <br /></td>
+                    Selected product slab price is <?php echo $orderInfoDataArr['priceinfo']->price;?> and quantity <?php echo $orderInfoDataArr['priceinfo']->qty;?></font> <br /></td>
                   <td width="10%">&nbsp;</td>
                 </tr>
                 <tr>
@@ -63,7 +63,7 @@
 										</font> 
 									</td>
                                   <td width="10%" align="middle" valign="top">&nbsp;</td>
-									<?phpp /*<td width="48%" align="middle" valign="top">
+									<?php /*<td width="48%" align="middle" valign="top">
 										<font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:15px; line-height:21px;font-weight:bold;">
 											Billing Address
 										</font>

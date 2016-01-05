@@ -35,35 +35,69 @@
                     <!-- end banner section -->
                 </div>
                 <div class="col-md-3 col-sm-5">
-                    <div class="view second-effect">
-                        <img src="<?php echo SiteImagesURL;?>daily_deals.png" class="img-responsive" />
-                        <div class="mask">
-                                <p class="cntnt">
-                                UP TO 70% OFF
-                                <a href="#">Shop Now &nbsp;<i class="fa fa-caret-right"></i></a>
-                            </p>
+                    <div class="col-md-6">
+                        <div class="view second-effect">
+                            <img src="<?php echo SiteImagesURL;?>daily_deals.png" class="img-responsive" height="100" width="100"/>
+                            <div class="mask">
+                                    <p class="cntnt">
+                                    UP TO 70% OFF
+                                    <a href="#">Shop Now &nbsp;<i class="fa fa-caret-right"></i></a>
+                                </p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="view second-effect">
-                        <img src="<?php echo SiteImagesURL;?>offer_img.png" class="img-responsive" />
-                        <div class="mask">
-                                <p class="cntnt">
-                                UP TO 70% OFF
-                                <a href="#">Shop Now &nbsp;<i class="fa fa-caret-right"></i></a>
-                            </p>
+                        <div class="view second-effect">
+                            <img src="<?php echo SiteImagesURL;?>offer_img.png" class="img-responsive" />
+                            <div class="mask">
+                                    <p class="cntnt">
+                                    UP TO 70% OFF
+                                    <a href="#">Shop Now &nbsp;<i class="fa fa-caret-right"></i></a>
+                                </p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="view second-effect">
-                        <img src="<?php echo SiteImagesURL;?>offer_img1.png" class="img-responsive" />
-                        <div class="mask">
-                                <p class="cntnt">
-                                UP TO 70% OFF
-                                <a href="#">Shop Now &nbsp;<i class="fa fa-caret-right"></i></a>
-                            </p>
+                        <div class="view second-effect">
+                            <img src="<?php echo SiteImagesURL;?>offer_img1.png" class="img-responsive" />
+                            <div class="mask">
+                                    <p class="cntnt">
+                                    UP TO 70% OFF
+                                    <a href="#">Shop Now &nbsp;<i class="fa fa-caret-right"></i></a>
+                                </p>
+                            </div>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="view second-effect">
+                            <img src="<?php echo SiteImagesURL;?>daily_deals.png" class="img-responsive" />
+                            <div class="mask">
+                                    <p class="cntnt">
+                                    UP TO 70% OFF
+                                    <a href="#">Shop Now &nbsp;<i class="fa fa-caret-right"></i></a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="view second-effect">
+                            <img src="<?php echo SiteImagesURL;?>offer_img.png" class="img-responsive" />
+                            <div class="mask">
+                                    <p class="cntnt">
+                                    UP TO 70% OFF
+                                    <a href="#">Shop Now &nbsp;<i class="fa fa-caret-right"></i></a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="view second-effect">
+                            <img src="<?php echo SiteImagesURL;?>offer_img1.png" class="img-responsive" />
+                            <div class="mask">
+                                    <p class="cntnt">
+                                    UP TO 70% OFF
+                                    <a href="#">Shop Now &nbsp;<i class="fa fa-caret-right"></i></a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>

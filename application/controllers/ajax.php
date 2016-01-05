@@ -19,18 +19,7 @@ class Ajax extends MY_Controller{
             array('field'   => 'password','label'   => 'Password','rules'   => 'trim|required|xss_clean|min_length[4]|max_length[15]'),
             array('field'   => 'confirmPassword','label'   => 'Password','rules'   => 'trim|required|xss_clean|matches[password]'),
             array('field'   => 'firstName','label'   => 'First Name','rules'   => 'trim|required|xss_clean|min_length[3]|max_length[25]'),
-            array('field'   => 'lastName','label'   => 'Last Name','rules'   => 'trim|required|xss_clean|min_length[3]|max_length[25]')/*,
-            array(
-                  'field'   => 'webIdRegistration',
-                  'label'   => 'Unathorize Access',
-                  'rules'   => 'trim|required|xss_clean|callback_valid_security_code'
-               )*/
-            /*,
-            array(
-                  'field'   => 'agree',
-                  'label'   => 'Agree for Terms and Condition',
-                  'rules'   => 'trim|required|xss_clean'
-               )*/
+            array('field'   => 'lastName','label'   => 'Last Name','rules'   => 'trim|required|xss_clean|min_length[3]|max_length[25]')
          );
         //echo json_encode(array('result'=>'bad','msg'=> 'kkkkkkkkkkkkkkk'));die;
         //initialise the rules with validatiion helper
@@ -52,14 +41,14 @@ class Ajax extends MY_Controller{
                 'email'=>$email,'IP'=> $this->input->ip_address(),'userResources'=>'site','userType'=>'buyer','status'=>1);
             $userId=$this->User_model->add($dataArr);
             
-            if($userId!=""){               
-            
+            if($userId!=""){
+                $this->User_model->add_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'userId'=>$userId));
                 if($receiveNewsLetter==1){
                     if($this->User_model->is_already_subscribe($email)==FALSE){
                         $this->User_model->subscribe($email);
                     }
                 }
-                $this->User_model->add_login_history(array('userId'=>$userId));
+                $this->User_model->add_login_history(array('userId'=>$userId,'IP'=>$this->input->ip_address()));
                 $users=$this->User_model->get_details_by_id($userId);
                 $this->session->set_userdata('FE_SESSION_VAR',$userId);
                 $this->session->set_userdata('FE_SESSION_USERNAME_VAR',$userName);
@@ -109,7 +98,7 @@ class Ajax extends MY_Controller{
                 //$this->session->set_userdata('FE_SESSION_USERNAME_VAR',$UserName);
                 $this->session->set_userdata('FE_SESSION_VAR_TYPE','seller');
                 $this->session->set_userdata('FE_SESSION_UDATA',$DataArr[0]);
-                $this->User_model->add_login_history(array('userId'=>$DataArr[0]->userId));
+                $this->User_model->add_login_history(array('userId'=>$DataArr[0]->userId,'IP'=>$this->input->ip_address()));
                 $redirect_url = $this->input->post('redirect_url',TRUE);
                 echo json_encode(array('result'=>'good','url'=>$redirect_url?$redirect_url:$_SERVER['HTTP_REFERER']));die; 
             }else{

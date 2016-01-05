@@ -36,19 +36,13 @@
                   <td width="10%">&nbsp;</td>
                   <td width="80%" align="left" valign="top">
                     <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:30px">
-					New Buying Club order running by <strong><?php echo $group_order_start['TEMPLATE_GROUP_ORDER_START_TITLE'];?></strong>
-                    </font> <br /><br /><br />
-                   <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">
-				   Hi, <br /><br /> You have requested to buy Buying Club order product. <br /><br />
-				   Product details : <a href='#'><?php echo $group_order_start['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE'];?></a><br /><br />
-				   <strong>Want to process the order ?</strong><br /><br />
-				   <a href='<?php echo BASE_URL;?>shopping/group-order-decline/<?php echo base64_encode($group_order_start['TEMPLATE_GROUP_ORDER_START_ORDERID']*226201);?>'>Decline the Buying Club Order</a><br /><br />
-				   <a href='<?php echo BASE_URL;?>shopping/group-order-accept-process/<?php echo base64_encode($group_order_start['TEMPLATE_GROUP_ORDER_START_ORDERID']*226201);?>'>Accept the Buying Club Order</a><br /><br />
-				   </font>
-					
+					<strong><?php echo $group_order_start['TEMPLATE_GROUP_ORDER_START_TITLE'];?> has completed payment before delivery</strong>
+                    </font> <br /><br />
 					</td>
                   <td width="10%">&nbsp;</td>
                 </tr>
+                <tr><td colspan="3">&nbsp;</td></tr>
+                <tr><td colspan="3"><div style="width:70%; text-align:center;"><font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:12px; line-height:30px">Selected product slab price is <?php echo $group_order_start['TEMPLATE_GROUP_ORDER_START_ORDERAMT'];?> and quantity <?php echo $group_order_start['TEMPLATE_GROUP_ORDER_START_ORDERQTY'];?></font></div></td></tr>
                 <tr><td colspan="3">&nbsp;</td></tr>
 				<tr>
                   <td width="10%">&nbsp;</td>

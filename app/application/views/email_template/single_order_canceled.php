@@ -1,4 +1,3 @@
-<?php $orderInfo=$single_order_success['TEMPLATE_ORDER_SUCCESS_ORDER_INFO'];?>
 <div bgcolor="#8d8e90">
   <table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#8d8e90">
     <tr>
@@ -35,11 +34,14 @@
             <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td width="10%">&nbsp;</td>
-                  <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $orderInfo['shipping']->firstName.' '.$orderInfo['shipping']->lastName;?>,</em></strong></font><br />
+                  <td width="80%" align="left" valign="top"><font style="font-family: Georgia, 'Times New Roman', Times, serif; color:#010101; font-size:14px"><strong><em>Hi <?php echo $buyerFullName;?>,</em></strong></font><br />
                     <br />
-                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">Thank you for your order!. <br />
-                    <br />
-                    We will send you email once the order will confirm by seller and one more mail,the items in your order have been shipped. Meanwhile, you can check the status of your order on Tidiit.com</font> <br /></td>
+                    <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">Your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderId;?></span></a> has canceled.<br /><strong>Cancelation reason is : <?php echo $reason;?></strong><br />
+					<?php if($comments!=""){?>
+					<strong><?php echo $buyerFullName;?> comment for cancelation is :<?php echo $comments;?></strong><br />
+					<?php }?>
+                    <!--Will delivery by : <br />-->
+					</font> <br /></td>
                   <td width="10%">&nbsp;</td>
                 </tr>
                 <tr>
@@ -49,24 +51,10 @@
                           <td align="left" valign="top" style="background-color:#FFFFFF;display:block;clear:both;padding:20px 20px 0 20px;" bgcolor=""><table border="0" cellspacing="0" cellpadding="0" width="100%" style="">
                               <tbody>
                                 <tr>
-                                  <td colspan="4" width="100%" align="middle" valign="top"><p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $single_order_success['TEMPLATE_ORDER_SUCCESS_ORDER_ID'];?></span></a> </p>
+                                  <td colspan="4" width="100%" align="middle" valign="top"><p style="padding:0;color:#565656;line-height:22px;font-size:13px;">Please find below, the summary of your order <a style="text-decoration:underline;" target="_blank" href="#"><span style="color:#565656;font-size:13px;">TIDIIT-OD-<?php echo $orderId;?></span></a> </p>
                                     <br>
                                   </td>
                                 </tr>
-                                <?php /*<tr> 
-<td colspan="4" align="left" valign="top">
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-<tbody>
-<tr>
-<td valign="middle" align="left" rowspan="2" style="white-space:nowrap;padding-right:5px;font-size:13px;"> 
-Seller: <a style="color:#666;font-size:12px;text-decoration:none;" target="_blank" href="#"><span style="color:#666;">Jazzup</span></a> 
-</td> <td valign="middle" align="left">
-</td>
-</tr>
-</tbody> 
-</table> 
-</td>
-</tr>*/?>
                               </tbody>
                             </table></td>
                         </tr>
@@ -82,10 +70,10 @@ Seller: <a style="color:#666;font-size:12px;text-decoration:none;" target="_blan
                                 <tr>
                                   <td width="40%" style="padding-left:20px;text-align:center;" valign="middle" align="center">
 								  <a style="text-decoration:none;" target="_blank" href="#<?php echo $MainSiteBaseURL.'product/details/';?>">
-								  <img border="0" src="<?php echo $SiteProductImageURL. $orderInfo['pimage']->image;?>">
+								  <img border="0" src="<?php echo $SiteProductImageURL. $orderInfoDataArr['pimage']->image;?>">
 								  </a> 
 								  </td>
-                                  <td width="60%" align="center" valign="top" style="padding:12px 15px 0 10px;vertical-align:top;min-width:100px;"><p style="padding:0;"> <a style="text-decoration:none;color:#565656;" target="_blank" href="#"> <span style="color:#565656;font-size:13px;"><?php echo $orderInfo['pdetail']->title;?></span> </a> </p></td>
+                                  <td width="60%" align="center" valign="top" style="padding:12px 15px 0 10px;vertical-align:top;min-width:100px;"><p style="padding:0;"> <a style="text-decoration:none;color:#565656;" target="_blank" href="#"> <span style="color:#565656;font-size:13px;"><?php echo $orderInfoDataArr['pdetail']->title;?></span> </a> </p></td>
                                 </tr>
                               </tbody>
                             </table></td>
@@ -93,11 +81,11 @@ Seller: <a style="color:#666;font-size:12px;text-decoration:none;" target="_blan
                               <tbody>
                                 <tr>
                                   <td width="33%" valign="top" align="center" style="padding:12px 10px 0 10px;text-align:center;"><p style="white-space:nowrap;padding:0;color:#848484;font-size:12px;">Item Price</p>
-                                    <p style="white-space:nowrap;padding:7px 0 0 0;color:#565656;font-size:13px;"> Rs. <?php echo $orderInfo['priceinfo']->price/$orderInfo['priceinfo']->qty;?> </p></td>
+                                    <p style="white-space:nowrap;padding:7px 0 0 0;color:#565656;font-size:13px;"> Rs. <?php echo $orderInfoDataArr['priceinfo']->price/$orderInfoDataArr['priceinfo']->qty;?> </p></td>
                                   <td width="33%" valign="top" align="center" style="padding:12px 10px 0 10px;text-align:center;"><p style="padding:0;color:#848484;font-size:12px;">Quantity</p>
-                                    <p style="padding:7px 0 0 0;color:#565656;font-size:13px;"> <?php echo $orderInfo['priceinfo']->qty;?> </p></td>
+                                    <p style="padding:7px 0 0 0;color:#565656;font-size:13px;"> <?php echo $orderInfoDataArr['priceinfo']->qty;?> </p></td>
                                   <td width="33%" valign="top" align="center" style="padding:12px 20px 0 10px;text-align:center;"><p style="white-space:nowrap;padding:0;color:#848484;font-size:12px;">Subtotal </p>
-                                    <p style="white-space:nowrap;padding:7px 0 0 0;color:#565656;font-size:13px;"> Rs. <?php echo $orderInfo['priceinfo']->price;?> </p></td>
+                                    <p style="white-space:nowrap;padding:7px 0 0 0;color:#565656;font-size:13px;"> Rs. <?php echo $orderInfoDataArr['priceinfo']->price;?> </p></td>
                                 </tr>
                               </tbody>
                             </table></td>
@@ -113,10 +101,10 @@ Seller: <a style="color:#666;font-size:12px;text-decoration:none;" target="_blan
 					</font>
                     <br />
                     <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">
-					<?php echo $orderInfo['shipping']->firstName.' '.$orderInfo['shipping']->firstName;?><br/>
-                    <?php echo $orderInfo['shipping']->address.' , '.$orderInfo['shipping']->locality;?><br/>
-                    <?php echo $orderInfo['shipping']->city.' , '.$orderInfo['shipping']->stateName;?><br/>
-                    <?php echo $orderInfo['shipping']->zip.' , '.$orderInfo['shipping']->countryName;?><br/>
+					<?php echo $orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->firstName;?><br/>
+                    <?php echo $orderInfoDataArr['shipping']->address.' , '.$orderInfoDataArr['shipping']->locality;?><br/>
+                    <?php echo $orderInfoDataArr['shipping']->city.' , '.$orderInfoDataArr['shipping']->stateName;?><br/>
+                    <?php echo $orderInfoDataArr['shipping']->zip.' , '.$orderInfoDataArr['shipping']->countryName;?><br/>
 					<br />
                     </font> </td>
                   <td width="10%">&nbsp;</td>

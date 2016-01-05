@@ -231,8 +231,11 @@ class User_model extends CI_Model {
         }
     }
 
-    function subscribe($email){
-        $this->db->insert($this->_subscriber,array('email'=>$email,'subscribeDate'=>date('Y-m-d'),'IP'=>$this->input->ip_address()));
+    function subscribe($email,$appSource=""){
+        $dataArr=array('email'=>$email,'subscribeDate'=>date('Y-m-d'),'IP'=>$this->input->ip_address());
+        if(!empty($appSource))
+            $dataArr['appSource']=$appSource;
+        $this->db->insert($this->_subscriber,$dataArr);
         return $this->db->insert_id();
     }
 
@@ -766,7 +769,7 @@ class User_model extends CI_Model {
         if($userId==0)
             $rs=$this->db->where('userId',  $this->session->userdata('FE_SESSION_VAR'))->get()->result();
         else
-            $rs=$this->db->where('userId',  $userId)->get()->result();
+            $rs=$this->db->where('userId',  $userId)->get()->result_array();
         
         if(empty($rs)){
             return array();

@@ -13,22 +13,6 @@ class Appdata extends REST_Controller {
         $this->load->model('Country');
     }
     
-    function testservice_get(){
-        $testid = "";
-        if($this->get('testid'))
-        	$testid = $this->get('testid');
-        
-        $this->response(array("test ID" => $testid), 200);
-    }
-
-    function testpostservice_post(){
-        $testid = "";
-        if($this->post('testid'))
-            $testid = $this->post('testid');
-        
-        $this->response(array("test ID" => $testid), 200);
-    }
-    
     function home_get(){
         $timeStamp=$this->get('timestamp');
         if(!isValidTimeStamp($timeStamp)){
@@ -37,7 +21,6 @@ class Appdata extends REST_Controller {
             $this->load->model('Banner_model','banner');
             $this->load->model('Brand_model','brand');
             $result = array();
-            $result=  $this->get_default_urls();
             $slider1=$this->banner->get_home_slider(1,TRUE);
             //$slider2=$this->banner->get_home_slider(2,TRUE);
             $noOfItem=  $this->siteconfig->get_value_by_name('MOBILE_APP_HOME_PAGE_SLIDER_ITEM_NO');
@@ -51,11 +34,7 @@ class Appdata extends REST_Controller {
             $result['featured_products']=$newArrivalsData;
             $result['brand']=$this->brand->get_all(TRUE);
             //$result['site_product_image_url']=$this->config->item('ProductURL');
-            
-            
-            $result['timestamp'] = (string)mktime();
-            header('Content-type: application/json');
-            echo json_encode($result);
+            success_response_after_post_get($result);
         }
     }
     
@@ -73,9 +52,9 @@ class Appdata extends REST_Controller {
         if($userName!="" && $password!="" && $deviceToken!="" && $deviceType!="" && $UDID!=""){
             $rs=$this->user->check_login_data($userName,$password,'buyer');
             if(count($rs)>0){
-                $this->user->add_login_history(array('userId'=>$rs[0]->userId,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'udid'=>$UDID));
-                header('Content-type: application/json');
-                echo json_encode(array('userId' => $rs[0]->userId));
+                $this->user->add_login_history(array('userId'=>$rs[0]->userId,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'udid'=>$UDID,'appSource'=>$deviceType));
+                $parram=array('userId'=>$rs[0]->userId,'message'=>'You have logedin successfully');
+                success_response_after_post_get($parram);
             }else{$this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;}
         }else{
             $this->response(array('error' => 'Please provide Username,password,device token,device type,UDID.'), 400);
@@ -110,30 +89,39 @@ class Appdata extends REST_Controller {
         }
         
         $dataArr=array('userName'=>$email,'password'=>  base64_encode($password).'~'.md5('tidiit'),'firstName'=>$firstName,'lastName'=>$lastName,
-                'email'=>$email,'userResources'=>'app','userType'=>'buyer','status'=>1);
+                'email'=>$email,'userResources'=>'app','userType'=>'buyer','status'=>1,'appSource'=>$deviceType);
         $userId=$this->user->add($dataArr);
         
         if($userId!=""){               
             if($this->user->is_already_subscribe($email)==FALSE){
-                $this->user->subscribe($email);
+                $this->user->subscribe($email,$deviceType);
             }
-            $this->user->add_login_history(array('userId'=>$userId,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'udid'=>$UDID));
-            header('Content-type: application/json');
-            echo json_encode(array('userId' => $userId));
+            $this->user->add_login_history(array('userId'=>$userId,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'udid'=>$UDID,'appSource'=>$deviceType));
+            
+            $mail_template_data=array();
+            $mail_template_data['TEMPLATE_CREATE_USER_EAMIL']=$email;
+            $mail_template_data['TEMPLATE_CREATE_USER_FIRSTNAME']=$firstName;
+            $mail_template_data['TEMPLATE_CREATE_USER_LASTNAME']=$lastName;
+            $mail_template_data['TEMPLATE_CREATE_USER_USERNAME']=$email;
+            $mail_template_data['TEMPLATE_CREATE_USER_PASSWORD']=$password;
+
+            $mail_template_view_data=load_default_resources();
+            $mail_template_view_data['create_user']=$mail_template_data;
+            global_tidiit_mail($email, "Your account at Tidiit Inc. Ltd.", $mail_template_view_data,'user_create',$firstName.' '.$lastName);
+            
+            $parram=array('userId'=>$userId,'message'=>'You have registered successfully, you will get separte mail for regisration details.');
+            success_response_after_post_get($parram);
         }
     }
     
     function my_profile_get(){
         $result = array();
-        $result=  $this->get_default_urls();
         $userId=  $this->get('userId');
         if($userId==""):
             $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
         else:
-            $result['userProfileData']=$this->user->get_details_by_id($userId);
-            $result['timestamp'] = (string)mktime();
-            header('Content-type: application/json');
-            echo json_encode($result);
+            $result['userProfileData']=$this->user->get_details_by_id($userId,TRUE);
+            success_response_after_post_get($result);
         endif;
     }
     
@@ -162,20 +150,15 @@ class Appdata extends REST_Controller {
             $myProfileDataArr=array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo,
                     'email'=>$email,'DOB'=>$DOB,'mobile'=>$mobile,'fax'=>$fax,'aboutMe'=>$aboutMe);
             $this->user->edit($myProfileDataArr,$userId);
-            $result=  $this->get_default_urls();
             $result['message']="Profile data updated successfully.";
-            $result['timestamp'] = (string)mktime();
-            header('Content-type: application/json');
-            echo json_encode($result);
+            success_response_after_post_get($result);
         endif;
     }
     
     function my_buyers_clubs_get(){
         $result = array();
-        $result=  $this->get_default_urls();
         $userId=  $this->get('userId');
-        $this->load->model('Country');
-        $result['countryDataArr']=$this->Country->get_all1();
+        $result['countryDataArr']=$this->Country->get_all1(TRUE);
         //$data['CatArr']=$this->Category_model->get_all(0);
         $menuArr=array();
         $TopCategoryData=$this->category->get_top_category_for_product_list();
@@ -210,62 +193,97 @@ class Appdata extends REST_Controller {
         $myGroupDataArr=$this->user->get_my_groups_apps($userId);
         $my_groups = $myGroupDataArr;
         $result['myGroups']=$my_groups;
-        $result['timestamp'] = (string)mktime();
-        header('Content-type: application/json');
-        echo json_encode($result);
+        success_response_after_post_get($result);
     }
     
     function my_shipping_address_get(){
         $result = array();
-        $result=  $this->get_default_urls();
+        $userShippingDataDetails = array();
         $userId=  $this->get('userId');
         $this->load->model('Country');
         $userShippingDataDetails=$this->user->get_user_shipping_information($userId);
         if(empty($userShippingDataDetails)){
-            $userShippingDataDetails[0]=new stdClass();
-            $userShippingDataDetails[0]->firstName="";
-            $userShippingDataDetails[0]->lastName="";
-            $userShippingDataDetails[0]->countryId="";
-            $userShippingDataDetails[0]->cityId="";
-            $userShippingDataDetails[0]->zipId="";
-            $userShippingDataDetails[0]->localityId="";
-            $userShippingDataDetails[0]->phone="";
-            $userShippingDataDetails[0]->address="";
-            $userShippingDataDetails[0]->contactNo="";
+            $userShippingDataDetails[0]=array();
+            $userShippingDataDetails[0]['firstName']="";
+            $userShippingDataDetails[0]['lastName']="";
+            $userShippingDataDetails[0]['countryId']="";
+            $userShippingDataDetails[0]['cityId']="";
+            $userShippingDataDetails[0]['zipId']="";
+            $userShippingDataDetails[0]['localityId']="";
+            $userShippingDataDetails[0]['phone']="";
+            $userShippingDataDetails[0]['address']="";
+            $userShippingDataDetails[0]['contactNo']="";
         }
         if($userShippingDataDetails[0]->countryId!=""){
-            $result['cityDataArr']=  $this->Country->get_all_city1($userShippingDataDetails[0]->countryId);
+            $result['cityDataArr']=  $this->Country->get_all_city1($userShippingDataDetails[0]->countryId,TRUE);
         }
         if($userShippingDataDetails[0]->zipId!=""){
-            $result['zipDataArr']=  $this->Country->get_all_zip1($userShippingDataDetails[0]->cityId);
+            $result['zipDataArr']=  $this->Country->get_all_zip1($userShippingDataDetails[0]->cityId,TRUE);
         }
         if($userShippingDataDetails[0]->localityId!=""){
-            $result['localityDataArr']=  $this->Country->get_all_locality($userShippingDataDetails[0]->zipId);
+            $result['localityDataArr']=  $this->Country->get_all_locality1($userShippingDataDetails[0]->zipId,TRUE);
         }
-        $result['countryDataArr']=$this->Country->get_all1();
+        $result['countryDataArr']=$this->Country->get_all1(TRUE);
         $result['userShippingDataDetails']=$userShippingDataDetails;
         $rs=$this->user->get_my_product_type($userId);
         //pre($rs); //die;
         $result['userProductTypeArr']=$rs;
-        $result['timestamp'] = (string)mktime();
-        header('Content-type: application/json');
-        echo json_encode($result);
+        success_response_after_post_get($result);
+    }
+    
+    function my_shipping_address_post(){
+        $userId=  $this->post('userId');
+        $firstName=  $this->post('firstName');
+        $lastName=  $this->post('lastName');
+        $countryId=  $this->post('countryId');
+        $cityId=  $this->post('cityId');
+        $zipId=  $this->post('zipId');
+        $localityId=  $this->post('localityId');
+        $phone=  $this->post('phone');
+        $address=  $this->post('address');
+        $productTypeId=  $this->post('productTypeId');
+        $productTypeIdArr=  explode(',', $productTypeId);
+        $deviceType=$this->post('deviceType');
+        if(empty($productTypeIdArr)){
+            $this->response(array('error' => 'Please provide prodcut type for current user.'), 400); return FALSE;
+        }
+        
+        foreach ($productTypeIdArr AS $k =>$v){
+            $newCateoryArr[]=$v;
+            $newCateoryArr=recusive_category($newCateoryArr,$v);
+        }
+        //pre($newCateoryArr);die;
+        $this->user->update_user_product_type_category(array('productTypeCateoryId'=>implode(',', $newCateoryArr)),$userId);
+        $this->user->remove_user_from_product_type($userId);
+        foreach($newCateoryArr As $k => $v){
+            $this->user->update_product_type_user($v,$userId);
+        }
+
+        $rs=$this->Country->city_details($cityId);
+
+        $isAdded=$this->User_model->is_shipping_address_added();
+        if(empty($isAdded)){
+            $this->User_model->add_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'userId'=>$userId,'address'=>$address,'stateId'=>$rs[0]->stateId,'appSource'=>$deviceType));
+        }else{
+            $this->User_model->edit_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'address'=>$address,'stateId'=>$rs[0]->stateId),$userId);
+        }
+        
+        $result['message']="Shipping address data updated successfully.";
+        success_response_after_post_get($result);
     }
     
     function my_finance_get(){
         $result = array();
-        $result=  $this->get_default_urls();
+        $financeDataArr=array();
         $userId=  $this->get('userId');
         $financeDataArr=$this->user->get_finance_info($userId);
         if(empty($financeDataArr)){
-            $financeDataArr[0]=new stdClass();
-            $financeDataArr[0]->mpesaFullName="";
-            $financeDataArr[0]->mpesaAccount="";
+            $financeDataArr[0]=array();
+            $financeDataArr[0]['mpesaFullName']="";
+            $financeDataArr[0]['mpesaAccount']="";
         }
         $result['financeDataArr']=$financeDataArr;
-        $result['timestamp'] = (string)mktime();
-        header('Content-type: application/json');
-        echo json_encode($result);
+        success_response_after_post_get($result);
     }
     
     function retrive_your_password_post(){
@@ -282,15 +300,12 @@ class Appdata extends REST_Controller {
             $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_USERNAME']=$DataArr[0]->userName;
             $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_PASSWORD']=$DataArr[0]->password;
 
-            $mail_template_view_data=$this->get_default_urls();
+            $mail_template_view_data=get_default_urls();
             $mail_template_view_data['retribe_user_password']=$mail_template_data;
-            $this->_global_tidiit_mail($DataArr[0]->email, "Your password at Tidiit Inc. Ltd.", $mail_template_view_data,'retribe_user_password',$DataArr[0]->firstName.' '.$DataArr[0]->lastName);
+            global_tidiit_mail($DataArr[0]->email, "Your password at Tidiit Inc. Ltd.", $mail_template_view_data,'retribe_user_password',$DataArr[0]->firstName.' '.$DataArr[0]->lastName);
             $result = array();
-            $result=  $this->get_default_urls();
             $result['message']="Your password has send by your registered email.";
-            $result['timestamp'] = (string)mktime();
-            header('Content-type: application/json');
-            echo json_encode($result);
+            success_response_after_post_get($result);
         else:
             $this->response(array('error' => 'Please check your "email" and try again.'), 400); return FALSE;
         endif;
@@ -309,10 +324,9 @@ class Appdata extends REST_Controller {
                 if($this->user->check_old_password($oldPassword,$userId)==TRUE):
                     $dataArr=array('password'=>  base64_encode($newPassword).'~'.md5('tidiit'));
                     $this->user->edit($dataArr,$userId);
+                    $result=array();
                     $result['message']="Your password has changed successfully.";
-                    $result['timestamp'] = (string)mktime();
-                    header('Content-type: application/json');
-                    echo json_encode($result);
+                    success_response_after_post_get($result);
                 else:
                     $this->response(array('error' => 'Invalid old password provided,try again.'), 400); return FALSE;
                 endif;
@@ -327,27 +341,24 @@ class Appdata extends REST_Controller {
         $countryId=$this->get('countryId');
         $result=array();
         $result['cityArr']=  $this->Country->get_all_city1($countryId,true);
-        $result['timestamp'] = (string)mktime();
-        header('Content-type: application/json');
-        echo json_encode($result);
+        $result['ajaxType']='yes';
+        success_response_after_post_get($result);
     }
     
     function get_zip_by_city_get(){
         $cityId=$this->get('cityId');
         $result=array();
         $result['zipArr']=  $this->Country->get_all_zip1($cityId,TRUE);
-        $result['timestamp'] = (string)mktime();
-        header('Content-type: application/json');
-        echo json_encode($result);
+        $result['ajaxType']='yes';
+        success_response_after_post_get($result);
     }
     
     function get_locality_by_zip_get(){
         $zipId=$this->get('zipId');
         $result=array();
         $result['localityArr']=  $this->Country->get_all_locality1($zipId,TRUE);
-        $result['timestamp'] = (string)mktime();
-        header('Content-type: application/json');
-        echo json_encode($result);
+        $result['ajaxType']='yes';
+        success_response_after_post_get($result);
     }
     
     function get_all_user_by_locality_except_me_get(){
@@ -355,13 +366,14 @@ class Appdata extends REST_Controller {
         $userId=$this->get('userId');
         $result=array();
         $result['localityArr']=  $this->user->get_all_users_by_locality($localityId,$userId);
-        $result['timestamp'] = (string)mktime();
-        header('Content-type: application/json');
-        echo json_encode($result);
+        $result['ajaxType']='yes';
+        success_response_after_post_get($result);
     }
     
     function my_finance_post(){
+        $result=array();
         $userId=$this->post('userId');
+        $deviceType=$this->post('deviceType');
         $mpesaFullName=$this->post('mpesaFullName');
         $mpesaAccount=$this->post('mpesaAccount');
         if($userId =="" && $mpesaFullName=="" && $mpesaAccount ==""):
@@ -369,14 +381,12 @@ class Appdata extends REST_Controller {
         else:
             $isAdded=$this->user->get_finance_info($userId);
             if(empty($isAdded)){
-                $this->user->add_finance(array('mpesaFullName'=>$mpesaFullName,'mpesaAccount'=>$mpesaAccount,'userId'=>$userId));
+                $this->user->add_finance(array('mpesaFullName'=>$mpesaFullName,'mpesaAccount'=>$mpesaAccount,'userId'=>$userId,'appSource'=>$deviceType));
             }else{
                 $this->user->edit_finance(array('mpesaFullName'=>$mpesaFullName,'mpesaAccount'=>$mpesaAccount),$userId);
             }
             $result['message']="Your finance information has updated successfully.";
-            $result['timestamp'] = (string)mktime();
-            header('Content-type: application/json');
-            echo json_encode($result);
+            success_response_after_post_get($result);
         endif;
     }
     
@@ -385,6 +395,7 @@ class Appdata extends REST_Controller {
         $groupTitle=$this->post('groupTitle');
         $productType=$this->post('productType');
         $groupUsers=$this->post('groupUsers');
+        $deviceType=$this->post('deviceType');
         $colors = array('red','maroon','purple','green','blue');
         $rand_keys = array_rand($colors, 1);
         $groupColor = $colors[$rand_keys];
@@ -392,56 +403,246 @@ class Appdata extends REST_Controller {
         $notify = array();
         
         if(!$groupUsersArr):
-            echo json_encode(array('result'=>'bad','msg'=>'Please select the at least one Buyer club member!'));die;
+            $this->response(array('error' => 'Please select the at least one Buyer club member!'), 400); return FALSE;
         endif;
-        $groupDataArr=array('groupAdminId'=>$groupAdminId,'groupTitle'=>$groupTitle,'productType'=>$productType,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor);
+        $groupDataArr=array('groupAdminId'=>$groupAdminId,'groupTitle'=>$groupTitle,'productType'=>$productType,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor,'appSource'=>$deviceType);
         $groupId = $this->user->group_add($groupDataArr);
-        $userDetails=$this->user->get_details_by_id($groupAdminId,TRUE);
+        $adminDataArr=  $this->user->get_details_by_id($groupAdminId);
         if($groupId):
             if($groupUsersArr):
                 foreach($groupUsersArr as $guser):
+                    $receiverDetails=$this->user->get_details_by_id($guser);
                     $notify['senderId'] = $groupAdminId;
                     $notify['receiverId'] = $guser;
-                    $notify['nType'] = "GROUP-ADD";
+                    $notify['receiverMobileNumber'] = $receiverDetails[0]->mobile;
+                    $notify['senderMobileNumber'] = $adminDataArr[0]->mobile;
+                    $notify['nType'] = "BUYING-CLUB-ADD";
                     $notify['nTitle'] = $groupTitle;
-                    $notify['adminName'] = $userDetails[0]['firstName'].' '.$userDetails[0]['lastName'];
-                    $notify['adminEmail'] = $userDetails[0]['email'];
-                    $notify['adminContactNo'] = $userDetails[0]['contactNo'];
+                    $notify['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
+                    $notify['adminEmail'] = $adminDataArr[0]->email;
+                    $notify['adminContactNo'] = $adminDataArr[0]->contactNo;
+                    $notify['appSource'] = $deviceType;
                     $this->send_notification($notify);
                 endforeach;
             endif;
-            echo json_encode(array('result'=>'good','gid'=>$groupId));die; 
+            $result=array();
+            $result['groupId']=$groupId;
+            $result['message']="Buying Club Created successfully";
+            success_response_after_post_get($result);
         else:    
-            echo json_encode(array('result'=>'bad','msg'=>'Some error happen. Please try again!'));die;
+            $this->response(array('error' => 'Some error happen. Please try again!'), 400); return FALSE;
         endif;
     }
     
+    function edit_group_get(){
+        $adminId=$this->get($userId);
+        $groupId=$this->get($groupId);
+        $group = $this->user->get_group_by_id($groupId,TRUE);
+        if(!$group):
+            $this->response(array('error' => 'Invalid Buying Club index. Please try again!'), 400); return FALSE;
+        endif;
+        $user = $this->user->get_details_by_id($adminId,TRUE);
+        if(!$user):
+            $this->response(array('error' => 'Invalid user index. Please try again!'), 400); return FALSE;
+        endif;
+        $result=array();
+        $result['countryDataArr']=$this->Country->get_all1();
+        $menuArr=array();
+        $TopCategoryData=$this->category->get_top_category_for_product_list();
+        //$AllButtomCategoryData=$this->Category_model->buttom_category_for_product_list();
+        foreach($TopCategoryData as $k){
+            $SubCateory=$this->category->get_subcategory_by_category_id($k->categoryId);
+            if(count($SubCateory)>0){
+                foreach($SubCateory as $kk => $vv){
+                    $menuArr[$vv->categoryId]=$k->categoryName.' -> '.$vv->categoryName;
+                    $ThirdCateory=$this->category->get_subcategory_by_category_id($vv->categoryId);
+                    if(count($ThirdCateory)>0){
+                        foreach($ThirdCateory AS $k3 => $v3){
+                            // now going for 4rath
+                            $menuArr[$v3->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName;
+                            $FourthCateory=$this->category->get_subcategory_by_category_id($v3->categoryId);
+                            if(count($FourthCateory)>0){ //print_r($v3);die;
+                                foreach($FourthCateory AS $k4 => $v4){
+                                    $menuArr[$v4->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName.' -> '.$v4->categoryName;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $categoryMenyArr=array();
+        foreach($menuArr As $k => $v){
+            $categoryMenyArr[]=array('categoryId'=>$k,'categoryName'=>$v);
+        }
+        $result['CatArr']=  $categoryMenyArr;
+        
+        
+        $result['group']=$group;
+        $result['orderId']=0;
+        $result['reorder'] = 1;
+        $result['user']=$user;
+        success_response_after_post_get($result);
+    }
+    
+    function edit_group_post(){
+        $groupId = $this->post('groupId');
+        $adminId = $this->post('userId');
+        $groupTitle = $this->post('groupTitle');
+        //$productType = $this->input->post('productType');
+        $groupUsersArr = $this->post('groupUsers');
+        
+        $colors = array('red','maroon','purple','green','blue');
+        $rand_keys = array_rand($colors, 1);
+        $groupColor = $colors[$rand_keys];
+        
+        if(!$groupUsersArr):
+            $this->response(array('error' => 'Please select the at least one Buying Club member!'), 400); return FALSE;
+        endif;
+        
+        $groupUsers = implode(",", $groupUsersArr);
+        $bfrUpdateGroup = $this->user->get_group_by_id($groupId);
+        $bfrUsers = explode(",", $bfrUpdateGroup->groupUsers);
+        $olduser = array();
+        $deluser = array();
+        $newUser = array();
+        foreach($groupUsersArr as $guser):
+            if(in_array($guser, $bfrUsers)):
+                $olduser[] = $guser;
+            else:
+                $newUser[] = $guser;
+            endif;
+        endforeach;
+        foreach($bfrUsers as $bfruser):
+            if(!in_array($bfruser, $groupUsersArr)):
+                $deluser[] = $bfruser;
+            endif;
+        endforeach;        
+        
+        $groupIdUpdate = $this->user->group_update(array('groupTitle'=>$groupTitle,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor), $groupId);
+        if($groupIdUpdate):
+            $adminDataArr=  $this->user->get_details_by_id($adminId);
+            foreach($olduser as $ouser):
+                $receiverDetails=$this->user->get_details_by_id($ouser);
+                $notify['senderId'] = $adminId;
+                $notify['receiverId'] = $ouser;
+                $notify['nType'] = "BUYING-CLUB-MODIFY";
+                $notify['receiverMobileNumber'] = $receiverDetails[0]->mobile;
+                $notify['senderMobileNumber'] = $adminDataArr[0]->mobile;
+                $notify['nTitle'] = $groupTitle;
+                $this->send_notification($notify);
+            endforeach;
+            foreach($newUser as $nuser):
+                $receiverDetails=$this->user->get_details_by_id($nuser);
+                $notify['senderId'] = $adminId;
+                $notify['receiverId'] = $nuser;
+                $notify['receiverMobileNumber'] = $receiverDetails[0]->mobile;
+                $notify['senderMobileNumber'] = $adminDataArr[0]->mobile;
+                $notify['nType'] = "BUYING-CLUB-MODIFY-NEW";
+                $notify['nTitle'] = $groupTitle;
+                $notify['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
+                $notify['adminEmail'] = $adminDataArr[0]->email;
+                $notify['adminContactNo'] = $adminDataArr[0]->contactNo;
+                $this->send_notification($notify);
+            endforeach;
+
+            foreach($deluser as $duser):
+                $receiverDetails=$this->user->get_details_by_id($duser);
+                $notify['senderId'] = $adminId;
+                $notify['receiverId'] = $duser;
+                $notify['nType'] = "BUYING-CLUB-MODIFY-DELETE";
+                $notify['receiverMobileNumber'] = $receiverDetails[0]->mobile;
+                $notify['senderMobileNumber'] = $adminDataArr[0]->mobile;
+                $notify['nTitle'] = $groupTitle;
+                $this->send_notification($notify);
+            endforeach;
+            $reorder = $this->post('reorder');
+            
+            if($reorder):
+                $this->load->model('Order_model','order');
+                $orderId = $this->post('orderId');
+                $order = $this->order->get_single_order_by_id($orderId);
+                $pro = $this->product->details($order->productId);
+                $orderinfo['pdetail'] = $pro[0];
+                $group = $this->user->get_group_by_id($groupId);
+                $mail_template_data=array();
+                foreach($group->users as $key => $usr):
+                    $mail_template_data=array();
+                    $data['senderId'] = $adminId;
+                    $data['receiverId'] = $usr->userId;
+                    $data['nType'] = 'BUYING-CLUB-ORDER';
+                    $data['nTitle'] = 'Buying Club Re-order [TIDIIT-OD'.$order->orderId.'] running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+                    $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID']=$order->orderId;
+                    $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ADMIN_NAME']=$group->admin->firstName.' '.$group->admin->lastName;
+                    $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club order product.<br>";
+                    $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
+                    $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
+                    $data['nMessage'] .= "Want to process the order ? <br>";
+                    $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-re-order-accept-process/".base64_encode($orderId*226201)."/".base64_encode(100)."' class='btn btn-success btn-lg'>Accept</a><br>";
+                    $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID1']=$orderId;
+                    $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+
+                    $data['isRead'] = 0;
+                    $data['status'] = 1;
+                    $data['createDate'] = date('Y-m-d H:i:s');
+
+                    //Send Email message
+                    $recv_email = $usr->email;
+                    $sender_email = $group->admin->email;
+                    /// firing mail
+                    $mail_template_view_data=load_default_resources();
+                    $mail_template_view_data['group_order_re_start']=$mail_template_data;
+                    global_tidiit_mail($recv_email, "Buying Club Order Re-Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_re_start');
+                    
+                    $this->user->notification_add($data);
+                endforeach;
+            endif;
+            success_response_after_post_get(array('message'=>'Selected group data updated successfully.'));
+        else:    
+            $this->response(array('error' => 'Some error happen. Please try again!'), 400); return FALSE;
+        endif;
+    }
     
     function send_notification($data){
+        /*
+        $notify['senderId'] = ;
+        $notify['receiverId'] = ;
+        $notify['nType'] = ;
+        $notify['nTitle'] = ;
+        $notify['nMessage'] = ;
+         */
         $type = $data['nType'];
         switch($type){
-            case 'GROUP-ADD':
+            case 'BUYING-CLUB-ADD':
                 $data['nMessage'] = "Hi, <br /> You Have added in my newly created Buying Club <strong>[".$data['nTitle']."]</strong> by ".$data['adminName'].".<br />Group Leader email id is ".$data['adminEmail'].".<br />Group Leader contact number is ".$data['adminContactNo'].".";
                 $data['isEmail'] = true;
-                $data['isMobMessage'] = true;
+                if($this->siteconfig->get_value_by_name('SMS_SEND_ALLOW')=='yes'):
+                    $data['isMobMessage'] = true;
+                endif;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
-            case 'GROUP-MODIFY':
+            case 'BUYING-CLUB-MODIFY':
                 $data['nMessage'] = "Hi, <br> Buying Club <strong>[".$data['nTitle']."]</strong> has been modified.";
                 $data['isEmail'] = true;
-                $data['isMobMessage'] = true;
+                if($this->siteconfig->get_value_by_name('SMS_SEND_ALLOW')=='yes'):
+                    $data['isMobMessage'] = true;
+                endif;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
-            case 'GROUP-MODIFY-NEW':
-                $data['nMessage'] = "Hi, <br> You Have added in my Buying Club <strong>[".$data['nTitle']."]</strong>.My name is ".$data['adminName'].".<br />My email id is ".$data['adminEmail'].".<br />My contact number is ".$data['adminContactNo'].".";
+            case 'BUYING-CLUB-MODIFY-NEW':
+                $data['nMessage'] = "Hi, <br> You Have added in my Buying Club <strong>[".$data['nTitle']."]</strong>.<br />My name is ".$data['adminName'].".<br />My email id is ".$data['adminEmail'].".<br />My contact number is ".$data['adminContactNo'].".";
                 $data['isEmail'] = true;
-                $data['isMobMessage'] = true;
+                if($this->siteconfig->get_value_by_name('SMS_SEND_ALLOW')=='yes'):
+                    $data['isMobMessage'] = true;
+                endif;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
-            case 'GROUP-MODIFY-DELETE':
+            case 'BUYING-CLUB-MODIFY-DELETE':
                 $data['nMessage'] = "Hi, <br> You are not part of this Buying Club <strong>[".$data['nTitle']."]</strong>";
                 $data['isEmail'] = true;
-                $data['isMobMessage'] = true;
+                if($this->siteconfig->get_value_by_name('SMS_SEND_ALLOW')=='yes'):
+                    $data['isMobMessage'] = true;
+                endif;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
         }
@@ -453,7 +654,18 @@ class Appdata extends REST_Controller {
         
         
         if($data['isMobMessage']):
+            $this->load->library('tidiitsms');
             //Send Mobile message
+            $smsAddHistoryDataArr=array();
+            $smsConfig=array('sms_text'=>$data['nMessage'],'receive_phone_number'=>$data['receiverMobileNumber']);
+            $smsResult=$this->tidiitsms->send_sms($smsConfig);
+            $smsAddHistoryDataArr=array('senderUserId'=>$data['senderId'],'receiverUserId'=>$data['receiverId'],
+                'senderPhoneNumber'=>$data['senderMobileNumber'],'receiverPhoneNumber'=>$data['receiverMobileNumber'],
+                'IP'=>  $this->input->ip_address(),'sms'=>$data['nMessage'],'sendActionType'=>$data['nType'],
+                'smsGatewaySenderId'=>$this->siteconfig->get_value_by_name('SMS_GATEWAY_SENDERID'),'smsGatewayReturnData'=>$smsResult);
+                $this->user->add_sms_history($smsAddHistoryDataArr);
+            
+            
             unset($data['isMobMessage']);
         endif;
         
@@ -461,6 +673,10 @@ class Appdata extends REST_Controller {
             //Send Email message
             unset($data['isEmail']);
         endif;
+        unset($data['adminName']);
+        unset($data['adminEmail']);
+        unset($data['adminContactNo']);
+        unset($data['receiverMobileNumber']);
         
         $this->user->notification_add($data);
     
@@ -505,36 +721,7 @@ class Appdata extends REST_Controller {
         return $mainMenuArr;
     }
     
-    function get_default_urls(){
-        $result=array();
-        $result['site_product_image_url']='http://seller.tidiit.com/resources/product/original/';
-        //$result['site_image_url']=$this->config->item('MainSiteResourcesURL').'images/';
-        $result['site_image_url']='http://tidiit.com/resources/images/';
-        $result['site_slider_image_url']='http://tidiit.com/resources/banner/original/';
-        $result['site_brand_image_url']='http://tidiit.com/resources/brand/original/';
-        $result['site_category_image_url']='http://tidiit.com/resources/category/original/';
-        $result['main_site_url']='http://www.tidiit.com/';
-        return $result;
-    }
     
-    function _global_tidiit_mail($to,$subject,$dataResources,$tempplateName="",$toName=""){
-        $message='';
-        if($tempplateName==""){
-            $message=$dataResources;
-        }else{
-            $message=  $this->load->view('email_template/'.$tempplateName,$dataResources,TRUE);
-        }
-        $this->load->library('email');
-        $this->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
-        if($toName!="")
-            $this->email->to($to,$toName);
-        else
-            $this->email->to($to);
-        
-        $this->email->subject($subject);
-        $this->email->message($message);
-        $this->email->send();
-    }
     
     
 }

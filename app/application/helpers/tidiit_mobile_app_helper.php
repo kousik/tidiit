@@ -104,20 +104,6 @@ if(!function_exists('user_role_check')){
     }
 }
 
-if ( ! function_exists('get_home_url')){
-    function get_home_url(){
-        $CI =& get_instance();
-        $countryId=$CI->session->userdata('USER_SHIPPING_COUNTRY');
-        if($countryId==1){
-            return base_url().'send-online-gifts-usa';
-        }else if($countryId==99){
-            return base_url().'send-wine-cakes-flowers-online-india';
-        }else if($countryId==240){
-            return base_url().'send-gifts-worldwide';
-        }
-    }
-}
-
 if ( ! function_exists('title_more_string')){
     function title_more_string($str,$no_char=22){
         $strArr=  explode(' ', $str);
@@ -202,4 +188,88 @@ if ( ! function_exists('return_current_country_code')){
     }
 }
 
-?>
+if ( ! function_exists('success_response_after_post_get')){
+    function success_response_after_post_get($parram=array()){
+        $result=array();
+        if(!array_key_exists('ajaxType', $parram)):
+            $result=  get_default_urls();    
+        endif;
+        //$result['message']="Shipping address data updated successfully.";
+        $result['timestamp'] = (string)mktime();
+        if(!empty($parram)):
+            foreach ($parram as $k => $v){
+                $result[$k]=$v;
+            }
+        endif;
+        
+        header('Content-type: application/json');
+        echo json_encode($result);
+    }
+}
+
+if ( ! function_exists('get_default_urls')){
+	function get_default_urls(){
+		$result=array();
+        $result['site_product_image_url']='http://seller.tidiit.com/resources/product/original/';
+        //$result['site_image_url']=$this->config->item('MainSiteResourcesURL').'images/';
+        $result['site_image_url']='http://tidiit.com/resources/images/';
+        $result['site_slider_image_url']='http://tidiit.com/resources/banner/original/';
+        $result['site_brand_image_url']='http://tidiit.com/resources/brand/original/';
+        $result['site_category_image_url']='http://tidiit.com/resources/category/original/';
+        $result['main_site_url']='http://www.tidiit.com/';
+        return $result;
+	}
+}
+
+if ( ! function_exists('load_default_resources')){
+	function load_default_resources(){
+		$data=array();
+        $data['SiteImagesURL']='http://tidiit.com/resources/images/';
+        $data['SiteCSSURL']='http://tidiit.com/resources/css/';
+        $data['SiteJSURL']='http://tidiit.com/resources/js/';
+        $data['SiteResourcesURL']='http://tidiit.com/resources/';
+        $data['MainSiteBaseURL']='http://tidiit.com/';
+        $data['MainSiteImagesURL']='http://tidiit.com/resources/images/';
+        $data['SiteProductImageURL']='http://seller.tidiit.com/resources/product/original/';
+        return $data;
+	}
+}
+
+if ( ! function_exists('global_tidiit_mail')){
+	function global_tidiit_mail($to,$subject,$dataResources,$tempplateName="",$toName=""){
+		$CI=& get_instance();
+        $message='';
+        if($tempplateName==""){
+            $message=$dataResources;
+        }else{
+            $message=  $CI->load->view('email_template/'.$tempplateName,$dataResources,TRUE);
+        }
+        $CI->load->library('email');
+        $CI->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
+        if($toName!="")
+            $CI->email->to($to,$toName);
+        else
+            $CI->email->to($to);
+        
+        $CI->email->subject($subject);
+        $CI->email->message($message);
+        $CI->email->send();
+	}
+}
+
+if ( ! function_exists('recusive_category')){
+	function recusive_category($newCateoryArr,$categoryId){
+		$CI=& get_instance();
+		$CI->load->model('Category_model','category');
+        $chieldCateArr=$CI->category->get_subcategory_by_category_id($categoryId);
+        if(empty($chieldCateArr)){
+            return $newCateoryArr;
+        }else{    
+            foreach($chieldCateArr AS $k){
+                $newCateoryArr[]=$k->categoryId;
+                $newCateoryArr=$this->recusive_category($newCateoryArr, $k->categoryId);
+            }
+            return $newCateoryArr;
+        }
+	}
+}

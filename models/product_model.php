@@ -312,9 +312,12 @@ class Product_model extends CI_Model {
 		return TRUE;
 	}
 	
-	public function get_products_images($productId){
-		$this->db->select('*')->from($this->_table_image)->where_in('productId',explode(',',$productId));
-		return $this->db->get()->result();
+	public function get_products_images($productId,$app=false){
+            $this->db->select('*')->from($this->_table_image)->where_in('productId',explode(',',$productId));
+            if($app)
+                return $this->db->get()->result_array();
+            else    
+                return $this->db->get()->result();
 	}
 	
 	public function delete_product_image($productId){
@@ -423,27 +426,33 @@ class Product_model extends CI_Model {
 		$this->db->delete($this->_table_tag); 		
 	}
 	
-	public function details($id){
-		$sql="SELECT p.*,b.title AS brandTitle,b.brandId FROM `product` AS p JOIN `product_brand` AS pb ON(p.productId=pb.productId) "
-                        . " JOIN `brand` AS b ON(pb.brandId=b.brandId) WHERE p.productId='".$id."' ";
-		//die($sql);
-		return $this->db->query($sql)->result();
+	public function details($id,$app=FALSE){
+            $sql="SELECT p.*,b.title AS brandTitle,b.brandId FROM `product` AS p JOIN `product_brand` AS pb ON(p.productId=pb.productId) "
+                    . " JOIN `brand` AS b ON(pb.brandId=b.brandId) WHERE p.productId='".$id."' ";
+            //die($sql);
+            if($app)
+                return $this->db->query($sql)->result_array();
+            else
+                return $this->db->query($sql)->result();
 	}
 	
 	
 	
-	public function products_for_discount(){
-		$sql="SELECT p.productId,p.Title,pc.CountryID "
-                        . " FROM product AS p JOIN `product_country` AS pc ON(pc.productId=p.productId) WHERE p.Status=1";
-		return $this->db->query($sql)->result();
+	public function products_for_discount($app=false){
+            $sql="SELECT p.productId,p.Title,pc.CountryID "
+                    . " FROM product AS p JOIN `product_country` AS pc ON(pc.productId=p.productId) WHERE p.Status=1";
+            if($app)
+                return $this->db->query($sql)->result_array();
+            else    
+                return $this->db->query($sql)->result();
 	}	
 	
 	public function add_product_discount($dataArr){
-		$sql="DELETE FROM `product_discount` WHERE productId IN(".$dataArr['productId'].")";
-		$this->db->query($sql);
-		
-		$this->db->insert($this->_table_discount,$dataArr);
-		return $this->db->insert_id();
+            $sql="DELETE FROM `product_discount` WHERE productId IN(".$dataArr['productId'].")";
+            $this->db->query($sql);
+
+            $this->db->insert($this->_table_discount,$dataArr);
+            return $this->db->insert_id();
 	}
 	
 	public function add_category_discount($dataArr){
@@ -565,16 +574,25 @@ class Product_model extends CI_Model {
             return $this->db->query($sql)->result();
     }
     
-    function get_page_template(){
-        return $this->db->from($this->_table_template)->get()->result();
+    function get_page_template($app=false){
+        if($app)
+            return $this->db->from($this->_table_template)->get()->result_array();
+        else    
+            return $this->db->from($this->_table_template)->get()->result();
     }
     
-    function get_products_price($produtcId){
-        return $this->db->from($this->_table_price)->where('productId',$produtcId)->order_by('qty','asc')->get()->result();
+    function get_products_price($produtcId,$app=false){
+        if($app)
+            return $this->db->from($this->_table_price)->where('productId',$produtcId)->order_by('qty','asc')->get()->result_array();
+        else    
+            return $this->db->from($this->_table_price)->where('productId',$produtcId)->order_by('qty','asc')->get()->result();
     }
     
-    function get_products_price_details_by_id($productPriceId){        
-        $data = $this->db->from($this->_table_price)->where('productPriceId',$productPriceId)->get()->result();
+    function get_products_price_details_by_id($productPriceId,$app=false){
+        if($app)
+            $data = $this->db->from($this->_table_price)->where('productPriceId',$productPriceId)->get()->result_array();
+        else    
+            $data = $this->db->from($this->_table_price)->where('productPriceId',$productPriceId)->get()->result();
         return $data[0];
     }
     
@@ -589,9 +607,12 @@ class Product_model extends CI_Model {
         return TRUE;
     }
     
-    function get_views_times_by_seller(){
+    function get_views_times_by_seller($app=false){
         $this->db->select('p.title,pv.*')->from($this->_table.' p')->join($this->_table_seller.' ps','p.productId=ps.productId');
         $this->db->join($this->_table_views.' pv','p.productId=pv.productId','left')->where('ps.userId',  $this->session->userdata('FE_SESSION_VAR'));
+        if($app)
+            return $this->db->get()->result_array();
+        else    
         return $this->db->get()->result();
     }
     
