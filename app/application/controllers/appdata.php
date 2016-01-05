@@ -120,7 +120,13 @@ class Appdata extends REST_Controller {
         if($userId==""):
             $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
         else:
-            $result['userProfileData']=$this->user->get_details_by_id($userId,TRUE);
+            $userData=$this->user->get_details_by_id($userId,TRUE);
+            $userDataDOBArr=  explode('-',$userData[0]['DOB']);
+            if(count($userDataDOBArr)>0){
+                $result['userProfileData']=$userDataDOBArr[2].'-'.$userDataDOBArr[1].'-'.$userDataDOBArr[0];
+            }else{
+                $result['userProfileData']=$userData;
+            }
             success_response_after_post_get($result);
         endif;
     }
@@ -133,8 +139,11 @@ class Appdata extends REST_Controller {
         $mobile=$this->post('mobile');
         $fax=$this->post('fax');
         $rowDOB=$this->post('DOB');
+        $DOB="00-00-0000";
         $dobArr=  explode('-',$rowDOB);
-        $DOB=$dobArr[2].'-'.$dobArr[1].'-'.$dobArr[0];
+        if(!empty($dobArr)):
+            $DOB=$dobArr[2].'-'.$dobArr[1].'-'.$dobArr[0];
+        endif;
         $aboutMe=$this->post('aboutMe');
         $userId=$this->post('userId');
         
