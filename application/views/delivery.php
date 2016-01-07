@@ -328,8 +328,8 @@
       </div>
         <form action="#" method="post" name="outForDeliveryForm" class="form-horizontal" id="outForDeliveryForm" enctype="multipart/form-data"> 
             <div class="modal-body">
-                <div class="col-md-12 col-sm-12"> 
-                    <div class="gen_infmtn">
+                <div class=""> 
+                    <div class="">
                         <div class="table-responsive">
                             <div class="panel panel-default">
                             <table class="table table-striped" id='js-print-container'>
@@ -413,10 +413,10 @@
                                                 </div>
                                             </td>
                                         </tr>
-					<!--<tr>
+					<tr>
                                             <td>Photo of time of delivery1</td>
                                             <td>:</td>
-                                            <td><input id="photo1" name="photo1" type="file" class="form-control" required >
+                                            <td><input id="photo1" name="photo1" type="file" class="form-control" required style="padding:0px;">
                                                 <div>
                                                     <label id="photo1-error" class="error" for="photo1"></label>
                                                 </div>
@@ -425,12 +425,12 @@
 										<tr>
                                             <td>Photo of time of delivery2</td>
                                             <td>:</td>
-                                            <td><input id="photo2" name="photo2" type="file" class="form-control" required >
+                                            <td><input id="photo2" name="photo2" type="file" class="form-control" required style="padding:0px;" >
                                                 <div>
                                                     <label id="photo2-error" class="error" for="photo2"></label>
                                                 </div>
                                             </td>
-                                        </tr> -->
+                                        </tr>
                                         <tr>
                                              <td style="width: 35%;">&nbsp;</td>
                                              <td style="width: 5%;">&nbsp;</td>

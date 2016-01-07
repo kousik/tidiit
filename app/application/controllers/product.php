@@ -33,7 +33,7 @@ class Product extends REST_Controller {
         $result['productPriceArr']=$productPriceArr;
         
         $mobileBoxContentsArr=$this->config->item('mobileBoxContents');
-        $mobileContentArr=  explode(',', $productDetailsArr[0]->mobileBoxContent);
+        $mobileContentArr=  explode(',', $productDetailsArr[0]['mobileBoxContent']);
         if(!empty($mobileContentArr)):
             $inBox='';
             foreach($mobileContentArr AS $k){
@@ -48,21 +48,21 @@ class Product extends REST_Controller {
         endif;
         
         $mobileColor=$this->config->item('mobileColor');
-        $mobileColorName='';if(array_key_exists($productDetailsArr[0]->color, $mobileColor)){$mobileColorName=$mobileColor[$productDetailsArr[0]->color];}
+        $mobileColorName='';if(array_key_exists($productDetailsArr[0]['color'], $mobileColor)){$mobileColorName=$mobileColor[$productDetailsArr[0]['color']];}
         $result['mobileColorName']=$mobileColorName;
         
         $mobileDisplayResolution=$this->config->item('mobileDisplayResolution');
-        $mobileDisplayResolutiontype='';if(array_key_exists($productDetailsArr[0]->displayResolution, $mobileDisplayResolution)){$mobileDisplayResolutiontype=$mobileDisplayResolution[$productDetailsArr[0]->displayResolution];}
+        $mobileDisplayResolutiontype='';if(array_key_exists($productDetailsArr[0]['displayResolution'], $mobileDisplayResolution)){$mobileDisplayResolutiontype=$mobileDisplayResolution[$productDetailsArr[0]['displayResolution']];}
         $result['mobileDisplayResolutionType']=$mobileDisplayResolutiontype;
         
         $mobileBatteryType=$this->config->item('mobileBatteryType');
-        $mobileBatteryName='';if(array_key_exists($productDetailsArr[0]->batteryType, $mobileBatteryType)){$mobileBatteryName=$mobileBatteryType[$productDetailsArr[0]->batteryType];}
+        $mobileBatteryName='';if(array_key_exists($productDetailsArr[0]['batteryType'], $mobileBatteryType)){$mobileBatteryName=$mobileBatteryType[$productDetailsArr[0]['batteryType']];}
         $result['mobileBatteryName']=$mobileBatteryName;
         
-        $result['mobileOS']=$this->config->item('mobileOS')[$productDetailsArr[0]->os];
+        $result['mobileOS']=$this->config->item('mobileOS')[$productDetailsArr[0]['os']];
                 
         $mobileConnectivity=$this->config->item('mobileConnectivity');
-        $connectivityArr= explode(',', $productDetailsArr[0]->mobileConnectivity);
+        $connectivityArr= explode(',', $productDetailsArr[0]['mobileConnectivity']);
         $connectionStr='';
         foreach($connectivityArr AS $k =>$v){
             $connectionStr.=$mobileConnectivity[$v].', ';
@@ -70,31 +70,31 @@ class Product extends REST_Controller {
         $result['connectivityType']=$connectionStr;
         
         $mobileProcessorCores=$this->config->item('mobileProcessorCores');        
-        $processorType="";if(array_key_exists($productDetailsArr[0]->processorCores, $mobileProcessorCores)){$processorType=$mobileProcessorCores[$productDetailsArr[0]->processorCores];}
+        $processorType="";if(array_key_exists($productDetailsArr[0]['processorCores'], $mobileProcessorCores)){$processorType=$mobileProcessorCores[$productDetailsArr[0]['processorCores']];}
         $result['processorType']=$processorType;
         
-        $result['mobileProcessorBrand']=$this->config->item('mobileProcessorBrand')[$productDetailsArr[0]->processorBrand];
+        $result['mobileProcessorBrand']=$this->config->item('mobileProcessorBrand')[$productDetailsArr[0]['processorBrand']];
         
         $mobileCamera=$this->config->item('mobileCamera');
-        $rearCamera='';if(array_key_exists($productDetailsArr[0]->mobileRearCamera, $mobileCamera)){$rearCamera=$mobileCamera[$productDetailsArr[0]->mobileRearCamera];}
+        $rearCamera='';if(array_key_exists($productDetailsArr[0]['mobileRearCamera'], $mobileCamera)){$rearCamera=$mobileCamera[$productDetailsArr[0]['mobileRearCamera']];}
         $result['rearCamera']=$rearCamera;
-        $frontCamera='';if(array_key_exists($productDetailsArr[0]->frontCamera, $mobileCamera)){$frontCamera=$mobileCamera[$productDetailsArr[0]->frontCamera];}
+        $frontCamera='';if(array_key_exists($productDetailsArr[0]['frontCamera'], $mobileCamera)){$frontCamera=$mobileCamera[$productDetailsArr[0]['frontCamera']];}
         $result['frontCamera']=$frontCamera;
         
         $ramData=$this->config->item('ramData');
-        $ram='';if(array_key_exists($productDetailsArr[0]->ram, $ramData)){$ram=$ramData[$productDetailsArr[0]->ram];}
+        $ram='';if(array_key_exists($productDetailsArr[0]['ram'], $ramData)){$ram=$ramData[$productDetailsArr[0]['ram']];}
         $result['ram']=$ram;
         
         $expandableMemory=$this->config->item('expandableMemory');
-        $expandableMemoryData='';if(array_key_exists($productDetailsArr[0]->expandableMemory,$expandableMemory)){$expandableMemoryData=$expandableMemory[$productDetailsArr[0]->expandableMemory];}
+        $expandableMemoryData='';if(array_key_exists($productDetailsArr[0]['expandableMemory'],$expandableMemory)){$expandableMemoryData=$expandableMemory[$productDetailsArr[0]['expandableMemory']];}
         $result['expandableMemoryData']=$expandableMemoryData;
         
         $warrantyDuration=$this->config->item('warrantyDuration');
-        $warrantyDurationData='';if(array_key_exists($productDetailsArr[0]->warrantyDuration, $warrantyDuration)){$warrantyDurationData=$warrantyDuration[$productDetailsArr[0]->warrantyDuration];}
+        $warrantyDurationData='';if(array_key_exists($productDetailsArr[0]['warrantyDuration'], $warrantyDuration)){$warrantyDurationData=$warrantyDuration[$productDetailsArr[0]['warrantyDuration']];}
         $result['warrantyDurationData']=$warrantyDurationData;
         
         $internalMemory=$this->config->item('internalMemory');
-        $internalMemoryData='';if(array_key_exists($productDetailsArr[0]->internalMemory, $internalMemory)){$internalMemoryData=$internalMemory[$productDetailsArr[0]->internalMemory];}
+        $internalMemoryData='';if(array_key_exists($productDetailsArr[0]['internalMemory'], $internalMemory)){$internalMemoryData=$internalMemory[$productDetailsArr[0]['internalMemory']];}
         $result['internalMemoryData']=$internalMemoryData;
         
         success_response_after_post_get($result);

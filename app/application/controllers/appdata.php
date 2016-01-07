@@ -123,7 +123,8 @@ class Appdata extends REST_Controller {
             $userData=$this->user->get_details_by_id($userId,TRUE);
             $userDataDOBArr=  explode('-',$userData[0]['DOB']);
             if(count($userDataDOBArr)>0){
-                $result['userProfileData']=$userDataDOBArr[2].'-'.$userDataDOBArr[1].'-'.$userDataDOBArr[0];
+                $result['userProfileDateData']=$userDataDOBArr[2].'-'.$userDataDOBArr[1].'-'.$userDataDOBArr[0];
+                $result['userProfileData']=$userData;
             }else{
                 $result['userProfileData']=$userData;
             }
@@ -417,6 +418,7 @@ class Appdata extends REST_Controller {
         $groupDataArr=array('groupAdminId'=>$groupAdminId,'groupTitle'=>$groupTitle,'productType'=>$productType,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor,'appSource'=>$deviceType);
         $groupId = $this->user->group_add($groupDataArr);
         $adminDataArr=  $this->user->get_details_by_id($groupAdminId);
+        $groupUsersArr=  explode(',', $groupUsers);
         if($groupId):
             if($groupUsersArr):
                 foreach($groupUsersArr as $guser):
@@ -444,8 +446,8 @@ class Appdata extends REST_Controller {
     }
     
     function edit_group_get(){
-        $adminId=$this->get($userId);
-        $groupId=$this->get($groupId);
+        $adminId=$this->get('userId');
+        $groupId=$this->get('groupId');
         $group = $this->user->get_group_by_id($groupId,TRUE);
         if(!$group):
             $this->response(array('error' => 'Invalid Buying Club index. Please try again!'), 400); return FALSE;
@@ -538,6 +540,9 @@ class Appdata extends REST_Controller {
                 $notify['nType'] = "BUYING-CLUB-MODIFY";
                 $notify['receiverMobileNumber'] = $receiverDetails[0]->mobile;
                 $notify['senderMobileNumber'] = $adminDataArr[0]->mobile;
+                $notify['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
+                $notify['adminEmail'] = $adminDataArr[0]->email;
+                $notify['adminContactNo'] = $adminDataArr[0]->contactNo;
                 $notify['nTitle'] = $groupTitle;
                 $this->send_notification($notify);
             endforeach;
@@ -563,6 +568,9 @@ class Appdata extends REST_Controller {
                 $notify['receiverMobileNumber'] = $receiverDetails[0]->mobile;
                 $notify['senderMobileNumber'] = $adminDataArr[0]->mobile;
                 $notify['nTitle'] = $groupTitle;
+                $notify['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
+                $notify['adminEmail'] = $adminDataArr[0]->email;
+                $notify['adminContactNo'] = $adminDataArr[0]->contactNo;
                 $this->send_notification($notify);
             endforeach;
             $reorder = $this->post('reorder');
@@ -594,6 +602,9 @@ class Appdata extends REST_Controller {
                     $data['isRead'] = 0;
                     $data['status'] = 1;
                     $data['createDate'] = date('Y-m-d H:i:s');
+                    $data['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
+                    $data['adminEmail'] = $adminDataArr[0]->email;
+                    $data['adminContactNo'] = $adminDataArr[0]->contactNo;
 
                     //Send Email message
                     $recv_email = $usr->email;
@@ -656,11 +667,8 @@ class Appdata extends REST_Controller {
                 break;
         }
         
-        
         $data['isRead'] = 0;
         $data['status'] = 1;
-        
-        
         
         if($data['isMobMessage']):
             $this->load->library('tidiitsms');
@@ -673,8 +681,6 @@ class Appdata extends REST_Controller {
                 'IP'=>  $this->input->ip_address(),'sms'=>$data['nMessage'],'sendActionType'=>$data['nType'],
                 'smsGatewaySenderId'=>$this->siteconfig->get_value_by_name('SMS_GATEWAY_SENDERID'),'smsGatewayReturnData'=>$smsResult);
                 $this->user->add_sms_history($smsAddHistoryDataArr);
-            
-            
             unset($data['isMobMessage']);
         endif;
         
@@ -686,9 +692,7 @@ class Appdata extends REST_Controller {
         unset($data['adminEmail']);
         unset($data['adminContactNo']);
         unset($data['receiverMobileNumber']);
-        
         $this->user->notification_add($data);
-    
     }
     
     function get_main_menu(){
@@ -729,10 +733,6 @@ class Appdata extends REST_Controller {
         //return $TopCategoryData;
         return $mainMenuArr;
     }
-    
-    
-    
-    
 }
     
 ?>

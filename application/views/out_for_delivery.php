@@ -326,109 +326,104 @@
       </div>
         <form action="#" method="post" name="outForDeliveryForm" class="form-horizontal" id="outForDeliveryForm"> 
             <div class="modal-body">
-                <div class="col-md-12 col-sm-12"> 
-                    <div class="gen_infmtn">
-                        <div class="table-responsive">
-                            <div class="panel panel-default">
-                            <table class="table table-striped" id='js-print-container'>
-                                <tr>
-                                    <td>
-                                     <table class="table">
-                                         <tr>
-                                             <td style="width: 35%;">&nbsp;</td>
-                                             <td style="width: 5%;">&nbsp;</td>
-                                             <td style="width: 60%;">&nbsp;</td>
-                                         </tr>
-                                        <tr>
-                                            <td>Select out for delivery type</td>
-                                            <td>:</td>
-                                            <td><select name="outForDeliveryType" id="outForDeliveryType">
-                                                    <option value="">Select</option>
-                                                    <option value="preAlert">Pre-alert</option>
-                                                    <option value="outForDelivery">Out for delivery</option>
-                                                </select>
-                                                <div>
-                                                    <label id="outForDeliveryType-error" class="error" for="outForDeliveryType"></label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr id="pre_alert" style="display:none;">
-                                            <td>Delivery days</td>
-                                            <td>:</td>
-                                            <td><select name="outForDeliveryDays" id="outForDeliveryDays">
-                                                    <option value="">Select</option>
-                                                    <!--<option value="1">Today</option> -->
-                                                    <option value="2">Tomorrow</option>
-                                                    <option value="3">After 2 days</option>
-                                                    <option value="4">After 3 days</option>
-                                                </select>
-                                                <div>
-                                                    <label id="outForDeliveryDays-error" class="error" for="outForDeliveryDays"></label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Enter the OrderID</td>
-                                            <td>:</td>
-                                            <td><input id="orderId" name="orderId" type="text" class="form-control" required >
-                                                <div>
-                                                    <label id="orderId-error" class="error" for="orderId"></label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Logistics Tidiit Sign ID</td>
-                                            <td>:</td>
-                                            <td><input id="logisticsId" name="logisticsId" type="text" class="form-control" required >
-                                                <div>
-                                                    <label id="logisticsId-error" class="error" for="logisticsId"></label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Delivery Staff Name</td>
-                                            <td>:</td>
-                                            <td><input id="deliveryStaffName" name="deliveryStaffName" type="text" class="form-control" required >
-                                                <div>
-                                                    <label id="deliveryStaffName-error" class="error" for="deliveryStaffName"></label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Delivery Staff Contact No</td>
-                                            <td>:</td>
-                                            <td><input id="deliveryStaffContactNo" name="deliveryStaffContactNo" type="text" class="form-control" required >
-                                                <div>
-                                                    <label id="deliveryStaffContactNo-error" class="error" for="deliveryStaffContactNo"></label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Delivery Staff Email</td>
-                                            <td>:</td>
-                                            <td><input id="deliveryStaffEmail" name="deliveryStaffEmail" type="email" class="form-control" required >
-                                                <div>
-                                                    <label id="deliveryStaffEmail-error" class="error" for="deliveryStaffEmail"></label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                             <td style="width: 35%;">&nbsp;</td>
-                                             <td style="width: 5%;">&nbsp;</td>
-                                             <td style="width: 60%;">
-                                                 <input type="submit" name="outForDeliverySubmit" id="outForDeliverySubmit" value="Submit" class="btn btn-default col-md-5"/>	
-                                             </td>
-                                         </tr>
-                                    </table>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>  
-                            </div>
-                        </div> 
-                        
+                <div class="table-responsive">
+                    <div class="panel panel-default">
+                        <table class="table table-striped" id='js-print-container'>
+                            <tr>
+                                <td>
+                                 <table class="table">
+                                     <tr>
+                                         <td style="width: 35%;">&nbsp;</td>
+                                         <td style="width: 5%;">&nbsp;</td>
+                                         <td style="width: 60%;">&nbsp;</td>
+                                     </tr>
+                                    <tr>
+                                        <td>Select out for delivery type</td>
+                                        <td>:</td>
+                                        <td><select name="outForDeliveryType" id="outForDeliveryType">
+                                                <option value="">Select</option>
+                                                <option value="preAlert">Pre-alert</option>
+                                                <option value="outForDelivery">Out for delivery</option>
+                                            </select>
+                                            <div>
+                                                <label id="outForDeliveryType-error" class="error" for="outForDeliveryType"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr id="pre_alert" style="display:none;">
+                                        <td>Delivery days</td>
+                                        <td>:</td>
+                                        <td><select name="outForDeliveryDays" id="outForDeliveryDays">
+                                                <option value="">Select</option>
+                                                <!--<option value="1">Today</option> -->
+                                                <option value="2">Tomorrow</option>
+                                                <option value="3">After 2 days</option>
+                                                <option value="4">After 3 days</option>
+                                            </select>
+                                            <div>
+                                                <label id="outForDeliveryDays-error" class="error" for="outForDeliveryDays"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Enter the OrderID</td>
+                                        <td>:</td>
+                                        <td><input id="orderId" name="orderId" type="text" class="form-control" required >
+                                            <div>
+                                                <label id="orderId-error" class="error" for="orderId"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Logistics Tidiit Sign ID</td>
+                                        <td>:</td>
+                                        <td><input id="logisticsId" name="logisticsId" type="text" class="form-control" required >
+                                            <div>
+                                                <label id="logisticsId-error" class="error" for="logisticsId"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Delivery Staff Name</td>
+                                        <td>:</td>
+                                        <td><input id="deliveryStaffName" name="deliveryStaffName" type="text" class="form-control" required >
+                                            <div>
+                                                <label id="deliveryStaffName-error" class="error" for="deliveryStaffName"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Delivery Staff Contact No</td>
+                                        <td>:</td>
+                                        <td><input id="deliveryStaffContactNo" name="deliveryStaffContactNo" type="text" class="form-control" required >
+                                            <div>
+                                                <label id="deliveryStaffContactNo-error" class="error" for="deliveryStaffContactNo"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Delivery Staff Email</td>
+                                        <td>:</td>
+                                        <td><input id="deliveryStaffEmail" name="deliveryStaffEmail" type="email" class="form-control" required >
+                                            <div>
+                                                <label id="deliveryStaffEmail-error" class="error" for="deliveryStaffEmail"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                         <td style="width: 35%;">&nbsp;</td>
+                                         <td style="width: 5%;">&nbsp;</td>
+                                         <td style="width: 60%;">
+                                             <input type="submit" name="outForDeliverySubmit" id="outForDeliverySubmit" value="Submit" class="btn btn-default col-md-5"/>	
+                                         </td>
+                                     </tr>
+                                </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>  
                     </div>
-                </div>    
+                </div> 
             </div>
         <div class="modal-footer">&nbsp;</div>
       </form>    
