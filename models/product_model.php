@@ -563,7 +563,7 @@ class Product_model extends CI_Model {
     
         
     public function get_recent($noOfItem=12,$app=false){
-        $sql="SELECT p.*,pi.image,c.categoryName "
+        $sql="SELECT p.productId,p.title,p.lowestPrice,p.heighestPrice,p.qty,p.minQty,pi.image,c.categoryName "
                 . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
                 . " JOIN product_category AS pc ON(pc.productId=p.productId)  "
                 . " JOIN category AS c ON(pc.categoryId=c.categoryId)  "

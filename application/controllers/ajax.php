@@ -598,8 +598,6 @@ class Ajax extends MY_Controller{
                 $data['isEmail'] = true;
                 if($this->Siteconfig_model->get_value_by_name('SMS_SEND_ALLOW')=='yes'):
                     $data['isMobMessage'] = true;
-                else:
-                    $data['isMobMessage'] = false;
                 endif;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
