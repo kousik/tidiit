@@ -598,6 +598,8 @@ class Ajax extends MY_Controller{
                 $data['isEmail'] = true;
                 if($this->Siteconfig_model->get_value_by_name('SMS_SEND_ALLOW')=='yes'):
                     $data['isMobMessage'] = true;
+                else:
+                    $data['isMobMessage'] = true;
                 endif;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
@@ -605,6 +607,8 @@ class Ajax extends MY_Controller{
                 $data['nMessage'] = "Hi, <br> Buying Club <strong>[".$data['nTitle']."]</strong> has been modified.";
                 $data['isEmail'] = true;
                 if($this->Siteconfig_model->get_value_by_name('SMS_SEND_ALLOW')=='yes'):
+                    $data['isMobMessage'] = true;
+                else:
                     $data['isMobMessage'] = true;
                 endif;
                 $data['createDate'] = date('Y-m-d H:i:s');
@@ -614,6 +618,8 @@ class Ajax extends MY_Controller{
                 $data['isEmail'] = true;
                 if($this->Siteconfig_model->get_value_by_name('SMS_SEND_ALLOW')=='yes'):
                     $data['isMobMessage'] = true;
+                else:
+                    $data['isMobMessage'] = true;
                 endif;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
@@ -621,6 +627,8 @@ class Ajax extends MY_Controller{
                 $data['nMessage'] = "Hi, <br> You are not part of this Buying Club <strong>[".$data['nTitle']."]</strong>";
                 $data['isEmail'] = true;
                 if($this->Siteconfig_model->get_value_by_name('SMS_SEND_ALLOW')=='yes'):
+                    $data['isMobMessage'] = true;
+                else:
                     $data['isMobMessage'] = true;
                 endif;
                 $data['createDate'] = date('Y-m-d H:i:s');
