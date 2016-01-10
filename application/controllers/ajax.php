@@ -1271,7 +1271,6 @@ class Ajax extends MY_Controller{
             array('field'   => 'receiveStaffContactNo','label'   => 'Receive Staff Contact No','rules'   => 'trim|required|xss_clean'),
             array('field'   => 'receiveDateTime','label'   => 'Receive Date Time','rules'   => 'trim|required|xss_clean'),
          );
-        
         $this->form_validation->set_rules($config); 
         //checking validation
         if($this->form_validation->run() == FALSE):
@@ -1310,7 +1309,10 @@ class Ajax extends MY_Controller{
             $config['max_height'] = '1550';
             $upload_files=array();
             $this->load->library('upload');
-            /*foreach ($_FILES as $fieldname => $fileObject){  //fieldname is the form field name
+            //pre($_FILES);die;
+            foreach ($_FILES as $fieldname => $fileObject){  //fieldname is the form field name
+                //pre($fieldname);
+                //pre($fileObject);die;
                 $this->upload->initialize($config);
                 if (!$this->upload->do_upload($fieldname)):
                     foreach($upload_files AS $k){
@@ -1328,8 +1330,9 @@ class Ajax extends MY_Controller{
             if(empty($upload_files) || count($upload_files)<2){
                 echo json_encode(array('result'=>'bad','msg'=>'You must upload 2 photo for tidiit order delivery proof.'));die;
             }
-            $data['photo1']=$upload_files[0];
-            $data['photo2']=$upload_files[1];*/
+            $dataArr['photo1']=$upload_files[0];
+            $dataArr['photo2']=$upload_files[1];
+            //pre($dataArr);die;
             if(empty($oldDeliveryRequestDetails)):
                 $orderDeliveredRequestId=$this->Order_model->add_order_delivered_request($dataArr);
             else:

@@ -36,16 +36,28 @@ myJsMain.commonFunction = {
         //alert(url);return false;
         var ajaxUrl =url,
         //data = $this.serialize().replace(/%5B%5D/g, '[]');
-        data = $this.serialize();
-        //data = new FormData($this[0]);
+        //data = $this.serialize();
+        data = new FormData($this[0]);
         //alert(data);return false;
         //alert(callback);return false;
-        jQuery.post(ajaxUrl, data, function(resultData) {
+        /*jQuery.post(ajaxUrl, data, function(resultData) {
             resultData['thisVar'] = $this;
             
             myJsMain.commonFunction.callBackFuction(callback, resultData);
             //$('body,html').animate({scrollTop: 0}, 'slow');
-        }, 'json');
+        }, 'json');*/
+        
+        jQuery.ajax({
+            url: ajaxUrl,
+            type: 'POST',
+            data: data,
+            dataType:'json',
+            mimeType:"multipart/form-data",
+            contentType: false,
+            cache: false,
+            processData:false,
+            success: callback
+        });
     },
     callBackFuction: function(callback, data) { 
         // Call our callback, but using our own instance as the context

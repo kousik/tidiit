@@ -535,7 +535,25 @@
                 "OK": function() {
                     jQuery( this ).dialog( "close" );
                     myJsMain.commonFunction.showPleaseWait();
-                    myJsMain.commonFunction.ajaxSubmit($this,url,calBackFun);
+                    //jQuery("#outForDeliveryForm").submit(function(e){
+                        //var formData = new FormData(jQuery('#outForDeliveryForm')[0]);
+                        //fData=jQuery('#outForDeliveryForm').serialize();
+                        //console.log(formData);
+                        myJsMain.commonFunction.ajaxSubmit($this,url,calBackFun);
+                        //$.post( url, fData,calBackFun, 'json' );
+                        /*jQuery.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: formData,
+                            dataType:'json',
+                            mimeType:"multipart/form-data",
+                            contentType: false,
+                            cache: false,
+                            processData:false,
+                            success: calBackFun
+                        });*/
+                    //});
+
                 },
                 Cancel: function() {
                     jQuery( this ).dialog( "close" );
