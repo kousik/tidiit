@@ -238,6 +238,7 @@ class Appdata extends REST_Controller {
         $rs=$this->user->get_my_product_type($userId);
         //pre($rs); //die;
         $result['userProductTypeArr']=$rs;
+        $result['topCategoryDataArr']=$this->category->get_top_category_for_product_list(true);
         success_response_after_post_get($result);
     }
     
