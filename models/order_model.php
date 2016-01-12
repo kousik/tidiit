@@ -50,7 +50,7 @@ class Order_model extends CI_Model {
     public function get_single_order_by_id($orderId){
         $this->db->limit(1);
         $this->db->order_by('orderUpdatedate','DESC');
-        $this->db->select('o.*,p.paymentType,s.email AS sellerEmail,s.firstName AS sellerFirstName,s.lastName AS sellerLastName,s1.email AS buyerEmail,s1.firstName AS buyerFirstName,s1.lastName AS buyerLastName');
+        $this->db->select('o.*,p.paymentType,s.email AS sellerEmail,s.firstName AS sellerFirstName,s.lastName AS sellerLastName,s1.email AS buyerEmail,s1.firstName AS buyerFirstName,s1.lastName AS buyerLastName,s1.mobile AS buyerMobileNo');
         $this->db->from($this->_table.' o');
         $this->db->join('product_seller ps','o.productId=ps.productId')->join('user s','ps.userId=s.userId')->join('user s1','o.userId=s1.userId');
         $this->db->join('payment p','o.orderId=p.orderId','left');
@@ -161,7 +161,7 @@ class Order_model extends CI_Model {
 
     public function details($orderId){
         $this->db->select('o.*,pp.qty AS productSlabPrice,pp.price AS productSlabPrice,s.email AS sellerEmail,s.firstName AS sellerFirstName, '
-                . 's.lastName AS sellerLastName,s1.email AS buyerEmail,s1.firstName AS buyerFirstName,s1.lastName AS buyerLastName,p.paymentType');
+                . 's.lastName AS sellerLastName,s1.email AS buyerEmail,s1.firstName AS buyerFirstName,s1.lastName AS buyerLastName,p.paymentType,s1.mobile AS buyerMobileNo');
         $this->db->from($this->_table.' o')->join('product_price pp','o.productPriceId=pp.productPriceId')->join('user s1','o.userId=s1.userId');
         $this->db->join('product_seller ps','o.productId=ps.productId')->join('user s','ps.userId=s.userId')->join('`payment` As p','o.orderId=p.orderId','left');
         return $this->db->where('o.orderId',$orderId)->order_by('orderUpdatedate','DESC')->get()->result();

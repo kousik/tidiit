@@ -1004,6 +1004,7 @@ class Ajax extends MY_Controller{
                     echo json_encode(array('result'=>'bad','msg'=>'Please select out for delivery days.'));die;
                 endif;    
                 $outForDeliveryDataArr['outForDeliveryDays']=$outForDeliveryDays;
+                $dataArr['outForDeliveryDays']=$outForDeliveryDays;
                 $this->Order_model->add_order_out_for_delivery($dataArr); 
                 if($order->orderType=='GROUP'):
                     $this->_send_pre_alert_regarding_out_for_delivery_of_group($outForDeliveryDataArr);
@@ -1058,6 +1059,15 @@ class Ajax extends MY_Controller{
         //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
         $supportEmail='judhisahoo@gmail.com';
         $this->_global_tidiit_mail($supportEmail, "Pre-alert for Order no - TIDIIT-OD-".$order->orderId.' before delivery ', $mail_template_view_data,'support_single_order_out_for_delivery_pre_alert','Tidiit Inc Support');
+        
+        /// sendin SMS to allmember
+        $smsMsg='Tidiit order TIDIIT-OD-'.$order->orderId.' will delivered by '.$outForDeliveryDataArr['outForDeliveryDays'].' days.';
+        if($isPaid==0):
+            $smsMsg.="AS you had selected Settlement on Delivery method,please submit the payment,So delivery people will delivery your item.";
+        endif;
+        $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$order->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
+        'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-OUT-FOR_DELIVERY-PRE-ALERT');
+        $this->send_sms_notification($sms_data);
         return TRUE;
     }
     
@@ -1101,6 +1111,24 @@ class Ajax extends MY_Controller{
         //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
         $supportEmail='judhisahoo@gmail.com';
         $this->_global_tidiit_mail($supportEmail, "Pre-alert Tidiit Buying Club for Order no - TIDIIT-OD-".$order->orderId.' before delivery ', $mail_template_view_data,'support_group_order_out_for_delivery_pre_alert','Tidiit Inc Support');
+        
+        /// sendin SMS to Buyer
+        $smsMsg='Your Tidiit order TIDIIT-OD-'.$order->orderId.' will delivered by '.$outForDeliveryDataArr['outForDeliveryDays'].' days.';
+        if($isPaid==0):
+            $smsMsg.="AS you had selected Settlement on Delivery method,please submit the payment,So delivery people will delivery your item.";
+        endif;
+        $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$order->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
+        'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-OUT-FOR_DELIVERY-PRE-ALERT');
+        $this->send_sms_notification($sms_data);
+        
+        /// sendin SMS to Leader
+        $smsMsg='Your Buying Club['.$orderInfo['group']->groupTitle.']  member Tidiit order TIDIIT-OD-'.$order->orderId.' will delivered by '.$outForDeliveryDataArr['outForDeliveryDays'].' days.';
+        if($isPaid==0):
+            $smsMsg.="$buyerFullName had selected Settlement on Delivery method,please follow with him/her to submit the payment,So delivery people will delivery your item.";
+        endif;
+        $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$orderInfo['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfo["group"]->admin->userId,
+        'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-OUT-FOR_DELIVERY-PRE-ALERT');
+        $this->send_sms_notification($sms_data);
         return TRUE;
     }
     
@@ -1137,6 +1165,15 @@ class Ajax extends MY_Controller{
         //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
         $supportEmail='judhisahoo@gmail.com';
         $this->_global_tidiit_mail($supportEmail, "Tidiit Order no - TIDIIT-OD-".$order->orderId.' is ready to Out For Delivery ', $mail_template_view_data,'support_single_order_out_for_delivery','Tidiit Inc Support');
+        
+        $smsMsg='Tidiit order TIDIIT-OD-'.$order->orderId.' is ready to Out For Delivery.';
+        if($isPaid==0):
+            $smsMsg.="AS you had selected Settlement on Delivery method,please submit the payment,So delivery people will deliver your item at your door step.";
+        endif;
+        $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$order->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
+        'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-OUT-FOR_DELIVERY');
+        $this->send_sms_notification($sms_data);
+        
         return true;
     }
     
@@ -1177,6 +1214,24 @@ class Ajax extends MY_Controller{
         //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
         $supportEmail='judhisahoo@gmail.com';
         $this->_global_tidiit_mail($supportEmail, "Tidiit Buying Club for Order no - TIDIIT-OD-".$order->orderId.' is ready for Out For Delivery ', $mail_template_view_data,'support_group_order_out_for_delivery','Tidiit Inc Support');
+        
+        /// sendin SMS to Buyer
+        $smsMsg='Your Tidiit order TIDIIT-OD-'.$order->orderId.' is ready to Out For Delivery.';
+        if($isPaid==0):
+            $smsMsg.="AS you had selected Settlement on Delivery method,please submit the payment,So delivery people will delivery your item.";
+        endif;
+        $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$order->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
+        'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-OUT-FOR_DELIVERY');
+        $this->send_sms_notification($sms_data);
+        
+        /// sendin SMS to Leader
+        $smsMsg='Your Buying Club['.$orderInfo['group']->groupTitle.']  member Tidiit order TIDIIT-OD-'.$order->orderId.' is ready to Out For Delivery.';
+        if($isPaid==0):
+            $smsMsg.="$buyerFullName had selected Settlement on Delivery method,please follow with him/her to submit the payment,So delivery people will delivery your item.";
+        endif;
+        $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$orderInfo['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfo["group"]->admin->userId,
+        'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-OUT-FOR_DELIVERY');
+        $this->send_sms_notification($sms_data);
         return TRUE;
     }
     
@@ -1411,4 +1466,27 @@ class Ajax extends MY_Controller{
         //pre($data);die;
         echo json_encode(array('content'=>$this->load->view('order_details',$data,true)));die;
      }
+     
+     function send_sms_notification($data){
+        /*
+        $notify['senderId'] = ;
+        $notify['receiverId'] = ;
+        $notify['nType'] = ;
+        $notify['nTitle'] = ;
+        $notify['nMessage'] = ;
+         */
+        $SMS_SEND_ALLOW=$this->Siteconfig_model->get_value_by_name('SMS_SEND_ALLOW');
+        if($SMS_SEND_ALLOW=='yes'){
+            $this->load->library('tidiitsms');
+            //Send Mobile message
+            $smsAddHistoryDataArr=array();
+            $smsConfig=array('sms_text'=>$data['nMessage'],'receive_phone_number'=>$data['receiverMobileNumber']);
+            $smsResult=$this->tidiitsms->send_sms($smsConfig);
+            $smsAddHistoryDataArr=array('senderUserId'=>$data['senderId'],'receiverUserId'=>$data['receiverId'],
+                'senderPhoneNumber'=>$data['senderMobileNumber'],'receiverPhoneNumber'=>$data['receiverMobileNumber'],
+                'IP'=>  $this->input->ip_address(),'sms'=>$data['nMessage'],'sendActionType'=>$data['nType'],
+                'smsGatewaySenderId'=>$this->Siteconfig_model->get_value_by_name('SMS_GATEWAY_SENDERID'),'smsGatewayReturnData'=>$smsResult);
+                $this->User_model->add_sms_history($smsAddHistoryDataArr);
+        }
+    }
 }

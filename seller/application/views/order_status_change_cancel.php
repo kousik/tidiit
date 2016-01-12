@@ -9,8 +9,7 @@
       </div>
         <form name="orderStatesChange" id="orderStatesChange" action="<?php echo BASE_URL.'order/state_change_cancel/';?>" method="post">
             <div class="modal-body">
-                <div class="col-md-12 col-sm-12"> 
-                    <div class="gen_infmtn">
+                <div class="gen_infmtn">
                         <div class="table-responsive">
                             <div class="panel panel-default">
                             <table class="table table-striped" id='js-print-container'>
@@ -147,7 +146,6 @@
                         <?php /*<a href="<?=BASE_URL?>my-orders"><button class="btn btn-warning"><i class="fa fa-arrow-left"></i> Back</button> </a>
                         <?php if($order->status == 5):?><a class="btn btn-info btn-xs pull-right" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-file-text-o"></i> View Invoice</a><?php endif; */?>
                     </div>
-                </div>    
             </div>
         <div class="modal-footer">&nbsp;</div>
       </form>    

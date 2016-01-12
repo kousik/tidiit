@@ -48,6 +48,8 @@ define('SiteImagesURL',SiteResourcesURL.'images/');
 define('SiteCSSURL',SiteResourcesURL.'css/');
 define('SiteJSURL',SiteResourcesURL.'js/');
 define('ResourcesPath',$_SERVER['DOCUMENT_ROOT'].'/'.SITE_SUB_DOMAIN.'resources/');
+$mainHost=  explode('.',$_SERVER['HTTP_HOST']);
+define('MainSiteURL','http://www.'.$mainHost[1].'.'.$mainHost[2]);
 
 
 /// product image dir
