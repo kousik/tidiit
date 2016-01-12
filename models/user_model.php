@@ -774,7 +774,11 @@ class User_model extends CI_Model {
         if(empty($rs)){
             return array();
         }else{
-            return explode(',', $rs[0]->productTypeCateoryId);
+            if($userId==0):
+                return explode(',', $rs[0]->productTypeCateoryId);
+            else:
+                return explode(',', $rs[0]['productTypeCateoryId']);
+            endif;
         }
     }
     

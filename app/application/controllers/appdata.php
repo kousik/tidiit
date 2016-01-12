@@ -212,6 +212,7 @@ class Appdata extends REST_Controller {
         $userId=  $this->get('userId');
         $this->load->model('Country');
         $userShippingDataDetails=$this->user->get_user_shipping_information($userId);
+        //pre($userShippingDataDetails);die;
         if(empty($userShippingDataDetails)){
             $userShippingDataDetails[0]=array();
             $userShippingDataDetails[0]['firstName']="";
@@ -224,19 +225,19 @@ class Appdata extends REST_Controller {
             $userShippingDataDetails[0]['address']="";
             $userShippingDataDetails[0]['contactNo']="";
         }
-        if($userShippingDataDetails[0]->countryId!=""){
-            $result['cityDataArr']=  $this->Country->get_all_city1($userShippingDataDetails[0]->countryId,TRUE);
+        if($userShippingDataDetails[0]['countryId']!=""){
+            $result['cityDataArr']=  $this->Country->get_all_city1($userShippingDataDetails[0]['countryId'],TRUE);
         }
-        if($userShippingDataDetails[0]->zipId!=""){
-            $result['zipDataArr']=  $this->Country->get_all_zip1($userShippingDataDetails[0]->cityId,TRUE);
+        if($userShippingDataDetails[0]['zipId']!=""){
+            $result['zipDataArr']=  $this->Country->get_all_zip1($userShippingDataDetails[0]['cityId'],TRUE);
         }
-        if($userShippingDataDetails[0]->localityId!=""){
-            $result['localityDataArr']=  $this->Country->get_all_locality1($userShippingDataDetails[0]->zipId,TRUE);
+        if($userShippingDataDetails[0]['localityId']!=""){
+            $result['localityDataArr']=  $this->Country->get_all_locality1($userShippingDataDetails[0]['zipId'],TRUE);
         }
         $result['countryDataArr']=$this->Country->get_all1(TRUE);
         $result['userShippingDataDetails']=$userShippingDataDetails;
         $rs=$this->user->get_my_product_type($userId);
-        //pre($rs); //die;
+        //pre($rs); die;
         $result['userProductTypeArr']=$rs;
         $result['topCategoryDataArr']=$this->category->get_top_category_for_product_list(true);
         success_response_after_post_get($result);
