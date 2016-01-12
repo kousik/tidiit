@@ -467,4 +467,9 @@ class Order_model extends CI_Model {
         $this->db->update($this->_delivered_request,$dataArr);
         return TRUE;		
     }
+    
+    function get_order_delivery_details_by_order_id($orderId){
+        $this->db->select('odr.*,l.title,l.registrationNo,l.supportNo')->from($this->_delivered_request.' AS odr');
+        return $this->db->join('logistics As l','odr.logisticsId=l.logisticsId')->where('odr.orderId',$orderId)->get()->row();
+    }
 }

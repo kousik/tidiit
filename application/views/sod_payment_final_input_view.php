@@ -22,8 +22,7 @@
       </div>
         <form action="<?php echo BASE_URL.'shopping/complete_payment/'?>" method="post" name="outForDeliveryForm" class="form-horizontal" id="outForDeliveryForm"> 
             <div class="modal-body">
-                <div class="col-md-12 col-sm-12"> 
-                    <div class="gen_infmtn">
+                <div class="gen_infmtn">
                         <div class="table-responsive">
                             <div class="panel panel-default">
                             <table class="table table-striped" id='js-print-container'>
@@ -92,7 +91,6 @@
                         </div> 
                         
                     </div>
-                </div>    
             </div>
         <div class="modal-footer">&nbsp;</div>
       </form>    

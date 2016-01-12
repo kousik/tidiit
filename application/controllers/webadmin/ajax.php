@@ -130,6 +130,26 @@ class Ajax extends MY_Controller{
         }
     }
     
+    function show_order_delivery_details(){
+        $this->load->model('Order_model','order');
+        $orderId=$this->input->post('orderId',TRUE);
+        $data=  $this->load_default_resources();
+        $orderDeliveryDetails=$this->order->get_order_delivery_details_by_order_id($orderId);
+        //pre($orderDeliveryDetails);die;
+        $order=$this->order->get_single_order_by_id($orderId);
+        $data['group'] = $this->User_model->get_group_by_id($order->groupId);
+        $orderStatusobj=$this->order->get_state();
+        $stateArr=array();
+        foreach($orderStatusobj As $k){
+            $stateArr[$k->orderStateId]=$k->name;
+        }
+        $data['status']= $stateArr;
+        $data['order']=$order;
+        $data['orderDeliveryDetails']=$orderDeliveryDetails;
+        $data['orderId']=$orderId;
+        echo json_encode(array('content'=>$this->load->view('webadmin/order_delivery_details',$data,true)));die;
+    }
+    
     function show_order_details(){
         $this->load->model('Order_model');
         $orderId=$this->input->post('orderId',TRUE);

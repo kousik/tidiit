@@ -78,8 +78,9 @@ $OrderTypeArr=array('1'=>'Website','2'=>'Mobile Web','3'=>"Mobile Apps");
                               <?php if($InerArr->orderType == 'SINGLE' && $InerArr->status < 4):?> &nbsp; 
                               <a href="javascript:void(0);" class="changeOrderStateCancel"  title="Cancel" data-orderid="<?php echo $InerArr->orderId;?>">Cancel</a>
                               <?php endif;?>
-                            <?php if($InerArr->orderDeliveredRequestId!="" && $InerArr->status<6):?>  
-                              <a href="javascript:void(0);" class="changeOrderStateDelivered"  title="Delivered" data-orderid="<?php echo $InerArr->orderId;?>">Set Delivered</a>
+                            <?php if($InerArr->orderDeliveredRequestId!="" && $InerArr->status>4):?>  
+                              <a href="javascript:void(0);" class="viewOrderDeliveryDetails"  title="Delivered" data-orderid="<?php echo $InerArr->orderId;?>">
+                                  <?php if($InerArr->status==5){ echo 'View and Update Delivery Details';}else{ echo 'View Delivery Details';}?></a>
                             <?php endif;?>  
                         </td>
                         <td><?php echo $InerArr->orderId;?></td>
@@ -104,7 +105,7 @@ $OrderTypeArr=array('1'=>'Website','2'=>'Mobile Web','3'=>"Mobile Apps");
 <div id="modal_order_details"></div>
 <?php echo $AdminHomeRest;?>
 <script type="text/javascript">
-jQuery('body').on("click",'.viewOrderDetails',function(){ alert('rr');
+jQuery('body').on("click",'.viewOrderDetails',function(){
     var orderid = jQuery(this).data('orderid'); 
     jQuery.post( myJsMain.baseURL+'ajax/show_order_details/', {
          orderId: orderid
@@ -113,19 +114,20 @@ jQuery('body').on("click",'.viewOrderDetails',function(){ alert('rr');
          jQuery('#modal_order_details').html(data.content);
      }, 'json' );
  });
- jQuery('body').on("click",'.changeOrderStateDelivered',function(){
+ jQuery('body').on("click",'.viewOrderDeliveryDetails',function(){
      myJsMain.commonFunction.showWebAdminPleaseWait();
     var orderid = jQuery(this).data('orderid'); 
     jqout=jQuery(this);
-    jQuery.post( myJsMain.baseURL+'ajax/update_order_delivered/', {
+    jQuery.post( myJsMain.baseURL+'ajax/show_order_delivery_details/', {
          orderId: orderid
      },
      function(data){
          myJsMain.commonFunction.hideWebAdminPleaseWait();
-         if(data.result=='good'){
+         jQuery('#modal_order_details').html(data.content);
+         /*if(data.result=='good'){
              jqout.html("");
              myJsMain.commonFunction.tidiitAlert('Tidiit Order Update System','Select order update as delivered successfully.',200);
-         }
+         }*/
      }, 'json' );
  });
 jQuery(document).ready(function(){

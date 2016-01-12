@@ -1,36 +1,39 @@
-<?php $orderinfo = unserialize(base64_decode($order->orderInfo));
-$logisticId='';$trackingURL='';$awbNo='';$note='';
-if(!empty($latestOrderState)){
-    $logisticId=$latestOrderState['logisticsId'];
-    $trackingURL=$latestOrderState['trackingURL'];
-    $awbNo=$latestOrderState['awbNo'];
-    $note=$latestOrderState['note'];
-}?>
-<!-- Modal --><style>label.error{color: red;padding-left: 5px;}</style>
+<?php $orderinfo = unserialize(base64_decode($order->orderInfo));?>
+<!-- Modal -->
 <div class="modal fade" id="myModalLogin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Order Status Change for :<?php echo $orderId;?></h4>
+        <h4 class="modal-title" id="myModalLabel">Delivery Details of Order Id :<?php echo $orderId;?></h4>
       </div>
-        
+        <form action="#" method="post" name="add_groups" class="form-horizontal" id="add_groups"> 
             <div class="modal-body">
-                <div class="col-md-12 col-sm-12"> 
-                    <div class="gen_infmtn">
-                        <div class="table-responsive">
+                <div class="table-responsive">
                             <div class="panel panel-default">
                             <table class="table table-striped" id='js-print-container'>
                                 <thead>
-                                    <tr class="active">
-                                        <th><a href="javascript://">Order #TIDIIT-OD-<?=$order->orderId?></a> <?php if($order->orderType == 'SINGLE' && $order->status < 4):?><a class="btn btn-danger btn-xs pull-right" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-times"></i> Cancel Order</a><?php endif;?><?php if($order->status == 5):?><a class="btn btn-info btn-xs pull-right no-print" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-file-text-o"></i> View Invoice</a><?php endif;?></th>
-                                    </tr>
+                                <tr class="active">
+                                    <th>
+                                        <a href="javascript://">Order #TIDIIT-OD-<?=$order->orderId?></a>
+                                        <?php if($order->status == 5):?><a class="btn btn-info btn-xs pull-right no-print" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-file-text-o"></i> View Invoice </a><?php endif;?>
+                                        <?php if($order->status == 5):?><a class="btn btn-info btn-xs pull-right no-print changeOrderStateDelivered" data-orderid="<?=$order->orderId?>" style="margin-right:10px;"><i class="fa fa-file-text-o"></i> Set As Delivered</a><?php endif;?>
+                                    </th>
+                                  </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
                                     <td>
-                                        <p><i class="fa fa-sort-desc"></i> Order Details</p>
+                                        <p><i class="fa fa-sort-desc"></i> Delivery Details</p>
                                      <table class="table">
+                                        <tr><td style="width: 23%;font-size: 12px;">Logistics Company Name</td><td style="width: 26%;"><?php echo $orderDeliveryDetails->title; ?></td><td style="width: 2%;font-weight:bold;">:</td><td style="width: 23%;font-size: 12px;">Logistics Registration Number</td><td style="width: 26%"><?php echo $orderDeliveryDetails->registrationNo; ?></td></tr>
+                                        <tr><td style="width: 23%;font-size: 12px;">Logistics Support Number</td><td style="width: 26%;"><?php echo $orderDeliveryDetails->supportNo; ?></td><td style="width: 2%;font-weight:bold;">:</td><td style="width: 23%;font-size: 12px;">Delivery Staff Name</td><td style="width: 26%"><?php echo $orderDeliveryDetails->deliveryStaffName; ?></td></tr>
+                                        <tr><td style="width: 23%;font-size: 12px;">Delivery Staff Contact Number</td><td style="width: 26%;"><?php echo $orderDeliveryDetails->deliveryStaffContactNo; ?></td><td style="width: 2%;font-weight:bold;">:</td><td style="width: 23%;font-size: 12px;">Delivery Staff Email</td><td style="width: 26%"><?php echo $orderDeliveryDetails->deliveryStaffEmail; ?></td></tr>
+                                        <tr><td style="width: 23%;font-size: 12px;">Receive Date Time</td><td style="width: 26%;"><?php echo date('d-m-Y H:i:s',strtotime($orderDeliveryDetails->receiveDateTime)); ?></td><td style="width: 2%;font-weight:bold;">:</td><td style="width: 23%;font-size: 12px;">Delivery Update Date and time</td><td style="width: 26%"><?php echo date('d-m-Y H:i:s',strtotime($orderDeliveryDetails->addedDate)); ?></td></tr>
+                                        <tr><td style="width: 23%;font-size: 12px;">Delivery Photo1</td><td style="width: 26%;"><img src="<?php echo SiteResourcesURL.'order_delivery/75X75/'.$orderDeliveryDetails->photo1; ?>" border=""></td><td style="width: 2%;font-weight:bold;">:</td><td style="width: 23%;font-size: 12px;">Delivery Photo2</td><td style="width: 6%"><img src="<?php echo SiteResourcesURL.'order_delivery/75X75/'.$orderDeliveryDetails->photo2; ?>" border=""></td></tr>
+                                    </table>    
+                                     <p><i class="fa fa-sort-desc"></i> Order Details</p>   
+                                     <table class="table table-bordered table-hover">
                                         <thead>
                                         <tr class="info">
                                             <th>Order ID</th>
@@ -49,10 +52,11 @@ if(!empty($latestOrderState)){
                                             <td><i class="fa fa-rupee"></i><?=$order->subTotalAmount?></td>
                                             <td><?php echo ($order->paymentType=='settlementOnDelivery')?'Settlement On Delivery':'Paid';?></td>
                                             <td><?php echo ($order->paymentType=='settlementOnDelivery')?'<span style="color: #009900;">No</span>':'<span style="color: #009900;">Yes</span>';?></td>
-                                            <td><span class="label label-info"><?=$status[$order->status];?></span> (<?=$order->orderDate;?>)</td>
+                                            <td><span class="label label-info"><?php if($order->status == 5){?>Physically Delivered But wait for Support Update<?php }else{ echo $status[$order->status];}?></span> (<?=$order->orderDate;?>)</td>
                                         </tr>
                                     </table>
 
+                                    
                                      <table class="table table-bordered table-hover">
                                         <thead>
                                         <tr class="success">
@@ -124,12 +128,42 @@ if(!empty($latestOrderState)){
                                                 <td><?=isset($order->productQty)?$order->productQty:'0'?></td>
                                                 <td><i class="fa fa-rupee"></i><?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></td>
                                             </tr>
+                                            <tr> 
+                                                <td colspan="5"></td>
+                                                <td>Order Sub Total</td>
+                                                <td><i class="fa fa-rupee"></i><?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></td>
+                                            </tr>
+                                            <tr> 
+                                                <td colspan="5"></td>
+                                                <td>Order Discount</td>
+                                                <td><i class="fa fa-rupee"></i><?=isset($order->discountAmount)?$order->discountAmount:''?></td>
+                                            </tr>
+                                            <tr> 
+                                                <td colspan="5"></td>
+                                                <td>Shipping ()</td>
+                                                <td><i class="fa fa-rupee"></i><?=isset($order->shippingamount)?$order->shippingamount:''?></td>
+                                            </tr>
+                                            <tr> 
+                                                <td colspan="5"></td>
+                                                <td>Tax</td>
+                                                <td><i class="fa fa-rupee"></i><?=isset($order->taxAmount)?$order->taxAmount:''?></td>
+                                            </tr>
+                                            <tr> 
+                                                <td colspan="5"></td>
+                                                <td>Order Total</td>
+                                                <td><i class="fa fa-rupee"></i><?=isset($order->orderAmount)?$order->orderAmount:''?></td>
+                                            </tr>
+                                            <tr> 
+                                                <td colspan="5"></td>
+                                                <td>Paid</td>
+                                                <td><i class="fa fa-rupee"></i><?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></td>
+                                            </tr>
                                         </table>  
-                                        <form name="orderStatesChange" id="orderStatesChange" action="<?php echo BASE_URL.'order/state_change/';?>" method="post">
-                                        <table class="table no-print">
+
+                                    <?php /*<table class="table no-print">
                                         <thead>
                                         <tr class="info">
-                                            <th>Update  Order Status</th>
+                                            <th>Manage Order</th>
                                             <th></th>
                                             <th></th>
                                           </tr>
@@ -137,48 +171,16 @@ if(!empty($latestOrderState)){
                                         <tbody>
                                         </tbody>
                                         <tr>
-                                            <td style="width:30%">Select Order Status</td>
-                                            <td style="width:5%">:</td>
-                                            <td style="width:65%">
-                                                <select name="status" id="status" class="required">
-                                                    <option value="">Select</option>
-                                                    <option value="3" <?php if($order->status==3){?>selected<?php }?>>Confirm</option>
-                                                    <option value="4" <?php if($order->status==4){?>selected<?php }?>>Shipped</option>
-                                                </select>
+                                            <td align='middle'>
+                                                <span id='btnPrint' style='cursor: pointer;' data-text="Tidiit.com - Order Information - TIDIIT-OD-<?=$order->orderId;?>"><i class="fa fa-print"></i><br>
+                                                    PRINT ORDER</span>
                                             </td>
+                                            <td align='middle'><?php if($order->status == 5):?><a data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-envelope"></i><br>EMAIL INVOICE</a><?php endif;?></td>
+                                            <td align='middle'><span><a href="<?=BASE_URL?>contact-us"><i class="fa fa-phone-square"></i><br>
+                                                        CONTACT US</a></span></td>
                                         </tr>
-                                        <tr>
-                                            <td>Enter your comment</td>
-                                            <td>:</td>
-                                            <td><textarea name="note" id="note"><?php echo $note;?></textarea></td>
-                                        </tr>
-                                        <tr id="showHideShippedElement2" style="display:none;">
-                                            <td>Select Logistics Partner</td>
-                                            <td>:</td>
-                                            <td>
-                                                <select name="logisticsId" id="logisticsId" class="logisticsId">
-                                                    <option value="">Select</option>
-                                                    <?php foreach($logisticsData As $k): ?>
-                                                    <option value="<?php echo $k->logisticsId;?>" <?php if($logisticId==$k->logisticsId){?>selected<?php }?>><?php echo $k->title;?></option>
-                                                    <?php endforeach;?>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr id="showHideShippedElement" style="display:none;">
-                                            <td>Enter your Air Way Bill Number</td>
-                                            <td>:</td>
-                                            <td><input type="text" name="awbNo" id="awbNo" class="required" value="<?php echo $awbNo;?>"/></td>
-                                        </tr>
-                                        <tr id="showHideShippedElement1" style="display:none;">
-                                            <td>Enter your tracking URL</td>
-                                            <td>:</td>
-                                            <td><input type="text" name="trackingURL" id="trackingURL" class="required" value="<?php echo $trackingURL;?>"/></td>
-                                        </tr>
-                                        <tr><td colspan="3">&nbsp; <input type="hidden" name="orderId" value="<?php echo $orderId;?>"></td></tr>
-                                        <tr><td>&nbsp;</td><td>&nbsp;</td><td><button class="btn btn-warning" type="submit"><i class="fa fa-arrow-left"></i> Submit</button></td></tr>
+                                    </table>*/?>
 
-                                    </table>
-                                        </form>        
                                     </td>
                                 </tr>
                                 </tbody>
@@ -187,11 +189,9 @@ if(!empty($latestOrderState)){
                         </div> 
                         <?php /*<a href="<?=BASE_URL?>my-orders"><button class="btn btn-warning"><i class="fa fa-arrow-left"></i> Back</button> </a>
                         <?php if($order->status == 5):?><a class="btn btn-info btn-xs pull-right" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-file-text-o"></i> View Invoice</a><?php endif; */?>
-                    </div>
-                </div>    
             </div>
         <div class="modal-footer">&nbsp;</div>
-    
+      </form>    
     </div>
   </div>
 </div>
@@ -202,33 +202,24 @@ if(!empty($latestOrderState)){
 <script type="text/javascript">
     jQuery(document).ready(function(){
         jQuery('#myModalLogin').modal('show');
-        jQuery("#orderStatesChange").validate();
-        jQuery('#status').on('change',function(){
-            if($(this).val()==4){
-                $('#showHideShippedElement').show();
-                $('#showHideShippedElement1').show();
-                $('#showHideShippedElement2').show();
-            }else{
-                $('#showHideShippedElement').hide();
-                $('#showHideShippedElement1').hide();
-                $('#showHideShippedElement2').hide();
-            }
+        jQuery('body').on("click",'.changeOrderStateDelivered',function(){
+           if(confirm('Are you sure to update the selected order as delivered ?')){
+                myJsMain.commonFunction.showWebAdminPleaseWait();
+                var orderid = jQuery(this).data('orderid'); 
+                jqout=jQuery(this);
+                jQuery.post( myJsMain.baseURL+'ajax/update_order_delivered/', {
+                     orderId: orderid
+                 },
+                 function(data){
+                     myJsMain.commonFunction.hideWebAdminPleaseWait();
+                     if(data.result=='good'){
+                         jqout.html("");
+                         myJsMain.commonFunction.tidiitAlert('Tidiit Order Update System','Select order update as delivered successfully.',200);
+                         location.href=myJsMain.baseURL+'order/viewlist';
+                     }
+                 }, 'json' );
+           }
+           return false;
         });
-        <?php if($order->status==4){?>
-                $('#showHideShippedElement').show();
-                $('#showHideShippedElement1').show();
-                $('#showHideShippedElement2').show();
-        <?php }?>
-        $('#orderStatesChange').submit(function(e) {
-            if ($(this).valid()) {
-                if ($(this).valid()) {
-                    if(confirm("Are you sure to update selected order status ?")){
-                        myJsMain.commonFunction.showPleaseWait();
-                    }else{
-                        return false;
-                    }
-                }
-            }
-        });   
     });
 </script>

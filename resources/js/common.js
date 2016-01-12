@@ -7,6 +7,7 @@ var track_click = 1;
 var total_pages;
 
 var offPage = 0;
+var tidiitConfirm1Var=false;
 
 // add new validate method for phone number validation.
 jQuery.validator.addMethod("phoneno", function(value, element) {
@@ -188,6 +189,34 @@ myJsMain.commonFunction = {
                 }
             }
         });
+    },
+    tidiitConfirm2:function(boxTitle,confirmMessaage,height,obj){
+        if(!tidiitConfirm1Var){
+            if(height==0){
+                height=175;
+            }
+            if(myJsMain.isMobile=='yes'){tidiitAlertBoxWidth=350;}else{tidiitAlertBoxWidth=450;}
+            jQuery('#dialog-confirm-message-text').text(confirmMessaage);
+            console.log('cimming inside tidiitConfirm2');
+            jQuery( "#dialog-confirm" ).dialog({
+                resizable: false,
+                height:height,
+                width:tidiitAlertBoxWidth,
+                modal: true,
+                title:boxTitle,
+                dialogClass: 'success-dialog',
+                buttons: {
+                    "OK": function() {
+                        jQuery( this ).dialog( "close" );
+                        tidiitConfirm1Var = true;//obj.click();
+                    },
+                    Cancel: function() {
+                        jQuery( this ).dialog( "close" );
+                    }
+                }
+            });
+        }
+        return tidiitConfirm1Var;
     },
     showPleaseWait: function() {
         pleaseWaitDiv.modal('show');
