@@ -431,6 +431,7 @@ class Shopping extends MY_Controller{
             $this->Order_model->update($info, $orderId);
             $allOrderArray=array();
             $paymentGatewayAmount=$order->orderAmount;
+            $me = $this->_get_current_user_details();
             if($paymentOption=='sod'):
                 if($order->parrentOrderID == 0):
                     $this->Product_model->update_product_quantity($prod_price_info->productId,$prod_price_info->qty);
@@ -464,14 +465,13 @@ class Shopping extends MY_Controller{
                         $this->User_model->notification_add($data);
                         
                         /// sendin SMS to allmember
-                        $sms_data=array('nMessage'=>'You have invited to Buying Club['.$group->title.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.BASE_URL,
+                        $sms_data=array('nMessage'=>'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.BASE_URL,
                             'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$usr->userId,
                             'senderMobileNumber'=>$group->admin->mobile,'nType'=>'CREATE-'.$data['nType']);
                         $this->send_sms_notification($sms_data);
                         
                     endforeach;
                 else:
-                    $me = $this->_get_current_user_details();
                     $mail_template_data=array();
                     foreach($group->users as $key => $usr):
                         if($me->userId != $usr->userId):
@@ -522,9 +522,9 @@ class Shopping extends MY_Controller{
                     $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                     $this->User_model->notification_add($data);
                     
-                    $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of your Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
-                            'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
-                            'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
+                    $sms_data=array('nMessage'=>$me->firstName.' '.$me->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of your Buying Club['.$group->groupTitle.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
+                            'receiverMobileNumber'=>$group->admin->mobile,'senderId'=>'','receiverId'=>$data['receiverId'],
+                            'senderMobileNumber'=>$me->mobile,'nType'=>"BUYING-CLUB-ORDER-INVITED-MEMBER-COMPLETE");
                             $this->send_sms_notification($sms_data);
                 endif;
             else:
@@ -533,7 +533,6 @@ class Shopping extends MY_Controller{
             endif;
             
             if($order_update['status'] == 2):
-                
                 $this->_sent_order_complete_mail($order);
             endif;
             
@@ -1538,6 +1537,11 @@ class Shopping extends MY_Controller{
                 //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
                 $supportEmail='judhisahoo@gmail.com';
                 $this->_global_tidiit_mail($supportEmail, "Buying Club order no - TIDIIT-OD-".$k->orderId.' has placed from Tidiit Inc Ltd', $adminMailData,'support_group_order_success','Tidiit Inc Support');
+                
+                $sms_data=array('nMessage'=>'Your Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] order TIDIIT-OD-'.$order->orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.BASE_URL,
+                'receiverMobileNumber'=>$userDetails[0]->mobile,'senderId'=>'','receiverId'=>$order->userId,
+                'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CONFIRM');
+                $this->send_sms_notification($sms_data);
             }
         }
         return TRUE;
@@ -1565,7 +1569,10 @@ class Shopping extends MY_Controller{
         $supportEmail='judhisahoo@gmail.com';
         $this->_global_tidiit_mail($supportEmail, "Order no - TIDIIT-OD-".$orderId.' has placed by '.$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName, $adminMailData,'support_single_order_success','Tidiit Inc Support');
         //die;
-        
+        $sms_data=array('nMessage'=>'Your Tidiit order TIDIIT-OD-'.$order->orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.BASE_URL,
+        'receiverMobileNumber'=>$userDetails[0]->mobile,'senderId'=>'','receiverId'=>$order->userId,
+        'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CONFIRM');
+        $this->send_sms_notification($sms_data);
         return TRUE;
     }
     
@@ -1938,8 +1945,9 @@ class Shopping extends MY_Controller{
         $user = $this->_get_current_user_details(); 
         $recv_email = $user->email;
         $recv_name=$user->firstName.' '.$user->lastName;
-        $tidiitStr='TIDIIT-OD';
+        $tidiitStr='TIDIIT-OD-';
         $logisticsData=$PaymentDataArr['logisticsData'];
+        
         if($order->parrentOrderID == 0):
             foreach($group->users as $key => $usr):
                 $mail_template_data=array();
@@ -1970,7 +1978,6 @@ class Shopping extends MY_Controller{
                 $this->_global_tidiit_mail($recv_email, 'Payment has submited before delivery for Buying Club Order', $mail_template_view_data,'group_order_sod_final_payment');
                 $this->User_model->notification_add($data);   
             endforeach;
-            
         else:
             $me = $this->_get_current_user_details();
             $mail_template_data=array();
@@ -2018,22 +2025,34 @@ class Shopping extends MY_Controller{
             $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
             $this->_global_tidiit_mail($recv_email,"Payment has submited for Tidiit Buying Club order before delivery", $mail_template_view_data,'group_order_group_member_sod_final_payment',$leaderName);
             $this->User_model->notification_add($data);
-            
-            if(!empty($logisticsData) && array_key_exists('', $mail_template_data))
-            
+        endif;
+        
+        if(!empty($logisticsData) && array_key_exists('deliveryStaffContactNo', $logisticsData)):
+            $logisticMobileNo=$logisticsData['deliveryStaffContactNo'];
             if($logisticMobileNo!=""):
-                $sms=$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.' please process the delivery.';
+                $sms=$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.'-'.$orderId.' please process the delivery.';
                 /// sendin SMS to allmember
                 $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$logisticMobileNo,'senderId'=>'','receiverId'=>'',
-                'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL_PAYMENT');
+                'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
                 $this->send_sms_notification($sms_data);
             endif;
-            
-            
         endif;
-
+        
+        /// SMS to payer
+        $sms='Thanks for the payment.We have received for Tidiit Buying Club['.$group->groupTitle.'] order '.$tidiitStr.'-'.$orderId.'.';
+        $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
+        'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
+        $this->send_sms_notification($sms_data);
+        
+        if($user->userId!=$group->admin->userId){
+            /// SMS to group admin
+            $sms='Your Tidiit Buying Club['.$group->groupTitle.'] member['.$user->firstName.' '.$user->lastName.'] has completed payment for order '.$tidiitStr.'-'.$orderId.'.';
+            $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$group->admin->mobile,'senderId'=>'','receiverId'=>$group->admin->userId,
+            'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LEADER');
+            $this->send_sms_notification($sms_data);
+        }
+        
         $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
-
         $this->Order_model->edit_payment(array('paymentType'=>'mPesa','mPesaId'=>$mPesaId),$orderId);
         $logisticMobileNo=$PaymentDataArr['logisticsData']['deliveryStaffContactNo'];
         $sms="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].'. '.$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.'-'.$orderId.' please process the delivery.';
@@ -2078,14 +2097,23 @@ class Shopping extends MY_Controller{
             $this->_sent_single_order_complete_mail_sod_final_payment($v);
         endforeach;
         /// here to preocess SMS to logistics partner
-        $logisticMobileNo=$PaymentDataArr['logisticsData']['deliveryStaffContactNo'];
-        if($logisticMobileNo!=""):
-            $sms=$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.' please process the delivery.';
-            /// sendin SMS to allmember
-            $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$logisticMobileNo,'senderId'=>'','receiverId'=>'',
-            'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL_PAYMENT');
-            $this->send_sms_notification($sms_data);
+        $logisticsData=$PaymentDataArr['logisticsData'];
+        if(!empty($logisticsData) && array_key_exists('deliveryStaffContactNo', $logisticsData)):
+            $logisticMobileNo=$logisticsData['deliveryStaffContactNo'];
+            if($logisticMobileNo!=""):
+                $sms=$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.' please process the delivery.';
+                /// sendin SMS to allmember
+                $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$logisticMobileNo,'senderId'=>'','receiverId'=>'',
+                'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
+                $this->send_sms_notification($sms_data);
+            endif;
         endif;
+        
+        /// SMS to payer
+        $sms='Thanks for the payment.We have received for Tidiit order '.$tidiitStr.'.';
+        $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
+        'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
+        $this->send_sms_notification($sms_data);
         
         /// here send mail to logistic partner
         $mailBody="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';

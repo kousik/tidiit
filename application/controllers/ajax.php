@@ -874,10 +874,13 @@ class Ajax extends MY_Controller{
                 $myProfileDataArr=array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo,
                     'email'=>$email,'DOB'=>$DOB,'mobile'=>$mobile,'fax'=>$fax,'aboutMe'=>$aboutMe);
                 $this->User_model->edit($myProfileDataArr,$userId);
+                $DataArr=  $this->User_model->get_details_by_id($userId);
+                $this->session->set_userdata('FE_SESSION_UDATA',$DataArr[0]);
                 echo json_encode(array('result'=>'good'));die; 
             }
         }
     }
+    
     
     public function retribe_forgot_password(){
         $config = array(
@@ -1062,7 +1065,7 @@ class Ajax extends MY_Controller{
         
         /// sendin SMS to allmember
         $smsMsg='Tidiit order TIDIIT-OD-'.$order->orderId.' will delivered by '.$outForDeliveryDataArr['outForDeliveryDays'].' days.';
-        if($isPaid==0):
+        if($order->isPaid==0):
             $smsMsg.="AS you had selected Settlement on Delivery method,please submit the payment,So delivery people will delivery your item.";
         endif;
         $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$order->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
@@ -1114,21 +1117,23 @@ class Ajax extends MY_Controller{
         
         /// sendin SMS to Buyer
         $smsMsg='Your Tidiit order TIDIIT-OD-'.$order->orderId.' will delivered by '.$outForDeliveryDataArr['outForDeliveryDays'].' days.';
-        if($isPaid==0):
+        if($order->isPaid==0):
             $smsMsg.="AS you had selected Settlement on Delivery method,please submit the payment,So delivery people will delivery your item.";
         endif;
         $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$order->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
         'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-OUT-FOR_DELIVERY-PRE-ALERT');
         $this->send_sms_notification($sms_data);
         
-        /// sendin SMS to Leader
-        $smsMsg='Your Buying Club['.$orderInfo['group']->groupTitle.']  member Tidiit order TIDIIT-OD-'.$order->orderId.' will delivered by '.$outForDeliveryDataArr['outForDeliveryDays'].' days.';
-        if($isPaid==0):
-            $smsMsg.="$buyerFullName had selected Settlement on Delivery method,please follow with him/her to submit the payment,So delivery people will delivery your item.";
+        if($order->userId!=$orderInfo["group"]->admin->userId):
+            /// sendin SMS to Leader
+            $smsMsg='Your Buying Club['.$orderInfo['group']->groupTitle.']  member Tidiit order TIDIIT-OD-'.$order->orderId.' will delivered by '.$outForDeliveryDataArr['outForDeliveryDays'].' days.';
+            if($order->isPaid==0):
+                $smsMsg.="$buyerFullName had selected Settlement on Delivery method,please follow with him/her to submit the payment,So delivery people will delivery your item.";
+            endif;
+            $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$orderInfo['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfo["group"]->admin->userId,
+            'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-OUT-FOR_DELIVERY-PRE-ALERT');
+            $this->send_sms_notification($sms_data);
         endif;
-        $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$orderInfo['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfo["group"]->admin->userId,
-        'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-OUT-FOR_DELIVERY-PRE-ALERT');
-        $this->send_sms_notification($sms_data);
         return TRUE;
     }
     
@@ -1167,7 +1172,7 @@ class Ajax extends MY_Controller{
         $this->_global_tidiit_mail($supportEmail, "Tidiit Order no - TIDIIT-OD-".$order->orderId.' is ready to Out For Delivery ', $mail_template_view_data,'support_single_order_out_for_delivery','Tidiit Inc Support');
         
         $smsMsg='Tidiit order TIDIIT-OD-'.$order->orderId.' is ready to Out For Delivery.';
-        if($isPaid==0):
+        if($order->isPaid==0):
             $smsMsg.="AS you had selected Settlement on Delivery method,please submit the payment,So delivery people will deliver your item at your door step.";
         endif;
         $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$order->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
@@ -1217,21 +1222,23 @@ class Ajax extends MY_Controller{
         
         /// sendin SMS to Buyer
         $smsMsg='Your Tidiit order TIDIIT-OD-'.$order->orderId.' is ready to Out For Delivery.';
-        if($isPaid==0):
+        if($order->isPaid==0):
             $smsMsg.="AS you had selected Settlement on Delivery method,please submit the payment,So delivery people will delivery your item.";
         endif;
         $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$order->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
         'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-OUT-FOR_DELIVERY');
         $this->send_sms_notification($sms_data);
         
-        /// sendin SMS to Leader
-        $smsMsg='Your Buying Club['.$orderInfo['group']->groupTitle.']  member Tidiit order TIDIIT-OD-'.$order->orderId.' is ready to Out For Delivery.';
-        if($isPaid==0):
-            $smsMsg.="$buyerFullName had selected Settlement on Delivery method,please follow with him/her to submit the payment,So delivery people will delivery your item.";
-        endif;
-        $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$orderInfo['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfo["group"]->admin->userId,
-        'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-OUT-FOR_DELIVERY');
-        $this->send_sms_notification($sms_data);
+        if($order->userId!=$orderInfo["group"]->admin->userId):
+            /// sendin SMS to Leader
+            $smsMsg='Your Buying Club['.$orderInfo['group']->groupTitle.']  member Tidiit order TIDIIT-OD-'.$order->orderId.' is ready to Out For Delivery.';
+            if($order->isPaid==0):
+                $smsMsg.="$buyerFullName had selected Settlement on Delivery method,please follow with him/her to submit the payment,So delivery people will delivery your item.";
+            endif;
+            $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$orderInfo['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfo["group"]->admin->userId,
+            'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-OUT-FOR_DELIVERY');
+            $this->send_sms_notification($sms_data);
+        endif;        
         return TRUE;
     }
     
