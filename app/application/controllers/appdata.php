@@ -681,17 +681,7 @@ class Appdata extends REST_Controller {
         $data['status'] = 1;
         
         if($data['isMobMessage']):
-            $this->load->library('tidiitsms');
-            //Send Mobile message
-            $smsAddHistoryDataArr=array();
-            $smsConfig=array('sms_text'=>$data['nMessage'],'receive_phone_number'=>$data['receiverMobileNumber']);
-            $smsResult=$this->tidiitsms->send_sms($smsConfig);
-            $smsAddHistoryDataArr=array('senderUserId'=>$data['senderId'],'receiverUserId'=>$data['receiverId'],
-                'senderPhoneNumber'=>$data['senderMobileNumber'],'receiverPhoneNumber'=>$data['receiverMobileNumber'],
-                'IP'=>  $this->input->ip_address(),'sms'=>$data['nMessage'],'sendActionType'=>$data['nType'],
-                'smsGatewaySenderId'=>$this->siteconfig->get_value_by_name('SMS_GATEWAY_SENDERID'),'smsGatewayReturnData'=>$smsResult);
-                $this->user->add_sms_history($smsAddHistoryDataArr);
-            unset($data['isMobMessage']);
+            send_sms_notification($data);
         endif;
         
         if($data['isEmail']):

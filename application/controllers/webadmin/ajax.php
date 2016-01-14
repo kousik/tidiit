@@ -232,7 +232,7 @@ class Ajax extends MY_Controller{
         $sms='Your Tidiit order TIDIIT-OD-'.$order->orderId.' has been delivered by our logistic partner '.$orderDeliveryDetails[0]['logisticsCompanyName'].'.For any query please visit our Customer Service Section at '.base_url();
         $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$orderDetails[0]->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
         'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-DELIVERED');
-        $this->send_sms_notification($sms_data);
+        send_sms_notification($sms_data);
         
         return TRUE;
     }
@@ -276,39 +276,17 @@ class Ajax extends MY_Controller{
         $sms='Your Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] order TIDIIT-OD-'.$order->orderId.' has been delivered by our logistic partner '.$orderDeliveryDetails[0]['logisticsCompanyName'].'.For any query please visit our Customer Service Section at '.base_url();
         $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$orderDetails[0]->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
         'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-DELIVERED');
-        $this->send_sms_notification($sms_data);
+        send_sms_notification($sms_data);
         
         if($order->userId!=$orderInfoDataArr['group']->admin->userId):
             // the group member
             $sms='Your Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] member['.$buyerFullName.'] order TIDIIT-OD-'.$order->orderId.' has been delivered by our logistic partner '.$orderDeliveryDetails[0]['logisticsCompanyName'].'.For any query please visit our Customer Service Section at '.base_url();
             $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$orderInfoDataArr['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfoDataArr['group']->admin->userId,
             'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-DELIVERED-LEADER');
-            $this->send_sms_notification($sms_data);
+            send_sms_notification($sms_data);
         endif;
         return TRUE;
     }
     
-    function send_sms_notification($data){
-        /*
-        $notify['senderId'] = ;
-        $notify['receiverId'] = ;
-        $notify['nType'] = ;
-        $notify['nTitle'] = ;
-        $notify['nMessage'] = ;
-         */
-        $SMS_SEND_ALLOW=$this->Siteconfig_model->get_value_by_name('SMS_SEND_ALLOW');
-        if($SMS_SEND_ALLOW=='yes'){
-            $this->load->library('tidiitsms');
-            //Send Mobile message
-            $smsAddHistoryDataArr=array();
-            $smsConfig=array('sms_text'=>$data['nMessage'],'receive_phone_number'=>$data['receiverMobileNumber']);
-            $smsResult=$this->tidiitsms->send_sms($smsConfig);
-            $smsAddHistoryDataArr=array('senderUserId'=>$data['senderId'],'receiverUserId'=>$data['receiverId'],
-                'senderPhoneNumber'=>$data['senderMobileNumber'],'receiverPhoneNumber'=>$data['receiverMobileNumber'],
-                'IP'=>  $this->input->ip_address(),'sms'=>$data['nMessage'],'sendActionType'=>$data['nType'],
-                'smsGatewaySenderId'=>$this->Siteconfig_model->get_value_by_name('SMS_GATEWAY_SENDERID'),'smsGatewayReturnData'=>$smsResult);
-                $this->User_model->add_sms_history($smsAddHistoryDataArr);
-        }
-    }
 }
 

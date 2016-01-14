@@ -642,18 +642,7 @@ class Ajax extends MY_Controller{
         
         
         if($data['isMobMessage']):
-            $this->load->library('tidiitsms');
-            //Send Mobile message
-            $smsAddHistoryDataArr=array();
-            $smsConfig=array('sms_text'=>$data['nMessage'],'receive_phone_number'=>$data['receiverMobileNumber']);
-            $smsResult=$this->tidiitsms->send_sms($smsConfig);
-            $smsAddHistoryDataArr=array('senderUserId'=>$data['senderId'],'receiverUserId'=>$data['receiverId'],
-                'senderPhoneNumber'=>$data['senderMobileNumber'],'receiverPhoneNumber'=>$data['receiverMobileNumber'],
-                'IP'=>  $this->input->ip_address(),'sms'=>$data['nMessage'],'sendActionType'=>$data['nType'],
-                'smsGatewaySenderId'=>$this->Siteconfig_model->get_value_by_name('SMS_GATEWAY_SENDERID'),'smsGatewayReturnData'=>$smsResult);
-                $this->User_model->add_sms_history($smsAddHistoryDataArr);
-            
-            
+            send_sms_notification($data);
             unset($data['isMobMessage']);
         endif;
         
@@ -1070,7 +1059,7 @@ class Ajax extends MY_Controller{
         endif;
         $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$order->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
         'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-OUT-FOR_DELIVERY-PRE-ALERT');
-        $this->send_sms_notification($sms_data);
+        send_sms_notification($sms_data);
         return TRUE;
     }
     
@@ -1122,7 +1111,7 @@ class Ajax extends MY_Controller{
         endif;
         $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$order->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
         'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-OUT-FOR_DELIVERY-PRE-ALERT');
-        $this->send_sms_notification($sms_data);
+        send_sms_notification($sms_data);
         
         if($order->userId!=$orderInfo["group"]->admin->userId):
             /// sendin SMS to Leader
@@ -1132,7 +1121,7 @@ class Ajax extends MY_Controller{
             endif;
             $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$orderInfo['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfo["group"]->admin->userId,
             'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-OUT-FOR_DELIVERY-PRE-ALERT');
-            $this->send_sms_notification($sms_data);
+            send_sms_notification($sms_data);
         endif;
         return TRUE;
     }
@@ -1177,7 +1166,7 @@ class Ajax extends MY_Controller{
         endif;
         $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$order->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
         'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-OUT-FOR_DELIVERY');
-        $this->send_sms_notification($sms_data);
+        send_sms_notification($sms_data);
         
         return true;
     }
@@ -1227,7 +1216,7 @@ class Ajax extends MY_Controller{
         endif;
         $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$order->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
         'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-OUT-FOR_DELIVERY');
-        $this->send_sms_notification($sms_data);
+        send_sms_notification($sms_data);
         
         if($order->userId!=$orderInfo["group"]->admin->userId):
             /// sendin SMS to Leader
@@ -1237,7 +1226,7 @@ class Ajax extends MY_Controller{
             endif;
             $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$orderInfo['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfo["group"]->admin->userId,
             'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-OUT-FOR_DELIVERY');
-            $this->send_sms_notification($sms_data);
+            send_sms_notification($sms_data);
         endif;        
         return TRUE;
     }
@@ -1473,27 +1462,4 @@ class Ajax extends MY_Controller{
         //pre($data);die;
         echo json_encode(array('content'=>$this->load->view('order_details',$data,true)));die;
      }
-     
-     function send_sms_notification($data){
-        /*
-        $notify['senderId'] = ;
-        $notify['receiverId'] = ;
-        $notify['nType'] = ;
-        $notify['nTitle'] = ;
-        $notify['nMessage'] = ;
-         */
-        $SMS_SEND_ALLOW=$this->Siteconfig_model->get_value_by_name('SMS_SEND_ALLOW');
-        if($SMS_SEND_ALLOW=='yes'){
-            $this->load->library('tidiitsms');
-            //Send Mobile message
-            $smsAddHistoryDataArr=array();
-            $smsConfig=array('sms_text'=>$data['nMessage'],'receive_phone_number'=>$data['receiverMobileNumber']);
-            $smsResult=$this->tidiitsms->send_sms($smsConfig);
-            $smsAddHistoryDataArr=array('senderUserId'=>$data['senderId'],'receiverUserId'=>$data['receiverId'],
-                'senderPhoneNumber'=>$data['senderMobileNumber'],'receiverPhoneNumber'=>$data['receiverMobileNumber'],
-                'IP'=>  $this->input->ip_address(),'sms'=>$data['nMessage'],'sendActionType'=>$data['nType'],
-                'smsGatewaySenderId'=>$this->Siteconfig_model->get_value_by_name('SMS_GATEWAY_SENDERID'),'smsGatewayReturnData'=>$smsResult);
-                $this->User_model->add_sms_history($smsAddHistoryDataArr);
-        }
-    }
 }

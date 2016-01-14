@@ -468,7 +468,7 @@ class Shopping extends MY_Controller{
                         $sms_data=array('nMessage'=>'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.BASE_URL,
                             'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$usr->userId,
                             'senderMobileNumber'=>$group->admin->mobile,'nType'=>'CREATE-'.$data['nType']);
-                        $this->send_sms_notification($sms_data);
+                        send_sms_notification($sms_data);
                         
                     endforeach;
                 else:
@@ -505,7 +505,7 @@ class Shopping extends MY_Controller{
                             $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
                             'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
                             'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
-                            $this->send_sms_notification($sms_data);
+                            send_sms_notification($sms_data);
                         endif;
                     endforeach;
                     $data['receiverId'] = $group->admin->userId;
@@ -525,7 +525,7 @@ class Shopping extends MY_Controller{
                     $sms_data=array('nMessage'=>$me->firstName.' '.$me->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of your Buying Club['.$group->groupTitle.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
                             'receiverMobileNumber'=>$group->admin->mobile,'senderId'=>'','receiverId'=>$data['receiverId'],
                             'senderMobileNumber'=>$me->mobile,'nType'=>"BUYING-CLUB-ORDER-INVITED-MEMBER-COMPLETE");
-                            $this->send_sms_notification($sms_data);
+                            send_sms_notification($sms_data);
                 endif;
             else:
                 $paymentDataArr = array('orders'=>$orderId,'orderType'=>'group','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$pevorder,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>$cartId,'final_return'=>'no');      
@@ -1052,7 +1052,7 @@ class Shopping extends MY_Controller{
             $smsMsg='Buying Club['.$group->groupTitle.']  member['.$usr->firstName.' '.$usr->lastName.'] has decline the invitation Tidiit order TIDIIT-OD-'.$order->orderId.'.';
             $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$orderInfo['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfo["group"]->admin->userId,
             'senderMobileNumber'=>'','nType'=>$data['nType']);
-            $this->send_sms_notification($sms_data);
+            send_sms_notification($sms_data);
         endif;
         
         $this->session->set_flashdata('msg', 'Sorry for Buying Club order cancelation!');
@@ -1378,7 +1378,7 @@ class Shopping extends MY_Controller{
                     $sms_data=array('nMessage'=>'You have successfull placed an order TIDIIT-OD-'.$orderId.' for '.$pro[0]->title.'.More details about this notifiaction,Check '.BASE_URL,
                         'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
                         'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER');
-                    $this->send_sms_notification($sms_data);
+                    send_sms_notification($sms_data);
                 endif;
                 $allOrderInfoArray[$orderId]['orderInfo']=$orderinfo;
                 $allOrderInfoArray[$orderId]['order']=$order;
@@ -1541,7 +1541,7 @@ class Shopping extends MY_Controller{
                 $sms_data=array('nMessage'=>'Your Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] order TIDIIT-OD-'.$order->orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.BASE_URL,
                 'receiverMobileNumber'=>$userDetails[0]->mobile,'senderId'=>'','receiverId'=>$order->userId,
                 'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CONFIRM');
-                $this->send_sms_notification($sms_data);
+                send_sms_notification($sms_data);
             }
         }
         return TRUE;
@@ -1569,10 +1569,10 @@ class Shopping extends MY_Controller{
         $supportEmail='judhisahoo@gmail.com';
         $this->_global_tidiit_mail($supportEmail, "Order no - TIDIIT-OD-".$orderId.' has placed by '.$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName, $adminMailData,'support_single_order_success','Tidiit Inc Support');
         //die;
-        $sms_data=array('nMessage'=>'Your Tidiit order TIDIIT-OD-'.$order->orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.BASE_URL,
-        'receiverMobileNumber'=>$userDetails[0]->mobile,'senderId'=>'','receiverId'=>$order->userId,
+        $sms_data=array('nMessage'=>'Your Tidiit order TIDIIT-OD-'.$orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.BASE_URL,
+        'receiverMobileNumber'=>$orderDetails[0]->buyerMobileNo,'senderId'=>'','receiverId'=>$orderDetails[0]->userId,
         'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CONFIRM');
-        $this->send_sms_notification($sms_data);
+        send_sms_notification($sms_data);
         return TRUE;
     }
     
@@ -1679,7 +1679,7 @@ class Shopping extends MY_Controller{
                         $sms_data=array('nMessage'=>'You have invited to Buying Club['.$group->title.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.BASE_URL,
                             'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$usr->userId,
                             'senderMobileNumber'=>$group->admin->mobile,'nType'=>'CREATE-'.$data['nType']);
-                        $this->send_sms_notification($sms_data);
+                        send_sms_notification($sms_data);
                     endforeach;
                 else:
                     $me = $this->_get_current_user_details();
@@ -1716,7 +1716,7 @@ class Shopping extends MY_Controller{
                             $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
                             'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
                             'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
-                            $this->send_sms_notification($sms_data);
+                            send_sms_notification($sms_data);
                         endif;
                     endforeach;
                     $data['receiverId'] = $group->admin->userId;
@@ -1736,7 +1736,7 @@ class Shopping extends MY_Controller{
                     $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of your Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
                     'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
                     'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
-                    $this->send_sms_notification($sms_data);
+                    send_sms_notification($sms_data);
                 endif;
                 
                 if($order_update['status']==2):
@@ -1778,14 +1778,7 @@ class Shopping extends MY_Controller{
             $mail_template_view_data=$this->load_default_resources();
             $mail_template_view_data['single_order_success']=$mail_template_data;
             $this->_global_tidiit_mail($recv_email, "Your Tidiit order no - TIDIIT-OD-".$v.' has placed successfully', $mail_template_view_data,'single_order_success');
-            $this->_sent_single_order_complete_mail($v);
-            
-            /// sendin SMS to allmember
-            $sms_data=array('nMessage'=>'You have successfull placed an order TIDIIT-OD-'.$v.' for '.$orderinfo['pdetail']->title.'.More details about this notifiaction,Check '.BASE_URL,
-                'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
-                'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER');
-            $this->send_sms_notification($sms_data);
-            
+            $this->_sent_single_order_complete_mail($v);    
         endforeach;
         unset($_SESSION['PaymentData']);
         redirect(BASE_URL.'shopping/success/');
@@ -1825,6 +1818,7 @@ class Shopping extends MY_Controller{
         $orderId    = base64_decode($orderId);
         $orderId    = $orderId/226201;
         $order      = $this->Order_model->get_single_order_by_id($orderId);
+        $me=  $this->_get_current_user_details();
         if(!$order):
             echo '-1<p class="box alert">Invalid form submission! Please try after sometime.</p>';
             die;
@@ -1843,6 +1837,17 @@ class Shopping extends MY_Controller{
         $order=$this->Order_model->get_single_order_by_id($orderId);
         $this->Product_model->update_product_quantity($order->productId,$order->productQty,'+');
         $this->single_order_cancel_mail($order,$reason,$comments);
+        /// sendin SMS to cancel the order
+        $sms_data_msg='Your cancelation request for Tidiit Order TIDIIT-OD-'.$orderId.' has placed successfully.';
+        if($reason != "Other Reasons"){
+            $sms_data_msg .='Cancelation request due to "'.$reason.'".';
+        }else{
+            $sms_data_msg .='Cancelation request due to "'.$comments.'".';
+        }
+        $sms_data_msg.='More details about this notifiaction,Check '.BASE_URL;
+        $sms_data=array('nMessage'=>$sms_data_msg,'receiverMobileNumber'=>$me->mobile,'senderId'=>'','receiverId'=>$me->userId,
+        'senderMobileNumber'=>'','nType'=>"SINGLE-ORDER-CANCEL-BUYER");
+        send_sms_notification($sms_data);
         die;        
     }
     
@@ -2034,7 +2039,7 @@ class Shopping extends MY_Controller{
                 /// sendin SMS to allmember
                 $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$logisticMobileNo,'senderId'=>'','receiverId'=>'',
                 'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
-                $this->send_sms_notification($sms_data);
+                send_sms_notification($sms_data);
             endif;
         endif;
         
@@ -2042,14 +2047,14 @@ class Shopping extends MY_Controller{
         $sms='Thanks for the payment.We have received for Tidiit Buying Club['.$group->groupTitle.'] order '.$tidiitStr.'-'.$orderId.'.';
         $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
         'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
-        $this->send_sms_notification($sms_data);
+        send_sms_notification($sms_data);
         
         if($user->userId!=$group->admin->userId){
             /// SMS to group admin
             $sms='Your Tidiit Buying Club['.$group->groupTitle.'] member['.$user->firstName.' '.$user->lastName.'] has completed payment for order '.$tidiitStr.'-'.$orderId.'.';
             $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$group->admin->mobile,'senderId'=>'','receiverId'=>$group->admin->userId,
             'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LEADER');
-            $this->send_sms_notification($sms_data);
+            send_sms_notification($sms_data);
         }
         
         $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
@@ -2105,7 +2110,7 @@ class Shopping extends MY_Controller{
                 /// sendin SMS to allmember
                 $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$logisticMobileNo,'senderId'=>'','receiverId'=>'',
                 'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
-                $this->send_sms_notification($sms_data);
+                send_sms_notification($sms_data);
             endif;
         endif;
         
@@ -2113,7 +2118,7 @@ class Shopping extends MY_Controller{
         $sms='Thanks for the payment.We have received for Tidiit order '.$tidiitStr.'.';
         $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
         'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
-        $this->send_sms_notification($sms_data);
+        send_sms_notification($sms_data);
         
         /// here send mail to logistic partner
         $mailBody="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
@@ -2262,26 +2267,4 @@ class Shopping extends MY_Controller{
         return TRUE;
     }
     
-    function send_sms_notification($data){
-        /*
-        $notify['senderId'] = ;
-        $notify['receiverId'] = ;
-        $notify['nType'] = ;
-        $notify['nTitle'] = ;
-        $notify['nMessage'] = ;
-         */
-        $SMS_SEND_ALLOW=$this->Siteconfig_model->get_value_by_name('SMS_SEND_ALLOW');
-        if($SMS_SEND_ALLOW=='yes'){
-            $this->load->library('tidiitsms');
-            //Send Mobile message
-            $smsAddHistoryDataArr=array();
-            $smsConfig=array('sms_text'=>$data['nMessage'],'receive_phone_number'=>$data['receiverMobileNumber']);
-            $smsResult=$this->tidiitsms->send_sms($smsConfig);
-            $smsAddHistoryDataArr=array('senderUserId'=>$data['senderId'],'receiverUserId'=>$data['receiverId'],
-                'senderPhoneNumber'=>$data['senderMobileNumber'],'receiverPhoneNumber'=>$data['receiverMobileNumber'],
-                'IP'=>  $this->input->ip_address(),'sms'=>$data['nMessage'],'sendActionType'=>$data['nType'],
-                'smsGatewaySenderId'=>$this->Siteconfig_model->get_value_by_name('SMS_GATEWAY_SENDERID'),'smsGatewayReturnData'=>$smsResult);
-                $this->User_model->add_sms_history($smsAddHistoryDataArr);
-        }
-    }
 }

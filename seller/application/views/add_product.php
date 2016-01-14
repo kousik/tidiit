@@ -38,7 +38,11 @@
                     <table class="table table-bordered table-hover">                       
                       <tbody>
                         <tr>
-                            <td class="text-left"><input type="submit" name="submitForProduct" id="submitForProduct" value="Show for Product Upload"/></td>
+                            <td class="text-left">
+                                <div class="field buttons">
+                                    <button type="submit" name="submitForProduct" id="submitForProduct">Show for Product Upload</button>
+                                </div>
+                            </td>
                         </tr>
                       </tbody>
                     </table>

@@ -1,13 +1,12 @@
 <?php
 class Order extends MY_Controller{
 	public function __construct(){
-		parent::__construct();
-		$this->load->model('Product_model');
-		$this->load->model('Cart_model');
-		$this->load->model('Category_model');
-		$this->load->model('User_model');
-		$this->load->model('Order_model');
-		
+            parent::__construct();
+            $this->load->model('Product_model');
+            $this->load->model('Cart_model');
+            $this->load->model('Category_model');
+            $this->load->model('User_model');
+            $this->load->model('Order_model');	
 	}
 	
 	public function index(){
@@ -162,7 +161,7 @@ class Order extends MY_Controller{
             $sms_data=array('nMessage'=>'Tidiit order TIDIIT-OD-'.$order->orderId.' has been confirmed by '.$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName.'. More details about this notifiaction,Check '.MainSiteURL,
             'receiverMobileNumber'=>$userDetails[0]->mobile,'senderId'=>'','receiverId'=>$order->userId,
             'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CONFIRM');
-            $this->send_sms_notification($sms_data);
+            send_sms_notification($sms_data);
             return TRUE;
         }
         
@@ -176,7 +175,7 @@ class Order extends MY_Controller{
             $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
             //pre($orderInfoDataArr);die;
             $currentOrderUser=array();
-            echo '$order->userId '.$order->userId;
+            //echo '$order->userId '.$order->userId;
             foreach($orderInfoDataArr['group']->users As $k => $v){
                 echo '$v->userId '.$v->userId;
                 if($v->userId==$order->userId){
@@ -203,14 +202,16 @@ class Order extends MY_Controller{
             $sms_data=array('nMessage'=>'Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] order TIDIIT-OD-'.$order->orderId.' has been confirmed by '.$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName.'. More details about this notifiaction,Check '.MainSiteURL,
             'receiverMobileNumber'=>$currentOrderUser->mobile,'senderId'=>'','receiverId'=>$currentOrderUser->userId,
             'senderMobileNumber'=>'','nType'=>'BUYING_CLUB-ORDER-CONFIRM');
-            $this->send_sms_notification($sms_data);
+            send_sms_notification($sms_data);
             
-            ///SMS for Group Admin
-            $sms_data=array('nMessage'=>'Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] order TIDIIT-OD-'.$order->orderId.' has been confirmed by '.$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName.'. More details about this notifiaction,Check '.MainSiteURL,
-            'receiverMobileNumber'=>$orderInfoDataArr['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfoDataArr["group"]->admin->userId,
-            'senderMobileNumber'=>'','nType'=>'BUYING_CLUB-ORDER-CONFIRM');
-            $this->send_sms_notification($sms_data);
-
+            if($currentOrderUser->userId!=$orderInfoDataArr["group"]->admin->userId):
+                ///SMS for Group Admin
+                $sms_data=array('nMessage'=>'Your Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] member['.$currentOrderUser->firstName.' '.$currentOrderUser->lastName.'] order TIDIIT-OD-'.$order->orderId.' has been confirmed by '.$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName.'. More details about this notifiaction,Check '.MainSiteURL,
+                'receiverMobileNumber'=>$orderInfoDataArr['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfoDataArr["group"]->admin->userId,
+                'senderMobileNumber'=>'','nType'=>'BUYING_CLUB-ORDER-CONFIRM');
+                send_sms_notification($sms_data);
+            endif;
+            
             $this->load->model('Siteconfig_model','siteconfig');
             //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
             $supportEmail='judhisahoo@gmail.com';
@@ -272,13 +273,14 @@ class Order extends MY_Controller{
             $sms_data=array('nMessage'=>'Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] order TIDIIT-OD-'.$order->orderId.' has been shipped by '.$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName.' with Our Logistic Partner '.$shippedDataArr["logisticsName"].'. More details about this notifiaction,Check '.MainSiteURL,
             'receiverMobileNumber'=>$currentOrderUser->mobile,'senderId'=>'','receiverId'=>$currentOrderUser->userId,
             'senderMobileNumber'=>'','nType'=>'BUYING_CLUB-ORDER-CONFIRM');
-            $this->send_sms_notification($sms_data);
-            
-            ///SMS for Group Admin
-            $sms_data=array('nMessage'=>'Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] order TIDIIT-OD-'.$order->orderId.' has been shipped by '.$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName.' with Our Logistic Partner '.$shippedDataArr["logisticsName"].'. More details about this notifiaction,Check '.MainSiteURL,
-            'receiverMobileNumber'=>$orderInfoDataArr['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfoDataArr["group"]->admin->userId,
-            'senderMobileNumber'=>'','nType'=>'BUYING_CLUB-ORDER-SHIPPED');
-            $this->send_sms_notification($sms_data);
+            send_sms_notification($sms_data);
+            if($currentOrderUser->userId!=$orderInfoDataArr["group"]->admin->userId):
+                ///SMS for Group Admin
+                $sms_data=array('nMessage'=>'Your Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] member['.$currentOrderUser->firstName.' '.$currentOrderUser->lastName.'] order TIDIIT-OD-'.$order->orderId.' has been shipped by '.$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName.' with Our Logistic Partner '.$shippedDataArr["logisticsName"].'. More details about this notifiaction,Check '.MainSiteURL,
+                'receiverMobileNumber'=>$orderInfoDataArr['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfoDataArr["group"]->admin->userId,
+                'senderMobileNumber'=>'','nType'=>'BUYING_CLUB-ORDER-SHIPPED');
+                send_sms_notification($sms_data);
+            endif;
             return TRUE;
         }
         
@@ -316,7 +318,7 @@ class Order extends MY_Controller{
             $sms_data=array('nMessage'=>'Tidiit order TIDIIT-OD-'.$order->orderId.' has been shipped by '.$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName.' with Our Logistic Partner '.$shippedDataArr["logisticsName"].'. More details about this notifiaction,Check '.MainSiteURL,
             'receiverMobileNumber'=>$userDetails[0]->mobile,'senderId'=>'','receiverId'=>$order->userId,
             'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-SHIPPED');
-            $this->send_sms_notification($sms_data);
+            send_sms_notification($sms_data);
             return TRUE;
         }
         
@@ -369,29 +371,13 @@ class Order extends MY_Controller{
             //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
             $supportEmail='judhisahoo@gmail.com';
             $this->_global_tidiit_mail($supportEmail, "Order no - TIDIIT-OD-".$order->orderId.' has canceled by '.$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName, $adminMailData,'support_order_cancelled','Tidiit Inc Support');
+            
+            /// sendin SMS to allmember
+            $sms_data=array('nMessage'=>$sellerDetails[0]->firstName.' '.$sellerDetails[0]->lastName.' has cancled your Tidiit order TIDIIT-OD-'.$order->orderId.' due to "'.$note.'". More details about this notifiaction,Check '.MainSiteURL,
+            'receiverMobileNumber'=>$userDetails[0]->mobile,'senderId'=>  $this->session->userdata('FE_SESSION_VAR'),'receiverId'=>$order->userId,
+            'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CANCELED');
+            send_sms_notification($sms_data);
+            
             return TRUE;
         }
-        
-    function send_sms_notification($data){
-        /*
-        $notify['senderId'] = ;
-        $notify['receiverId'] = ;
-        $notify['nType'] = ;
-        $notify['nTitle'] = ;
-        $notify['nMessage'] = ;
-         */
-        $SMS_SEND_ALLOW=$this->Siteconfig_model->get_value_by_name('SMS_SEND_ALLOW');
-        if($SMS_SEND_ALLOW=='yes'){
-            $this->load->library('tidiitsms');
-            //Send Mobile message
-            $smsAddHistoryDataArr=array();
-            $smsConfig=array('sms_text'=>$data['nMessage'],'receive_phone_number'=>$data['receiverMobileNumber']);
-            $smsResult=$this->tidiitsms->send_sms($smsConfig);
-            $smsAddHistoryDataArr=array('senderUserId'=>$data['senderId'],'receiverUserId'=>$data['receiverId'],
-                'senderPhoneNumber'=>$data['senderMobileNumber'],'receiverPhoneNumber'=>$data['receiverMobileNumber'],
-                'IP'=>  $this->input->ip_address(),'sms'=>$data['nMessage'],'sendActionType'=>$data['nType'],
-                'smsGatewaySenderId'=>$this->Siteconfig_model->get_value_by_name('SMS_GATEWAY_SENDERID'),'smsGatewayReturnData'=>$smsResult);
-                $this->User_model->add_sms_history($smsAddHistoryDataArr);
-        }
-    }    
 }

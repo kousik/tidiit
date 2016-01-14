@@ -191,6 +191,36 @@ if ( ! function_exists('return_current_country_code')){
         $insights = array_combine($insights_keys, $insights_values);
         return $insights['country_code'];
     }
+    
+    //send_sms_notification($data){
 }
+
+if ( ! function_exists('send_sms_notification')):
+  function send_sms_notification($data){
+    $CI=& get_instance();
+    $CI->load->model('User_model','user');
+    $CI->load->model('Siteconfig_model','siteconfig');
+    $CI->load->library('tidiitsms');
+    /*
+    $notify['senderId'] = ;
+    $notify['receiverId'] = ;
+    $notify['nType'] = ;
+    $notify['nTitle'] = ;
+    $notify['nMessage'] = ;
+     */
+    $SMS_SEND_ALLOW=$CI->siteconfig->get_value_by_name('SMS_SEND_ALLOW');
+    if($SMS_SEND_ALLOW=='yes'){
+        //Send Mobile message
+        $smsAddHistoryDataArr=array();
+        $smsConfig=array('sms_text'=>$data['nMessage'],'receive_phone_number'=>$data['receiverMobileNumber']);
+        $smsResult=$CI->tidiitsms->send_sms($smsConfig);
+        $smsAddHistoryDataArr=array('senderUserId'=>$data['senderId'],'receiverUserId'=>$data['receiverId'],
+            'senderPhoneNumber'=>$data['senderMobileNumber'],'receiverPhoneNumber'=>$data['receiverMobileNumber'],
+            'IP'=>  $CI->input->ip_address(),'sms'=>$data['nMessage'],'sendActionType'=>$data['nType'],
+            'smsGatewaySenderId'=>$CI->siteconfig->get_value_by_name('SMS_GATEWAY_SENDERID'),'smsGatewayReturnData'=>$smsResult);
+            $CI->user->add_sms_history($smsAddHistoryDataArr);
+    }
+  }  
+endif;
 
 ?>
