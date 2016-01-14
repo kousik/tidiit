@@ -30,7 +30,7 @@ class Tidiitsms
     }
 
     public function initialize() {
-        $this->CI->load->load->model('Siteconfig_model');
+        $this->CI->load->model('Siteconfig_model');
         $this->gateway_user=$this->CI->Siteconfig_model->get_value_by_name('SMS_GATEWAY_USERID');
         $this->gateway_user_password=$this->CI->Siteconfig_model->get_value_by_name('SMS_GATEWAY_PASSWORD');
         $this->gateway_sender_id=$this->CI->Siteconfig_model->get_value_by_name('SMS_GATEWAY_SENDERID');

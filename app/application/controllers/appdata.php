@@ -411,6 +411,7 @@ class Appdata extends REST_Controller {
         $colors = array('red','maroon','purple','green','blue');
         $rand_keys = array_rand($colors, 1);
         $groupColor = $colors[$rand_keys];
+        $groupUsersArr=  explode(',', $groupUsers);
         
         $notify = array();
         
@@ -420,7 +421,7 @@ class Appdata extends REST_Controller {
         $groupDataArr=array('groupAdminId'=>$groupAdminId,'groupTitle'=>$groupTitle,'productType'=>$productType,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor,'appSource'=>$deviceType);
         $groupId = $this->user->group_add($groupDataArr);
         $adminDataArr=  $this->user->get_details_by_id($groupAdminId);
-        $groupUsersArr=  explode(',', $groupUsers);
+        //pre($adminDataArr);die;
         if($groupId):
             if($groupUsersArr):
                 foreach($groupUsersArr as $guser):
@@ -689,9 +690,11 @@ class Appdata extends REST_Controller {
             unset($data['isEmail']);
         endif;
         unset($data['adminName']);
+        unset($data['isMobMessage']);
         unset($data['adminEmail']);
         unset($data['adminContactNo']);
         unset($data['receiverMobileNumber']);
+        unset($data['senderMobileNumber']);
         $this->user->notification_add($data);
     }
     
