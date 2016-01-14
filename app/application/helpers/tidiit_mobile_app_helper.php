@@ -267,11 +267,11 @@ if ( ! function_exists('recusive_category')){
         }else{    
             foreach($chieldCateArr AS $k){
                 $newCateoryArr[]=$k->categoryId;
-                $newCateoryArr=$this->recusive_category($newCateoryArr, $k->categoryId);
+                $newCateoryArr=recusive_category($newCateoryArr, $k->categoryId);
             }
             return $newCateoryArr;
         }
-	}
+    }
 }
 
 if ( ! function_exists('send_sms_notification')):
