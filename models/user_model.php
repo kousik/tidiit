@@ -182,7 +182,7 @@ class User_model extends CI_Model {
     }
 
     /// this is for only guest user
-    public function get_user_shipping_information($userId=0){
+    public function get_user_shipping_information($userId=0,$app=FALSE){
         $this->db->select('sa.*,c.countryName,s.stateName,ci.city,z.zip,l.locality');
         $this->db->from($this->_shipping_address.' sa')->join($this->_table_country.' c','sa.countryId=c.countryId','left');
         $this->db->join($this->_table_state.' s','sa.stateId=s.stateId','left')->join($this->_table_city.' ci','sa.cityId=ci.cityId','left');
@@ -193,7 +193,11 @@ class User_model extends CI_Model {
             //echo $this->db->last_query();die;
             return $rs;
         else:
-            return $this->db->where('sa.userId',$userId)->get()->result_array();
+            if($app):
+                return $this->db->where('sa.userId',$userId)->get()->result();            
+            else:    
+                return $this->db->where('sa.userId',$userId)->get()->result_array();
+            endif;
         endif;
     }
 

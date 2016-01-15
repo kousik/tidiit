@@ -10,12 +10,7 @@ class Tidiit_debug extends MY_Controller{
     }
     
     function test(){
-        echo $_SERVER['SERVER_ADDR'];die;
-        $this->load->model('Order_model','order');
-        //$rs=  $this->order->details(8);
-        $rs=  $this->order->get_all_chield_order(12);
-        pre($rs);
-        //pre(unserialize(base64_decode($rs[0]->orderInfo)));
+        pre($_SERVER['DOCUMENT_ROOT']);die;
     }
     
     function sent_order_complete_mail(){

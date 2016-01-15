@@ -70,6 +70,7 @@ class Shopping extends MY_Controller{
             $order_data['userId'] = $this->session->userdata('FE_SESSION_VAR');
             $qrCodeFileName=time().'-'.rand(1, 50).'.png';
             $order_data['qrCodeImageFile']=$qrCodeFileName;
+            $order_data['IP']=  $this->input->ip_address();
             $orderId=$this->Order_model->add($order_data);
             $data['orderId']=$orderId;
             $params=array();
@@ -228,6 +229,7 @@ class Shopping extends MY_Controller{
             //$data['orderId']=$this->Order_model->add($order_data);
             $qrCodeFileName=time().'-'.rand(1, 50).'.png';
             $order_data['qrCodeImageFile']=$qrCodeFileName;
+            $order_data['IP']=  $this->input->ip_address();
             $orderId=$this->Order_model->add($order_data);
             $data['orderId']=$orderId;
             $params=array();
@@ -800,6 +802,7 @@ class Shopping extends MY_Controller{
                 //$parentOrderId = $this->Order_model->add($order_data);
                 $qrCodeFileName=time().'-'.rand(1, 50).'.png';
                 $order_data['qrCodeImageFile']=$qrCodeFileName;
+                $order_data['IP']=  $this->input->ip_address();
                 $qrCodeOrderId=$this->Order_model->add($order_data);
                 $parentOrderId=$qrCodeOrderId;
                 $params=array();
@@ -811,6 +814,7 @@ class Shopping extends MY_Controller{
             if(!$exists_order):
                 $qrCodeFileName=time().'-'.rand(1, 50).'.png';
                 $order_data['qrCodeImageFile']=$qrCodeFileName;
+                $order_data['IP']=  $this->input->ip_address();
                 $qrCodeOrderId=$this->Order_model->add($order_data);
                 $parentOrderId=$qrCodeOrderId;
                 $params=array();
@@ -921,6 +925,7 @@ class Shopping extends MY_Controller{
             //$data['orderId']=$this->Order_model->add($order_data);
             $qrCodeFileName=time().'-'.rand(1, 50).'.png';
             $order_data['qrCodeImageFile']=$qrCodeFileName;
+            $order_data['IP']=  $this->input->ip_address();
             $orderId=$this->Order_model->add($order_data);
             $data['orderId']=$orderId;
             $params=array();
@@ -1350,6 +1355,7 @@ class Shopping extends MY_Controller{
                 //$orderId = $this->Order_model->add($order);
                 $qrCodeFileName=time().'-'.rand(1, 50).'.png';
                 $order['qrCodeImageFile']=$qrCodeFileName;
+                $order['IP']=  $this->input->ip_address();
                 $orderId=$this->Order_model->add($order);
                 //$data['orderId']=$orderId;
                 $params=array();
