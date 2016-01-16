@@ -36,6 +36,10 @@ define('FOPEN_READ_WRITE_CREATE',				'a+b');
 define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
-
+$appServerRootArr=  explode("/",$_SERVER['DOCUMENT_ROOT']);
+unset($appServerRootArr[count($appServerRootArr)-1]);
+define('MAIN_SERVER_PATH', implode('/', $appServerRootArr).'/');
+define('MAIN_SERVER_RESOURCES_PATH',MAIN_SERVER_PATH.'resources/' );
+define('SITE_RESOURCES_PATH',$_SERVER['DOCUMENT_ROOT'].'/resources/');
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

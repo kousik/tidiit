@@ -20,6 +20,8 @@ class Order_model extends CI_Model {
     private $_out_for_delivery="order_out_for_delivery_pre_alert";
     private $_delivered_request="order_delivered_request";
     
+    private $_wishlist="wishlist";
+    
 
 
     public $result=NULL;
@@ -471,5 +473,29 @@ class Order_model extends CI_Model {
     function get_order_delivery_details_by_order_id($orderId){
         $this->db->select('odr.*,l.title,l.registrationNo,l.supportNo')->from($this->_delivered_request.' AS odr');
         return $this->db->join('logistics As l','odr.logisticsId=l.logisticsId')->where('odr.orderId',$orderId)->get()->row();
+    }
+    
+    function get_all_cart_item($userId){
+        return $this->db->select('o.*')->from($this->_table.' AS o')->where('o.userId',$userId)->where('o.status',0)->get()->result_array();
+    }
+    
+    function remove_order_from_cart($orderId,$userId){
+        $this->db->where_in('orderId',$orderId)->where('userId',$userId)->where('status',0);
+        $this->db->delete($this->_table);
+    }
+    
+    function add_to_wish_list($dataArr){
+        $this->db->where('productId',$dataArr['productId'])->where('userId',$dataArr['userId'])->where('productPriceId',$dataArr['productPriceId']);
+        if($this->db->count_all_results()>0){
+            return TRUE;
+        }
+        $this->db->insert($this->_wishlist,$dataArr);
+        return $this->db->insert_id();
+    }
+    
+    function remove_wish_list($userId,$productId,$productPriceId){
+        $this->db->where('productId',$productId)->where('userId',$userId)->where('productPriceId',$productPriceId);
+        $this->db->delete($this->_wishlist);
+        return TRUE;
     }
 }

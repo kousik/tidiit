@@ -224,6 +224,7 @@ class Appdata extends REST_Controller {
             $userShippingDataDetails[0]['phone']="";
             $userShippingDataDetails[0]['address']="";
             $userShippingDataDetails[0]['contactNo']="";
+            $userShippingDataDetails[0]['landmark']="";
         }
         if($userShippingDataDetails[0]['countryId']!=""){
             $result['cityDataArr']=  $this->Country->get_all_city1($userShippingDataDetails[0]['countryId'],TRUE);
@@ -422,6 +423,9 @@ class Appdata extends REST_Controller {
         $groupId = $this->user->group_add($groupDataArr);
         $adminDataArr=  $this->user->get_details_by_id($groupAdminId);
         //pre($adminDataArr);die;
+        if(empty($groupUsersArr[0])):
+            $this->response(array('error' =>'Invalid group user data provided.'), 400); return FALSE;
+        endif;
         if($groupId):
             if($groupUsersArr):
                 foreach($groupUsersArr as $guser):
