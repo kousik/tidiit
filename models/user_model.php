@@ -418,14 +418,13 @@ class User_model extends CI_Model {
                 $grp->users = $udata;
 
                 $getgpadmin = $this->get_details_by_id($this->session->userdata('FE_SESSION_VAR'));
-
                 $grp->admin = $getgpadmin[0];
                 $grp->hide = false;
                 $groups[$grp->groupId] = $grp;
             endforeach;
 
             $in_groups = $this->get_my_on_groups();
-            if($in_groups && !$df):
+            if($in_groups && !$df): //pre($groups);die;//pre($in_groups);die;
                 $result = array_merge($groups, $in_groups);
             else:
                 $result = $groups;
@@ -490,19 +489,21 @@ class User_model extends CI_Model {
                 $users = explode(",", $grp->groupUsers);
                 $udata = array();
                 if($users):                        
-                    foreach($users as $ukey => $usrId):
-                        $udatas = $this->get_details_by_id($usrId);
-                        $udata[] = $udatas[0];
-                    endforeach;
+                    $grp->users = $udata;
+                
+                    $getgpadmin = $this->get_details_by_id($grp->groupAdminId); 
+                    if(!empty($getgpadmin)):
+                        $grp->admin= $getgpadmin[0];
+                        $grp->hide = true;
+                        $groups[$grp->groupId] = $grp;
+                        foreach($users as $ukey => $usrId):
+                            $udatas = $this->get_details_by_id($usrId);
+                            $udata[] = $udatas[0];
+                        endforeach;
+                    endif;
                 endif;
-                $grp->users = $udata;
-                
-                $getgpadmin = $this->get_details_by_id($grp->groupAdminId); 
-                $grp->admin= $getgpadmin[0];
-                $grp->hide = true;
-                $groups[$grp->groupId] = $grp;
-                
             endforeach;
+            //pre($groups);die;
             return $groups;
         else:
             return false;
@@ -761,7 +762,7 @@ class User_model extends CI_Model {
             return array();
         }else{
             $this->db->select('u.firstName,u.lastName,u.userId,u.email')->from('user u');
-            $this->db->join($this->_bill_address.' ba','ba.userId=u.userId');
+            $this->db->join($this->_shipping_address.' ba','ba.userId=u.userId');
             $rs=$this->db->where_in('ba.userId',explode(',',$rs[0]->userIdStr))->where('ba.localityId',$localityId)->where_not_in('ba.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
             //echo $this->db->last_query();
             return $rs;

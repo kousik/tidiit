@@ -630,6 +630,17 @@ class Appdata extends REST_Controller {
         endif;
     }
     
+    function delete_group_post(){
+        $groupId=  $this->post('groupId');
+        $userId=  $this->post('userId');
+        if($userId>0):
+            $this->user->group_delete($groupId);
+            success_response_after_post_get(array('message'=>'Selected group deleted successfully.'));
+        else:    
+            $this->response(array('error' => 'Invalid user id. Please try again!'), 400); return FALSE;
+        endif;
+    }
+    
     function send_notification($data){
         /*
         $notify['senderId'] = ;
