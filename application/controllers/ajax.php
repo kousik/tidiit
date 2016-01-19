@@ -715,7 +715,7 @@ class Ajax extends MY_Controller{
                 $localityId=$this->input->post('localityId',TRUE);
                 $address=$this->input->post('address',TRUE);
                 
-                $productTypeId=$this->input->post('productTypeId',TRUE);pre($_POST);die;
+                $productTypeId=$this->input->post('productTypeId',TRUE);//pre($_POST);die;
                 $newCateoryArr=array();
                 //pre($productTypeId);
                 foreach ($productTypeId AS $k =>$v){
