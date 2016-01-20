@@ -697,7 +697,12 @@ class Appdata extends REST_Controller {
         $data['status'] = 1;
         
         if($data['isMobMessage']):
-            send_sms_notification($data);
+            $smsData['nMessage']=  str_replace('<br />','', $data['nMessage']);
+            $smsData['nMessage']=  str_replace('<br>','', $smsData['nMessage']);
+            $smsData['nMessage']=  str_replace('<br/>','', $smsData['nMessage']);
+            $smsData['nMessage']=  str_replace('<strong>','', $smsData['nMessage']);
+            $smsData['nMessage']=  str_replace('</strong>','', $smsData['nMessage']);
+            send_sms_notification($smsData);
         endif;
         
         if($data['isEmail']):

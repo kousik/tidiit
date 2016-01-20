@@ -642,7 +642,13 @@ class Ajax extends MY_Controller{
         
         
         if($data['isMobMessage']):
-            send_sms_notification($data);
+            $smsData=$data;
+            $smsData['nMessage']=  str_replace('<br />','', $data['nMessage']);
+            $smsData['nMessage']=  str_replace('<br>','', $smsData['nMessage']);
+            $smsData['nMessage']=  str_replace('<br/>','', $smsData['nMessage']);
+            $smsData['nMessage']=  str_replace('<strong>','', $smsData['nMessage']);
+            $smsData['nMessage']=  str_replace('</strong>','', $smsData['nMessage']);
+            send_sms_notification($smsData);
             unset($data['isMobMessage']);
         endif;
         
