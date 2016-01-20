@@ -22,7 +22,10 @@ class Shopping extends REST_Controller {
         $latitude = $this->post('latitude');
         $longitude = $this->post('longitude');
         $deviceType = $this->post('deviceType');
-        $cartDataArr=array('productId'=>$productId,'userId'=>$userId,'productPriceId'=>$productPriceId,'latitude'=>$latitude,'longitude'=>$longitude,'deviceType'=>$deviceType);
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        $cartDataArr=array('productId'=>$productId,'userId'=>$userId,'productPriceId'=>$productPriceId,'latitude'=>$latitude,'longitude'=>$longitude,
+            'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID);
         $msg=$this->add_to_cart($cartDataArr);
         $result=array();
         $result['message']=$msg;//$orderId.'-'.$qrCodeFileName;
@@ -49,6 +52,8 @@ class Shopping extends REST_Controller {
         $order_data['appSource'] = $cartDataArr['deviceType'];
         $order_data['longitude'] = $cartDataArr['longitude'];
         $order_data['latitude'] = $cartDataArr['latitude'];
+        $order_data['deviceToken'] = $cartDataArr['deviceToken'];
+        $order_data['udid'] = $cartDataArr['UDID'];
         
         
         /*$cartArr = array();
@@ -118,12 +123,22 @@ class Shopping extends REST_Controller {
         
         $rs=$this->Country->city_details($cityId);
 
-        $isAdded=$this->user->is_shipping_address_added();
-        if(empty($isAdded)){
+        $isAdded=$this->user->is_shipping_address_added($userId);
+        /*if(empty($isAdded)){
             $this->user->add_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'userId'=>$userId,'address'=>$address,'stateId'=>$rs[0]->stateId,'appSource'=>$deviceType,'landmark'=>$landmark));
         }else{
             $this->user->edit_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'address'=>$address,'stateId'=>$rs[0]->stateId,'landmark'=>$landmark),$userId);
+        }*/
+        
+        $userShippingDetails=  $this->user->get_user_shipping_information($userId,TRUE);
+        $allIncompleteOrders= $this->order->get_incomplete_order_by_user($userId);
+        
+        foreach($allIncompleteOrders As $k){
+            $orderInfo= unserialize(base64_decode($k->orderInfo));
+            $orderInfo['shipping']=$userShippingDetails[0];
+            $this->order->update(array('orderInfo'=>base64_encode(serialize($orderInfo))),$k->orderId);
         }
+        
         $result=array();
         $result['message']='Shipping address updated successfully';
         success_response_after_post_get($result);
@@ -135,6 +150,48 @@ class Shopping extends REST_Controller {
     
     function single_order_coupon_set_post(){
         
+    }
+    
+    function single_order_sod_payment_post(){
+        $userId=  $this->post('userId');
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        $deviceType = $this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        $allIncompleteOrders= $this->order->get_incomplete_order_by_user($userId);
+        $defaultResources=load_default_resources();
+        $user=$this->user->get_details_by_id($userId)[0];
+        foreach ($allIncompleteOrders As $k){
+            $orderinfo = array();
+            $mail_template_data = array();
+            $orderInfo= unserialize(base64_decode($k->orderInfo));
+            //pre($orderInfo);die;
+            //pre($orderInfo['shipping']);die;
+            //pre($orderInfo['pdetail']);die;
+            //pre($orderInfo['priceinfo']);die;
+            $settlementOnDeliveryId=$this->order->add_sod(array('latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId));
+            $this->order->add_payment(array('orderId'=>$k->orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'single'));
+            $this->product->update_product_quantity($orderInfo['priceinfo']->productId,$orderInfo['priceinfo']->qty);
+            $orderUpdateArr=array('orderUpdatedate'=>date('Y-m-d H:i:s'),'status'=>2,'udidPayment'=>$UDID,'deviceTokenPayment'=>$deviceToken,
+                'latitudePayment'=>$latitude,'longitudePayment'=>$longitude);
+            $this->order->update($orderUpdateArr,$k->orderId);
+            /// sendin SMS to user
+            /*$sms_data=array('nMessage'=>'You have successfull placed an order TIDIIT-OD-'.$k->orderId.' for '.$orderInfo['pdetail']->title.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'],
+                'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
+                'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER');*/
+            //send_sms_notification($sms_data);
+            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
+            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$k->orderId;
+            $mail_template_view_data=$defaultResources;
+            $mail_template_view_data['single_order_success']=$mail_template_data;
+            $receiverFullName=$user->firstName.' '.$user->lastName;
+            global_tidiit_mail($user->email, "Your Tidiit order - TIDIIT-OD-".$k->orderId.' has placed successfully', $mail_template_view_data,'single_order_success',$receiverFullName);
+            $this->sent_single_order_complete_mail($k->orderId);
+        }
+        $result=array();
+        $result['message']='Thanks you for shopping with '.$defaultResources['MainSiteBaseURL'].'.Order placed successfully for each item selected.For More details check your "My Order" section.';
+        success_response_after_post_get($result);
     }
     
     function set_wishlist_post(){
@@ -165,6 +222,43 @@ class Shopping extends REST_Controller {
         else:
             $this->response(array('error' => 'Unknow error to remove the selected item from wishlist.'), 400);
         endif;
+    }
+    
+    /// not used any where for testing only
+    function get_order_details_get(){
+        $orderId=$this->get('orderId');
+        $orderDetails=$this->order->details($orderId);
+        $orderInfo= unserialize(base64_decode($orderDetails[0]->orderInfo));
+            pre($orderInfo);die;
+    }
+    
+    function sent_single_order_complete_mail($orderId){
+        $orderDetails=  $this->order->details($orderId);
+        //pre($orderDetails);die;
+        $adminMailData= load_default_resources();
+        $adminMailData['orderDetails']=$orderDetails;
+        $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
+        //pre($orderInfoDataArr);die;
+        $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
+        /// for seller
+        $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+        $adminMailData['buyerFullName']=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
+        global_tidiit_mail($orderDetails[0]->sellerEmail, "A new order no - TIDIIT-OD-".$orderId.' has placed from Tidiit Inc Ltd', $adminMailData,'seller_single_order_success',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
+
+        /// for support
+        $adminMailData['userFullName']='Tidiit Inc Support';
+        $adminMailData['sellerFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+        $adminMailData['buyerFullName']=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
+        $this->load->model('Siteconfig_model','siteconfig');
+        //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
+        $supportEmail='judhisahoo@gmail.com';
+        global_tidiit_mail($supportEmail, "Order no - TIDIIT-OD-".$orderId.' has placed by '.$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName, $adminMailData,'support_single_order_success','Tidiit Inc Support');
+        //die;
+        $sms_data=array('nMessage'=>'Your Tidiit order TIDIIT-OD-'.$orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.BASE_URL,
+        'receiverMobileNumber'=>$orderDetails[0]->buyerMobileNo,'senderId'=>'','receiverId'=>$orderDetails[0]->userId,
+        'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CONFIRM');
+        send_sms_notification($sms_data);
+        return TRUE;
     }
     
 }

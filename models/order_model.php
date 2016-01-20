@@ -62,6 +62,8 @@ class Order_model extends CI_Model {
         $order = !empty($orderData)?$orderData[0]:false;
         return $order;
     }
+    
+    
 
     public function get_available_order_quantity($orderId){
         $this->db->select_sum('productQty');
@@ -497,5 +499,19 @@ class Order_model extends CI_Model {
         $this->db->where('productId',$productId)->where('userId',$userId)->where('productPriceId',$productPriceId);
         $this->db->delete($this->_wishlist);
         return TRUE;
+    }
+    
+    public function get_incomplete_order_by_user($userId){
+        //$this->db->limit(1);
+        $this->db->order_by('orderUpdatedate','DESC');
+        $this->db->select('o.*,p.paymentType,s.email AS sellerEmail,s.firstName AS sellerFirstName,s.lastName AS sellerLastName,s1.email AS buyerEmail,s1.firstName AS buyerFirstName,s1.lastName AS buyerLastName,s1.mobile AS buyerMobileNo');
+        $this->db->from($this->_table.' o');
+        $this->db->join('product_seller ps','o.productId=ps.productId')->join('user s','ps.userId=s.userId')->join('user s1','o.userId=s1.userId');
+        $this->db->join('payment p','o.orderId=p.orderId','left');
+        $order = $this->db->where('o.userId',$userId)->where('o.status',0)->get()->result(); 
+        //echo $str = $this->db->last_query();
+        //print_r($orderData);
+        //$order = !empty($orderData)?$orderData[0]:false;
+        return $order;
     }
 }

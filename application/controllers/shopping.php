@@ -1380,11 +1380,11 @@ class Shopping extends MY_Controller{
                     $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$orderId;
                     $this->_remove_cart($item['rowid']);
                     
-                    /// sendin SMS to allmember
+                    /*// sendin SMS to allmember
                     $sms_data=array('nMessage'=>'You have successfull placed an order TIDIIT-OD-'.$orderId.' for '.$pro[0]->title.'.More details about this notifiaction,Check '.BASE_URL,
                         'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
                         'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER');
-                    send_sms_notification($sms_data);
+                    send_sms_notification($sms_data);*/
                 endif;
                 $allOrderInfoArray[$orderId]['orderInfo']=$orderinfo;
                 $allOrderInfoArray[$orderId]['order']=$order;

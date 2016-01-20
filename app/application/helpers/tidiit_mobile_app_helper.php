@@ -289,15 +289,20 @@ if ( ! function_exists('send_sms_notification')):
      */
     $SMS_SEND_ALLOW=$CI->siteconfig->get_value_by_name('SMS_SEND_ALLOW');
     if($SMS_SEND_ALLOW=='yes'){
-        //Send Mobile message
-        $smsAddHistoryDataArr=array();
-        $smsConfig=array('sms_text'=>$data['nMessage'],'receive_phone_number'=>$data['receiverMobileNumber']);
-        $smsResult=$CI->tidiitsms->send_sms($smsConfig);
-        $smsAddHistoryDataArr=array('senderUserId'=>$data['senderId'],'receiverUserId'=>$data['receiverId'],
-            'senderPhoneNumber'=>$data['senderMobileNumber'],'receiverPhoneNumber'=>$data['receiverMobileNumber'],
-            'IP'=>  $CI->input->ip_address(),'sms'=>$data['nMessage'],'sendActionType'=>$data['nType'],
-            'smsGatewaySenderId'=>$CI->siteconfig->get_value_by_name('SMS_GATEWAY_SENDERID'),'smsGatewayReturnData'=>$smsResult);
-            $CI->user->add_sms_history($smsAddHistoryDataArr);
+        if($data['receiverMobileNumber']==""){
+            return FALSE;
+        }else{
+            //Send Mobile message
+            $smsAddHistoryDataArr=array();
+            $smsConfig=array('sms_text'=>$data['nMessage'],'receive_phone_number'=>$data['receiverMobileNumber']);
+            $smsResult=$CI->tidiitsms->send_sms($smsConfig);
+
+            $smsAddHistoryDataArr=array('senderUserId'=>$data['senderId'],'receiverUserId'=>$data['receiverId'],
+                'senderPhoneNumber'=>$data['senderMobileNumber'],'receiverPhoneNumber'=>$data['receiverMobileNumber'],
+                'IP'=>  $CI->input->ip_address(),'sms'=>$data['nMessage'],'sendActionType'=>$data['nType'],
+                'smsGatewaySenderId'=>$CI->siteconfig->get_value_by_name('SMS_GATEWAY_SENDERID'),'smsGatewayReturnData'=>$smsResult);
+                $CI->user->add_sms_history($smsAddHistoryDataArr);
+        }
     }
   }  
 endif;
