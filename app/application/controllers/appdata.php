@@ -122,8 +122,9 @@ class Appdata extends REST_Controller {
         else:
             $userData=$this->user->get_details_by_id($userId,TRUE);
             $userDataDOBArr=  explode('-',$userData[0]['DOB']);
+            //pre($userDataDOBArr);die;
             if(count($userDataDOBArr)>0){
-                $result['userProfileDateData']=$userDataDOBArr[2].'-'.$userDataDOBArr[1].'-'.$userDataDOBArr[0];
+                $userData[0]['DOB']=$userDataDOBArr[2].'-'.$userDataDOBArr[1].'-'.$userDataDOBArr[0];
                 $result['userProfileData']=$userData;
             }else{
                 $result['userProfileData']=$userData;
