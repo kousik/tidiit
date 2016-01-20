@@ -141,13 +141,16 @@
 </article>
 <?php echo $footer;?>
 <script type="text/javascript">
-    var zipDynEle='<select class="form-control nova heght_cntrl" name="zipId" id="zipId" value=""  tabindex="1"><option value="">Select</option></select>';
-    var localityDynEle='<select class="form-control nova heght_cntrl" name="localityId" id="localityId" value=""  tabindex="1"><option value="">Select</option></select>';
-    var cityDynEle='<select class="form-control nova heght_cntrl" name="cityId" id="cityId" value=""  tabindex="1"><option value="">Select</option></select>';
+    var zipDynEle='<select class="form-control nova heght_cntrl" name="zipId" id="zipId" value=""  tabindex="1"><option value="">Select Zip</option></select>';
+    var localityDynEle='<select class="form-control nova heght_cntrl" name="localityId" id="localityId" value=""  tabindex="1"><option value="">Select Locality</option></select>';
+    var cityDynEle='<select class="form-control nova heght_cntrl" name="cityId" id="cityId" value=""  tabindex="1"><option value="">Select City</option></select>';
     myJsMain.my_shipping_address();
     jQuery(document).ready(function(){
         //jQuery('.countryElementPara').on('change','#countryId',function(){
         jQuery('#countryId').on('change',function(){
+            jQuery('.zipElementPara').html(zipDynEle);
+            jQuery('.localityElementPara').html(localityDynEle);
+            jQuery('.cityElementPara').html(cityDynEle);
            if(jQuery(this).val()==""){
                return false;
            }else{

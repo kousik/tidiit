@@ -654,6 +654,7 @@ class Ajax extends MY_Controller{
         unset($data['adminEmail']);
         unset($data['adminContactNo']);
         unset($data['receiverMobileNumber']);
+        unset($data['senderMobileNumber']);
         
         $this->User_model->notification_add($data);
     
@@ -1461,5 +1462,14 @@ class Ajax extends MY_Controller{
         $data['status']= $stateArr;
         //pre($data);die;
         echo json_encode(array('content'=>$this->load->view('order_details',$data,true)));die;
+     }
+     
+     function check_group_title_exist(){
+         $groupTitle=$this->input->post('groupTitle',TRUE);
+         if($this->User_model->group_title_exists($groupTitle)){
+             echo 'yes';die;
+         }else{
+             echo 'no';die;
+         }
      }
 }

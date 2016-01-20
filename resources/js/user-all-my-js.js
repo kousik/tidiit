@@ -226,6 +226,25 @@ myJsMain.my_create_groups=function(){
         }
     };
     
+    jQuery('#groupTitle').on('blur',function(){
+        var NowGroupTitleData=jQuery(this).val();
+        if(jQuery(this).val()==""){
+            return false;
+        }else{
+            jQuery.ajax({
+                type:"POST",
+                url:myJsMain.baseURL+'ajax/check_group_title_exist/',
+                data:'groupTitle='+jQuery(this).val(),
+                success:function(msg){
+                    if(msg=="yes"){
+                        jQuery('#groupTitle').val('');
+                        myJsMain.commonFunction.tidiitAlert('Tidiit Group System','"'+NowGroupTitleData+'" is already created,So try new one.');
+                    }
+                }
+            });
+        }
+     });
+    
     jQuery('#countryId').on('change',function(){
         jQuery('.js-show-group-locality-users').empty();
         jQuery('.js-show-group-users-tags').empty();

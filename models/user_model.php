@@ -805,4 +805,13 @@ class User_model extends CI_Model {
         
     }
     
+    function group_title_exists($groupTitle){
+        $this->db->where('groupTitle',$groupTitle);
+        $this->db->from($this->_group);
+        if($this->db->count_all_results()>0):
+            return TRUE;
+        else:
+            return FALSE;
+        endif;
+    }
 }
