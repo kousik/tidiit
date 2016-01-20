@@ -776,6 +776,28 @@ class Appdata extends REST_Controller {
         //return $TopCategoryData;
         return $mainMenuArr;
     }
+    
+    /*function _global_tidiit_mail($to,$subject,$dataResources,$tempplateName="",$toName=""){
+            $message='';
+            if($tempplateName==""){
+                $message=$dataResources;
+            }else{
+                $message=  $this->load->view('email_template/'.$tempplateName,$dataResources,TRUE);
+            }
+            ///echo $message;die;
+            //echo $to;die;
+            $this->load->library('email');
+            $this->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
+            if($toName!="")
+                $this->email->to($to,$toName);
+            else
+                $this->email->to($to);
+
+            $this->email->subject($subject);
+            $this->email->message($message);
+            $this->email->send();
+            echo $this->email->print_debugger();die;
+	}*/
 }
     
 ?>

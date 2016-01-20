@@ -238,22 +238,25 @@ if ( ! function_exists('load_default_resources')){
 if ( ! function_exists('global_tidiit_mail')){
 	function global_tidiit_mail($to,$subject,$dataResources,$tempplateName="",$toName=""){
 		$CI=& get_instance();
-        $message='';
-        if($tempplateName==""){
-            $message=$dataResources;
-        }else{
-            $message=  $CI->load->view('email_template/'.$tempplateName,$dataResources,TRUE);
-        }
-        $CI->load->library('email');
-        $CI->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
-        if($toName!="")
-            $CI->email->to($to,$toName);
-        else
-            $CI->email->to($to);
-        
-        $CI->email->subject($subject);
-        $CI->email->message($message);
-        $CI->email->send();
+            $message='';
+            if($tempplateName==""){
+                $message=$dataResources;
+            }else{
+                $message=  $CI->load->view('email_template/'.$tempplateName,$dataResources,TRUE);
+            }
+            ///echo $message;die;
+            //echo $to;die;
+            $CI->load->library('email');
+            $CI->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
+            if($toName!="")
+                $CI->email->to($to,$toName);
+            else
+                $CI->email->to($to);
+
+            $CI->email->subject($subject);
+            $CI->email->message($message);
+            $CI->email->send();
+            echo $CI->email->print_debugger();die;
 	}
 }
 

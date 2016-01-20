@@ -170,23 +170,26 @@ class Shopping extends REST_Controller {
             //pre($orderInfo['shipping']);die;
             //pre($orderInfo['pdetail']);die;
             //pre($orderInfo['priceinfo']);die;
-            $settlementOnDeliveryId=$this->order->add_sod(array('latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId));
-            $this->order->add_payment(array('orderId'=>$k->orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'single'));
-            $this->product->update_product_quantity($orderInfo['priceinfo']->productId,$orderInfo['priceinfo']->qty);
-            $orderUpdateArr=array('orderUpdatedate'=>date('Y-m-d H:i:s'),'status'=>2,'udidPayment'=>$UDID,'deviceTokenPayment'=>$deviceToken,
+           
+            //$settlementOnDeliveryId=$this->order->add_sod(array('latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId));
+            //$this->order->add_payment(array('orderId'=>$k->orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'single'));
+            //$this->product->update_product_quantity($orderInfo['priceinfo']->productId,$orderInfo['priceinfo']->qty);
+            $orderUpdateArr=array('orderUpdatedate'=>date('Y-m-d H:i:s'),'udidPayment'=>$UDID,'deviceTokenPayment'=>$deviceToken,
                 'latitudePayment'=>$latitude,'longitudePayment'=>$longitude);
+            //$orderUpdateArr['status']=2;
             $this->order->update($orderUpdateArr,$k->orderId);
             /// sendin SMS to user
             /*$sms_data=array('nMessage'=>'You have successfull placed an order TIDIIT-OD-'.$k->orderId.' for '.$orderInfo['pdetail']->title.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'],
                 'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
                 'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER');*/
             //send_sms_notification($sms_data);
-            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
+            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderInfo;
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$k->orderId;
             $mail_template_view_data=$defaultResources;
             $mail_template_view_data['single_order_success']=$mail_template_data;
             $receiverFullName=$user->firstName.' '.$user->lastName;
             global_tidiit_mail($user->email, "Your Tidiit order - TIDIIT-OD-".$k->orderId.' has placed successfully', $mail_template_view_data,'single_order_success',$receiverFullName);
+            
             $this->sent_single_order_complete_mail($k->orderId);
         }
         $result=array();
@@ -254,10 +257,10 @@ class Shopping extends REST_Controller {
         $supportEmail='judhisahoo@gmail.com';
         global_tidiit_mail($supportEmail, "Order no - TIDIIT-OD-".$orderId.' has placed by '.$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName, $adminMailData,'support_single_order_success','Tidiit Inc Support');
         //die;
-        $sms_data=array('nMessage'=>'Your Tidiit order TIDIIT-OD-'.$orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.BASE_URL,
+        $sms_data=array('nMessage'=>'Your Tidiit order TIDIIT-OD-'.$orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.$adminMailData['MainSiteBaseURL'],
         'receiverMobileNumber'=>$orderDetails[0]->buyerMobileNo,'senderId'=>'','receiverId'=>$orderDetails[0]->userId,
         'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CONFIRM');
-        send_sms_notification($sms_data);
+        //send_sms_notification($sms_data);
         return TRUE;
     }
     
