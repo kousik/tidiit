@@ -260,7 +260,7 @@ class Shopping extends REST_Controller {
         $sms_data=array('nMessage'=>'Your Tidiit order TIDIIT-OD-'.$orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.$adminMailData['MainSiteBaseURL'],
         'receiverMobileNumber'=>$orderDetails[0]->buyerMobileNo,'senderId'=>'','receiverId'=>$orderDetails[0]->userId,
         'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CONFIRM');
-        //send_sms_notification($sms_data);
+        send_sms_notification($sms_data);
         return TRUE;
     }
     

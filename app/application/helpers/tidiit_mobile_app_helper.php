@@ -230,7 +230,7 @@ if ( ! function_exists('load_default_resources')){
         $data['SiteResourcesURL']='http://tidiit.com/resources/';
         $data['MainSiteBaseURL']='http://tidiit.com/';
         $data['MainSiteImagesURL']='http://tidiit.com/resources/images/';
-        $data['SiteProductImageURL']='http://seller.tidiit.com/resources/product/original/';
+        $data['SiteProductImageURL']='http://seller.tidiit.com/resources/product/100X100/';
         return $data;
 	}
 }
