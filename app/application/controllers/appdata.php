@@ -313,7 +313,7 @@ class Appdata extends REST_Controller {
             $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_USERNAME']=$DataArr[0]->userName;
             $mail_template_data['TEMPLATE_RETRIBE_USER_PASSWORD_PASSWORD']=$DataArr[0]->password;
 
-            $mail_template_view_data=load_default_resources();
+            $mail_template_view_data=get_default_urls();
             $mail_template_view_data['retribe_user_password']=$mail_template_data;
             global_tidiit_mail($DataArr[0]->email, "Your password at Tidiit Inc. Ltd.", $mail_template_view_data,'retribe_user_password',$DataArr[0]->firstName.' '.$DataArr[0]->lastName);
             $result = array();
@@ -777,27 +777,6 @@ class Appdata extends REST_Controller {
         return $mainMenuArr;
     }
     
-    /*function _global_tidiit_mail($to,$subject,$dataResources,$tempplateName="",$toName=""){
-            $message='';
-            if($tempplateName==""){
-                $message=$dataResources;
-            }else{
-                $message=  $this->load->view('email_template/'.$tempplateName,$dataResources,TRUE);
-            }
-            ///echo $message;die;
-            //echo $to;die;
-            $this->load->library('email');
-            $this->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
-            if($toName!="")
-                $this->email->to($to,$toName);
-            else
-                $this->email->to($to);
-
-            $this->email->subject($subject);
-            $this->email->message($message);
-            $this->email->send();
-            echo $this->email->print_debugger();die;
-	}*/
 }
     
 ?>

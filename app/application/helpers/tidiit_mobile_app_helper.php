@@ -256,7 +256,7 @@ if ( ! function_exists('global_tidiit_mail')){
             $CI->email->subject($subject);
             $CI->email->message($message);
             $CI->email->send();
-            echo $CI->email->print_debugger();die;
+            //echo $CI->email->print_debugger();die;
 	}
 }
 

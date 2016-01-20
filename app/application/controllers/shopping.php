@@ -124,11 +124,11 @@ class Shopping extends REST_Controller {
         $rs=$this->Country->city_details($cityId);
 
         $isAdded=$this->user->is_shipping_address_added($userId);
-        /*if(empty($isAdded)){
+        if(empty($isAdded)){
             $this->user->add_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'userId'=>$userId,'address'=>$address,'stateId'=>$rs[0]->stateId,'appSource'=>$deviceType,'landmark'=>$landmark));
         }else{
             $this->user->edit_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'address'=>$address,'stateId'=>$rs[0]->stateId,'landmark'=>$landmark),$userId);
-        }*/
+        }
         
         $userShippingDetails=  $this->user->get_user_shipping_information($userId,TRUE);
         $allIncompleteOrders= $this->order->get_incomplete_order_by_user($userId);
@@ -163,7 +163,7 @@ class Shopping extends REST_Controller {
         $defaultResources=load_default_resources();
         $user=$this->user->get_details_by_id($userId)[0];
         foreach ($allIncompleteOrders As $k){
-            $orderinfo = array();
+            $orderInfo = array();
             $mail_template_data = array();
             $orderInfo= unserialize(base64_decode($k->orderInfo));
             //pre($orderInfo);die;
@@ -171,12 +171,12 @@ class Shopping extends REST_Controller {
             //pre($orderInfo['pdetail']);die;
             //pre($orderInfo['priceinfo']);die;
            
-            //$settlementOnDeliveryId=$this->order->add_sod(array('latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId));
-            //$this->order->add_payment(array('orderId'=>$k->orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'single'));
-            //$this->product->update_product_quantity($orderInfo['priceinfo']->productId,$orderInfo['priceinfo']->qty);
+            $settlementOnDeliveryId=$this->order->add_sod(array('latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId));
+            $this->order->add_payment(array('orderId'=>$k->orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'single'));
+            $this->product->update_product_quantity($orderInfo['priceinfo']->productId,$orderInfo['priceinfo']->qty);
             $orderUpdateArr=array('orderUpdatedate'=>date('Y-m-d H:i:s'),'udidPayment'=>$UDID,'deviceTokenPayment'=>$deviceToken,
                 'latitudePayment'=>$latitude,'longitudePayment'=>$longitude);
-            //$orderUpdateArr['status']=2;
+            $orderUpdateArr['status']=2;
             $this->order->update($orderUpdateArr,$k->orderId);
             /// sendin SMS to user
             /*$sms_data=array('nMessage'=>'You have successfull placed an order TIDIIT-OD-'.$k->orderId.' for '.$orderInfo['pdetail']->title.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'],
