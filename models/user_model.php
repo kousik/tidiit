@@ -756,14 +756,18 @@ class User_model extends CI_Model {
         }
     }
     
-    function get_all_users_by_product_type_locality($productType,$localityId){
+    function get_all_users_by_product_type_locality($productType,$localityId,$userId=0){
         $rs=$this->db->get_where($this->_product_type_user,array('productTypeId'=>$productType))->result();
         if(empty($rs)){
             return array();
         }else{
             $this->db->select('u.firstName,u.lastName,u.userId,u.email')->from('user u');
             $this->db->join($this->_shipping_address.' ba','ba.userId=u.userId');
-            $rs=$this->db->where_in('ba.userId',explode(',',$rs[0]->userIdStr))->where('ba.localityId',$localityId)->where_not_in('ba.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+            if($userId==0):
+                $rs=$this->db->where_in('ba.userId',explode(',',$rs[0]->userIdStr))->where('ba.localityId',$localityId)->where_not_in('ba.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+            else:
+                $rs=$this->db->where_in('ba.userId',explode(',',$rs[0]->userIdStr))->where('ba.localityId',$localityId)->where_not_in('ba.userId',$userId)->get()->result_array();
+            endif;
             //echo $this->db->last_query();
             return $rs;
         }

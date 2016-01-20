@@ -641,6 +641,26 @@ class Appdata extends REST_Controller {
         endif;
     }
     
+    function get_child_category_get(){
+        $categoryId=$this->get('categoryId');
+        $chieldCategoryArr=$this->category->get_subcategory_by_category_id($categoryId,true);
+        if(count($chieldCategoryArr)>0){
+            success_response_after_post_get(array('chieldCategoryArr'=>$chieldCategoryArr));
+        }else{
+            success_response_after_post_get(array());
+        }
+    }
+    
+    function get_users_by_locality_product_type_except_me_get(){
+        $localityId=$this->get('localityId');
+        $userId=$this->get('userId');
+        $productTypeId=$this->get('productTypeId');
+        $result=array();
+        $result['localityArr']=  $this->user->get_all_users_by_product_type_locality($productTypeId,$localityId,$userId);
+        $result['ajaxType']='yes';
+        success_response_after_post_get($result);
+    }
+    
     function send_notification($data){
         /*
         $notify['senderId'] = ;
