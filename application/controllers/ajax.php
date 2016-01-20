@@ -178,7 +178,7 @@ class Ajax extends MY_Controller{
             if(empty($cityDataArr)){
                 echo '';die;
             }else{
-                $html='<select class="form-control nova heght_cntrl required" name="cityId" id="cityId" value=""  tabindex="1"><option value="">Select</option>';
+                $html='<select class="form-control nova heght_cntrl required" name="cityId" id="cityId" value=""  tabindex="1"><option value="">Select City</option>';
                 foreach($cityDataArr AS $k){
                     $html .='<option value="'.$k->cityId.'">'.$k->city.'</option>';
                 }
@@ -198,7 +198,7 @@ class Ajax extends MY_Controller{
             if(empty($zipDataArr)){
                 echo '';die;
             }else{
-                $html='<select class="form-control nova heght_cntrl required" name="zipId" id="zipId" value=""  tabindex="1"><option value="">Select</option>';
+                $html='<select class="form-control nova heght_cntrl required" name="zipId" id="zipId" value=""  tabindex="1"><option value="">Select Zip</option>';
                 foreach($zipDataArr AS $k){
                     $html .='<option value="'.$k->zipId.'">'.$k->zip.'</option>';
                 }
@@ -218,7 +218,7 @@ class Ajax extends MY_Controller{
             if(empty($localityDataArr)){
                 echo '';die;
             }else{
-                $html='<select class="form-control nova heght_cntrl required" name="localityId" id="localityId" value=""  tabindex="1"><option value="">Select</option>';
+                $html='<select class="form-control nova heght_cntrl required" name="localityId" id="localityId" value=""  tabindex="1"><option value="">Select Locality</option>';
                 foreach($localityDataArr AS $k){
                     $html .='<option value="'.$k->localityId.'">'.$k->locality.'</option>';
                 }

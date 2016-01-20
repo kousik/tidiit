@@ -227,6 +227,11 @@ myJsMain.my_create_groups=function(){
     };
     
     jQuery('#countryId').on('change',function(){
+        jQuery('.js-show-group-locality-users').empty();
+        jQuery('.js-show-group-users-tags').empty();
+        jQuery('.zipElementPara').html(zipDynEle);
+        jQuery('.localityElementPara').html(localityDynEle);
+        jQuery('.cityElementPara').html(cityDynEle);
         if(jQuery(this).val()==""){
             return false;
         }else{
@@ -236,10 +241,7 @@ myJsMain.my_create_groups=function(){
                 data:'countryId='+jQuery(this).val(),
                 success:function(msg){
                     if(msg!=""){
-                         jQuery('.js-show-group-locality-users').empty();
                          jQuery('.cityElementPara').html(msg);
-                         jQuery('.zipElementPara').html(zipDynEle);
-                         jQuery('.localityElementPara').html(localityDynEle);
                     }
                 }
             });
@@ -255,8 +257,9 @@ myJsMain.my_create_groups=function(){
                 url:myJsMain.baseURL+'ajax/show_zip_by_city/',
                 data:'cityId='+jQuery(this).val(),
                 success:function(msg){
+                    jQuery('.js-show-group-locality-users').empty();
+                    jQuery('.js-show-group-users-tags').empty();
                     if(msg!=""){
-                        jQuery('.js-show-group-locality-users').empty();
                         jQuery('.zipElementPara').html(msg);
                         jQuery('.localityElementPara').html(localityDynEle);
                     }
@@ -274,8 +277,10 @@ myJsMain.my_create_groups=function(){
                 url:myJsMain.baseURL+'ajax/show_locality_by_zip/',
                 data:'zipId='+jQuery(this).val(),
                 success:function(msg){
-                    if(msg!=""){
-                        jQuery('.js-show-group-locality-users').empty();
+                    jQuery('.js-show-group-locality-users').empty();
+                    jQuery('.js-show-group-users-tags').empty();
+                    jQuery('.localityElementPara').html(localityDynEle);
+                    if(msg!=""){    
                         jQuery('.localityElementPara').html(msg);
                     }
                 }
@@ -288,19 +293,43 @@ myJsMain.my_create_groups=function(){
             return false;
         }else{
             jQuery('.js-show-group-locality-users').empty();
-            jQuery.ajax({
-                type:"POST",
-                url:myJsMain.baseURL+'ajax/show_locality_all_users/',
-                data:'localityId='+jQuery(this).val(),
-                success:function(msg){
-                    if(msg!=""){
-                        jQuery('.js-show-group-locality-users').html(msg);
-                    }else{
-                        jQuery('div.js-message').html('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> There is no user match with selected locality.</div>');
-                        jQuery('div.js-message').fadeIn(300,function() { setTimeout( 'jQuery("div.js-message").fadeOut(300)', 15000 ); });
+            jQuery('.js-show-group-users-tags').empty();
+            if(jQuery('#localityId').val()==''){
+                jQuery.ajax({
+                    type:"POST",
+                    url:myJsMain.baseURL+'ajax/show_locality_all_users/',
+                    data:'localityId='+jQuery(this).val(),
+                    success:function(msg){
+                        if(msg!=""){
+                            jQuery('.js-show-group-users-tags').empty();
+                            jQuery('.js-show-group-users-tags').html(selected_user_tag_div_content);
+                            jQuery('.js-show-group-locality-users').html(msg);
+                        }else{
+                            jQuery('.js-show-group-users-tags').empty();
+                            jQuery('div.js-message').html('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> There is no user match with selected locality.</div>');
+                            jQuery('div.js-message').fadeIn(300,function() { setTimeout( 'jQuery("div.js-message").fadeOut(300)', 11000 ); });
+                        }
                     }
-                }
-            });
+                });
+            }else{
+                var ajaxData='localityId='+jQuery('#localityId').val()+'&productType='+jQuery('#productType').val();
+                jQuery.ajax({
+                    type:"POST",
+                    url:myJsMain.baseURL+'ajax/show_locality_all_users_with_product_type/',
+                    data:ajaxData,
+                    success:function(msg){
+                        if(msg!=""){
+                            jQuery('.js-show-group-users-tags').html(selected_user_tag_div_content);
+                            jQuery('.js-show-group-locality-users').html(msg);
+                        }else{
+                            jQuery('.js-show-group-users-tags').empty();
+                            jQuery('.js-show-group-locality-users').empty();
+                            jQuery('div.js-message').html('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> There is no user match with selected product type.</div>');
+                            jQuery('div.js-message').fadeIn(300,function() { setTimeout( 'jQuery("div.js-message").fadeOut(300)', 15000 ); });
+                        }
+                    }
+                }); 
+            }
         }
      });
      //jQuery('div.grp_dashboard').on('click','button.js-group-delete',function(){
