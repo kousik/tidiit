@@ -1521,12 +1521,18 @@ class Shopping extends MY_Controller{
                     if($kk->userId==$orderDetails[0]->userId){
                         $email=$kk->email;
                         $userFullName=$kk->firstName.' '.$kk->lastName;
+                        $mobileNumber=$kk->mobile;
                         break;
                     }
                 }
                 //echo '<br>$order id '.$k->orderId.'<br>';
                 $adminMailData['userFullName']=$userFullName;
                 $this->_global_tidiit_mail($email, "Your Buying Club Tidiit order TIDIIT-OD-".$k->orderId.' has placed successfully', $adminMailData,'group_order_success',$userFullName);
+                
+                $sms_data=array('nMessage'=>'Your Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] order TIDIIT-OD-'.$k->orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.BASE_URL,
+                'receiverMobileNumber'=>$mobileNumber,'senderId'=>'','receiverId'=>$orderDetails[0]->userId,
+                'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CONFIRM');
+                send_sms_notification($sms_data);
                 
                 //echo '<br>$order id '.$k->orderId.'<br>';
                 /// for seller
@@ -1543,11 +1549,6 @@ class Shopping extends MY_Controller{
                 //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
                 $supportEmail='judhisahoo@gmail.com';
                 $this->_global_tidiit_mail($supportEmail, "Buying Club order no - TIDIIT-OD-".$k->orderId.' has placed from Tidiit Inc Ltd', $adminMailData,'support_group_order_success','Tidiit Inc Support');
-                
-                $sms_data=array('nMessage'=>'Your Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] order TIDIIT-OD-'.$order->orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.BASE_URL,
-                'receiverMobileNumber'=>$userDetails[0]->mobile,'senderId'=>'','receiverId'=>$order->userId,
-                'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CONFIRM');
-                send_sms_notification($sms_data);
             }
         }
         return TRUE;
