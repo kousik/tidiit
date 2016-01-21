@@ -1491,6 +1491,12 @@ class Shopping extends MY_Controller{
             //pre($adminMailData);die;
             $this->_global_tidiit_mail($orderInfoDataArr['group']->admin->email, "Your  Buying Club order - TIDIIT-OD-".$order->parrentOrderID.' has placed successfully.', $adminMailData,'group_order_success',$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName);
             
+            $sms_data=array('nMessage'=>'Your Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] order TIDIIT-OD-'.$orderDetails[0]->orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.BASE_URL,
+            'receiverMobileNumber'=>$orderInfoDataArr['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfoDataArr['group']->admin->userId,
+            'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-PLACED');
+            send_sms_notification($sms_data);
+            
+            
             /// for seller
             $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
             $adminMailData['buyerFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
@@ -1531,7 +1537,7 @@ class Shopping extends MY_Controller{
                 
                 $sms_data=array('nMessage'=>'Your Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] order TIDIIT-OD-'.$k->orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.BASE_URL,
                 'receiverMobileNumber'=>$mobileNumber,'senderId'=>'','receiverId'=>$orderDetails[0]->userId,
-                'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CONFIRM');
+                'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-PLACED');
                 send_sms_notification($sms_data);
                 
                 //echo '<br>$order id '.$k->orderId.'<br>';
