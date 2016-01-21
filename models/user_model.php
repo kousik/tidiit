@@ -274,12 +274,12 @@ class User_model extends CI_Model {
 
     function get_all_users_by_locality($localityId,$userId=0){
         if($userId==0):
-            $this->db->where('userId !=', $this->session->userdata('FE_SESSION_VAR'));
+            $this->db->where('userId !=', $this->session->userdata('FE_SESSION_VAR')); $this->db->distinct();
             $this->db->select('userId')->from($this->_shipping_address)->where('localityId',$localityId);
             $query=$this->db->get();
             $data = $query->result();
         else:
-            $this->db->where('userId !=',$userId);
+            $this->db->where('userId !=',$userId);$this->db->distinct();
             $this->db->select('userId')->from($this->_shipping_address)->where('localityId',$localityId);
             $query=$this->db->get();
             $data = $query->result_array();
@@ -761,6 +761,7 @@ class User_model extends CI_Model {
         if(empty($rs)){
             return array();
         }else{
+            $this->db->distinct();
             $this->db->select('u.firstName,u.lastName,u.userId,u.email')->from('user u');
             $this->db->join($this->_shipping_address.' ba','ba.userId=u.userId');
             if($userId==0):
