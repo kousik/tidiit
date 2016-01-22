@@ -249,8 +249,10 @@ class Coupon_model extends CI_Model{
     
     public function is_coupon_code_used_or_not_for_single($coupon){
         $coupons = $this->db->from($this->_order_coupon)->where('couponId',$coupon->couponId)->get()->result();
+        //pre($coupons);die;
         if($coupons):
-            return true;                
+            //return true;
+            return FALSE;
         else:  
             return false;
         endif;
@@ -259,7 +261,10 @@ class Coupon_model extends CI_Model{
 
 
     public function is_coupon_code_exists($code){
-        $coupons = $this->db->from($this->_coupon)->where('code',$code)->get()->result();
+        //$coupons = $this->db->from($this->_coupon)->where('code',$code)->get()->result();
+        $sql="SELECT * FROM coupon WHERE `code`='".$code."' AND CURDATE() BETWEEN `startDate` AND `endDate` AND Status=1";
+        //echo $sql;die;
+        $coupons=$this->db->query($sql)->result();
         if($coupons):
             return $coupons[0];
         else:    

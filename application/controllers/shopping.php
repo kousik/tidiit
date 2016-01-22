@@ -1260,7 +1260,7 @@ class Shopping extends MY_Controller{
         
         $coupon = $this->Coupon_model->is_coupon_code_exists($promocode);
         if(!$coupon):
-            $result['error'] = "Invalid promo code!";
+            $result['error'] = "Invalid promo code or promo code has expaired!";
             echo json_encode( $result );
             die;
         endif;
