@@ -8,6 +8,7 @@ class Shopping extends MY_Controller{
         $this->_isLoggedIn();
         $this->load->model('User_model');
         $this->load->model('Order_model');
+        $this->load->model('Coupon_model');
         $this->db->cache_off();
         $this->load->library('cart');
         $this->load->model('Category_model');
@@ -349,14 +350,14 @@ class Shopping extends MY_Controller{
         $orderId = $this->input->post('orderId',TRUE);
         $promocode = $this->input->post('promocode',TRUE);
         
-        $coupon = $this->Order_model->is_coupon_code_exists($promocode);
+        $coupon = $this->Coupon_model->is_coupon_code_exists($promocode);
         if(!$coupon):
             $result['error'] = "Invalid promo code!";
             echo json_encode( $result );
             die;
         endif;
         
-        $ordercoupon = $this->Order_model->is_coupon_code_used_or_not($coupon, $orderId);
+        $ordercoupon = $this->Coupon_model->is_coupon_code_used_or_not($coupon, $orderId);
         
         if(!$ordercoupon):
             $result['error'] = "Promo code already used!";
@@ -373,7 +374,6 @@ class Shopping extends MY_Controller{
             echo json_encode( $result );
             die;
         endif;
-	
     }
     
     /**
@@ -445,7 +445,7 @@ class Shopping extends MY_Controller{
 
                         $data['nTitle'] = 'New Buying Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
                         $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
-                        $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club order product.<br>";
+                        $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club['.$group->groupTitle.'] order product.<br>";
                         $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
                         $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
                         $data['nMessage'] .= "Want to process the order ? <br>";
@@ -464,6 +464,7 @@ class Shopping extends MY_Controller{
                         $mail_template_view_data=$this->load_default_resources();
                         $mail_template_view_data['group_order_start']=$mail_template_data;
                         $this->_global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
+                        //pre($data);die;
                         $this->User_model->notification_add($data);
                         
                         /// sendin SMS to allmember
@@ -482,12 +483,12 @@ class Shopping extends MY_Controller{
                             $data['receiverId'] = $usr->userId;
                             $data['nType'] = 'BUYING-CLUB-ORDER-CONTINUE';
 
-                            $data['nTitle'] = 'Buying Club order continue by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+                            $data['nTitle'] = 'Buying Club['.$group->groupTitle.'] order continue by <b>'.$me->firstName.' '.$me->lastName.'</b>';
                             $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$usr->firstName.' '.$usr->lastName;
-                            $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club.<br>";
+                            $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club['.$group->groupTitle.'].<br>";
                             $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
                             $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
-                            $data['nMessage'] .= "";
+                            $data['nMessage'] .= "Order item is ".$orderinfo['pdetail']->title."<br /><br />";
                             $data['nMessage'] .= "Thanks <br> Tidiit Team.";
 
                             $data['isRead'] = 0;
@@ -510,7 +511,17 @@ class Shopping extends MY_Controller{
                             send_sms_notification($sms_data);
                         endif;
                     endforeach;
+                    $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                     $data['receiverId'] = $group->admin->userId;
+                    $data['nType'] = 'BUYING-CLUB-ORDER-CONTINUE';
+                    $data['nTitle'] = 'Your Buying Club['.$group->groupTitle.'] order continue by <b>'.$me->firstName.' '.$me->lastName.'</b>';
+                    $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club['.$group->groupTitle.'].<br>";
+                    $data['nMessage'] .= 'Order item is '.$orderinfo['pdetail']->title."<br /><br/>";
+                    $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                    $data['isRead'] = 0;
+                    $data['status'] = 1;
+                    $data['createDate'] = date('Y-m-d H:i:s');
+                    
                     //Send Email message
                     $recv_email = $group->admin->email;
                     $sender_email = $me->email;
@@ -522,6 +533,7 @@ class Shopping extends MY_Controller{
                     }
                     $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
                     $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+                    
                     $this->User_model->notification_add($data);
                     
                     $sms_data=array('nMessage'=>$me->firstName.' '.$me->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of your Buying Club['.$group->groupTitle.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
@@ -1246,14 +1258,14 @@ class Shopping extends MY_Controller{
     function ajax_single_order_set_promo(){
         $promocode = $this->input->post('promocode',TRUE);
         
-        $coupon = $this->Order_model->is_coupon_code_exists($promocode);
+        $coupon = $this->Coupon_model->is_coupon_code_exists($promocode);
         if(!$coupon):
             $result['error'] = "Invalid promo code!";
             echo json_encode( $result );
             die;
         endif;
         
-        $ordercoupon = $this->Order_model->is_coupon_code_used_or_not_for_single($coupon);
+        $ordercoupon = $this->Coupon_model->is_coupon_code_used_or_not_for_single($coupon);
         
         if($ordercoupon):
             $result['error'] = "Promo code already used!";

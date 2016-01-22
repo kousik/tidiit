@@ -583,7 +583,7 @@ class User_model extends CI_Model {
         if($limit != null){
             $this->db->limit($limit, $offset);
         }
-        $this->db->order_by('createDate','desc');
+        $this->db->order_by('id','desc');
         $query = $this->db->get();
         $this->result = $query->result();
         //echo $str = $this->db->last_query();
@@ -818,5 +818,11 @@ class User_model extends CI_Model {
         else:
             return FALSE;
         endif;
+    }
+    
+    function get_all_buyer(){
+        $rs=$this->db->from($this->_table)->where('status >',0)->where('userType','buyer')->get()->result();
+        //echo $this->db->last_query();
+        return $rs;
     }
 }

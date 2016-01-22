@@ -12,7 +12,7 @@ class Order_model extends CI_Model {
     private $_product='product';
 
     private $_coupon = 'coupon';
-    private $_order_coupon = 'order_coupon';
+    private $_order_coupon = 'order_coupon';    
 
     private $_sod="settlement_on_delivery";
     private $_mpesa="mpesa";
@@ -347,64 +347,7 @@ class Order_model extends CI_Model {
         return TRUE;
     }
 
-    public function is_coupon_code_exists($code){
-        $coupons = $this->db->from($this->_coupon)->where('code',$code)->get()->result();
-        if($coupons):
-            return $coupons[0];
-        else:    
-            return false;
-        endif;
-    }
-
-
-    public function is_coupon_code_used_or_not($coupon, $orderId){
-        $coupons = $this->db->from($this->_order_coupon)->where('couponId',$coupon->couponId)->get()->result();
-        $order = $this->get_single_order_by_id($orderId);
-        if($coupons):
-            $data = $coupons[0];
-            if($data->orderId == $orderId):
-                $edata = array();
-                $edata['orderId'] = $data->orderId;
-                $edata['couponId'] = $data->couponId;
-                $edata['amount'] = $data->amount;
-                $edata['orderAmount'] = $order->subTotalAmount - $data->amount;
-                $edata['applied'] = true;
-                return $edata;
-            else:
-                return false;
-            endif;
-        else:                
-            $cdata = array();
-            $cdata['orderId'] = $orderId;
-            $cdata['couponId'] = $coupon->couponId;
-            if($coupon->type == 'percentage'):
-                $amt = ($coupon->amount/100)*$order;
-                $amt1 = number_format($amt, 2, '.', '');
-                $cdata['amount'] = substr($amt1, 0, -3);
-            elseif($coupon->type == 'fix'):
-                $cdata['amount'] = $coupon->amount;
-            endif;    
-            $this->db->insert($this->_order_coupon,$cdata);
-            $cdata['orderCouponId'] = $this->db->insert_id();
-
-            $order_update['orderAmount'] = $order->subTotalAmount - $cdata['amount'];
-            $order_update['discountAmount'] = $cdata['amount'];        
-            $this->update($order_update,$orderId);
-            $cdata['orderAmount'] = $order_update['orderAmount'];
-            return $cdata;
-        endif;
-    }
-
-
-    public function is_coupon_code_used_or_not_for_single($coupon){
-        $coupons = $this->db->from($this->_order_coupon)->where('couponId',$coupon->couponId)->get()->result();
-        if($coupons):
-            return true;                
-        else:  
-            return false;
-        endif;
-    }
-
+    
     public function get_order_coupon($orderId){
         $coupons = $this->db->from($this->_order_coupon)->where('orderId',$orderId)->get()->result();
         if($coupons):

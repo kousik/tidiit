@@ -72,7 +72,7 @@ class MY_location_track
                 'error'
                 );
 
-            $curl = curl_init();
+            /*$curl = curl_init();
             curl_setopt_array(
                 $curl,
                 array(
@@ -93,10 +93,12 @@ class MY_location_track
 
             $insights_values = str_getcsv($resp);
             $insights_values = array_pad($insights_values, sizeof($insights_keys), '');
-            $insights = array_combine($insights_keys, $insights_values);
+            $insights = array_combine($insights_keys, $insights_values);*/
             //echo $insights['country_code'];die;
             //$this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR',trim($cLocationvar));
-            $this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR',$insights['country_code']);
+            
+            //$this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR',$insights['country_code']);
+            $this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR','IN');
         }
     }
 
