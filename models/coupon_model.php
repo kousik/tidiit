@@ -203,7 +203,7 @@ class Coupon_model extends CI_Model{
                 return $cdata;
             endif;
         else:
-            $rs=$this->db->from($this->_order_coupon)->where('orderId',$order)->get()->result();
+            $rs=$this->db->from($this->_order_coupon)->where('orderId',$orderId)->get()->result();
             if(count($rs)>0):
                 $cdata = array();
                 $cdata['couponId'] = $coupon->couponId;
