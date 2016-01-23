@@ -111,6 +111,8 @@ class Appdata extends REST_Controller {
             
             $parram=array('userId'=>$userId,'message'=>'You have registered successfully, you will get separte mail for regisration details.');
             success_response_after_post_get($parram);
+        }else{
+            $this->response(array('error' => 'Unknown error arises, please try again.'), 400); return FALSE;
         }
     }
     
@@ -157,12 +159,14 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Please provide valid email.'), 400); return FALSE;
         }
         
-        if($email!="" && $contactNo!="" && $deviceToken!="" && $deviceType!="" && $UDID!="" && $userId!=""):
+        if($email!="" && $contactNo!="" && $deviceToken!="" && $deviceType!="" && $UDID!="" && $userId!="" && $mobile!=""):
             $myProfileDataArr=array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo,
                     'email'=>$email,'DOB'=>$DOB,'mobile'=>$mobile,'fax'=>$fax,'aboutMe'=>$aboutMe);
             $this->user->edit($myProfileDataArr,$userId);
             $result['message']="Profile data updated successfully.";
             success_response_after_post_get($result);
+        else:
+            $this->response(array('error' => 'All fields are required amd must be filled up.'), 400); return FALSE;
         endif;
     }
     
