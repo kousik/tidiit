@@ -146,7 +146,13 @@ class Appdata extends REST_Controller {
         $DOB="00-00-0000";
         $dobArr=  explode('-',$rowDOB);
         if(!empty($dobArr)):
-            $DOB=$dobArr[2].'-'.$dobArr[1].'-'.$dobArr[0];
+            if(strlen($dobArr[2])==4):
+                $DOB=$dobArr[2].'-'.$dobArr[1].'-'.$dobArr[0];
+            else:
+                $this->response(array('error' => 'Please provide valid year,Year must be 4 character.'), 400); return FALSE;
+            endif;
+        else:
+            $this->response(array('error' => 'Please provide valid date(dd-mm-YYYY).'), 400); return FALSE;
         endif;
         $aboutMe=$this->post('aboutMe');
         $userId=$this->post('userId');
