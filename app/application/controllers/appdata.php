@@ -266,6 +266,7 @@ class Appdata extends REST_Controller {
         $phone=  $this->post('phone');
         $address=  $this->post('address');
         $productTypeId=  $this->post('productTypeId');
+        mail('judhisahoo@gmail.com','productTypeId',$productTypeId);
         $productTypeIdArr=  explode(',', $productTypeId);
         $deviceType=$this->post('deviceType');
         if(empty($productTypeIdArr)){
