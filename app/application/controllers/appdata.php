@@ -277,6 +277,8 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Please provide prodcut type for current user.'), 400); return FALSE;
         }
         
+        mail('judhisahoo@gmail.com','$productTypeIdArr',  json_encode($productTypeIdArr));
+        
         foreach ($productTypeIdArr AS $k =>$v){
             $newCateoryArr[]=$v;
             $newCateoryArr=recusive_category($newCateoryArr,$v);
@@ -290,7 +292,7 @@ class Appdata extends REST_Controller {
 
         $rs=$this->Country->city_details($cityId);
 
-        $isAdded=$this->user->is_shipping_address_added();
+        $isAdded=$this->user->is_shipping_address_added($userId);
         if(empty($isAdded)){
             $this->user->add_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'userId'=>$userId,'address'=>$address,'stateId'=>$rs[0]->stateId,'appSource'=>$deviceType));
         }else{
