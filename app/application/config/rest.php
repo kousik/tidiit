@@ -120,7 +120,7 @@ $config['auth_library_function'] = '';
 |	array('admin' => '1234')
 |
 */
-$config['rest_valid_logins'] = array('mobikasa_ios' => 'M0bikasa_1@3','abc'=>'1234');
+$config['rest_valid_logins'] = array('tidiit_ios' => 'T1D11T_1@3','tidiit_and'=>'T1D11T_1@3','tidiit_php'=>'tidiit_cto');
 
 /*
 |--------------------------------------------------------------------------
