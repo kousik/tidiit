@@ -274,6 +274,11 @@ class Appdata extends REST_Controller {
         mail('gippy.gupta@gmail.com','productTypeId',$productTypeId);
         mail('judhisahoo@gmail.com','productTypeId',$productTypeId);
         $productTypeIdArr=  explode(',', $productTypeId);
+        
+        if ($productTypeIdArr[0] == "") { 
+            unset($productTypeIdArr[0]); 
+        }
+        
         if (end($productTypeIdArr) == "") { 
             array_pop($productTypeIdArr); 
         }
