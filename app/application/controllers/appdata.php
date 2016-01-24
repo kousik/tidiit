@@ -438,10 +438,21 @@ class Appdata extends REST_Controller {
         $groupUsersArr=  explode(',', $groupUsers);
         
         $notify = array();
+        if($groupAdminId=="" || $groupTitle=="" || trimg($productType)=="" || trim($deviceType)=="" || count($groupUsersArr)==0){
+            $this->response(array('error' => 'Please provide all data'), 400); return FALSE;
+        }
+        $userDetails=$this->user->get_details_by_id($groupAdminId);
+        if(count($userDetails)==0){
+            $this->response(array('error' => 'Invalid grop admin id'), 400); return FALSE;
+        }
         
-        if(!$groupUsersArr):
-            $this->response(array('error' => 'Please select the at least one Buyer club member!'), 400); return FALSE;
-        endif;
+        foreach($groupUsersArr AS $k => $v){
+            $userDetails=$this->user->get_details_by_id($v);
+            if(count($userDetails)==0){
+                $this->response(array('error' => 'Invalid user id provided for group cration'), 400); return FALSE;
+            }
+        }
+        
         $groupDataArr=array('groupAdminId'=>$groupAdminId,'groupTitle'=>$groupTitle,'productType'=>$productType,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor,'appSource'=>$deviceType);
         $groupId = $this->user->group_add($groupDataArr);
         $adminDataArr=  $this->user->get_details_by_id($groupAdminId);
