@@ -41,9 +41,9 @@ class Product extends REST_Controller {
             $inBox='';
             foreach($mobileContentArr AS $k){
                 if($inBox=='')
-                    $inBox=$mobileBoxContents[$k];
+                    $inBox=$mobileBoxContentsArr[$k];
                 else
-                    $inBox.= ', '.$mobileBoxContents[$k];
+                    $inBox.= ', '.$mobileBoxContentsArr[$k];
             }
             $result['mobileBoxContents']=$inBox;
         else:
