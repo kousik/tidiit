@@ -687,11 +687,13 @@ class User_model extends CI_Model {
         if($this->db->where('userId',$userId)->from($this->_user_product_type_category)->count_all_results()>0){
             /// update record
             $this->db->where('userId',$userId);
+            @mail('judhisahoo@gmail.com','update_user_product_type_category query string',$this->db->last_query());
             $this->db->update($this->_user_product_type_category,$dataArr);
             return TRUE;
         }else{
             $dataArr['userId']=$userId;
             $this->db->insert($this->_user_product_type_category,$dataArr);
+            @mail('judhisahoo@gmail.com','update_user_product_type_category query string',$this->db->last_query());
             return $this->db->insert_id();		
         }
     }
