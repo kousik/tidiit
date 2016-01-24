@@ -274,6 +274,9 @@ class Appdata extends REST_Controller {
         mail('gippy.gupta@gmail.com','productTypeId',$productTypeId);
         mail('judhisahoo@gmail.com','productTypeId',$productTypeId);
         $productTypeIdArr=  explode(',', $productTypeId);
+        if (end($productTypeIdArr) == "") { 
+            array_pop($productTypeIdArr); 
+        }
         $deviceType=$this->post('deviceType');
         if(empty($productTypeIdArr)){
             $this->response(array('error' => 'Please provide prodcut type for current user.'), 400); return FALSE;
