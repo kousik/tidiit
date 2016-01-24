@@ -266,6 +266,7 @@ class Appdata extends REST_Controller {
         $phone=  $this->post('phone');
         $address=  $this->post('address');
         $productTypeId=  $this->post('productTypeId');
+        mail('judhisahoo@gmail.com','all post data',  json_encode($_POST));
         if(trim($productTypeId)==""){
             $this->response(array('error' => 'Please provide prodcut type for current user.'), 400); return FALSE;
         }
