@@ -40,11 +40,11 @@
             <tr height="20" bgcolor="#DFDFDF">
               <td  style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/tax/viewlist';?>">Tax manager</a> </td>
             </tr>
-            <?php /*?>
+            
             <tr height="20" bgcolor="#DFDFDF">
               <td  style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/shipping/viewlist';?>">Shipping manager</a> </td>
             </tr>
-            <tr height="20" bgcolor="#DFDFDF">
+            <?php /*?><tr height="20" bgcolor="#DFDFDF">
               <td  style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/home_banner/viewlist';?>">Home Page Banner manager</a> </td>
             </tr>
             <tr height="20" bgcolor="#DFDFDF">

@@ -288,5 +288,18 @@ class Ajax extends MY_Controller{
         return TRUE;
     }
     
+    function check_is_exist_start_weight(){
+        $startWeight=$this->input->post('startWeight',TRUE);
+        $countryCode=$this->input->post('countryCode',TRUE);
+        $shippingId=$this->input->post('shippingId',TRUE);
+        $this->load->model('Shipping_model');
+        $rs=$this->Shipping_model->check_startweight_by_country($startWeight,$countryCode,$shippingId);
+        //pre($rs);die;
+        if(!empty($rs)):
+            echo 'exist';die;
+        else:
+            echo '';die;
+        endif;
+    }
 }
 

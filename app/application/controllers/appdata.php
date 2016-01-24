@@ -501,6 +501,14 @@ class Appdata extends REST_Controller {
     function edit_group_get(){
         $adminId=$this->get('userId');
         $groupId=$this->get('groupId');
+        $userDetails=  $this->user->get_details_by_id($adminId);
+        if(empty($userDetails)){
+            $this->response(array('error' => 'Invalid Buying Club index. Please try again!'), 400); return FALSE;
+        }
+        $isExist=$this->user->is_group_exist_group_id_admin_id($groupId,$adminId);
+        if(count($isExist)==0){
+            $this->response(array('error' => 'Profided buying club index is not match with buying club leadr index. Please provide correct index!'), 400); return FALSE;
+        }
         $group = $this->user->get_group_by_id($groupId,TRUE);
         if(!$group):
             $this->response(array('error' => 'Invalid Buying Club index. Please try again!'), 400); return FALSE;

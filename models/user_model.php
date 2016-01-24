@@ -253,15 +253,19 @@ class User_model extends CI_Model {
 
     function get_billing_address($userId=0){
         $this->db->select('ba.*,c.countryName,s.stateName,ci.city AS cityTableData,z.zip AS zipTableData,l.locality,u.firstName,u.lastName,u.email');
-        $this->db->from($this->_bill_address.' ba')->join($this->_table.' u','ba.userId=u.userId','left join');
-        $this->db->join($this->_table_country.' c','ba.countryId=c.countryId','left join');
-        $this->db->join($this->_table_state.' s','ba.stateId=s.stateId','left join')->join($this->_table_city.' ci','ba.cityId=ci.cityId','left join');
-        $this->db->join($this->_table_zip.' z','ba.zipId=z.zipId','left join');
-        $this->db->join($this->_table_locality.' l','ba.localityId=l.localityId','left join');
+        $this->db->from($this->_bill_address.' ba')->join($this->_table.' u','ba.userId=u.userId','left');
+        $this->db->join($this->_table_country.' c','ba.countryId=c.countryId','left');
+        $this->db->join($this->_table_state.' s','ba.stateId=s.stateId','left')->join($this->_table_city.' ci','ba.cityId=ci.cityId','left');
+        $this->db->join($this->_table_zip.' z','ba.zipId=z.zipId','left');
+        $this->db->join($this->_table_locality.' l','ba.localityId=l.localityId','left');
         if($userId==0):
-            return $this->db->where('ba.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+            $rs=$this->db->where('ba.userId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+            //echo $this->db->last_query();
+            return $rs;
         else:
-            return $this->db->where('ba.userId',$userId)->get()->result_array();
+            $rs=$this->db->where('ba.userId',$userId)->get()->result_array();
+            //echo $this->db->last_query();
+            return $rs;
         endif;
     }
 
@@ -387,8 +391,8 @@ class User_model extends CI_Model {
             $getgpadmin = $this->get_details_by_id($group->groupAdminId); 
             $group->admin = $getgpadmin[0];
         else:
-            $group['users'] = $udata;
-            $getgpadmin = $this->get_details_by_id($group->groupAdminId,TRUE); 
+            $group['users'] = $udata; 
+            $getgpadmin = $this->get_details_by_id($group['groupAdminId'],TRUE); 
             $group['admin'] = $getgpadmin[0];
         endif;    
         return $group;
@@ -826,5 +830,9 @@ class User_model extends CI_Model {
         $rs=$this->db->from($this->_table)->where('status >',0)->where('userType','buyer')->get()->result();
         //echo $this->db->last_query();
         return $rs;
+    }
+    
+    function is_group_exist_group_id_admin_id($groupId,$adminId){
+        return $this->db->from($this->_group)->where('groupId',$groupId)->where('groupAdminId',$adminId)->get()->result();
     }
 }
