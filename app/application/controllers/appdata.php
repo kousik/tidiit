@@ -266,22 +266,22 @@ class Appdata extends REST_Controller {
         $phone=  $this->post('phone');
         $address=  $this->post('address');
         $productTypeId=  $this->post('productTypeId');
-        mail('judhisahoo@gmail.com','all post data',  json_encode($_POST));
+        mail('gippy.gupta@gmail.com','all post data',  json_encode($_POST));
         if(trim($productTypeId)==""){
             $this->response(array('error' => 'Please provide prodcut type for current user.'), 400); return FALSE;
         }
-        mail('judhisahoo@gmail.com','productTypeId',$productTypeId);
+        mail('gippy.gupta@gmail.com','productTypeId',$productTypeId);
         $productTypeIdArr=  explode(',', $productTypeId);
         $deviceType=$this->post('deviceType');
         if(empty($productTypeIdArr)){
             $this->response(array('error' => 'Please provide prodcut type for current user.'), 400); return FALSE;
         }
         
-        mail('judhisahoo@gmail.com','$productTypeIdArr',  json_encode($productTypeIdArr));
+        mail('gippy.gupta@gmail.com','$productTypeIdArr',  json_encode($productTypeIdArr));
         
         foreach ($productTypeIdArr AS $k =>$v){
             $rs=$this->db->from('category')->where('categoryId',$v)->get()->result_array();
-            mail('judhisahoo@gmail.com','category details of '.$v,  json_encode($rs));
+            mail('gippy.gupta@gmail.com','category details of '.$v,  json_encode($rs));
             if(count($rs)==0):
                 $this->response(array('error' => 'Invalid product type id.'), 400); return FALSE;
             endif;
