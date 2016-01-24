@@ -18,9 +18,12 @@ class Product extends REST_Controller {
         $this->config->load('product');
         $productId= $this->get('productId');
         $productDetailsArr=  $this->product->details($productId,TRUE);
+        if(empty($productDetailsArr)){
+            $this->response(array('error' => 'Invalid product index. Please try again!'), 400); return FALSE;
+        }
         //pre($productDetailsArr);die;
         if($productDetailsArr[0]['status']==0){
-            $this->response(array('error' => 'Invalid product index. Please try again!'), 400); return FALSE;
+            $this->response(array('error' => 'This product is an inactive product. Please try again!'), 400); return FALSE;
         }
         $this->product->update_view($productId);
         $productImageArr=$this->product->get_products_images($productId,TRUE);
