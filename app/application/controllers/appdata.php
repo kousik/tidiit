@@ -282,7 +282,7 @@ class Appdata extends REST_Controller {
         foreach ($productTypeIdArr AS $k =>$v){
             $rs=$this->db->from('category')->where('categoryId',$v)->get()->result_array();
             mail('judhisahoo@gmail.com','category details of '.$v,  json_encode($rs));
-            if(count(v)==0):
+            if(count($rs)==0):
                 $this->response(array('error' => 'Invalid product type id.'), 400); return FALSE;
             endif;
             $newCateoryArr[]=$v;
