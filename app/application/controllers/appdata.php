@@ -709,6 +709,7 @@ class Appdata extends REST_Controller {
         $localityId=$this->get('localityId');
         $userId=$this->get('userId');
         $productTypeId=$this->get('productTypeId');
+        //echo $localityId.' '.$userId.' '.$productTypeId;die;
         $result=array();
         $result['localityArr']=  $this->user->get_all_users_by_product_type_locality($productTypeId,$localityId,$userId);
         $result['ajaxType']='yes';
