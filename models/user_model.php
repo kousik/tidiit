@@ -835,4 +835,13 @@ class User_model extends CI_Model {
     function is_group_exist_group_id_admin_id($groupId,$adminId){
         return $this->db->from($this->_group)->where('groupId',$groupId)->where('groupAdminId',$adminId)->get()->result();
     }
+    
+    function is_all_users_exists_for_group_by_admin_id($adminId,$users){
+        $rs=$this->db->from($this->_group)->where('groupAdminId',$adminId)->where('groupUsers',$users)->get()->row();
+        if(empty($rs)):
+            return FALSE;
+        else:
+            return $rs;
+        endif;
+    }
 }
