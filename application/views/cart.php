@@ -1,4 +1,4 @@
-<?php 
+<?php  //abc
 $CI =& get_instance();
 $CI->load->model('Product_model');
 ?>
