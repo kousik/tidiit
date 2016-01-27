@@ -481,6 +481,11 @@ class Appdata extends REST_Controller {
                 $this->response(array('error' => 'Invalid user id provided for group cration'), 400); return FALSE;
             }
         }
+        $rs=$this->user->is_all_users_exists_for_group_by_admin_id($groupAdminId,  implode(',', $groupUsersArr));
+        if($rs!=FALSE){
+            $this->response(array('error' => 'All users are already attached with "Buying Club"['.$rs->groupTitle.'],Instead of create another Buying Club please use exist one.'), 400); return FALSE;
+        }
+        
         $groupDataArr=array('groupAdminId'=>$groupAdminId,'groupTitle'=>$groupTitle,'productType'=>$productType,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor,'appSource'=>$deviceType);
         $groupId = $this->user->group_add($groupDataArr);
         $adminDataArr=  $this->user->get_details_by_id($groupAdminId);
