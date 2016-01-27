@@ -450,28 +450,42 @@ class Appdata extends REST_Controller {
         $groupUsersArr=  explode(',', $groupUsers);
         
         $notify = array();
-        if($groupAdminId=="" || $groupTitle=="" || trimg($productType)=="" || trim($deviceType)=="" || count($groupUsersArr)==0){
+        if($groupAdminId=="" || $groupTitle=="" || trim($productType)=="" || trim($deviceType)=="" || count($groupUsersArr)==0){
             $this->response(array('error' => 'Please provide all data'), 400); return FALSE;
         }
+        
+        if($this->user->group_title_exists($groupTitle)){
+            $this->response(array('error' => $groupTitle.' is already created by some one,Your "Buyinb Club" Name must be unique.'), 400); return FALSE;
+        }
+        
         $userDetails=$this->user->get_details_by_id($groupAdminId);
         if(count($userDetails)==0){
             $this->response(array('error' => 'Invalid grop admin id'), 400); return FALSE;
         }
         
+        if ($groupUsersArr[0] == "") { 
+            unset($groupUsersArr[0]); 
+        }
+        
+        if (end($groupUsersArr) == "") { 
+            array_pop($groupUsersArr); 
+        }
+        
+        $productTypeDetails=$this->category->get_details_by_id($productType);
+        if(count($productTypeDetails)==0){
+            $this->response(array('error' => 'Invalid product Type id'), 400); return FALSE;
+        }
         foreach($groupUsersArr AS $k => $v){
             $userDetails=$this->user->get_details_by_id($v);
             if(count($userDetails)==0){
                 $this->response(array('error' => 'Invalid user id provided for group cration'), 400); return FALSE;
             }
         }
-        
         $groupDataArr=array('groupAdminId'=>$groupAdminId,'groupTitle'=>$groupTitle,'productType'=>$productType,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor,'appSource'=>$deviceType);
         $groupId = $this->user->group_add($groupDataArr);
         $adminDataArr=  $this->user->get_details_by_id($groupAdminId);
         //pre($adminDataArr);die;
-        if(empty($groupUsersArr[0])):
-            $this->response(array('error' =>'Invalid group user data provided.'), 400); return FALSE;
-        endif;
+        
         if($groupId):
             if($groupUsersArr):
                 foreach($groupUsersArr as $guser):
