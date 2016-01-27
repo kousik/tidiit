@@ -472,7 +472,7 @@ class Appdata extends REST_Controller {
         }
         
         $productTypeDetails=$this->category->get_details_by_id($productType);
-        if(count($productTypeDetails)==0){
+        if(count($productTypeDetails)==0 || $productTypeDetails[0]->parrentCategoryId==0){
             $this->response(array('error' => 'Invalid product Type id'), 400); return FALSE;
         }
         foreach($groupUsersArr AS $k => $v){
