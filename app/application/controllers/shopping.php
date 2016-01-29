@@ -28,7 +28,7 @@ class Shopping extends REST_Controller {
             'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID);
         $msg=$this->add_to_cart($cartDataArr);
         $result=array();
-        $result['message']=$msg;//$orderId.'-'.$qrCodeFileName;
+        $result['message']="Selected product slab added to truck successfully.";//$orderId.'-'.$qrCodeFileName;
         success_response_after_post_get($result);
     }
     
@@ -91,12 +91,22 @@ class Shopping extends REST_Controller {
     function get_cart_item_get(){
         $userId = $this->get('userId');
         $allItemArr=$this->order->get_all_cart_item($userId);
+        $newAllItemArr=array();
+        foreach($allItemArr AS $k){
+            $orderInfo=  unserialize(base64_decode($k['orderInfo']));
+            $k['productTitle']=$orderInfo['pdetail']->title;
+            $k['qty']=$orderInfo['priceinfo']->qty;
+            $k['price']=$orderInfo['priceinfo']->price;
+            $k['pimage']=$orderInfo['pimage']->image;
+            $newAllItemArr[]=$k;
+        }
+        //pre($newAllItemArr);die;
         $result=array();
-        $result['allItemArr']=$allItemArr;
+        $result['allItemArr']=$newAllItemArr;
         success_response_after_post_get($result);
     }
     
-    function remove_item_from_cart_get(){
+    function remove_item_from_cart_post(){
         $userId = $this->get('userId');
         $orderId = $this->get('orderId');
         $this->order->remove_order_from_cart($orderId,$userId);
