@@ -107,8 +107,8 @@ class Shopping extends REST_Controller {
     }
     
     function remove_item_from_cart_post(){
-        $userId = $this->get('userId');
-        $orderId = $this->get('orderId');
+        $userId = $this->post('userId');
+        $orderId = $this->post('orderId');
         $this->order->remove_order_from_cart($orderId,$userId);
         $result=array();
         $result['message']='selected item removed from cart successfully';
