@@ -211,7 +211,7 @@ class Shopping extends REST_Controller {
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
         
-        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType || $UDID ==""  || $deviceToken==""){
+        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken==""){
             $this->response(array('error' => 'Please provide user index,latitude,longitude,device id,device token !'), 400); return FALSE;
         }
         
