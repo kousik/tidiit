@@ -24,7 +24,8 @@ class Shopping extends REST_Controller {
         $deviceType = $this->post('deviceType');
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
-        if($userId=="" || $productId =="" || $productPriceId == "" || $latitude =="" || $longitude =="" || $deviceType || $UDID ==""  || $deviceToken==""){
+        //pre($_POST);die;
+        if($userId=="" || $productId =="" || $productPriceId == "" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken==""){
             $this->response(array('error' => 'Please provide user index,product index,product price index,latitude,longitude,device id,device token !'), 400); return FALSE;
         }
         $rs=$this->user->get_details_by_id($userId);
@@ -41,7 +42,7 @@ class Shopping extends REST_Controller {
             'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID);
         $msg=$this->add_to_cart($cartDataArr);
         $result=array();
-        $result['message']="Selected product slab added to truck successfully.";//$orderId.'-'.$qrCodeFileName;
+        $result['message']="Selected product slab added to truck successfully.";//$orderId.'-'.$qrCodeFileName; 
         success_response_after_post_get($result);
     }
     
