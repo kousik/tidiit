@@ -329,10 +329,14 @@ if ( ! function_exists('get_counry_code_from_lat_long')):
         $data = @file_get_contents($url);
         // Parse the json response
         $jsondata = json_decode($data,true);
-        foreach( $jsondata["results"][0]["address_components"] as $value) {
-            if (in_array('country', $value["types"])) {
-                return $value["short_name"];
+        if(!empty($jsondata["results"])){
+            foreach( $jsondata["results"][0]["address_components"] as $value) {
+                if (in_array('country', $value["types"])) {
+                    return $value["short_name"];
+                }
             }
+        }else{
+            return FALSE;
         }
         //return $jsondata["results"][0]["formatted_address"];
     }

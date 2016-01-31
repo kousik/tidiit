@@ -106,19 +106,22 @@ class Shopping extends REST_Controller {
         $latitude = $this->get('latitude');
         $longitude = $this->get('longitude');
         if($userId=="" || $latitude=="" || $longitude==""){
-            $this->response(array('error' => 'Please provide user index,latitude adn Longitude !'), 400); return FALSE;
+            $this->response(array('error' => 'Please provide user index,latitude and Longitude !'), 400); return FALSE;
         }
         
         $rs=$this->user->get_details_by_id($userId);
         if(empty($rs)){
             $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
         }
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        if($countryShortName==FALSE){
+            $this->response(array('error' => 'Please provide valid latitude and longitude!'), 400); return FALSE;
+        }
         $allItemArr=$this->order->get_all_cart_item($userId);
         $newAllItemArr=array();
         foreach($allItemArr AS $k){
-            $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
             $fieldName=$countryShortName.'_tax';
-            $taxPercentage=$k->$fieldName;
+            $taxPercentage=$k[$fieldName];
             $orderInfo=  unserialize(base64_decode($k['orderInfo']));
             $k['productTitle']=$orderInfo['pdetail']->title;
             $k['qty']=$orderInfo['priceinfo']->qty;
