@@ -421,7 +421,7 @@ class Order_model extends CI_Model {
     }
     
     function get_all_cart_item($userId){
-        $this->db->select('o.*,c.IN_tax,c,KE_tax')->from($this->_table.' AS o');
+        $this->db->select('o.*,c.IN_tax,c.KE_tax')->from($this->_table.' AS o');
         $this->db->join('product_category pc','pc.productId=o.productId')->join('category c','pc.categoryId=c.categoryId');
         return $this->db->where('o.userId',$userId)->where('o.status',0)->get()->result_array();
     }
