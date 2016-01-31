@@ -421,7 +421,9 @@ class Order_model extends CI_Model {
     }
     
     function get_all_cart_item($userId){
-        return $this->db->select('o.*')->from($this->_table.' AS o')->where('o.userId',$userId)->where('o.status',0)->get()->result_array();
+        $this->db->select('o.*,c.IN_tax,c,KE_tax')->from($this->_table.' AS o');
+        $this->db->join('product_category pc','pc.productId=o.productId')->join('category c','pc.categoryId=c.categoryId');
+        return $this->db->where('o.userId',$userId)->where('o.status',0)->get()->result_array();
     }
     
     function remove_order_from_cart($orderId,$userId){
@@ -456,5 +458,14 @@ class Order_model extends CI_Model {
         //print_r($orderData);
         //$order = !empty($orderData)?$orderData[0]:false;
         return $order;
+    }
+    
+    public function inctive_order_details_by_order_id_user_id($orderId,$userId){
+        $this->db->where('orderId',$orderId)->where('userId',$userId)->where('status',0);
+        if($this->db->from($this->_table)->count_all_results()>0){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
     }
 }

@@ -320,3 +320,20 @@ if ( ! function_exists('get_full_address_from_lat_long')):
         return $jsondata["results"][0]["formatted_address"];
     }
 endif;
+
+if ( ! function_exists('get_counry_code_from_lat_long')):
+    function get_counry_code_from_lat_long($lat,$long){
+        //("country", $jsondata["results"][0]["address_components"]);
+        $url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$long&sensor=false";
+        // Make the HTTP request
+        $data = @file_get_contents($url);
+        // Parse the json response
+        $jsondata = json_decode($data,true);
+        foreach( $jsondata["results"][0]["address_components"] as $value) {
+            if (in_array('country', $value["types"])) {
+                return $value["short_name"];
+            }
+        }
+        //return $jsondata["results"][0]["formatted_address"];
+    }
+endif;

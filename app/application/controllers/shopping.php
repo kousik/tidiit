@@ -24,6 +24,19 @@ class Shopping extends REST_Controller {
         $deviceType = $this->post('deviceType');
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
+        if($userId=="" || $productId =="" || $productPriceId == "" || $latitude =="" || $longitude =="" || $deviceType || $UDID ==""  || $deviceToken==""){
+            $this->response(array('error' => 'Please provide user index,product index,product price index,latitude,longitude,device id,device token !'), 400); return FALSE;
+        }
+        $rs=$this->user->get_details_by_id($userId);
+        if(empty($rs)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
+        
+        $product = $this->product->details($productId);
+        if(empty($product)){
+            $this->response(array('error' => 'Please provide valid product index!'), 400); return FALSE;
+        }
+        
         $cartDataArr=array('productId'=>$productId,'userId'=>$userId,'productPriceId'=>$productPriceId,'latitude'=>$latitude,'longitude'=>$longitude,
             'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID);
         $msg=$this->add_to_cart($cartDataArr);
@@ -90,14 +103,28 @@ class Shopping extends REST_Controller {
     
     function get_cart_item_get(){
         $userId = $this->get('userId');
+        $latitude = $this->get('latitude');
+        $longitude = $this->get('longitude');
+        if($userId=="" || $latitude =="" || $longitude ==""){
+            $this->response(array('error' => 'Please provide user index,latitude,longitude !'), 400); return FALSE;
+        }
+        
+        $rs=$this->user->get_details_by_id($userId);
+        if(empty($rs)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
         $allItemArr=$this->order->get_all_cart_item($userId);
         $newAllItemArr=array();
         foreach($allItemArr AS $k){
+            $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+            $fieldName=$countryShortName.'_tax';
+            $taxPercentage=$k->$fieldName;
             $orderInfo=  unserialize(base64_decode($k['orderInfo']));
             $k['productTitle']=$orderInfo['pdetail']->title;
             $k['qty']=$orderInfo['priceinfo']->qty;
             $k['price']=$orderInfo['priceinfo']->price;
             $k['pimage']=$orderInfo['pimage']->image;
+            $k['tax']=$orderInfo['priceinfo']->price*$taxPercentage/100;
             $newAllItemArr[]=$k;
         }
         //pre($newAllItemArr);die;
@@ -109,6 +136,12 @@ class Shopping extends REST_Controller {
     function remove_item_from_cart_post(){
         $userId = $this->post('userId');
         $orderId = $this->post('orderId');
+        if($userId=="" || $orderId ==""){
+            $this->response(array('error' => 'Please provide user index,order index !'), 400); return FALSE;
+        }
+        if($this->order->inctive_order_details_by_order_id_user_id($orderId,$userId)==FALSE){
+            $this->response(array('error' => 'Provided order index not match with user index!'), 400); return FALSE;
+        }
         $this->order->remove_order_from_cart($orderId,$userId);
         $result=array();
         $result['message']='selected item removed from cart successfully';
@@ -129,6 +162,10 @@ class Shopping extends REST_Controller {
         $deviceType=  $this->post('deviceType');
         $longitude = $this->post('longitude');
         $latitude = $this->post('latitude');
+        
+        if($userId=="" || $firstName=="" || $lastName=="" || $countryId=="" || $cityId=="" || $zipId=="" || $localityId =="" || $deviceType =="" || $latitude=="" || $longitude==""){
+            $this->response(array('error' => 'Please provide user index,first name,last name,latitude,longitude,device type,country index,city index,locality index,zip index !'), 400); return FALSE;
+        }
         
         
         $rs=$this->Country->city_details($cityId);
@@ -169,6 +206,11 @@ class Shopping extends REST_Controller {
         $deviceType = $this->post('deviceType');
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
+        
+        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType || $UDID ==""  || $deviceToken==""){
+            $this->response(array('error' => 'Please provide user index,latitude,longitude,device id,device token !'), 400); return FALSE;
+        }
+        
         $allIncompleteOrders= $this->order->get_incomplete_order_by_user($userId);
         $defaultResources=load_default_resources();
         $user=$this->user->get_details_by_id($userId)[0];
@@ -273,6 +315,30 @@ class Shopping extends REST_Controller {
         send_sms_notification($sms_data);
         return TRUE;
     }
+    
+    
+    function move_to_wish_list_post(){
+        $userId=$this->post('userId');
+        $orderId=$this->post('orderId');
+        $orderDetails=$this->order->details($orderId);
+        $orderInfo= unserialize(base64_decode($orderDetails[0]->orderInfo));
+        pre($orderInfo);die;
+        $productId=$orderInfo['priceinfo']->productId;
+        $productPriceId = $orderInfo['priceinfo']->productPriceId;
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        $deviceType = $this->post('deviceType');
+        $wishListDataArr=array('userId'=>$userId,'productId'=>$productId,'productPriceId'=>$productPriceId,'latitude'=>$latitude,'longitude'=>$longitude,'deviceType'=>$deviceType);
+        if($this->order->add_to_wish_list($wishListDataArr)):
+            $this->order->remove_order_from_cart($orderId,$userId);
+            $result=array();
+            $result['message']='selected item moved wishlist successfully';
+            success_response_after_post_get($result);
+        else:
+            $this->response(array('error' => 'Unknow error to move the selected item to wishlist.'), 400);
+        endif;
+    }
+    
     
 }
     
