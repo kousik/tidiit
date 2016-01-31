@@ -103,10 +103,8 @@ class Shopping extends REST_Controller {
     
     function get_cart_item_get(){
         $userId = $this->get('userId');
-        $latitude = $this->get('latitude');
-        $longitude = $this->get('longitude');
-        if($userId=="" || $latitude =="" || $longitude ==""){
-            $this->response(array('error' => 'Please provide user index,latitude,longitude !'), 400); return FALSE;
+        if($userId==""){
+            $this->response(array('error' => 'Please provide user index !'), 400); return FALSE;
         }
         
         $rs=$this->user->get_details_by_id($userId);
