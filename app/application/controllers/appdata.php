@@ -742,18 +742,54 @@ class Appdata extends REST_Controller {
         success_response_after_post_get($result);
     }
     
-    function my_orders_get(){
-        $userId=$this->get('userId');
+    function my_orders_post(){
+        $userId=$this->post('userId');
+        if($userId==""){
+            $this->response(array('error' => 'Invalid user id. Please try again!'), 400); return FALSE;
+        }
+        $rs=$this->user->get_details_by_id($userId);
+        if(empty($rs)){
+            $this->response(array('error' => 'Invalid user index. Please try again!'), 400); return FALSE;
+        }
         $result=array();
         $result['my_orders']=$this->order->get_my_all_orders_with_parent_app($userId);
         $result['order_state_data']=$this->order->get_state(true);
         success_response_after_post_get($result);
     }
     
-    function my_notifications_get(){
-        $userId=$this->get('userId');
+    function my_notifications_post(){
+        $userId=$this->post('userId');
+        if($userId==""){
+            $this->response(array('error' => 'Invalid user index. Please try again!'), 400); return FALSE;
+        }
+        $rs=$this->user->get_details_by_id($userId);
+        if(empty($rs)){
+            $this->response(array('error' => 'Invalid user id. Please try again!'), 400); return FALSE;
+        }
         $result=array();
         $result['my_notications']=$this->user->notification_all_my_app($userId);
+        success_response_after_post_get($result);
+    }
+    
+    function my_notification_details_post(){
+        $userId=$this->post('userId');
+        $notificationId=$this->post('notificationId');
+        if($userId=="" || $notificationId==""){
+            $this->response(array('error' => 'Invalid user index and notification index. Please try again!'), 400); return FALSE;
+        }
+        $rs=$this->user->get_details_by_id($userId);
+        if(empty($rs)){
+            $this->response(array('error' => 'Invalid user id. Please try again!'), 400); return FALSE;
+        }
+        $details=$this->user->notification_single($notificationId,TRUE);
+        if(!$details){
+            $this->response(array('error' => 'Invalid notification id. Please try again!'), 400); return FALSE;
+        }
+        $cond['id'] = $notificationId;
+        $setdata['isRead'] = 1;
+        $this->user->notification_update($cond, $setdata);
+        $result=array();
+        $result['notications_details']=$details;
         success_response_after_post_get($result);
     }
     
