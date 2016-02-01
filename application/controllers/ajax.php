@@ -345,7 +345,7 @@ class Ajax extends MY_Controller{
             echo json_encode(array('result'=>'bad','msg'=>'Please select the at least one Buyer club member!'));die;
         endif;
         
-        $rs=$this->user->is_all_users_exists_for_group_by_admin_id($groupAdminId,$groupUsers);
+        $rs=$this->User_model->is_all_users_exists_for_group_by_admin_id($groupAdminId,$groupUsers);
         if($rs!=FALSE){
             echo json_encode(array('result'=>'bad','msg'=>'All users are already attached with "Buying Club"['.$rs->groupTitle.'],Instead of create another Buying Club please use exist one.'));die;
         }

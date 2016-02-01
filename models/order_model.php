@@ -116,6 +116,33 @@ class Order_model extends CI_Model {
         return $this->result;
 
     }
+    
+    public function get_my_all_orders_with_parent_app($userId){
+        //$this->db->select('a.*, count(c.parrentOrderId) as pid, pd.*, bd.title AS brandTitle, pi.image');
+        $this->db->select('a.*, pd.title, bd.title AS brandTitle, pi.image');
+        $this->db->from($this->_table.' as a');
+        //$this->db->join($this->_table.' as c', 'c.parrentOrderId = a.orderId', 'LEFT OUTER');
+
+        $this->db->join('product as pd', 'pd.productId = a.productId', 'LEFT');
+        $this->db->join('product_brand as pb', 'pd.productId = pb.productId', 'LEFT');
+        $this->db->join('brand as bd', 'pb.brandId = bd.brandId', 'LEFT');
+        $this->db->join('product_image as pi', 'pd.productId = pi.productId', 'LEFT');
+
+       $cond= array('a.userId'=>$user->userId);
+        foreach($cond as $key=>$val){
+                $this->db->where($key,$val);
+        }
+
+        $this->db->where('a.status !=',0);
+        //$this->db->where('c.status !=',0);
+        
+        $this->db->group_by('a.orderId');
+        $this->db->order_by('a.orderId','DESC');
+        $this->result = $this->db->get()->result_array();
+        //echo $str = $this->db->last_query();
+        return $this->result;
+
+    }
 
     public function get_parent_order($orderId){
         $this->db->select('*');

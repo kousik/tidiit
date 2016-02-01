@@ -10,6 +10,7 @@ class Appdata extends REST_Controller {
         $this->load->model('Cms_model','cms');
         $this->load->model('Product_model','product');
         $this->load->model('Category_model','category');
+        $this->load->model('Order_model','order');
         $this->load->model('Country');
     }
     
@@ -739,6 +740,12 @@ class Appdata extends REST_Controller {
         $result['localityArr']=  $this->user->get_all_users_by_product_type_locality($productTypeId,$localityId,$userId);
         $result['ajaxType']='yes';
         success_response_after_post_get($result);
+    }
+    
+    function my_orders_get(){
+        $userId=$this->get('userId');
+        $result=array();
+        $result['my_orders']=$this->order->get_my_all_orders_with_parent_app($userId);
     }
     
     function send_notification($data){
