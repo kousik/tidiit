@@ -33,6 +33,12 @@ class Appdata extends REST_Controller {
             $result['new_arrivals']=$newArrivalsData;
             $result['featured_products']=$newArrivalsData;
             $result['brand']=$this->brand->get_all(TRUE);
+            $userId=$this->get('userId');
+            if($userId!=""){
+                $result['total_cart_item']=$this->user->get_total_cart_item($userId);
+            }else{
+                $result['total_cart_item']=0;
+            }
             //$result['site_product_image_url']=$this->config->item('ProductURL');
             success_response_after_post_get($result);
         }

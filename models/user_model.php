@@ -844,4 +844,9 @@ class User_model extends CI_Model {
             return $rs;
         endif;
     }
+    
+    function get_total_cart_item($userId){
+        $this->db->where('userId',$userId)->where('status',0)->from('order');
+        return $this->db->count_all_results();
+    }
 }
