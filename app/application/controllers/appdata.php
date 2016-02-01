@@ -750,6 +750,13 @@ class Appdata extends REST_Controller {
         success_response_after_post_get($result);
     }
     
+    function my_notifications_get(){
+        $userId=$this->get('userId');
+        $result=array();
+        $result['my_notications']=$this->user->notification_all_my_app($userId);
+        success_response_after_post_get($result);
+    }
+    
     function send_notification($data){
         /*
         $notify['senderId'] = ;

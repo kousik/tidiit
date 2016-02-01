@@ -599,15 +599,13 @@ class User_model extends CI_Model {
      * @param type $receiverId
      * @return type
      */
-    public function notification_all_my_app($offset = null, $limit = null, $cond){
+    public function notification_all_my_app($userId){
         $this->db->from($this->_notification);
+        $cond = array('status'=>'1', 'receiverId'=>$userId);
         foreach($cond as $key=>$val){
                 $this->db->where($key,$val);
         }
         
-        if($limit != null){
-            $this->db->limit($limit, $offset);
-        }
         $this->db->order_by('createDate','desc');
         $query = $this->db->get();
         $this->result = $query->result_array();
