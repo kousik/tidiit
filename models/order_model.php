@@ -128,7 +128,7 @@ class Order_model extends CI_Model {
         $this->db->join('brand as bd', 'pb.brandId = bd.brandId', 'LEFT');
         $this->db->join('product_image as pi', 'pd.productId = pi.productId', 'LEFT');
 
-       $cond= array('a.userId'=>$user->userId);
+       $cond= array('a.userId'=>$userId);
         foreach($cond as $key=>$val){
                 $this->db->where($key,$val);
         }

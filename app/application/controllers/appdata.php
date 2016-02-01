@@ -746,6 +746,8 @@ class Appdata extends REST_Controller {
         $userId=$this->get('userId');
         $result=array();
         $result['my_orders']=$this->order->get_my_all_orders_with_parent_app($userId);
+        $result['order_state_data']=$this->order->get_state(true);
+        success_response_after_post_get($result);
     }
     
     function send_notification($data){
