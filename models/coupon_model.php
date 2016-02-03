@@ -247,15 +247,25 @@ class Coupon_model extends CI_Model{
         endif;
     }
     
-    public function is_coupon_code_used_or_not_for_single($coupon){
-        $coupons = $this->db->from($this->_order_coupon)->where('couponId',$coupon->couponId)->get()->result();
-        //pre($coupons);die;
+    public function is_coupon_code_valid_for_single($coupon){
+        $sql="SELECT * FROM coupon WHERE `couponId`='".$coupon->couponId."' AND CURDATE() BETWEEN `startDate` AND `endDate` AND status=1";
+        $coupons = $this->db->query($sql)->result();
+        //echo $this->db->last_query();die;
         if($coupons):
-            //return true;
-            return FALSE;
-        else:  
             return false;
+        else:  
+            return true;
         endif;
+    }
+    
+    function is_coupon_recently_used($orderIdArr,$couponId){
+        $rs=$this->db->from($this->_order_coupon)->where_in('orderId',$orderIdArr)->where('couponId',$couponId)->get()->result();
+        //echo $this->db->last_query();die;
+        if(count($rs)>0){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
     }
 
 
@@ -288,6 +298,11 @@ class Coupon_model extends CI_Model{
         $this->db->where('orderId',$orderId);
         $this->db->update('order',$DataArr);
         return TRUE;		
+    }
+    
+    function remove_order($orderId){
+        $this->db->where('orderId',$orderId);
+        $this->db->delete($this->_order_coupon); 
     }
 }
 ?>

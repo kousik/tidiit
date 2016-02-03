@@ -635,4 +635,8 @@ class Product_model extends CI_Model {
             $this->db->insert_batch($this->_table_tag,$tagDataArr);
         return true;
     }
+    
+    function get_tax_for_current_location($productId,$taxCol){
+        return $this->db->select('c.'.$taxCol)->from('category c')->join($this->_table_category.' pc','pc.categoryId=c.categoryId')->join($this->_table.' p','p.productId=pc.productId')->where('p.productId',$productId)->get()->row();
+    }
 }

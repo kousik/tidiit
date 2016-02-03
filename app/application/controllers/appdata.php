@@ -793,6 +793,7 @@ class Appdata extends REST_Controller {
         success_response_after_post_get($result);
     }
     
+    
     function send_notification($data){
         /*
         $notify['senderId'] = ;

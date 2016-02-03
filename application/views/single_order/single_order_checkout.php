@@ -7,9 +7,9 @@
  */
 
 echo $html_heading; echo $header;
-$CI =& get_instance();
-$CI->load->model('Product_model');
-$cart = $this->cart->contents();
+//$CI =& get_instance();
+//$CI->load->model('Product_model');
+//$cart = $this->cart->contents();
 //pre($cart);
 //echo key($cart);die;
 ?>
@@ -201,28 +201,50 @@ $cart = $this->cart->contents();
                                             <tbody>
                                                 <?php
                                                 $total = 0;
-                                                foreach ($cart as $item):
-                                                    $total += $item['subtotal'];
-                                                    $productDetailsArr = $this->Product_model->details($item['options']['productId']);
-                                                    $productImageArr = $this->Product_model->get_products_images($item['options']['productId']);
+                                                $tax=0;
+                                                $disc='';
+                                                foreach ($allItemArr as $k): //pre($k);
+                                                    $total += $k['subTotalAmount'];
+                                                    $tax +=$k['taxAmount'];
+                                                    $disc +=$k['discountAmount'];
+                                                    //$productDetailsArr = $this->Product_model->details($item['options']['productId']);
+                                                    //$productImageArr = $this->Product_model->get_products_images($item['options']['productId']);
                                                     ?>
-                                                    <tr id="<?=$item['rowid']?>">
+                                                    <tr id="<?=$k['orderId']?>">
                                                         <td data-th="Product">
                                                             <div class="row">
-                                                                <div class="col-sm-3 product-img"><img src="<?= PRODUCT_DEAILS_SMALL . $productImageArr[0]->image ?>" alt="..." class="img-responsive"></div>
+                                                                <div class="col-sm-3 product-img"><img src="<?=PRODUCT_DEAILS_SMALL.$k['pimage']?>" alt="<?=$k['productTitle']?>" class="img-responsive"></div>
                                                                 <div class="col-sm-9 product-details">
-                                                                    <h4 class="nomargin"><?= $item['name'] ?></h4>
-                                                                    <p><?= $productDetailsArr[0]->shortDescription ?></p>
+                                                                    <h4 class="nomargin"><?= $k['productTitle'] ?></h4>
+                                                                    <p>
+                                                                    <div class="col-sm-12 col-xs-12 float-lt padng-lft-none">
+                                                                        <div class="col-sm-8 col-xs-12 padng-lft-none">
+                                                                            <span class="pull-left pincode-TEXT"> Have a promo code? </span>
+                                                                            <span class="showPromocodeSection" data-eleid="<?=$k['orderId']?>">
+                                                                                <a href="javascript://">Use those</a></span>
+                                                                            <input type="text" id="order-coupon<?=$k['orderId']?>" name="coupon" value="" style="width:55%;<?php if($k['discountAmount']<1){?>display: none;<?php }?>">
+                                                                        </div> 
+                                                                        <div class="col-sm-4 col-xs-12 padng-lft-none padng_right_none ApplyCouponActionSection<?=$k['orderId']?>" <?php if($k['discountAmount']<1){?>style="display: none;"<?php }?>>
+                                                                            <a href="javascript://" class="js-apply-coupon" alt="<?=$k['orderId']?>">Apply</a>
+                                                                            <span class="applyCouponElemtnForRemove<?=$k['orderId']?>">
+                                                                                <?php if($k['discountAmount']>0){?>
+                                                                                <button type="button" class="btn btn-info btn-xs remove-coupon-from-order-<?=$k["orderId"]?>" style="width:75px"><i class="fa fa-tags"></i>COUPON</button><button type="button" class="btn btn-danger btn-xs remove-coupon-from-order remove-coupon-from-order-<?=$k["orderId"]?>" data-id="<?=$k["orderId"]?>"><i class="fa fa-times-circle"></i></button>
+                                                                                <?php }?>
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                        
+                                                                    </p>
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td data-th="Price"><i class="fa fa-rupee"></i> <?= $item['price'] ?></td>
+                                                        <td data-th="Price"><i class="fa fa-rupee"></i> <?= $k['subTotalAmount']/$k['qty'] ?></td>
 
-                                                        <td data-th="Quantity"><?= $item['qty'] ?></td>
-                                                        <td data-th="Subtotal" class="text-center"><i class="fa fa-rupee"></i> <?= number_format($item['subtotal']) ?>.00</td>
+                                                        <td data-th="Quantity"><?= $k['qty'] ?></td>
+                                                        <td data-th="Subtotal" class="text-center"><i class="fa fa-rupee"></i> <?= number_format($k['subTotalAmount']) ?>.00</td>
                                                         <td class="actions" data-th="" align="right">
 
-                                                            <button class="btn btn-danger btn-sm js-single-cart-remove" data-cartid="<?=$item['rowid']?>"><i class="fa fa-trash-o"></i></button>								
+                                                            <button class="btn btn-danger btn-sm js-single-cart-remove" data-cartid="<?=$k['orderId']?>"><i class="fa fa-trash-o"></i></button>								
                                                         </td>
                                                     </tr>
                                                     <?php
@@ -232,11 +254,11 @@ $cart = $this->cart->contents();
                                                 <tr>
                                                     <td colspan="5" valign="middle">
                                                         <div class="pincode-check-enable row">
-                                                            <div class="col-sm-5 col-xs-12"><span class="pull-left pincode-TEXT"> Have a promo code? Apply </span><input type="text" id="order-coupon" name="coupon" value=""></div> 
+                                                            <!--<div class="col-sm-5 col-xs-12"><span class="pull-left pincode-TEXT"> Have a promo code? Apply </span><input type="text" id="order-coupon" name="coupon" value=""></div> 
                                                             <div class="col-sm-1 col-xs-12">
                                                                 <a href="javascript://" class="js-apply-coupon">Apply</a>
-                                                            </div>
-                                                            <div id="pincode-error-tooltip">
+                                                            </div>-->
+                                                            <div id="pincode-error-tooltip" class=" padng_fftn">
                                                                 <p class="pincode-error-text"><i class="fa fa-gift"></i> Gift Wrap Not Available</p>
                                                             </div>
                                                         </div>							
@@ -245,29 +267,23 @@ $cart = $this->cart->contents();
                                             </tbody>
 
                                             <tfoot>
-
-                                                <tr>
-                                                    <td colspan="3">Delivery and payment options can be selected later</td>
-                                                    <td class="text-center">Free</td>
+                                                <tr class="js-show-disc" <?php if($disc==""):?>style="display: none;"<?php endif;?>>
+                                                    <td colspan="3"  class="text-right"><strong>Discount :  -</strong></td>
+                                                    <td class="text-right  js-show-disc-amt"><strong><i class="fa fa-rupee"></i> 
+                                                        <?php 
+                                                        echo  number_format(round($disc,0,PHP_ROUND_HALF_UP),2);
+                                                        ?>
+                                                        </strong></td>
                                                     <td></td>
                                                 </tr>
-<?php 
-if(isset($coupon) && $coupon):
-    $total -= $coupon->amount;
-    $disc = $coupon->amount;
-else:
-    $disc = '0.00';
-endif;?>                                                
-                                                <tr class="js-show-disc" <?php if(!$coupon):?>style="display: none;"<?php endif;?>>
-                                                    <td colspan="3"  class="text-right">Discount :  -</td>
-                                                    <td class="text-center js-show-disc-amt"><i class="fa fa-rupee"></i> <?=$disc?></td>
+                                                <tr>
+                                                    <td colspan="3" class="text-right"><strong>Tax : -</strong></td>
+                                                    <td class="hidden-xs text-right js-tax-total"><strong><i class="fa fa-rupee"></i> <?= number_format(round($tax,0,PHP_ROUND_HALF_UP),2)?></strong></td>
                                                     <td></td>
                                                 </tr>
-
                                                 <tr>
-                                                    <td></td>
-                                                    <td colspan="2" class="hidden-xs"></td>
-                                                    <td class="hidden-xs text-center js-sub-total"><strong>Total <i class="fa fa-rupee"></i> <?=number_format($total)?>.00</strong></td>
+                                                    <td colspan="3" class="text-right"><strong>Total : -</strong></td>
+                                                    <td class="hidden-xs text-right js-sub-total"><strong> <i class="fa fa-rupee"></i> <?=number_format(round(($total-$disc)+$tax,0,PHP_ROUND_HALF_UP),2)?></strong></td>
                                                     <td colspan="2"><a href="javascript://" class="btn btn-success btn-block js-proceed-payment">PROCEED TO PAYMENT <i class="fa fa-angle-right"></i></a></td>
                                                 </tr>
                                             </tfoot>
@@ -300,14 +316,9 @@ endif;?>
                                               </div><!-- /input-group -->
                                         </form>
                                     </div>
-
-
                                     <div class="cart-container-table">
                                         <a href="javascript://" class="btn btn-info btn-block js-order-payment">Pay Now <i class="fa fa-angle-right"></i></a>
                                     </div>
-
-
-
                                 </div>
                             </div>
                         </div>
@@ -325,6 +336,13 @@ endif;?>
 
 <script type="text/javascript">
     jQuery(document).ready(function(){
+        jQuery('.showPromocodeSection').click(function(){
+            var eleID=jQuery(this).attr('data-eleid');
+            
+            jQuery('#order-coupon'+eleID).show();
+            jQuery('.ApplyCouponActionSection'+eleID).show();
+            jQuery(this).html('');
+        });
     myJsMain.my_checkout_shipping_address();
     jQuery('#countryId').on('change',function(){
            if(jQuery(this).val()==""){
@@ -404,15 +422,18 @@ endif;?>
       jQuery("body").delegate('a.js-apply-coupon', "click", function(e){
             e.preventDefault();
             myJsMain.commonFunction.showPleaseWait();
-            var obj = $('input[id="order-coupon"]');            
+            var orderId=jQuery(this).attr('alt');
+            var obj = $('input[id="order-coupon'+orderId+'"]');            
             var cpn = obj.val();
             if(!cpn){ 
+                myJsMain.commonFunction.hidePleaseWait();
                 $('div.js-message').html('<div class="alert alert-danger">Please enter your promo code!</div>');
              $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
             } else {                
                 $.post( myJsMain.baseURL+'shopping/ajax_single_order_set_promo/', {
                     orderId: obj.attr('data-order'),
-                    promocode: cpn
+                    promocode: cpn,
+                    orderId: orderId
                 },
                 function(data){ 
                     myJsMain.commonFunction.hidePleaseWait();
@@ -428,8 +449,11 @@ endif;?>
                     
                     if(data.content){
                         $('tr.js-show-disc').show();
-                        $('td.js-show-disc-amt').html('<i class="fa fa-rupee"></i> '+data.content.amount);
-                        $('.js-sub-total').html('<strong>Total <i class="fa fa-rupee"></i> '+data.content.orderAmount+'</strong>');
+                        $('td.js-show-disc-amt').html('<strong><i class="fa fa-rupee"></i> '+data.content.couponAmount+'</strong>');
+                        $('.js-tax-total').html('<strong><i class="fa fa-rupee"></i> '+data.content.tax+'</strong>');
+                        $('.js-sub-total').html('<strong><i class="fa fa-rupee"></i> '+data.content.grandTotal+'</strong>');
+                        var htmlCoupon = "<button type=\"button\" class=\"btn btn-info btn-xs remove-coupon-from-order-"+orderId+"\" style=\"width:75px\"><i class=\"fa fa-tags\"></i>"+cpn+"</button><button type=\"button\" class=\"btn btn-danger btn-xs remove-coupon-from-order remove-coupon-from-order-"+orderId+"\" data-id=\""+orderId+"\"><i class=\"fa fa-times-circle\"></i></button>";
+                        jQuery('.applyCouponElemtnForRemove'+orderId).html(htmlCoupon);
                         obj.val('');
                     }
                     
@@ -437,6 +461,24 @@ endif;?>
             }
         });
         
+        jQuery("body").delegate('.remove-coupon-from-order', "click", function(e){
+            orderId= jQuery(this).attr('data-id');
+            e.preventDefault();
+            myJsMain.commonFunction.showPleaseWait();
+            $.post( myJsMain.baseURL+'shopping/ajax_single_order_remove_promo/', {
+                    orderId: orderId
+                },
+                function(data){ 
+                    myJsMain.commonFunction.hidePleaseWait();
+                    if(data.msg=='ok'){
+                        jQuery('.applyCouponElemtnForRemove'+orderId).html('');
+                        location.href=myJsMain.baseURL+'shopping/single-checkout/';
+                    }else{
+                            $('div.js-message').html('<div class="alert alert-danger">Unknown error arises to remove the Coupon Code.</div>');
+                            $('div.js-message').fadeIn(300,function() { setTimeout( '$("div.js-message").fadeOut(300)', 15000 ); });
+                    }
+                }, 'json' ); 
+        });
         
         jQuery("body").delegate('a.js-proceed-payment', "click", function(e){
             e.preventDefault();

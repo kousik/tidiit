@@ -115,6 +115,7 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
         }
         $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        $countryShortName='IN';
         if($countryShortName==FALSE){
             $this->response(array('error' => 'Please provide valid latitude and longitude!'), 400); return FALSE;
         }

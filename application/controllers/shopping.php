@@ -162,6 +162,7 @@ class Shopping extends MY_Controller{
             }
         }
         $data['CatArr']=$menuArr;
+        $this->session->set_userdata('TotalItemInCart',1);
         $user = $this->_get_current_user_details();
         $my_groups = $this->User_model->get_my_groups();
         $data['myGroups']=$my_groups;
@@ -680,12 +681,14 @@ class Shopping extends MY_Controller{
      * 
      */
     function remove_group_cart(){
+        $user=  $this->_get_current_user_details();
         $cartId = $this->input->post('cartId',TRUE);
         $orderId = $this->input->post('orderId',TRUE);
-        $this->_remove_cart($cartId);
-        
+        $this->Order_model->remove_order_from_cart($cartId,$user->userId);
+        //$this->_remove_cart($cartId);
+        $data=array();
         $data['status'] = 0;
-        $this->Order_model->delete($orderId);
+        //$this->Order_model->delete($orderId);
         ob_start();
         echo true;
         $result['contents'] = ob_get_contents();
@@ -1145,63 +1148,74 @@ class Shopping extends MY_Controller{
         if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
             redirect(BASE_URL.'404_override');
         endif;
+        
+        //$cartDataArr=array('productId'=>$productId,'userId'=>$user->userId,'productPriceId'=>$productPriceId);
         $product = $this->Product_model->details($productId);
         $product = $product[0];
         $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
-        $is_cart_update = false;
-        $cart = $this->cart->contents();
-        if($cart): 
-            foreach ($cart as $item):            
-                if(($item['id'] == $productId) && ($item['options']['orderType'] == 'SINGLE')):
-                    $is_cart_update = $item['rowid'];                    
-                endif;
-            endforeach;
-        endif;
+        //$is_cart_update = false;
+        $countryShortName=$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');
+        $currentLocationTaxDetails=$this->Product_model->get_tax_for_current_location($productId,$countryShortName.'_tax');
+        $taxCol=$countryShortName.'_tax';
+        $taxPercentage=$currentLocationTaxDetails->$taxCol;
+        $tax=$prod_price_info->price*$taxPercentage/100;
         
-        //Order first step
         $order_data = array();
         $order_data['orderType'] = 'SINGLE';
         $order_data['productId'] = $productId;
         $order_data['productPriceId'] = $productPriceId;
         $order_data['orderDate'] = date('Y-m-d H:i:s');
         $order_data['status'] = 0;
+        $order_data['userId'] = $user->userId;
+        $order_data['productQty'] = $prod_price_info->qty;
+        $order_data['subTotalAmount'] = $prod_price_info->price;
+        $order_data['taxAmount'] = $tax;
+        $order_data['orderAmount'] = $prod_price_info->price+$tax;
+        $order_data['orderDevicetype'] = 3;
         
-        //Cart first step
-        $cart_data = array();
-        $cart_data['id'] = $productId;
-        $cart_data['name'] = $product->title;
-        $single_price = ($prod_price_info->price/$prod_price_info->qty);
-        $cart_data['price'] = number_format($single_price, 2, '.', '');
-        $cart_data['qty'] = $prod_price_info->qty;
-        $order_data['productPriceId'] = $productPriceId;
-        $cart_data['options'] = $order_data;
+        $orderinfo = array();
+        $orderinfo['pdetail'] = $product;
+        $orderinfo['priceinfo']=$prod_price_info;
+        $productImageArr =$this->Product_model->get_products_images($productId);
+        $orderinfo['pimage'] = $productImageArr[0];            
+        $userShippingDataDetails = $this->User_model->get_user_shipping_information($user->userId,TRUE);
+        $orderinfo['shipping'] = $userShippingDataDetails[0];
+        //pre($order_data);die;
+        $order_data['orderInfo'] = base64_encode(serialize($orderinfo));
         
-        //==============================================//
-        if($is_cart_update):            
-            $this->_remove_cart($is_cart_update);
-            $this->_add_to_cart($cart_data);            
-        else:
-            $this->_add_to_cart($cart_data);
-        endif;        
+        $qrCodeFileName=time().'-'.rand(1, 50).'.png';
+        $order_data['qrCodeImageFile']=$qrCodeFileName;
+        $order_data['IP']=  $this->input->ip_address();
+        $orderId=$this->Order_model->add($order_data);
+        //$data['orderId']=$orderId;
+        $params=array();
+        $params['data']=$orderId;
+        $params['savename']=$this->config->item('ResourcesPath').'qr_code/'.$qrCodeFileName;
+        $this->tidiitrcode->generate($params);
+        $this->session->set_userdata('TotalItemInCart',$this->User_model->get_total_cart_item($user->userId));
+        //return $orderId.'-'.$qrCodeFileName;        
         
         //redirect(BASE_URL.'product/details/'.base64_encode($productId));
         redirect(BASE_URL.'shopping/my-cart');
     }
     
     function single_order_check_out(){
-        if(count($this->cart->contents()) < 1):
-            redirect(BASE_URL);
-        endif;
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $user = $this->_get_current_user_details(); 
-        if($this->session->userdata('coupon')):
-            $coupon = $this->session->userdata('coupon');
-        else:    
-            $coupon = new stdClass();
-            $coupon->amount = '0.00';
+        $allItemArr=$this->Order_model->get_all_cart_item($user->userId);
+        if(count($allItemArr) < 1):
+            redirect(BASE_URL);
         endif;
-        $data['coupon'] = $coupon;
+        
+        foreach($allItemArr AS $k){
+            $orderInfo=  unserialize(base64_decode($k['orderInfo']));
+            $k['productTitle']=$orderInfo['pdetail']->title;
+            $k['qty']=$orderInfo['priceinfo']->qty;
+            $k['pimage']=$orderInfo['pimage']->image;
+            $newAllItemArr[]=$k;
+        }
+        $data['allItemArr']=$newAllItemArr;
         $userShippingDataDetails=$this->User_model->get_user_shipping_information();
         if(empty($userShippingDataDetails)){
             $userShippingDataDetails[0]=new stdClass();
@@ -1239,14 +1253,10 @@ class Shopping extends MY_Controller{
      * 
      */
     function remove_single_cart_processing(){
-        $cartId = $this->input->post('cartId',TRUE);        
-        $this->_remove_cart($cartId);
-        if(count($this->cart->contents()) > 0):
-            $result['reload'] = true;
-        else:
-            $this->session->unset_userdata('coupon');
-            $result['reload'] = false;
-        endif;
+        $user=  $this->_get_current_user_details();
+        $cartId = $this->input->post('cartId',TRUE);
+        $this->Order_model->remove_order_from_cart($cartId,$user->userId);
+        
         $result['contents'] = true;
 	echo json_encode( $result );
 	die;
@@ -1257,6 +1267,7 @@ class Shopping extends MY_Controller{
      */
     function ajax_single_order_set_promo(){
         $promocode = $this->input->post('promocode',TRUE);
+        $orderId = $this->input->post('orderId',TRUE);
         
         $coupon = $this->Coupon_model->is_coupon_code_exists($promocode);
         if(!$coupon):
@@ -1265,30 +1276,72 @@ class Shopping extends MY_Controller{
             die;
         endif;
         
-        $ordercoupon = $this->Coupon_model->is_coupon_code_used_or_not_for_single($coupon);
+        $ordercoupon = $this->Coupon_model->is_coupon_code_valid_for_single($coupon);
         
         if($ordercoupon):
-            $result['error'] = "Promo code already used!";
+            $result['error'] = "Promo code has expired.";
             echo json_encode( $result );
             die;
         else:
             $data = array();
-            $ctotal = $this->cart->total();
+            $user = $this->_get_current_user_details(); 
+            //$ctotal = $this->cart->total();
+            $allItemArr=$this->Order_model->get_all_cart_item($user->userId);
+            $orderIdArr=array();
+            foreach($allItemArr As $k){
+                $orderIdArr[]=$k['orderId'];
+            }
+            if($this->Coupon_model->is_coupon_recently_used($orderIdArr,$coupon->couponId)==TRUE){
+                $result['error'] = "Promo code has alrady used in your current session.";
+                echo json_encode( $result );
+                die;
+            }
+            $orderDetails=$this->Order_model->details($orderId);
+            //pre($orderDetails);die;
+            $ctotal=0;
+            foreach($allItemArr AS $k){ //pre($k);die;
+                $ctotal +=$k['subTotalAmount'];
+            }
             if($coupon->type == 'percentage'):
-                $amt = ($coupon->amount/100)*$ctotal;
+                $amt = ($coupon->amount/100)*$orderDetails[0]->subTotalAmount;
                 $amt1 = number_format($amt, 2, '.', '');
-                $data['amount'] = substr($amt1, 0, -3);
+                $data['couponAmount'] = substr($amt1, 0, -3);
             elseif($coupon->type == 'fix'):
-                $data['amount'] = $coupon->amount;
+                $data['couponAmount'] = $coupon->amount;
             endif;
-            $data['orderAmount'] = $ctotal - $coupon->amount;
             
+            $tax=0;
+            $grandTotal=0;
+            $couponAmount=0;
+            $countryShortName=$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');
+            foreach($allItemArr AS $k){
+                if($k['orderId']==$orderId){
+                    $currentLocationTaxDetails=$this->Product_model->get_tax_for_current_location($k['productId'],$countryShortName.'_tax');
+                    $taxCol=$countryShortName.'_tax';
+                    $taxPercentage=$currentLocationTaxDetails->$taxCol;
+                    $orderAmountBeforeTax=$k['subTotalAmount']-$data['couponAmount'];
+                    $cTax=$orderAmountBeforeTax*$taxPercentage/100;
+                    $orderAmount=$orderAmountBeforeTax+$cTax;
+                    $orderDataArr=array('taxAmount'=>$cTax,'discountAmount'=>$data['couponAmount'],'orderAmount'=>$orderAmount);
+                    $this->Order_model->update($orderDataArr,$k['orderId']);
+                    $this->Order_model->tidiit_creat_order_coupon(array('orderId'=>$k['orderId'],'couponId'=>$coupon->couponId,'amount'=>$data['couponAmount']));
+                    $couponAmount +=$data['couponAmount'];
+                }else{
+                    $cTax=$k['taxAmount'];
+                    $orderAmount=$k['orderAmount'];
+                    $couponAmount +=$k['discountAmount'];
+                }
+                
+                $tax +=$cTax;
+                $grandTotal +=$orderAmount;
+            }
             
-            $cpn = new stdClass();
-            $cpn->amount = $coupon->amount;
-            $cpn->couponId = $coupon->couponId;
-            $this->session->set_userdata('coupon', $cpn);
+            $data['tax'] = number_format(round($tax,0,PHP_ROUND_HALF_UP),2);
+            //$grandTotal=round($ctotal - $data['couponAmount']+round($tax,0,PHP_ROUND_HALF_UP),0,PHP_ROUND_HALF_UP);
+            $data['grandTotal'] = number_format(round($grandTotal,0,PHP_ROUND_HALF_UP),2);
+            
             $result['msg'] = "Promo code has been applied successfully!";
+            $data['couponAmount'] = number_format(round($couponAmount,0,PHP_ROUND_HALF_UP),2);
             $result['content'] = $data;
             echo json_encode( $result );
             die;
@@ -1306,112 +1359,75 @@ class Shopping extends MY_Controller{
             redirect(BASE_URL.'shopping/my-cart');
         }
         $user = $this->_get_current_user_details(); 
-        $cart = $this->cart->contents();
+        
+        //$cart = $this->cart->contents();
+        $allItemArr=$this->Order_model->get_all_cart_item($user->userId);
+        if(empty($allItemArr)){
+            $this->session->set_flashdata("message","There is not item in truck for payment.");
+            redirect(BASE_URL.'shopping/my-cart');
+        }
         $order = array();
         $orderid = array();
-        if($this->session->userdata('coupon')):
-            $coupon = $this->session->userdata('coupon');
-        else:    
-            $coupon = new stdClass();
-            $coupon->amount = 0;
-            $coupon->couponId = 0;
-        endif;
         
-        $totalsingleitem  = 0;
-        foreach ($this->cart->contents() as $citem):            
-            if($citem['options']['orderType'] == 'SINGLE'):
-                $totalsingleitem = $totalsingleitem + 1;                    
-            endif;
-        endforeach;
+        $totalsingleitem  = count($allItemArr);
+        //foreach ($allItemArr as $k):            
+            //if($citem['options']['orderType'] == 'SINGLE'):
+                //$totalsingleitem = $totalsingleitem + 1;                    
+            //endif;
+        //endforeach;
         
-        $coupon_price = 0;
-        if($coupon->couponId && $totalsingleitem > 1):
-            $coupon_price = $coupon->amount / $totalsingleitem;
-        elseif($coupon->couponId && $totalsingleitem == 1):
-            $coupon_price = $coupon->amount;            
-        endif;
+        $countryShortName=$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');
         $paymentGatewayAmount=0;
         $allOrderArray=array();
         $allOrderInfoArray=array();
-        foreach ($cart as $item):  
-            if($item['options']['orderType'] == 'SINGLE'):
-                $order['orderType'] = 'SINGLE';
-                $order['productId'] = $item['options']['productId'];
-                $order['productPriceId'] = $item['options']['productPriceId'];
-                $order['orderDate'] = date('Y-m-d H:i:s');
-                $order['orderUpdatedate'] = date('Y-m-d H:i:s');
-                $order['productQty'] = $item['qty'];
-                $order['userId'] = $this->session->userdata('FE_SESSION_VAR');
-                $order['orderAmount'] = $item['subtotal'] - $coupon_price;
-                $paymentGatewayAmount+=$order['orderAmount'];
-                $order['subTotalAmount'] = $item['subtotal'];   
-                $order['discountAmount'] = $coupon_price;
-                if($paymentType=='sod')
-                    $order['status'] = 2; 
-                else
-                    $order['status'] = 8; 
-                
-                $orderinfo = array();
-                $mail_template_data = array();
-                $pro = $this->Product_model->details($order['productId']);
-                $orderinfo['pdetail'] = $pro[0];
-                $orderinfo['priceinfo'] = $this->Product_model->get_products_price_details_by_id($order['productPriceId']);
-                $productImageArr =$this->Product_model->get_products_images($order['productId']);
-                $orderinfo['pimage'] = $productImageArr[0];            
+        foreach ($allItemArr as $kOrder):  
+            $order=array();
+            $paymentGatewayAmount+=$kOrder['orderAmount'];
+            if($paymentType=='sod')
+                $order['status'] = 2; 
+            else
+                $order['status'] = 8; 
 
-                $userShippingDataDetails = $this->User_model->get_user_shipping_information();
-                $orderinfo['shipping'] = $userShippingDataDetails[0];
-                //$userBillingDataDetails=$this->User_model->get_billing_address();
-                //$orderinfo['billing'] = $userBillingDataDetails[0];                
-                $order['orderInfo'] = base64_encode(serialize($orderinfo));
-                //$orderId = $this->Order_model->add($order);
-                $qrCodeFileName=time().'-'.rand(1, 50).'.png';
-                $order['qrCodeImageFile']=$qrCodeFileName;
-                $order['IP']=  $this->input->ip_address();
-                $orderId=$this->Order_model->add($order);
-                //$data['orderId']=$orderId;
-                $params=array();
-                $params['data']=$orderId;
-                $params['savename']=$this->config->item('ResourcesPath').'qr_code/'.$qrCodeFileName;
-                $this->tidiitrcode->generate($params);
-                $orderinfo['orderId']=$orderId;
-                $allOrderArray[]=$orderId;
-                
-                $orderid['orderId'] = $orderId;
-                if($coupon->couponId):
-                    $cdata = array();
-                    $cdata['orderId'] = $orderId;
-                    $cdata['couponId'] = $coupon->couponId;
-                    $cdata['amount'] = $coupon_price;
-                    $this->Order_model->tidiit_creat_order_coupon($cdata);
-                endif;
-                
+            $orderinfo = array();
+            $mail_template_data = array();
+            $pro = $this->Product_model->details($kOrder['productId']);
+            $orderinfo['pdetail'] = $pro[0];
+            $orderinfo['priceinfo'] = $this->Product_model->get_products_price_details_by_id($kOrder['productPriceId']);
+            $productImageArr =$this->Product_model->get_products_images($kOrder['productId']);
+            $orderinfo['pimage'] = $productImageArr[0];
+            $orderinfo['tax']=$kOrder['taxAmount'];
+            $orderinfo['discountAmount']=$kOrder['discountAmount'];
+
+            $userShippingDataDetails = $this->User_model->get_user_shipping_information();
+            $orderinfo['shipping'] = $userShippingDataDetails[0];
+            //$userBillingDataDetails=$this->User_model->get_billing_address();
+            //$orderinfo['billing'] = $userBillingDataDetails[0];                
+            $order['orderInfo'] = base64_encode(serialize($orderinfo));
+            //$orderId = $this->Order_model->add($order);
+            $this->Order_model->update($order,$kOrder['orderId']);
+            $orderinfo['orderId']=$kOrder['orderId'];
+            $allOrderArray[]=$kOrder['orderId'];
+
+            $orderid['orderId'] = $kOrder['orderId'];
+            
+            if($paymentType=='sod'):
+                $this->Product_model->update_product_quantity($kOrder['productId'],$kOrder['productQty']);
+                $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
+                $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$kOrder['orderId'];
+            endif;
+            $allOrderInfoArray[$kOrder['orderId']]['orderInfo']=$orderinfo;
+            $allOrderInfoArray[$kOrder['orderId']]['order']=$kOrder;
+            $allOrderInfoArray[$kOrder['orderId']]['cartId']=$kOrder['orderId'];
+            //Send Email message
+            $recv_email = $user->email;
+            if($orderid):
                 if($paymentType=='sod'):
-                    $this->Product_model->update_product_quantity($order['productId'],$order['productQty']);
-                    $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
-                    $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$orderId;
-                    $this->_remove_cart($item['rowid']);
-                    
-                    /*// sendin SMS to allmember
-                    $sms_data=array('nMessage'=>'You have successfull placed an order TIDIIT-OD-'.$orderId.' for '.$pro[0]->title.'.More details about this notifiaction,Check '.BASE_URL,
-                        'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
-                        'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER');
-                    send_sms_notification($sms_data);*/
-                endif;
-                $allOrderInfoArray[$orderId]['orderInfo']=$orderinfo;
-                $allOrderInfoArray[$orderId]['order']=$order;
-                $allOrderInfoArray[$orderId]['cartId']=$item['rowid'];
-                //Send Email message
-                $recv_email = $user->email;
-                if($orderid):
-                    if($paymentType=='sod'):
-                        $settlementOnDeliveryId=$this->Order_model->add_sod(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
-                        $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'single'));
-                        $mail_template_view_data=$this->load_default_resources();
-                        $mail_template_view_data['single_order_success']=$mail_template_data;
-                        $this->_global_tidiit_mail($recv_email, "Your Tidiit order - TIDIIT-OD-".$orderId.' has placed successfully', $mail_template_view_data,'single_order_success');
-                        $this->_sent_single_order_complete_mail($orderId);
-                    endif;
+                    $settlementOnDeliveryId=$this->Order_model->add_sod(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+                    $this->Order_model->add_payment(array('orderId'=>$kOrder['orderId'],'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'single'));
+                    $mail_template_view_data=$this->load_default_resources();
+                    $mail_template_view_data['single_order_success']=$mail_template_data;
+                    $this->_global_tidiit_mail($recv_email, "Your Tidiit order - TIDIIT-OD-".$kOrder['orderId'].' has placed successfully', $mail_template_view_data,'single_order_success');
+                    $this->_sent_single_order_complete_mail($kOrder['orderId']);
                 endif;
             endif;
         endforeach;
@@ -1435,6 +1451,21 @@ class Shopping extends MY_Controller{
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $user = $this->_get_current_user_details();         
+        
+        $allItemArr=$this->Order_model->get_all_cart_item($user->userId);
+        $countryShortName=$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');
+        $newAllItemArr=array();
+        foreach($allItemArr AS $k){
+            $fieldName=$countryShortName.'_tax';
+            $taxPercentage=$k[$fieldName];
+            $orderInfo=  unserialize(base64_decode($k['orderInfo']));
+            $k['productTitle']=$orderInfo['pdetail']->title;
+            $k['qty']=$orderInfo['priceinfo']->qty;
+            $k['pimage']=$orderInfo['pimage']->image;
+            $newAllItemArr[]=$k;
+        }
+        //pre($newAllItemArr);die;
+        $data['allItemArr']=$newAllItemArr;
         $data['user']= $user;
         $data['userMenuActive']= '';
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
@@ -2292,4 +2323,53 @@ class Shopping extends MY_Controller{
         return TRUE;
     }
     
+    function check_old_order_type(){
+        $orderType=  $this->input->post('orderType',TRUE);
+        $user=  $this->_get_current_user_details();
+        if(count($user)==0){
+            echo json_encode(array('contents'=>'-1'));
+            die;
+        }else{
+            $rs=$this->Order_model->has_order_with_order_type($user->userId);
+            if(empty($rs)){
+                echo json_encode(array('contents'=>'1')); die;
+            }else{
+                if($orderType=='single'){
+                    if(strtolower($rs->orderType)=='single'){
+                        echo json_encode(array('contents'=>'1')); die;
+                    }else{
+                        echo json_encode(array('contents'=>'0')); die;
+                    }
+                }else{
+                    if(strtolower($rs->orderType)=='single'){
+                        echo json_encode(array('contents'=>'2')); die;
+                    }else{
+                        echo json_encode(array('contents'=>'1')); die;
+                    }
+                }   
+            }
+        }
+    }
+    
+    function ajax_single_order_remove_promo(){
+        $orderId=$this->input->post('orderId',TRUE);
+        $orderDetails=$this->Order_model->details($orderId);
+        $countryShortName=$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');
+        $fieldName=$countryShortName.'_tax';
+        $currentLocationTaxDetails=$this->Product_model->get_tax_for_current_location($orderDetails[0]->productId,$countryShortName.'_tax');
+        $taxCol=$countryShortName.'_tax';
+        $taxPercentage=$currentLocationTaxDetails->$taxCol;
+        $tax=$orderDetails[0]->subTotalAmount*$taxPercentage/100;
+        
+        $orderDataArr=array();
+        $orderDataArr['taxAmount'] = $tax;
+        $orderDataArr['orderAmount'] = $orderDetails[0]->subTotalAmount+$tax;
+        $orderDataArr['discountAmount'] ='';
+        $this->Order_model->update($orderDataArr,$orderId);
+        
+        $this->Coupon_model->remove_order($orderId);
+        $result['msg'] = "ok";
+        echo json_encode( $result );
+        die;
+    }
 }

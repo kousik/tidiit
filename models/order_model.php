@@ -46,6 +46,9 @@ class Order_model extends CI_Model {
 
         $this->db->where('orderId', $orderId);
         $this->db->delete($this->_order_coupon); 
+        
+        $this->db->where('userId',$this->session->userdata('FE_SESSION_VAR'))->where('status',0)->from('order');
+        $this->session->set_userdata('TotalItemInCart',$this->db->count_all_results());
         return TRUE;
     }
 
@@ -205,7 +208,9 @@ class Order_model extends CI_Model {
 
             $this->db->where_in('orderId',$orderId);
             $this->db->delete($this->_cart);		
-
+            
+            $this->db->where('userId',$this->session->userdata('FE_SESSION_VAR'))->where('status',0)->from('order');
+            $this->session->set_userdata('TotalItemInCart',$this->db->count_all_results());
             return TRUE;
     }
 
@@ -385,6 +390,8 @@ class Order_model extends CI_Model {
     }
 
     public function tidiit_creat_order_coupon($data){
+        $this->db->where('orderId',$data['orderId']);
+        $this->delete($this->_order_coupon);
         if($this->db->insert($this->_order_coupon, $data)){
             return $this->db->insert_id();
         }else{
@@ -454,8 +461,14 @@ class Order_model extends CI_Model {
     }
     
     function remove_order_from_cart($orderId,$userId){
+        $this->db->where('orderId',$orderId);
+        $this->delete($this->_order_coupon);
+        
         $this->db->where_in('orderId',$orderId)->where('userId',$userId)->where('status',0);
         $this->db->delete($this->_table);
+        
+        $this->db->where('userId',$userId)->where('status',0)->from('order');
+        $this->session->set_userdata('TotalItemInCart',$this->db->count_all_results());
     }
     
     function add_to_wish_list($dataArr){
@@ -494,5 +507,14 @@ class Order_model extends CI_Model {
         }else{
             return FALSE;
         }
+    }
+    
+    function has_order_with_order_type($userId){
+        $this->db->where('userId',$userId)->where('status <',2);
+        return $this->db->from($this->_table)->get()->row();
+    }
+    
+    function get_coupon_details_by_order_id($orderId){
+        return $this->db->from('coupon c')->join('order_coupon oc','oc.couponId=c.couponId')->where('oc.orderId',$orderId)->get()->row();
     }
 }

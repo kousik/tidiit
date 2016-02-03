@@ -78,7 +78,7 @@ jQuery(document).ready(function(){
         $(this).closest('div').next('.spec-body').toggle("slow");
     });
     
-    jQuery('.add-to-truck-process-btn').click(function(){
+    jQuery('#add-cart-button-id').click(function(){
         var productPriceIdData=jQuery('input:radio[name=selectPackege]:checked').val();
         if(productPriceIdData==undefined){
             myJsMain.commonFunction.tidiitAlert('Tidiit Validate System',"Please select price for the product.",140);
@@ -90,15 +90,47 @@ jQuery(document).ready(function(){
                 $( "a.signIn" ).trigger( "click" );
                 return false;
             }
-            jQuery('#prorductPriceId').val(productPriceIdData);
-            var order_type=jQuery('input:radio[name=ordertype]:checked').val();
-            if(order_type=='group'){
-                jQuery('#add_to_truck_process_form').attr('action','<?php echo BASE_URL.'shopping/add-group-order/';?>');
-            }else{
-                jQuery('#add_to_truck_process_form').attr('action','<?php echo  BASE_URL.'shopping/add-order/';?>');
-            }
-            jQuery('#add_to_truck_process_form').submit();
-        }    
+            $('.multiselect-modal-sm').modal('show');
+        }
+    });
+    
+    jQuery('.add-to-truck-process-btn').click(function(){
+        var productPriceIdData=jQuery('input:radio[name=selectPackege]:checked').val();
+        jQuery('#prorductPriceId').val(productPriceIdData);
+        var order_type=jQuery('input:radio[name=ordertype]:checked').val();
+        myJsMain.commonFunction.showPleaseWait();
+        jQuery.post( myJsMain.baseURL+'shopping/check_old_order_type/', {
+                orderType: order_type
+            },
+            function(data){ 
+                myJsMain.commonFunction.hidePleaseWait();
+                if(data.contents=="1"){
+                    /// allow to process the product to cart
+                    if(order_type=='group'){
+                        jQuery('#add_to_truck_process_form').attr('action','<?php echo BASE_URL.'shopping/add-group-order/';?>');
+                    }else{
+                        jQuery('#add_to_truck_process_form').attr('action','<?php echo  BASE_URL.'shopping/add-order/';?>');
+                    }
+                    jQuery('#add_to_truck_process_form').submit();
+                }else if(data.contents=="0"){ 
+                    /// show error message
+                    if(order_type=='single'){
+                        myJsMain.commonFunction.tidiitAlert('Tidiit Validate System','Your had selected last uncompleted order is "Buying Club Order".So you can not process "Single Order" Now.Set the item to your wish list and process teh order latter.',140);
+                    }else{
+                        myJsMain.commonFunction.tidiitAlert('Tidiit Validate System','your last "Buying Club Order" is yet not completd.So you can not process "Buying Club Order" Now.Set the item to your wish list and process teh order latter.',140);
+                    }
+                }else if(data.contents=="2"){ 
+                    /// show error message
+                    myJsMain.commonFunction.tidiitAlert('Tidiit Validate System','Your "Single Order" yet not completed.So you can not process "Buying Club Order" Now.Set the item to your wish list and process teh order latter.',140);
+                }else if(data.contents=="-1"){ 
+                    myJsMain.commonFunction.tidiitAlert('Tidiit Validate System',"Please sign in or sign up first for buy this product.",140);
+                    $('.multiselect-modal-sm').modal('hide');
+                    $( "a.signIn" ).trigger( "click" );
+                    return false;
+                }
+                
+            }, 'json' );
+            
         
     });
 });  
@@ -212,7 +244,7 @@ jQuery(document).ready(function(){
             <hr class="divider-horizontal">
             <div id="pdp-buynow-rp" class="container-fluid buy-button-container reset-padding">
               <div class="row-fluid">               
-                <div id="add-cart-button-id" class="col-xs-8 btn btn-primary btn-xl rippleWhite buyLink marR15" data-toggle="modal" data-target=".multiselect-modal-sm"> <span class="intialtext">Add to Truck</span> </div>                
+                <div id="add-cart-button-id" class="col-xs-8 btn btn-primary btn-xl rippleWhite buyLink marR15"> <span class="intialtext">Add to Truck</span> </div>                
               </div>
             </div>
           </div>
@@ -704,7 +736,7 @@ jQuery(document).ready(function(){
                         </ul>
                      </li>
                      
-                     <!--<li><div class="product-spec">Hardware</div>
+                     <!--<li><idv class="product-spec">Hardware</div>
                         <ul>
                         	<table width="100%" cellspacing="2" cellpadding="0" border="0">
                             <tbody>

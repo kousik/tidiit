@@ -7,6 +7,7 @@ class Ajax extends MY_Controller{
         $this->load->model('Product_model');
         $this->load->model('Category_model');
         $this->load->model('Siteconfig_model');
+        $this->load->model('Order_model');
         //parse_str($_SERVER['QUERY_STRING'],$_GET);
         $this->load->library('cart');
         $this->db->cache_off();
@@ -98,6 +99,10 @@ class Ajax extends MY_Controller{
                 //$this->session->set_userdata('FE_SESSION_USERNAME_VAR',$UserName);
                 $this->session->set_userdata('FE_SESSION_VAR_TYPE','seller');
                 $this->session->set_userdata('FE_SESSION_UDATA',$DataArr[0]);
+                
+                $this->db->where('userId',$DataArr[0]->userId)->where('status',0)->from('order');
+                $this->session->set_userdata('TotalItemInCart',$this->db->count_all_results());
+                
                 $this->User_model->add_login_history(array('userId'=>$DataArr[0]->userId,'IP'=>$this->input->ip_address()));
                 $redirect_url = $this->input->post('redirect_url',TRUE);
                 echo json_encode(array('result'=>'good','url'=>$redirect_url?$redirect_url:$_SERVER['HTTP_REFERER']));die; 
@@ -673,6 +678,21 @@ class Ajax extends MY_Controller{
     
     function show_cart(){
         $data=array();
+        $user = $this->_get_current_user_details();         
+        
+        $allItemArr=$this->Order_model->get_all_cart_item($user->userId);
+        //$countryShortName=$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');
+        $newAllItemArr=array();
+        foreach($allItemArr AS $k){
+            $orderInfo=  unserialize(base64_decode($k['orderInfo']));
+            $k['productTitle']=$orderInfo['pdetail']->title;
+            $k['qty']=$orderInfo['priceinfo']->qty;
+            $k['pimage']=$orderInfo['pimage']->image;
+            $newAllItemArr[]=$k;
+        }
+        //pre($newAllItemArr);die;
+        $data['allItemArr']=$newAllItemArr;
+        $data['user']= $user;
         $ret=$this->load->view('cart',$data,true);
         echo $ret;die;
     }
