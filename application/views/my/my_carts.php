@@ -68,9 +68,9 @@ echo $html_heading; echo $header;
                                                      $total = 0;
                                                      $tax=0;
                                                 foreach($allItemArr as $k):
-                                                    /*if(isset($item['options']['orderType']) && $item['options']['orderType'] == 'SINGLE'):
-                                                        $productDetailsArr =  $this->Product_model->details($item['options']['productId']);
-                                                        $productImageArr =$this->Product_model->get_products_images($item['options']['productId']);*/
+                                                    if(isset($k['orderType']) && $k['orderType'] == 'SINGLE'):
+                                                        //$productDetailsArr =  $this->Product_model->details($item['options']['productId']);
+                                                        //$productImageArr =$this->Product_model->get_products_images($item['options']['productId']);*/
                                                     ?>
                                                     <tr id="<?=$k['orderId']?>">
                                                         <td data-th="Product">
@@ -95,7 +95,7 @@ echo $html_heading; echo $header;
                                                     <?php 
                                                     $total += $k['subTotalAmount'];
                                                     $tax += $k['taxAmount'];
-                                                    //endif;
+                                                    endif;
                                                     endforeach; ?>
                                                 </tbody>
 
@@ -136,8 +136,8 @@ echo $html_heading; echo $header;
                                                 <tbody>
                                                     <?php 
                                                 foreach($allItemArr as $k):
-                                                    /*if(isset($item['options']['orderType']) && $item['options']['orderType'] == 'GROUP'):
-                                                        $productDetailsArr =  $this->Product_model->details($item['options']['productId']);
+                                                    if(isset($k['orderType']) && $k['orderType'] == 'GROUP'):
+                                                        /*$productDetailsArr =  $this->Product_model->details($item['options']['productId']);
                                                         $productImageArr =$this->Product_model->get_products_images($item['options']['productId']);*/
                                                     ?>
                                                     <tr id="<?=$k['orderId']?>">
@@ -161,7 +161,7 @@ echo $html_heading; echo $header;
                                                             <a href="<?=BASE_URL;?>shopping/checkout/<?=base64_encode($k['orderId']*226201)?>" class="btn btn-success btn-sm"> Checkout <i class="fa fa-angle-right"></i></a>
                                                         </td>
                                                     </tr>
-                                                    <?php //endif;
+                                                    <?php endif;
                                                     endforeach;?>
                                                 </tbody>
 

@@ -35,19 +35,19 @@ class Shopping extends MY_Controller{
         $product = $this->Product_model->details($productId);
         $product = $product[0];
         $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
-        $is_cart_update = false;
-        $cart = $this->cart->contents();
+        //$is_cart_update = false;
+        //$cart = $this->cart->contents();
         
         
         //$this->cart->destroy();
-        if($cart): 
+        /*if($cart): 
             foreach ($cart as $item):            
                 if(($item['id'] == $productId)):
                     $data['orderId'] = $item['options']['orderId'];
                     $is_cart_update = $item['rowid'];                    
                 endif;
             endforeach;
-        endif;
+        endif;*/
         
         //Order first step
         $order_data = array();
@@ -58,13 +58,13 @@ class Shopping extends MY_Controller{
         $order_data['status'] = 0;
         
         //Cart first step
-        $cart_data = array();
+        /*$cart_data = array();
         $cart_data['id'] = $productId;
         $cart_data['name'] = $product->title;
         $single_price = ($prod_price_info->price/$prod_price_info->qty);
         $cart_data['price'] = number_format($single_price, 2, '.', '');
         
-        $cart_data['qty'] = $prod_price_info->qty;
+        $cart_data['qty'] = $prod_price_info->qty;*/
         
         if(!isset($data['orderId'])):
             $order_data['productQty'] = 0;
@@ -83,7 +83,7 @@ class Shopping extends MY_Controller{
         //$data['orderId'] = 0;
         $order_data['orderId'] = $data['orderId'];
         $order_data['productPriceId'] = $productPriceId;
-        $cart_data['options'] = $order_data;
+        //$cart_data['options'] = $order_data;
         
         
         $data['order'] = $this->Order_model->get_single_order_by_id($data['orderId']);
