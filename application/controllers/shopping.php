@@ -37,7 +37,7 @@ class Shopping extends MY_Controller{
         $is_cart_update = false;
         if($cart): 
             foreach ($cart as $item):            
-                if(($item->productId == $productId)):
+                if(($item->productId == $productId) && ( $item->orderType== "GROUP")):
                     $data['orderId'] = $item->orderId;
                     $is_cart_update = true;
                 endif;
@@ -724,7 +724,7 @@ class Shopping extends MY_Controller{
         $cart = $this->Order_model->tidiit_get_user_orders($user->userId, 0);
         if($cart):
             foreach ($cart as $item):
-                if(($item->productId == $productId)):
+                if(($item->productId == $productId) && ( $item->orderType== "GROUP")):
                     $data['orderId'] = $item->orderId;
                     $is_cart_update = true;
                 endif;
