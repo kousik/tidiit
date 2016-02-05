@@ -752,7 +752,16 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Invalid user index. Please try again!'), 400); return FALSE;
         }
         $result=array();
-        $result['my_orders']=$this->order->get_my_all_orders_with_parent_app($userId);
+        $myOrders=$this->order->get_my_all_orders_with_parent_app($userId);
+        $myOrdersArr=array();
+        foreach($myOrders AS $k){
+            $k['orderDate']=date('d-m-Y H:i:s',  strtotime($k['orderDate']));
+            $k['orderUpdatedate']=date('d-m-Y H:i:s',  strtotime($k['orderUpdatedate']));
+            $k['cancelDate']=date('d-m-Y H:i:s',  strtotime($k['cancelDate']));
+            $myOrdersArr[]=$k;
+        }
+        //pre($myOrdersArr);die;
+        $result['my_orders']=$myOrdersArr;
         $result['order_state_data']=$this->order->get_state(true);
         success_response_after_post_get($result);
     }
@@ -793,6 +802,25 @@ class Appdata extends REST_Controller {
         success_response_after_post_get($result);
     }
     
+    function my_order_details_post(){
+        $orderId=$this->post('orderId');
+        $result=array();
+        $orderDetails=$this->order->details($orderId,TRUE);
+        if(empty($orderDetails)){
+            $this->response(array('error' => 'Invalid order index. Please try again!'), 400); return FALSE;
+        }
+        //pre($orderDetails);die;
+        $orderInfo=unserialize(base64_decode($orderDetails[0]['orderInfo']));
+        $orderInfo = json_decode(json_encode($orderInfo), true);
+        $orderDetails[0]['orderDate']=  date('d-m-Y H:i:s',strtotime($orderDetails[0]['orderDate']));
+        $orderDetails[0]['orderUpdatedate']=  date('d-m-Y H:i:s',strtotime($orderDetails[0]['orderUpdatedate']));
+        $orderDetails[0]['cancelDate']=  date('d-m-Y H:i:s',strtotime($orderDetails[0]['cancelDate']));
+        pre($orderDetails);die;
+        $result['orderDetails']=  $orderDetails;
+        $result['orderInfo']=  $orderInfo;
+        $result['order_state_data']=$this->order->get_state(true);
+        success_response_after_post_get($result);
+    }
     
     function send_notification($data){
         /*
