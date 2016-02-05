@@ -454,10 +454,14 @@ class Order_model extends CI_Model {
         return $this->db->join('logistics As l','odr.logisticsId=l.logisticsId')->where('odr.orderId',$orderId)->get()->row();
     }
     
-    function get_all_cart_item($userId){
+    function get_all_cart_item($userId,$orderType=''){
         $this->db->select('o.*,c.IN_tax,c.KE_tax')->from($this->_table.' AS o');
         $this->db->join('product_category pc','pc.productId=o.productId')->join('category c','pc.categoryId=c.categoryId');
-        return $this->db->where('o.userId',$userId)->where('o.status',0)->get()->result_array();
+        $this->db->where('o.userId',$userId)->where('o.status',0);
+        if($orderType!='')
+            $this->db->where('orderType', strtoupper($orderType));
+        
+        return $this->db->get()->result_array();
     }
     
     function remove_order_from_cart($orderId,$userId){
@@ -486,14 +490,17 @@ class Order_model extends CI_Model {
         return TRUE;
     }
     
-    public function get_incomplete_order_by_user($userId){
+    public function get_incomplete_order_by_user($userId,$orderType=''){
         //$this->db->limit(1);
         $this->db->order_by('orderUpdatedate','DESC');
         $this->db->select('o.*,p.paymentType,s.email AS sellerEmail,s.firstName AS sellerFirstName,s.lastName AS sellerLastName,s1.email AS buyerEmail,s1.firstName AS buyerFirstName,s1.lastName AS buyerLastName,s1.mobile AS buyerMobileNo');
         $this->db->from($this->_table.' o');
         $this->db->join('product_seller ps','o.productId=ps.productId')->join('user s','ps.userId=s.userId')->join('user s1','o.userId=s1.userId');
         $this->db->join('payment p','o.orderId=p.orderId','left');
-        $order = $this->db->where('o.userId',$userId)->where('o.status',0)->get()->result(); 
+        $this->db->where('o.userId',$userId)->where('o.status',0);
+        if($orderType!='')
+            $this->db->where('o.orderType',  strtoupper($orderType));
+        $this->db->get()->result(); 
         //echo $str = $this->db->last_query();
         //print_r($orderData);
         //$order = !empty($orderData)?$orderData[0]:false;

@@ -38,6 +38,12 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => 'Please provide valid product index!'), 400); return FALSE;
         }
         
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        $countryShortName='IN';
+        if($countryShortName==FALSE){
+            $this->response(array('error' => 'Please provide valid latitude and longitude!'), 400); return FALSE;
+        }
+        
         $cartDataArr=array('productId'=>$productId,'userId'=>$userId,'productPriceId'=>$productPriceId,'latitude'=>$latitude,'longitude'=>$longitude,
             'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID);
         $msg=$this->add_to_cart($cartDataArr);
@@ -52,6 +58,14 @@ class Shopping extends REST_Controller {
         $prod_price_info = $this->product->get_products_price_details_by_id($cartDataArr['productPriceId']);
         $is_cart_update = false;
         
+        $countryShortName=  get_counry_code_from_lat_long($cartDataArr['latitude'], $cartDataArr['longitude']);
+        $countryShortName='IN';
+        
+        $currentLocationTaxDetails=$this->product->get_tax_for_current_location($cartDataArr['productId'],$countryShortName.'_tax');
+        $taxCol=$countryShortName.'_tax';
+        $taxPercentage=$currentLocationTaxDetails->$taxCol;
+        $tax=$prod_price_info->price*$taxPercentage/100;
+        
         $order_data = array();
         $order_data['orderType'] = 'SINGLE';
         $order_data['productId'] = $cartDataArr['productId'];
@@ -61,21 +75,14 @@ class Shopping extends REST_Controller {
         $order_data['userId'] = $cartDataArr['userId'];
         $order_data['productQty'] = $prod_price_info->qty;
         $order_data['subTotalAmount'] = $prod_price_info->price;
-        $order_data['orderAmount'] = $prod_price_info->price;
+        $order_data['taxAmount'] = $tax;
+        $order_data['orderAmount'] = $prod_price_info->price+$tax;
         $order_data['orderDevicetype'] = 3;
         $order_data['appSource'] = $cartDataArr['deviceType'];
         $order_data['longitude'] = $cartDataArr['longitude'];
         $order_data['latitude'] = $cartDataArr['latitude'];
         $order_data['deviceToken'] = $cartDataArr['deviceToken'];
         $order_data['udid'] = $cartDataArr['UDID'];
-        
-        
-        /*$cartArr = array();
-        $cartArr['id'] = $productId;
-        $cart_data['name'] = $product->title;
-        $single_price = ($prod_price_info->price/$prod_price_info->qty);
-        $cart_data['price'] = number_format($single_price, 2, '.', '');
-        $cart_data['qty'] = $prod_price_info->qty;*/
         
         $orderinfo = array();
         $orderinfo['pdetail'] = $product;
@@ -122,14 +129,12 @@ class Shopping extends REST_Controller {
         $allItemArr=$this->order->get_all_cart_item($userId);
         $newAllItemArr=array();
         foreach($allItemArr AS $k){
-            $fieldName=$countryShortName.'_tax';
-            $taxPercentage=$k[$fieldName];
+            //$fieldName=$countryShortName.'_tax';
+            //$taxPercentage=$k[$fieldName];
             $orderInfo=  unserialize(base64_decode($k['orderInfo']));
             $k['productTitle']=$orderInfo['pdetail']->title;
             $k['qty']=$orderInfo['priceinfo']->qty;
-            $k['price']=$orderInfo['priceinfo']->price;
             $k['pimage']=$orderInfo['pimage']->image;
-            $k['tax']=$orderInfo['priceinfo']->price*$taxPercentage/100;
             $newAllItemArr[]=$k;
         }
         //pre($newAllItemArr);die;
@@ -201,7 +206,112 @@ class Shopping extends REST_Controller {
     }
     
     function single_order_coupon_set_post(){
+        $this->load->model('Coupon_model','coupon');
+        $promocode=$this->post('couponCode',TRUE);
+        $orderId = $this->post('orderId',TRUE);
+        $userId = $this->post('userId',TRUE);
+        $latitude = $this->post('latitude',TRUE);
+        $longitude = $this->post('longitude',TRUE);
+        $coupon = $this->coupon->is_coupon_code_exists($promocode);
+        if(!$coupon):
+            $this->response(array('error' => 'Invalid promo code or promo code has expaired!!'), 400); return FALSE;
+        endif;
         
+        $ordercoupon = $this->coupon->is_coupon_code_valid_for_single($coupon);
+        
+        if($ordercoupon):
+            $this->response(array('error' => 'Invalid promo code or promo code has expaired!!'), 400); return FALSE;
+        else:
+           $userDetails=  $this->user->get_details_by_id($userId);
+            //$ctotal = $this->cart->total();
+            $allItemArr=$this->order->get_all_cart_item($userDetails[0]->userId,'single');
+            $orderIdArr=array();
+            foreach($allItemArr As $k){
+                $orderIdArr[]=$k['orderId'];
+            }
+            if($this->coupon->is_coupon_recently_used($orderIdArr,$coupon->couponId)==TRUE){
+                $this->response(array('error' => 'Promo code has alrady used in your current session.'), 400); return FALSE;
+            }
+            $orderDetails=$this->order->details($orderId);
+            if(empty($orderDetails)){
+                $this->response(array('error' => 'Invalid order index provided.'), 400); return FALSE;
+            }
+            //pre($orderDetails);die;
+            $ctotal=0;
+            foreach($allItemArr AS $k){ //pre($k);die;
+                $ctotal +=$k['subTotalAmount'];
+            }
+            if($coupon->type == 'percentage'):
+                $amt = ($coupon->amount/100)*$orderDetails[0]->subTotalAmount;
+                $amt1 = number_format($amt, 2, '.', '');
+                $data['couponAmount'] = substr($amt1, 0, -3);
+            elseif($coupon->type == 'fix'):
+                $data['couponAmount'] = $coupon->amount;
+            endif;
+            $tax=0;
+            $grandTotal=0;
+            $couponAmount=0;
+            $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+            //$countryShortName='IN';
+            foreach($allItemArr AS $k){
+                if($k['orderId']==$orderId){
+                    $currentLocationTaxDetails=$this->product->get_tax_for_current_location($k['productId'],$countryShortName.'_tax');
+                    $taxCol=$countryShortName.'_tax';
+                    $taxPercentage=$currentLocationTaxDetails->$taxCol;
+                    $orderAmountBeforeTax=$k['subTotalAmount']-$data['couponAmount'];
+                    $cTax=$orderAmountBeforeTax*$taxPercentage/100;
+                    $orderAmount=$orderAmountBeforeTax+$cTax;
+                    $orderDataArr=array('taxAmount'=>$cTax,'discountAmount'=>$data['couponAmount'],'orderAmount'=>$orderAmount);
+                    $this->order->update($orderDataArr,$k['orderId']);
+                    $this->order->tidiit_creat_order_coupon(array('orderId'=>$k['orderId'],'couponId'=>$coupon->couponId,'amount'=>$data['couponAmount']));
+                    $couponAmount +=$data['couponAmount'];
+                }else{
+                    $cTax=$k['taxAmount'];
+                    $orderAmount=$k['orderAmount'];
+                    $couponAmount +=$k['discountAmount'];
+                }
+                
+                $tax +=$cTax;
+                $grandTotal +=$orderAmount;
+            }
+            
+            $data['tax'] = number_format(round($tax,0,PHP_ROUND_HALF_UP),2);
+            //$grandTotal=round($ctotal - $data['couponAmount']+round($tax,0,PHP_ROUND_HALF_UP),0,PHP_ROUND_HALF_UP);
+            $data['grandTotal'] = number_format(round($grandTotal,0,PHP_ROUND_HALF_UP),2);
+            
+            $result['message'] = "Promo code has been applied successfully!";
+            $data['couponAmount'] = number_format(round($couponAmount,0,PHP_ROUND_HALF_UP),2);
+            $result['content'] = $data;
+            success_response_after_post_get($result);
+        endif;
+    }
+    
+    function single_order_coupon_unset_post(){
+        $this->load->model('Coupon_model','coupon');
+        $orderId=$this->post('orderId',TRUE);
+        $latitude = $this->post('latitude',TRUE);
+        $longitude = $this->post('longitude',TRUE);
+        $orderDetails=$this->order->details($orderId);
+        if(empty($orderDetails)){
+            $this->response(array('error' => 'Invalid order index provided.'), 400); return FALSE;
+        }
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        //$countryShortName='IN';
+        $currentLocationTaxDetails=$this->product->get_tax_for_current_location($orderDetails[0]->productId,$countryShortName.'_tax');
+        $taxCol=$countryShortName.'_tax';
+        $taxPercentage=$currentLocationTaxDetails->$taxCol;
+        $tax=$orderDetails[0]->subTotalAmount*$taxPercentage/100;
+        
+        $orderDataArr=array();
+        $orderDataArr['taxAmount'] = $tax;
+        $orderDataArr['orderAmount'] = $orderDetails[0]->subTotalAmount+$tax;
+        $orderDataArr['discountAmount'] ='';
+        $this->order->update($orderDataArr,$orderId);
+        
+        $this->coupon->remove_order($orderId);
+        $result['message'] = "Selected promo code removed form selected item.";
+        $result['ajaxType']='yes';
+        success_response_after_post_get($result);
     }
     
     function single_order_sod_payment_post(){
@@ -216,7 +326,7 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => 'Please provide user index,latitude,longitude,device id,device token !'), 400); return FALSE;
         }
         
-        $allIncompleteOrders= $this->order->get_incomplete_order_by_user($userId);
+        $allIncompleteOrders= $this->order->get_incomplete_order_by_user($userId,'single');
         $defaultResources=load_default_resources();
         $user=$this->user->get_details_by_id($userId)[0];
         foreach ($allIncompleteOrders As $k){

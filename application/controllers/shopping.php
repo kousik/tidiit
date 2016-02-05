@@ -1171,7 +1171,7 @@ class Shopping extends MY_Controller{
         $order_data['subTotalAmount'] = $prod_price_info->price;
         $order_data['taxAmount'] = $tax;
         $order_data['orderAmount'] = $prod_price_info->price+$tax;
-        $order_data['orderDevicetype'] = 3;
+        $order_data['orderDevicetype'] = 1;
         
         $orderinfo = array();
         $orderinfo['pdetail'] = $product;
@@ -1203,7 +1203,7 @@ class Shopping extends MY_Controller{
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $user = $this->_get_current_user_details(); 
-        $allItemArr=$this->Order_model->get_all_cart_item($user->userId);
+        $allItemArr=$this->Order_model->get_all_cart_item($user->userId,'single');
         if(count($allItemArr) < 1):
             redirect(BASE_URL);
         endif;
@@ -1286,7 +1286,7 @@ class Shopping extends MY_Controller{
             $data = array();
             $user = $this->_get_current_user_details(); 
             //$ctotal = $this->cart->total();
-            $allItemArr=$this->Order_model->get_all_cart_item($user->userId);
+            $allItemArr=$this->Order_model->get_all_cart_item($user->userId,'single');
             $orderIdArr=array();
             foreach($allItemArr As $k){
                 $orderIdArr[]=$k['orderId'];
@@ -1361,7 +1361,7 @@ class Shopping extends MY_Controller{
         $user = $this->_get_current_user_details(); 
         
         //$cart = $this->cart->contents();
-        $allItemArr=$this->Order_model->get_all_cart_item($user->userId);
+        $allItemArr=$this->Order_model->get_all_cart_item($user->userId,'single');
         if(empty($allItemArr)){
             $this->session->set_flashdata("message","There is not item in truck for payment.");
             redirect(BASE_URL.'shopping/my-cart');
@@ -1453,11 +1453,8 @@ class Shopping extends MY_Controller{
         $user = $this->_get_current_user_details();         
         
         $allItemArr=$this->Order_model->get_all_cart_item($user->userId);
-        $countryShortName=$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');
         $newAllItemArr=array();
         foreach($allItemArr AS $k){
-            $fieldName=$countryShortName.'_tax';
-            $taxPercentage=$k[$fieldName];
             $orderInfo=  unserialize(base64_decode($k['orderInfo']));
             $k['productTitle']=$orderInfo['pdetail']->title;
             $k['qty']=$orderInfo['priceinfo']->qty;
