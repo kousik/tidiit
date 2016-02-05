@@ -21,6 +21,10 @@ class Category extends MY_Controller{
                     $data=$this->_get_tobe_login_template($SEODataArr);
                 }
                 $data['is_loged_in'] = $this->is_loged_in();
+                
+                $data['feedback']=$this->load->view('feedback',$data,TRUE);
+                $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
+                
                 if($this->Category_model->has_chield(base64_decode($idStrArr[0])))
                     $this->load->view('category_details',$data);
                 else
@@ -127,6 +131,10 @@ class Category extends MY_Controller{
             $data['brands'] = $this->display_brands_view($total_rows['brands'],$brnd);
             echo json_encode($data);die;
         endif;
+        
+        $data['feedback']=$this->load->view('feedback',$data,TRUE);
+        $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
+        
         $this->load->view('category_details',$data);
     }
     
@@ -140,6 +148,10 @@ class Category extends MY_Controller{
         else:
             $data=$this->_get_tobe_login_template($SEODataArr);
         endif;
+        
+        $data['feedback']=$this->load->view('feedback',$data,TRUE);
+        $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
+        
         $this->load->view('product_default_message',$data);
     }
     

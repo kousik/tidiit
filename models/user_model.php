@@ -847,4 +847,9 @@ class User_model extends CI_Model {
         $this->db->where('userId',$userId)->where('status',0)->from('order');
         return $this->db->count_all_results();
     }
+    
+    function add_feedback($dataArray){
+        $this->db->insert('feedback',$dataArray);
+        return $this->db->insert_id();
+    }
 }

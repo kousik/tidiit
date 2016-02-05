@@ -47,6 +47,9 @@ class Index extends MY_Controller{
         $data['brandZoneArr']=$this->Brand_model->get_all();
         $data['sellerDataArr']=$this->Faq_model->get_all('seller');
         $data['buyerDataArr']=$this->Faq_model->get_all('buyer');
+        $data['buyerDataArr']=$this->Faq_model->get_all('buyer');
+        $data['feedback']=$this->load->view('feedback',$data,TRUE);
+        $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
         
         $this->load->view('home',$data);
     }
@@ -108,6 +111,9 @@ class Index extends MY_Controller{
         $data['sellerDataArr']=$this->Faq_model->get_all('seller');
         $data['buyerDataArr']=$this->Faq_model->get_all('buyer');
         
+        $data['feedback']=$this->load->view('feedback',$data,TRUE);
+        $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
+        
         $this->load->view('delivery',$data);
     }
     
@@ -145,6 +151,10 @@ class Index extends MY_Controller{
         }
         $this->load->model('Faq_model');
         $data['faqDataArr']=  $this->Faq_model->get_all('seller');
+        
+        $data['feedback']=$this->load->view('feedback',$data,TRUE);
+        $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
+        
         $this->load->view('faq_seller',$data);
     }
     
@@ -157,6 +167,10 @@ class Index extends MY_Controller{
         }
         $this->load->model('Faq_model');
         $data['faqDataArr']=  $this->Faq_model->get_all('buyer');
+        
+        $data['feedback']=$this->load->view('feedback',$data,TRUE);
+        $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
+        
         $this->load->view('faq_buyer',$data);
     }
     
@@ -168,6 +182,10 @@ class Index extends MY_Controller{
             $data=$this->_get_tobe_login_template($SEODataArr);
         }
         $data['brandZoneArr']=$this->Brand_model->get_all();
+        
+        $data['feedback']=$this->load->view('feedback',$data,TRUE);
+        $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
+        
         $this->load->view('brand_zone',$data);
     }
 }

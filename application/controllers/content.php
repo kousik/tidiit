@@ -30,6 +30,10 @@ class Content extends MY_Controller{
             }
             
             $data['contentDetails']=$contentDetails;
+            
+            $data['feedback']=$this->load->view('feedback',$data,TRUE);
+            $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
+            
             $this->load->view('content',$data);
         }
     }

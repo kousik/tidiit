@@ -1,7 +1,8 @@
 <?php echo $html_heading; echo $header;?>
 </div>
 </header>
-
+<?php echo $common_how_it_works;?>
+<?php echo $feedback;?>
 <article>
         	<div class="container inner_page">
               <div class="row">

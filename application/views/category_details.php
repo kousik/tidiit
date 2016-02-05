@@ -11,6 +11,8 @@
 <script type="text/javascript">
     //jQuery(document).ready(function(){});
 </script>
+<?php echo $common_how_it_works;?>
+<?php echo $feedback;?>
 <article>
   <div class="container">
     <div class="categrs_bannr">

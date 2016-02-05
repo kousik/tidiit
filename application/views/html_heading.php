@@ -52,6 +52,8 @@
             <?php else: ?>
                 myJsMain.isMobile='no';
             <?php endif;?>    
+            myJsMain.SecretTextSetAjaxURL='<?php echo BASE_URL.'ajax/reset_secret/'?>';
+            myJsMain.CaptchaCookeName='<?php echo $this->config->item('CAPTCHA_COOKIE_NAME');?>';     
         //]]>
         manualClick=false;
         </script>
