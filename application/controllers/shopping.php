@@ -26,28 +26,32 @@ class Shopping extends MY_Controller{
         
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
-        $user = $this->_get_current_user_details(); 
+        $user = $this->_get_current_user_details();
+        $cart = $this->Order_model->tidiit_get_user_orders($user->userId, 0);//print_r($cart);die;//$user->userId
         $productId = $this->input->post('productId');
         $productPriceId = $this->input->post('productPriceId');
         if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
             redirect(BASE_URL.'404_override');
         endif;
-        $product = $this->Product_model->details($productId);
-        $product = $product[0];
         $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
-        //$is_cart_update = false;
-        //$cart = $this->cart->contents();
-        
-        
-        //$this->cart->destroy();
-        /*if($cart): 
+        $is_cart_update = false;
+        if($cart): 
             foreach ($cart as $item):            
-                if(($item['id'] == $productId)):
-                    $data['orderId'] = $item['options']['orderId'];
-                    $is_cart_update = $item['rowid'];                    
+                if(($item->productId == $productId) && ( $item->orderType== "GROUP")):
+                    $data['orderId'] = $item->orderId;
+                    $is_cart_update = true;
                 endif;
             endforeach;
-        endif;*/
+        endif;
+
+
+        $orderinfo = [];
+        $pro = $this->Product_model->details($productId);
+        $orderinfo['pdetail'] = $pro[0];
+        $orderinfo['priceinfo'] = $prod_price_info;
+        $productImageArr = $this->Product_model->get_products_images($productId);
+        $orderinfo['pimage'] = $productImageArr[0];
+
         
         //Order first step
         $order_data = array();
@@ -56,45 +60,31 @@ class Shopping extends MY_Controller{
         $order_data['productPriceId'] = $productPriceId;
         $order_data['orderDate'] = date('Y-m-d H:i:s');
         $order_data['status'] = 0;
-        
-        //Cart first step
-        /*$cart_data = array();
-        $cart_data['id'] = $productId;
-        $cart_data['name'] = $product->title;
-        $single_price = ($prod_price_info->price/$prod_price_info->qty);
-        $cart_data['price'] = number_format($single_price, 2, '.', '');
-        
-        $cart_data['qty'] = $prod_price_info->qty;*/
-        
+        $order_data['orderInfo'] = base64_encode(serialize($orderinfo));
+        //Add Order
         if(!isset($data['orderId'])):
             $order_data['productQty'] = 0;
-            $order_data['userId'] = $this->session->userdata('FE_SESSION_VAR');
+            $order_data['userId'] = $user->userId;
             $qrCodeFileName=time().'-'.rand(1, 50).'.png';
             $order_data['qrCodeImageFile']=$qrCodeFileName;
             $order_data['IP']=  $this->input->ip_address();
-            $orderId=$this->Order_model->add($order_data);
+            $orderId = $this->Order_model->add($order_data);
             $data['orderId']=$orderId;
             $params=array();
-            $params['data']=$orderId;
-            $params['savename']=$this->config->item('ResourcesPath').'qr_code/'.$qrCodeFileName;
+            $params['data'] = $orderId;
+            $params['savename'] = $this->config->item('ResourcesPath').'qr_code/'.$qrCodeFileName;
             $this->tidiitrcode->generate($params);
         endif;
-        
-        //$data['orderId'] = 0;
+
         $order_data['orderId'] = $data['orderId'];
         $order_data['productPriceId'] = $productPriceId;
-        //$cart_data['options'] = $order_data;
-        
-        
         $data['order'] = $this->Order_model->get_single_order_by_id($data['orderId']);
         //==============================================//
         if($is_cart_update):
-            //$cart_data['rowid'] = $is_cart_update;
-            $this->_remove_cart($is_cart_update); //echo $is_cart_update;
-            $this->_add_to_cart($cart_data);
-            //$this->_update_single_cart($cart_data);
             if(isset($data['orderId'])):
-                $order_update = $order_data;
+                $order_update['orderInfo'] = base64_encode(serialize($orderinfo));
+                $order_update['orderAmount'] = $prod_price_info->price;
+                $order_update['subTotalAmount'] = $prod_price_info->price;
                 unset($order_update['orderId']);
                 unset($order_update['orderDate']);
                 $order_update['orderUpdatedate'] = date('Y-m-d H:i:s');
@@ -102,28 +92,12 @@ class Shopping extends MY_Controller{
                 //print_r($order_update);
                 $this->Order_model->update($order_update,$data['orderId']);
             endif;
-        else:
-            $this->_add_to_cart($cart_data);
         endif;
-        
-        
-        
-        $cart = $this->cart->contents();
-        
-        $data['rowid'] = false; 
-        if($cart): 
-            foreach ($cart as $item):            
-                if(($data['orderId'] == $item['options']['orderId'])):
-                    $data['rowid'] = $item['rowid'];                    
-                endif;
-            endforeach;
-        endif;
-        
+
         $a = $this->_get_available_order_quantity($data['orderId']);
         $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
+
         //=============================================//
-        
-        
         if($data['order']->groupId):
             $data['group'] = $this->User_model->get_group_by_id($data['order']->groupId);
             $data['groupId'] = $data['order']->groupId;
@@ -131,40 +105,13 @@ class Shopping extends MY_Controller{
             $data['group'] = false;
             $data['groupId'] = '';
         endif;
-        
+        $my_groups = $this->User_model->get_my_groups();
+        $data['CatArr'] = $this->_get_user_select_cat_array();
         $data['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
         $data['totalQty'] = $prod_price_info->qty;
         $data['priceInfo'] = $prod_price_info;
         $data['userMenuActive']=7;
-        $data['countryDataArr']=$this->Country->get_all1();
-        $menuArr=array();
-        $TopCategoryData=$this->Category_model->get_top_category_for_product_list();
-        //$AllButtomCategoryData=$this->Category_model->buttom_category_for_product_list();
-        foreach($TopCategoryData as $k){
-            $SubCateory=$this->Category_model->get_subcategory_by_category_id($k->categoryId);
-            if(count($SubCateory)>0){
-                foreach($SubCateory as $kk => $vv){
-                    $menuArr[$vv->categoryId]=$k->categoryName.' -> '.$vv->categoryName;
-                    $ThirdCateory=$this->Category_model->get_subcategory_by_category_id($vv->categoryId);
-                    if(count($ThirdCateory)>0){
-                        foreach($ThirdCateory AS $k3 => $v3){
-                            // now going for 4rath
-                            $menuArr[$v3->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName;
-                            $FourthCateory=$this->Category_model->get_subcategory_by_category_id($v3->categoryId);
-                            if(count($FourthCateory)>0){ //print_r($v3);die;
-                                foreach($FourthCateory AS $k4 => $v4){
-                                    $menuArr[$v4->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName.' -> '.$v4->categoryName;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        $data['CatArr']=$menuArr;
-        $this->session->set_userdata('TotalItemInCart',1);
-        $user = $this->_get_current_user_details();
-        $my_groups = $this->User_model->get_my_groups();
+        $data['countryDataArr'] = $this->Country->get_all1();
         $data['myGroups']=$my_groups;
         $data['user']=$user;
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
@@ -181,87 +128,23 @@ class Shopping extends MY_Controller{
         endif;
         $orderId = base64_decode($orderId);
         $orderId = $orderId/226201;
-        
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
-        $user = $this->_get_current_user_details(); 
-        
+        $user = $this->_get_current_user_details();
         $data['order'] = $this->Order_model->get_single_order_by_id($orderId);
-        
         $productId = $data['order']->productId;
         $productPriceId = $data['order']->productPriceId;
         if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
             redirect(BASE_URL.'404_override');
         endif;
+        $data['orderId'] = $data['order']->orderId;
         $product = $this->Product_model->details($productId);
         $product = $product[0];
         $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
-        $is_cart_update = false;
-        $cart = $this->cart->contents();
-        
-        
-        //$this->cart->destroy();
-        if($cart): 
-            foreach ($cart as $item):            
-                if(($item['id'] == $productId)):
-                    $data['orderId'] = $item['options']['orderId'];
-                    $is_cart_update = $item['rowid'];                    
-                endif;
-            endforeach;
-        endif;
-        
-        //Order first step
-        $order_data = array();
-        $order_data['orderType'] = 'GROUP';
-        $order_data['productId'] = $productId;
-        $order_data['productPriceId'] = $productPriceId;
-        $order_data['orderDate'] = date('Y-m-d H:i:s');
-        $order_data['status'] = 0;
-        
-        //Cart first step
-        $cart_data = array();
-        $cart_data['id'] = $productId;
-        $cart_data['name'] = $product->title;
-        $single_price = ($prod_price_info->price/$prod_price_info->qty);
-        $cart_data['price'] = number_format($single_price, 2, '.', '');
-        $cart_data['qty'] = $prod_price_info->qty;
-        
-        if(!isset($data['orderId'])):
-            $order_data['productQty'] = 0;
-            //$data['orderId']=$this->Order_model->add($order_data);
-            $qrCodeFileName=time().'-'.rand(1, 50).'.png';
-            $order_data['qrCodeImageFile']=$qrCodeFileName;
-            $order_data['IP']=  $this->input->ip_address();
-            $orderId=$this->Order_model->add($order_data);
-            $data['orderId']=$orderId;
-            $params=array();
-            $params['data']=$orderId;
-            $params['savename']=$this->config->item('ResourcesPath').'qr_code/'.$qrCodeFileName;
-            $this->tidiitrcode->generate($params);
-        endif;
-        
-        //$data['orderId'] = 0;
-        $order_data['orderId'] = $data['orderId'];
-        $order_data['productPriceId'] = $productPriceId;
-        $cart_data['options'] = $order_data;
-        
-        //==============================================//
-        
-        $cart = $this->cart->contents();
-        
-        $data['rowid'] = false; 
-        if($cart): 
-            foreach ($cart as $item):            
-                if(($data['orderId'] == $item['options']['orderId'])):
-                    $data['rowid'] = $item['rowid'];                    
-                endif;
-            endforeach;
-        endif;
         $a = $this->_get_available_order_quantity($data['orderId']);
         $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
         
         //=============================================//
-        
         if($data['order']->groupId):
             $data['group'] = $this->User_model->get_group_by_id($data['order']->groupId);
             $data['groupId'] = $data['order']->groupId;
@@ -269,41 +152,16 @@ class Shopping extends MY_Controller{
             $data['group'] = false;
             $data['groupId'] = 0;
         endif;
-        
+
+        $my_groups = $this->User_model->get_my_groups();
+        $data['CatArr'] = $this->_get_user_select_cat_array();
         $data['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
         $data['totalQty'] = $prod_price_info->qty;
         $data['priceInfo'] = $prod_price_info;
         $data['userMenuActive']=7;
         $data['countryDataArr']=$this->Country->get_all1();
-        $menuArr=array();
-        $TopCategoryData=$this->Category_model->get_top_category_for_product_list();
-        //$AllButtomCategoryData=$this->Category_model->buttom_category_for_product_list();
-        foreach($TopCategoryData as $k){
-            $SubCateory=$this->Category_model->get_subcategory_by_category_id($k->categoryId);
-            if(count($SubCateory)>0){
-                foreach($SubCateory as $kk => $vv){
-                    $menuArr[$vv->categoryId]=$k->categoryName.' -> '.$vv->categoryName;
-                    $ThirdCateory=$this->Category_model->get_subcategory_by_category_id($vv->categoryId);
-                    if(count($ThirdCateory)>0){
-                        foreach($ThirdCateory AS $k3 => $v3){
-                            // now going for 4rath
-                            $menuArr[$v3->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName;
-                            $FourthCateory=$this->Category_model->get_subcategory_by_category_id($v3->categoryId);
-                            if(count($FourthCateory)>0){ //print_r($v3);die;
-                                foreach($FourthCateory AS $k4 => $v4){
-                                    $menuArr[$v4->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName.' -> '.$v4->categoryName;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        $data['CatArr']=$menuArr;
-        $user = $this->_get_current_user_details();
-        $my_groups = $this->User_model->get_my_groups();
-        $data['myGroups']=$my_groups;
-        $data['user']=$user;
+        $data['myGroups'] = $my_groups;
+        $data['user'] = $user;
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('group_order/group_order',$data);
     }
@@ -313,29 +171,19 @@ class Shopping extends MY_Controller{
      */
     function ajax_update_group_order(){
         $orderId = $this->input->post('orderId',TRUE);
-        $cartid = $this->input->post('cartid',TRUE);
         $qty = $this->input->post('qty',TRUE);
-        
-        
-        $cart_info['rowid'] = $cartid;
-        $cart_info['qty'] = $qty;
-        $this->_update_single_cart($cart_info);
-        
-        
-        $cart = $this->cart->contents();
-        
-        $data['rowid'] = false; 
-        if($cart): 
-            foreach ($cart as $item):            
-                if(($cartid == $item['rowid'])):
-                    $order_update['orderAmount'] = $item['subtotal']; 
-                    $order_update['subTotalAmount'] = $item['subtotal']; 
-                endif;
-            endforeach;
-        endif;
+        $order = $this->Order_model->get_single_order_by_id($orderId);
+        $prod_price_info = $this->Product_model->get_products_price_details_by_id($order->productPriceId);
+
+        $single_price = ($prod_price_info->price/$prod_price_info->qty);
+        $price = number_format($single_price, 2, '.', '');
+        $totalprice = number_format($price*$qty, 2, '.', '');
+
+        $order_update = [];
+        $order_update['orderAmount'] = $totalprice;
+        $order_update['subTotalAmount'] = $totalprice;
         $order_update['productQty'] = $qty;        
         $this->Order_model->update($order_update,$orderId);
-        
         ob_start();
         echo BASE_URL.'shopping/checkout/'.base64_encode($orderId*226201);
         $result['contents'] = ob_get_contents();
@@ -382,7 +230,7 @@ class Shopping extends MY_Controller{
      */
     function ajax_process_group_payment(){
         $orderId = $this->input->post('orderId',TRUE);
-        $cartId = $this->input->post('cartId',TRUE);
+        //$cartId = $this->input->post('cartId',TRUE);
         $paymentOption = $this->input->post('paymentOption',TRUE);
         
         $pevorder = $this->Order_model->get_single_order_by_id($orderId);
@@ -446,7 +294,7 @@ class Shopping extends MY_Controller{
 
                         $data['nTitle'] = 'New Buying Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
                         $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
-                        $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club['.$group->groupTitle.'] order product.<br>";
+                        $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club[".$group->groupTitle."] order product.<br>";
                         $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
                         $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
                         $data['nMessage'] .= "Want to process the order ? <br>";
@@ -486,7 +334,7 @@ class Shopping extends MY_Controller{
 
                             $data['nTitle'] = 'Buying Club['.$group->groupTitle.'] order continue by <b>'.$me->firstName.' '.$me->lastName.'</b>';
                             $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$usr->firstName.' '.$usr->lastName;
-                            $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club['.$group->groupTitle.'].<br>";
+                            $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club[".$group->groupTitle."].<br>";
                             $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
                             $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
                             $data['nMessage'] .= "Order item is ".$orderinfo['pdetail']->title."<br /><br />";
@@ -554,7 +402,7 @@ class Shopping extends MY_Controller{
             if($paymentOption=='sod'):
                 $settlementOnDeliveryId=$this->Order_model->add_sod(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
                 $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'group'));
-                $this->_remove_cart($cartId);
+                //$this->_remove_cart($cartId);
                 redirect(BASE_URL.'shopping/success/');
             else:
                 $this->_mpesa_process($orderId);
@@ -601,7 +449,7 @@ class Shopping extends MY_Controller{
         $orderId = $orderId/226201;
         
         $SEODataArr=array();
-        $data=$this->_get_logedin_template($SEODataArr);
+        $data = $this->_get_logedin_template($SEODataArr);
         $order = $this->Order_model->get_single_order_by_id($orderId);
         if(!$order):
             redirect(BASE_URL.'404_override');
@@ -648,17 +496,7 @@ class Shopping extends MY_Controller{
         
         $product = $this->Product_model->details($order->productId);
         $data['product'] = $product[0];
-        
-        $cart = $this->cart->contents();        
-        $data['rowid'] = false; 
-        if($cart): 
-            foreach ($cart as $item):            
-                if(($orderId == $item['options']['orderId'])):
-                    $data['rowid'] = $item['rowid'];                    
-                endif;
-            endforeach;
-        endif;
-        
+
         $coupon = $this->Order_model->get_order_coupon($orderId);
         $data['coupon'] = $coupon;
         $this->load->view('group_order/checkout',$data);
@@ -683,18 +521,15 @@ class Shopping extends MY_Controller{
     function remove_group_cart(){
         $user=  $this->_get_current_user_details();
         $cartId = $this->input->post('cartId',TRUE);
-        $orderId = $this->input->post('orderId',TRUE);
         $this->Order_model->remove_order_from_cart($cartId,$user->userId);
-        //$this->_remove_cart($cartId);
         $data=array();
         $data['status'] = 0;
-        //$this->Order_model->delete($orderId);
         ob_start();
-        echo true;
-        $result['contents'] = ob_get_contents();
-	ob_end_clean();
-	echo json_encode( $result );
-	die;
+            echo true;
+            $result['contents'] = ob_get_contents();
+        ob_end_clean();
+        echo json_encode( $result );
+        die;
     }
     
     function _add_to_cart($data) {
@@ -807,8 +642,15 @@ class Shopping extends MY_Controller{
         $order_data['productQty'] = 0;
         $order_data['userId'] = $this->session->userdata('FE_SESSION_VAR');
         
-        $exists_order = $this->Order_model->is_parent_group_order_available($data['order']->orderId, $this->session->userdata('FE_SESSION_VAR'));
-        
+        $exists_order = $this->Order_model->is_parent_group_order_available($data['order']->orderId, $user->userId);
+
+
+        $orderinfo = [];
+        $orderinfo['pdetail'] = $product;
+        $orderinfo['priceinfo'] = $prod_price_info;
+        $productImageArr = $this->Product_model->get_products_images($productId);
+        $orderinfo['pimage'] = $productImageArr[0];
+        $order_data['orderInfo'] = base64_encode(serialize($orderinfo));
         if($reorder):
             if($exists_order && $exists_order->status == 0):
                 $this->Order_model->update($order_data,$exists_order->orderId);
@@ -845,36 +687,6 @@ class Shopping extends MY_Controller{
             endif;
         
         endif;
-        
-        
-        //Cart first step        
-        $is_cart_update = false;
-        $cart = $this->cart->contents();
-        if($cart): 
-            foreach ($cart as $item):            
-                if(($item['id'] == $productId)):
-                    $is_cart_update = $item['rowid'];                    
-                endif;
-            endforeach;
-        endif;
-        
-        $cart_data = array();
-        $cart_data['id'] = $productId;
-        $cart_data['name'] = $product->title;
-        $single_price = ($prod_price_info->price/$prod_price_info->qty);
-        $cart_data['price'] = number_format($single_price, 2, '.', '');        
-        $cart_data['qty'] = $prod_price_info->qty;        
-        $order_data['orderId'] = $parentOrderId;
-        $order_data['productPriceId'] = $productPriceId;
-        $cart_data['options'] = $order_data;
-        
-        if($is_cart_update):
-            $this->_remove_cart($is_cart_update); //echo $is_cart_update;
-            $this->_add_to_cart($cart_data);
-        else:
-            $this->_add_to_cart($cart_data);
-        endif;
-        
         redirect(BASE_URL.'shopping/mod-pt-group-order/'.base64_encode($parentOrderId*226201));
     }
     
@@ -909,12 +721,12 @@ class Shopping extends MY_Controller{
         $product = $product[0];
         $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
         $is_cart_update = false;
-        $cart = $this->cart->contents();
-        if($cart): 
-            foreach ($cart as $item):            
-                if(($item['id'] == $productId)):
-                    $data['orderId'] = $item['options']['orderId'];
-                    $is_cart_update = $item['rowid'];                    
+        $cart = $this->Order_model->tidiit_get_user_orders($user->userId, 0);
+        if($cart):
+            foreach ($cart as $item):
+                if(($item->productId == $productId) && ( $item->orderType== "GROUP")):
+                    $data['orderId'] = $item->orderId;
+                    $is_cart_update = true;
                 endif;
             endforeach;
         endif;
@@ -926,15 +738,14 @@ class Shopping extends MY_Controller{
         $order_data['productPriceId'] = $productPriceId;
         $order_data['orderDate'] = date('Y-m-d H:i:s');
         $order_data['status'] = 0;
-        
-        //Cart first step
-        $cart_data = array();
-        $cart_data['id'] = $productId;
-        $cart_data['name'] = $product->title;
-        $single_price = ($prod_price_info->price/$prod_price_info->qty);
-        $cart_data['price'] = number_format($single_price, 2, '.', '');
-        $cart_data['qty'] = $prod_price_info->qty;
-        
+
+        $orderinfo = [];
+        $orderinfo['pdetail'] = $product;
+        $orderinfo['priceinfo'] = $prod_price_info;
+        $productImageArr = $this->Product_model->get_products_images($productId);
+        $orderinfo['pimage'] = $productImageArr[0];
+        $order_data['orderInfo'] = base64_encode(serialize($orderinfo));
+
         if(!isset($data['orderId'])):
             $order_data['productQty'] = 0;
             //$data['orderId']=$this->Order_model->add($order_data);
@@ -952,19 +763,24 @@ class Shopping extends MY_Controller{
         //$data['orderId'] = 0;
         $order_data['orderId'] = $data['orderId'];
         $order_data['productPriceId'] = $productPriceId;
-        $cart_data['options'] = $order_data;
+        $data['order'] = $this->Order_model->get_single_order_by_id($data['orderId']);
+        //==============================================//
+        if($is_cart_update):
+            if(isset($data['orderId'])):
+                $order_update['orderInfo'] = base64_encode(serialize($orderinfo));
+                $order_update['orderAmount'] = $prod_price_info->price;
+                $order_update['subTotalAmount'] = $prod_price_info->price;
+                unset($order_update['orderId']);
+                unset($order_update['orderDate']);
+                $order_update['orderUpdatedate'] = date('Y-m-d H:i:s');
+                $order_update['productQty'] = $data['order']->productQty;
+                //print_r($order_update);
+                $this->Order_model->update($order_update,$data['orderId']);
+            endif;
+        endif;
         
         //==============================================//
-        
-        $cart = $this->cart->contents();
-        $data['rowid'] = false; 
-        if($cart): 
-            foreach ($cart as $item):            
-                if(($data['orderId'] == $item['options']['orderId'])):
-                    $data['rowid'] = $item['rowid'];                    
-                endif;
-            endforeach;
-        endif;
+
         $a = $this->_get_available_order_quantity($data['order']->parrentOrderID);
         $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
         
@@ -2327,7 +2143,8 @@ class Shopping extends MY_Controller{
             echo json_encode(array('contents'=>'-1'));
             die;
         }else{
-            $rs=$this->Order_model->has_order_with_order_type($user->userId);
+            echo json_encode(array('contents'=>'1')); die;
+            /*$rs=$this->Order_model->has_order_with_order_type($user->userId);
             if(empty($rs)){
                 echo json_encode(array('contents'=>'1')); die;
             }else{
@@ -2344,7 +2161,7 @@ class Shopping extends MY_Controller{
                         echo json_encode(array('contents'=>'1')); die;
                     }
                 }   
-            }
+            }*/
         }
     }
     
@@ -2369,4 +2186,34 @@ class Shopping extends MY_Controller{
         echo json_encode( $result );
         die;
     }
+
+    function _get_user_select_cat_array(){
+        $menuArr=array();
+        $TopCategoryData=$this->Category_model->get_top_category_for_product_list();
+        //$AllButtomCategoryData=$this->Category_model->buttom_category_for_product_list();
+        foreach($TopCategoryData as $k){
+            $SubCateory=$this->Category_model->get_subcategory_by_category_id($k->categoryId);
+            if(count($SubCateory)>0){
+                foreach($SubCateory as $kk => $vv){
+                    $menuArr[$vv->categoryId]=$k->categoryName.' -> '.$vv->categoryName;
+                    $ThirdCateory=$this->Category_model->get_subcategory_by_category_id($vv->categoryId);
+                    if(count($ThirdCateory)>0){
+                        foreach($ThirdCateory AS $k3 => $v3){
+                            // now going for 4rath
+                            $menuArr[$v3->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName;
+                            $FourthCateory=$this->Category_model->get_subcategory_by_category_id($v3->categoryId);
+                            if(count($FourthCateory)>0){ //print_r($v3);die;
+                                foreach($FourthCateory AS $k4 => $v4){
+                                    $menuArr[$v4->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName.' -> '.$v4->categoryName;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $menuArr;
+    }
 }
+
+1189
