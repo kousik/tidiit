@@ -389,10 +389,10 @@
                 },
                 function(data){
                     $('li span.js-notfy-auto-update').text(data.tot_notfy);
-                    //$('h3.js-cart-auto-update').html('<span>`</span>'+data.carttotal+' - '+data.totalitem+' item');
-                    $('h3.js-cart-auto-update').html(data.totalitem+' item');
+                    $('h3.js-cart-auto-update').html('<span>`</span>'+data.carttotal+' - '+data.totalitem+' item');
+                   // $('h3.js-cart-auto-update').html(data.totalitem+' item');
                 }, 'json' );
-            }, 10000);
+            }, 5000);
         <?php 
         endif;?>
                

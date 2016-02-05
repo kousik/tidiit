@@ -25,7 +25,7 @@ echo $html_heading; echo $header;?>
 
                                 <div class="active row grouporder_id">
                                    <form action="#" method="post" name="start_groups_order" id="start_groups_order"> 
-                                    <input type="hidden" id="js-order-info" name="orderId" value="<?=$orderId?>" data-groupid="<?=$groupId?>" data-userid="<?=$user->userId?>" data-rowid="<?=$rowid?>" >
+                                    <input type="hidden" id="js-order-info" name="orderId" value="<?=$orderId?>" data-groupid="<?=$groupId?>" data-userid="<?=$user->userId?>" >
                                     
                                     <div class="col-md-12 col-sm-12">
 
@@ -322,7 +322,6 @@ echo $html_heading; echo $header;?>
             
             $.post( myJsMain.baseURL+'shopping/ajax_update_group_order/', {
                 orderId: obj.val(),
-                cartid: obj.attr('data-rowid'),
                 qty: estd
             },
             function(data){ 

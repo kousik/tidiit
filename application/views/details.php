@@ -61,8 +61,7 @@ jQuery(document).ready(function(){
           itemsMobile : 2, // itemsMobile disabled - inherit from itemsTablet option
           pagination : false,
           autoPlay: true,
-          navigation : false,
-
+          navigation : false
     });
 
     // Custom Navigation Events
@@ -112,7 +111,8 @@ jQuery(document).ready(function(){
                         jQuery('#add_to_truck_process_form').attr('action','<?php echo  BASE_URL.'shopping/add-order/';?>');
                     }
                     jQuery('#add_to_truck_process_form').submit();
-                }else if(data.contents=="0"){ 
+                }
+                /*else if(data.contents=="0"){
                     /// show error message
                     if(order_type=='single'){
                         myJsMain.commonFunction.tidiitAlert('Tidiit Validate System','Your had selected last uncompleted order is "Buying Club Order".So you can not process "Single Order" Now.Set the item to your wish list and process teh order latter.',140);
@@ -122,7 +122,8 @@ jQuery(document).ready(function(){
                 }else if(data.contents=="2"){ 
                     /// show error message
                     myJsMain.commonFunction.tidiitAlert('Tidiit Validate System','Your "Single Order" yet not completed.So you can not process "Buying Club Order" Now.Set the item to your wish list and process teh order latter.',140);
-                }else if(data.contents=="-1"){ 
+                }*/
+                else if(data.contents=="-1"){
                     myJsMain.commonFunction.tidiitAlert('Tidiit Validate System',"Please sign in or sign up first for buy this product.",140);
                     $('.multiselect-modal-sm').modal('hide');
                     $( "a.signIn" ).trigger( "click" );

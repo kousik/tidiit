@@ -9,7 +9,6 @@
 echo $html_heading; echo $header;
 $CI =& get_instance();
 $CI->load->model('Product_model');
-$cart = $this->cart->contents();
 ?>
 <script src="<?php echo SiteJSURL;?>user-all-my-js.js" type="text/javascript"></script>
 </div>
@@ -184,7 +183,7 @@ $cart = $this->cart->contents();
 
 
                                     <div class="cart-container-table">
-                                        <table id="cart" class="table table-hover table-condensed <?=$rowid?>">
+                                        <table id="cart" class="table table-hover table-condensed <?=isset($order->orderId)?$order->orderId:""?>">
                                             <thead>
                                                 <tr>
                                                     <th style="width:50%">Product</th>
@@ -197,34 +196,37 @@ $cart = $this->cart->contents();
                                             <tbody>
                                                 <?php
                                                 $total = 0;
-                                                foreach ($cart as $item):
-                                                    if ($item['rowid'] == $rowid):
-                                                        $total += $item['subtotal'];
-                                                        $productDetailsArr = $this->Product_model->details($item['options']['productId']);
-                                                        $productImageArr = $this->Product_model->get_products_images($item['options']['productId']);
+                                                //foreach ($cart as $item):
+                                                    if ($order):
+                                                        $total += $order->orderAmount;
+                                                        $productDetailsArr = $this->Product_model->details($order->productId);
+                                                        $productImageArr = $this->Product_model->get_products_images($order->productId);
                                                         ?>
-                                                        <tr id="<?=$item['rowid']?>">
+                                                        <tr id="<?=$order->orderId?>">
                                                             <td data-th="Product">
                                                                 <div class="row">
                                                                     <div class="col-sm-3 product-img"><img src="<?= PRODUCT_DEAILS_SMALL . $productImageArr[0]->image ?>" alt="..." class="img-responsive"></div>
                                                                     <div class="col-sm-9 product-details">
-                                                                        <h4 class="nomargin"><?= $item['name'] ?></h4>
-                                                                        <p><?= $productDetailsArr[0]->shortDescription ?></p>
+                                                                        <h4 class="nomargin"><?= $productDetailsArr[0]->title ?></h4>
+                                                                        <p><?=$productDetailsArr[0]->shortDescription ?></p>
                                                                     </div>
                                                                 </div>
                                                             </td>
-                                                            <td data-th="Price"><i class="fa fa-rupee"></i> <?= $item['price'] ?></td>
+                                                            <?php
+                                                            $single_price = ($order->orderAmount/$order->productQty);
+                                                            $price = number_format($single_price, 2, '.', '');?>
+                                                            <td data-th="Price"><i class="fa fa-rupee"></i> <?= $price?></td>
 
-                                                            <td data-th="Quantity"><?= $item['qty'] ?></td>
-                                                            <td data-th="Subtotal" class="text-center"><i class="fa fa-rupee"></i> <?= number_format($item['subtotal']) ?>.00</td>
+                                                            <td data-th="Quantity"><?=$order->productQty?></td>
+                                                            <td data-th="Subtotal" class="text-center"><i class="fa fa-rupee"></i> <?= number_format($order->orderAmount) ?>.00</td>
                                                             <td class="actions" data-th="" align="right">
 
-                                                                <button class="btn btn-danger btn-sm js-group-cart-remove"  data-orderid="<?=$item['options']['orderId']?>" data-cartid="<?=$item['rowid']?>"><i class="fa fa-trash-o"></i></button>								
+                                                                <button class="btn btn-danger btn-sm js-group-cart-remove"  data-orderid="<?=$order->orderId?>"><i class="fa fa-trash-o"></i></button>
                                                             </td>
                                                         </tr>
                                                         <?php
                                                     endif;
-                                                endforeach;
+                                                //endforeach;
                                                 ?>
 
                                                 <tr>
@@ -297,13 +299,12 @@ endif;?>
                                                 <label for="sin">Settlement on Delivery</label>
                                             </div><!-- /input-group -->
                                               <input type="hidden" name="orderId" value="<?=$order->orderId?>"/>
-                                              <input type="hidden" name="cartId" value="<?=$rowid?>"/>
                                         </form>
                                     </div>
 
 
                                     <div class="cart-container-table">
-                                        <a href="javascript://" class="btn btn-info btn-block js-order-payment" data-orderid="<?=$order->orderId?>" data-cartid="<?=$rowid?>">Pay Now <i class="fa fa-angle-right"></i></a>
+                                        <a href="javascript://" class="btn btn-info btn-block js-order-payment" data-orderid="<?=$order->orderId?>" data-cartid="<?=$order->orderId?>">Pay Now <i class="fa fa-angle-right"></i></a>
                                     </div>
 
 
@@ -446,12 +447,9 @@ endif;?>
         
         jQuery("body").delegate('.js-group-cart-remove', "click", function(e){
             e.preventDefault();
-                         
-            var cartId = jQuery(this).attr('data-cartid');
-            var orderId = jQuery(this).attr('data-orderid');
+            var cartId = jQuery(this).attr('data-orderid');
             jQuery.post( myJsMain.baseURL+'shopping/remove_group_cart/', {
-                cartId: cartId,
-                orderId: orderId
+                cartId: cartId
             },
             function(data){ 
                 if(data.contents){

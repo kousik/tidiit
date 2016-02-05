@@ -143,12 +143,12 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));
                                                         <tr> 
                                                             <td colspan="5"></td>
                                                             <td>Shipping ()</td>
-                                                            <td><i class="fa fa-rupee"></i><?=isset($order->shippingamount)?$order->shippingamount:''?></td>
+                                                            <td><i class="fa fa-rupee"></i><?=isset($order->shippingamount)?$order->shippingamount:'0.00'?></td>
                                                         </tr>
                                                         <tr> 
                                                             <td colspan="5"></td>
                                                             <td>Tax</td>
-                                                            <td><i class="fa fa-rupee"></i><?=isset($order->taxAmount)?$order->taxAmount:''?></td>
+                                                            <td><i class="fa fa-rupee"></i><?=isset($order->taxAmount)?$order->taxAmount:'0.00'?></td>
                                                         </tr>
                                                         <tr> 
                                                             <td colspan="5"></td>
@@ -158,7 +158,7 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));
                                                         <tr> 
                                                             <td colspan="5"></td>
                                                             <td>Paid</td>
-                                                            <td><i class="fa fa-rupee"></i><?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></td>
+                                                            <td><i class="fa fa-rupee"></i><?=isset($order->orderAmount)?$order->orderAmount:''?></td>
                                                         </tr>
                                                     </table>  
                                                     
