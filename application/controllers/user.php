@@ -291,7 +291,7 @@ class User extends MY_Controller{
         $data['reorder'] = 1;
         $data['userMenuActive']=5;
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
-        $this->load->view('my_group_edit',$data);
+        $this->load->view('my/my_group_edit',$data);
     }
         
     function my_group_orders(){
@@ -347,8 +347,16 @@ class User extends MY_Controller{
         else:
             $data['tot_notfy'] = 0;
         endif;
-        $data['carttotal'] = number_format($this->cart->total(), 2, '.', '');
-        $data['totalitem'] = count($this->cart->contents());
+
+        $cart = $this->Order_model->tidiit_get_user_orders($this->session->userdata('FE_SESSION_VAR'), 0);
+        $total = 0;
+        if($cart):
+            foreach ($cart as $item):
+                    $total += $item->orderAmount;
+            endforeach;
+        endif;
+        $data['carttotal'] = number_format($total, 2, '.', '');
+        $data['totalitem'] = count($cart);
         echo json_encode( $data );
         die;
     }

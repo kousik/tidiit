@@ -503,10 +503,10 @@ class Order_model extends CI_Model {
         $this->db->where('o.userId',$userId)->where('o.status',0);
         if($orderType!='')
             $this->db->where('o.orderType',  strtoupper($orderType));
-        $this->db->get()->result(); 
+        $orderData = $this->db->get()->result();
         //echo $str = $this->db->last_query();
         //print_r($orderData);
-        //$order = !empty($orderData)?$orderData[0]:false;
+        $order = !empty($orderData)?$orderData[0]:false;
         return $order;
     }
     
@@ -527,4 +527,11 @@ class Order_model extends CI_Model {
     function get_coupon_details_by_order_id($orderId){
         return $this->db->from('coupon c')->join('order_coupon oc','oc.couponId=c.couponId')->where('oc.orderId',$orderId)->get()->row();
     }
+
+    function tidiit_get_user_orders($userId, $status = 0){
+        $this->db->where('userId',$userId)->where('status',$status);
+        return $this->db->from($this->_table)->get()->result();
+    }
+
+
 }

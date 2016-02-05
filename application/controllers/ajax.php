@@ -678,14 +678,12 @@ class Ajax extends MY_Controller{
     
     function show_cart(){
         $data=array();
-        $user = $this->_get_current_user_details();         
-        
+        $user = $this->_get_current_user_details();
         $allItemArr=$this->Order_model->get_all_cart_item($user->userId);
-        //$countryShortName=$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');
         $newAllItemArr=array();
         foreach($allItemArr AS $k){
-            $orderInfo=  unserialize(base64_decode($k['orderInfo']));
-            $k['productTitle']=$orderInfo['pdetail']->title;
+            $orderInfo =  unserialize(base64_decode($k['orderInfo']));
+            $k['productTitle'] = $orderInfo['pdetail']->title;
             $k['qty']=$orderInfo['priceinfo']->qty;
             $k['pimage']=$orderInfo['pimage']->image;
             $newAllItemArr[]=$k;

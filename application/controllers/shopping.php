@@ -2215,5 +2215,3 @@ class Shopping extends MY_Controller{
         return $menuArr;
     }
 }
-
-1189
