@@ -116,7 +116,10 @@
                         </tfoot>
                     </table>
                 <?php endif; ?>
-                <?php if ($is_group): ?>
+                <?php
+                $subtotal = 0;
+                $tax = 0;
+                if ($is_group): ?>
                     <h4>Buying Club Order</h4><br>
                     <table id="cart" class="table table-hover table-condensed">
                         <thead>
@@ -174,7 +177,7 @@
                         <tr>
                             <td colspan="3" class="hidden-xs"></td>
                             <td class="hidden-xs text-right"><strong>Tax <i
-                                        class="fa fa-rupee"></i> <?= number_format($subtotal) ?>.00</strong></td>
+                                        class="fa fa-rupee"></i> <?= number_format($tax) ?>.00</strong></td>
                             <td class="hidden-xs">&nbsp;</td>
                         </tr>
                         <tr>

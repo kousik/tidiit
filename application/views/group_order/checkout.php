@@ -213,12 +213,12 @@ $CI->load->model('Product_model');
                                                                 </div>
                                                             </td>
                                                             <?php
-                                                            $single_price = ($order->orderAmount/$order->productQty);
+                                                            $single_price = ($order->subTotalAmount/$order->productQty);
                                                             $price = number_format($single_price, 2, '.', '');?>
                                                             <td data-th="Price"><i class="fa fa-rupee"></i> <?= $price?></td>
 
                                                             <td data-th="Quantity"><?=$order->productQty?></td>
-                                                            <td data-th="Subtotal" class="text-center"><i class="fa fa-rupee"></i> <?= number_format($order->orderAmount) ?>.00</td>
+                                                            <td data-th="Subtotal" class="text-center"><i class="fa fa-rupee"></i> <?= number_format($order->subTotalAmount) ?>.00</td>
                                                             <td class="actions" data-th="" align="right">
 
                                                                 <button class="btn btn-danger btn-sm js-group-cart-remove"  data-orderid="<?=$order->orderId?>"><i class="fa fa-trash-o"></i></button>
@@ -251,6 +251,11 @@ $CI->load->model('Product_model');
                                                     <td class="text-center">Free</td>
                                                     <td></td>
                                                 </tr>
+                                                <tr>
+                                                    <td colspan="3"  class="text-right">Tax :  </td>
+                                                    <td class="text-center js-show-disc-amt"><i class="fa fa-rupee"></i> <?=$order->taxAmount?></td>
+                                                    <td></td>
+                                                </tr>
 <?php 
 if($coupon):
     $total -= $coupon->amount;
@@ -266,8 +271,8 @@ endif;?>
 
                                                 <tr>
                                                     <td></td>
-                                                    <td colspan="2" class="hidden-xs"></td>
-                                                    <td class="hidden-xs text-center js-sub-total"><strong>Total <i class="fa fa-rupee"></i> <?=$total?></strong></td>
+                                                    <td class="hidden-xs"></td>
+                                                    <td colspan="2" class="hidden-xs text-center js-sub-total"><strong>Total <i class="fa fa-rupee"></i> <?=$total?></strong></td>
                                                     <td colspan="2"><a href="javascript://" class="btn btn-success btn-block js-proceed-payment">PROCEED TO PAYMENT <i class="fa fa-angle-right"></i></a></td>
                                                 </tr>
                                             </tfoot>

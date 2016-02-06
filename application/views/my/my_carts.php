@@ -134,7 +134,9 @@ echo $html_heading; echo $header;
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php 
+                                                <?php
+                                                $total = 0;
+                                                $tax=0;
                                                 foreach($allItemArr as $k):
                                                     if(isset($k['orderType']) && $k['orderType'] == 'GROUP'):
                                                         /*$productDetailsArr =  $this->Product_model->details($item['options']['productId']);
@@ -161,20 +163,23 @@ echo $html_heading; echo $header;
                                                             <a href="<?=BASE_URL;?>shopping/checkout/<?=base64_encode($k['orderId']*226201)?>" class="btn btn-success btn-sm"> Checkout <i class="fa fa-angle-right"></i></a>
                                                         </td>
                                                     </tr>
-                                                    <?php endif;
+                                                    <?php
+                                                        $total += $k['subTotalAmount'];
+                                                        $tax += $k['taxAmount'];
+                                                    endif;
                                                     endforeach;?>
                                                 </tbody>
 
                                                 <tfoot>
                                                     <tr>
                                                         <td colspan="3" class="hidden-xs"></td>
-                                                        <td class="hidden-xs text-right"><strong>Tax <i class="fa fa-rupee"></i> <?=number_format($k['taxAmount'])?>.00</strong></td>
+                                                        <td class="hidden-xs text-right"><strong>Tax <i class="fa fa-rupee"></i> <?=number_format($tax)?>.00</strong></td>
                                                         <td class="hidden-xs">&nbsp;</td>
                                                     </tr>
                                                     <tr>
                                                         <td><a href="<?=BASE_URL;?>" class="btn btn-warning"><i class="fa fa-angle-left"></i> Continue Shopping</a></td>
                                                         <td colspan="2" class="hidden-xs"></td>
-                                                        <td class="text-right"><strong>Total <i class="fa fa-rupee"></i> <?=number_format($k['subTotalAmount']+$k['taxAmount'])?>.00</strong></td>
+                                                        <td class="text-right"><strong>Total <i class="fa fa-rupee"></i> <?=number_format($total+$tax)?>.00</strong></td>
                                                         <td class="hidden-xs">&nbsp;</td>
                                                     </tr>
                                                 </tfoot>

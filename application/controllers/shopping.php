@@ -52,6 +52,17 @@ class Shopping extends MY_Controller{
         $productImageArr = $this->Product_model->get_products_images($productId);
         $orderinfo['pimage'] = $productImageArr[0];
 
+
+
+        $country_name = $this->session->userdata('FE_SESSION_USER_LOCATION_VAR');
+        $taxDetails = $this->Product_model->get_tax_for_current_location($productId, $country_name.'_tax');
+        $taxCol = $country_name.'_tax';
+        $taxPercentage = $taxDetails->$taxCol;
+        $orderAmountBeforeTax = $prod_price_info->price;
+        $cTax = ($orderAmountBeforeTax*$taxPercentage)/100;
+        $orderAmount = $orderAmountBeforeTax+$cTax;
+        //$orderDataArr=array('taxAmount'=>$cTax,'discountAmount'=>$data['couponAmount'],'orderAmount'=>$orderAmount);
+
         
         //Order first step
         $order_data = array();
@@ -65,6 +76,9 @@ class Shopping extends MY_Controller{
         if(!isset($data['orderId'])):
             $order_data['productQty'] = 0;
             $order_data['userId'] = $user->userId;
+            $order_data['orderAmount'] = $orderAmount;
+            $order_data['subTotalAmount'] = $prod_price_info->price;
+            $order_data['taxAmount'] = $cTax;
             $qrCodeFileName=time().'-'.rand(1, 50).'.png';
             $order_data['qrCodeImageFile']=$qrCodeFileName;
             $order_data['IP']=  $this->input->ip_address();
@@ -83,8 +97,9 @@ class Shopping extends MY_Controller{
         if($is_cart_update):
             if(isset($data['orderId'])):
                 $order_update['orderInfo'] = base64_encode(serialize($orderinfo));
-                $order_update['orderAmount'] = $prod_price_info->price;
+                $order_update['orderAmount'] = $orderAmount;
                 $order_update['subTotalAmount'] = $prod_price_info->price;
+                $order_update['taxAmount'] = $cTax;
                 unset($order_update['orderId']);
                 unset($order_update['orderDate']);
                 $order_update['orderUpdatedate'] = date('Y-m-d H:i:s');
@@ -179,10 +194,20 @@ class Shopping extends MY_Controller{
         $price = number_format($single_price, 2, '.', '');
         $totalprice = number_format($price*$qty, 2, '.', '');
 
+
+        $country_name = $this->session->userdata('FE_SESSION_USER_LOCATION_VAR');
+        $taxDetails = $this->Product_model->get_tax_for_current_location($order->productId, $country_name.'_tax');
+        $taxCol = $country_name.'_tax';
+        $taxPercentage = $taxDetails->$taxCol;
+        $orderAmountBeforeTax = $totalprice;
+        $cTax = ($orderAmountBeforeTax*$taxPercentage)/100;
+        $orderAmount = $orderAmountBeforeTax+$cTax;
+
         $order_update = [];
-        $order_update['orderAmount'] = $totalprice;
+        $order_update['orderAmount'] = $orderAmount;
         $order_update['subTotalAmount'] = $totalprice;
-        $order_update['productQty'] = $qty;        
+        $order_update['productQty'] = $qty;
+        $order_update['taxAmount'] = $cTax;
         $this->Order_model->update($order_update,$orderId);
         ob_start();
         echo BASE_URL.'shopping/checkout/'.base64_encode($orderId*226201);
@@ -230,7 +255,7 @@ class Shopping extends MY_Controller{
      */
     function ajax_process_group_payment(){
         $orderId = $this->input->post('orderId',TRUE);
-        //$cartId = $this->input->post('cartId',TRUE);
+        $cartId = $orderId;
         $paymentOption = $this->input->post('paymentOption',TRUE);
         
         $pevorder = $this->Order_model->get_single_order_by_id($orderId);
@@ -818,7 +843,8 @@ class Shopping extends MY_Controller{
         $prod_price_info = $this->Product_model->get_products_price_details_by_id($order->productPriceId);
         $a = $this->_get_available_order_quantity($orderId);
         $availQty = $prod_price_info->qty - $a[0]->productQty;
-        
+        $orderInfo = unserialize(base64_decode($order->orderInfo));
+
         if(!$availQty):
             $this->session->set_flashdata('msg', 'Order already completed by other members of this Buying Club.');
             redirect(BASE_URL.'shopping/ord-message');
@@ -1282,10 +1308,6 @@ class Shopping extends MY_Controller{
         $data['user']= $user;
         $data['userMenuActive']= '';
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
-        
-        $data['feedback']=$this->load->view('feedback',$data,TRUE);
-        $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
-        
         $this->load->view('my/my_carts',$data);
     }
     
