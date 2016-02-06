@@ -150,7 +150,7 @@ echo $html_heading; echo $header;
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td data-th="Price"><i class="fa fa-rupee"></i> <?=$k['price']?></td>
+                                                        <td data-th="Price"><i class="fa fa-rupee"></i> <?=$k['subTotalAmount']?></td>
 
                                                         <td data-th="Quantity">
                                                             <?=$k['qty']?>
