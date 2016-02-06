@@ -1501,44 +1501,4 @@ class Ajax extends MY_Controller{
              echo 'no';die;
          }
      }
-     
-     function submit_feedback(){
-         $config = array(
-            array('field'   => 'feedBackEmail','label'   => 'Eamil','rules'   => 'trim|required|xss_clean|valid_email'),
-            array('field'   => 'feedBackName','label'   => 'Name','rules'   => 'trim|required|xss_clean'),
-            array('field'   => 'feedBackPhone','label'   => 'Phone','rules'   => 'trim|required|xss_clean'),
-            array('field'   => 'feedBackMessage','label'   => 'Message','rules'   => 'trim|required|xss_clean'),
-            array('field'   => 'secret','label'   => 'Code Text','rules'   => 'trim|required|xss_clean|callback_valid_security_code'),
-         );
-        //initialise the rules with validatiion helper
-        $this->form_validation->set_rules($config); 
-        //checking validation
-        if($this->form_validation->run() == FALSE){
-                //retun to login page with peroper error
-                echo json_encode(array('result'=>'bad','msg'=>str_replace('</p>','',str_replace('<p>','',validation_errors()))));die;
-        }else{
-            $email=$this->input->post('feedBackEmail',TRUE);
-            $name=$this->input->post('feedBackName',TRUE);
-            $phone=$this->input->post('feedBackPhone',TRUE);
-            $message=$this->input->post('feedBackMessage',TRUE);
-            $feedBackDataArr=array('name'=>$name,'email'=>$email,'phone'=>$phone,'message'=>$message,'IP'=>$this->input->ip_address());
-            $DataArr=$this->User_model->add_feedback($feedBackDataArr);
-            
-            $mail_template_data=array();
-                $mail_template_data['TEMPLATE_FEEDBACK_EMAIL']=$email;
-                $mail_template_data['TEMPLATE_FEEDBACK_NAME']=$name;
-                $mail_template_data['TEMPLATE_FEEDBACK_PHONE']=$phone;
-                $mail_template_data['TEMPLATE_FEEDBACK_MSG']=$message;
-                $mail_template_data['TEMPLATE_FEEDBACK_TIME']=date('d-m-Y H:i:s');
-                
-                $mail_template_view_data=$this->load_default_resources();
-                $mail_template_view_data['feedback']=$mail_template_data;
-                $this->_global_tidiit_mail('judhisahoo@gmail.com', "A new feedback has posted.", $mail_template_view_data,'feedback',"Tidiit System Administrator");
-            if(count($DataArr)>0){
-                echo json_encode(array('result'=>'good','msg'=>'Thanks you to use your validable time to provide the feedback.It will help us to improment in our services.'));die; 
-            }else{
-                echo json_encode(array('result'=>'bad','msg'=>'Unknown error arises and try again.'));die;     
-            }
-        }
-     }
 }

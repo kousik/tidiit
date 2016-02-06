@@ -6,8 +6,6 @@ echo $html_heading; echo $header;
 <script src="<?php echo SiteJSURL;?>user-all-my-js.js" type="text/javascript"></script>
 </div>
 </header>
-<?php echo $common_how_it_works;?>
-<?php echo $feedback;?>
 <article>
 
     <div class="container">
