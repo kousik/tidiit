@@ -812,9 +812,12 @@ class Appdata extends REST_Controller {
         //pre($orderDetails);die;
         $orderInfo=unserialize(base64_decode($orderDetails[0]['orderInfo']));
         $orderInfo = json_decode(json_encode($orderInfo), true);
+        //pre($orderInfo);die;
         $orderDetails[0]['orderDate']=  date('d-m-Y H:i:s',strtotime($orderDetails[0]['orderDate']));
         $orderDetails[0]['orderUpdatedate']=  date('d-m-Y H:i:s',strtotime($orderDetails[0]['orderUpdatedate']));
         $orderDetails[0]['cancelDate']=  date('d-m-Y H:i:s',strtotime($orderDetails[0]['cancelDate']));
+        $orderDetails[0]['productImage']=  $orderInfo['pimage']['image'];
+        $orderDetails[0]['productTitle']=  $orderInfo['pdetail']['title'];
         //pre($orderDetails);die;
         $result['orderDetails']=  $orderDetails;
         $result['orderInfo']=  $orderInfo;
@@ -835,6 +838,10 @@ class Appdata extends REST_Controller {
         }
        $result=array();
        $result['orderDetails']=$orderDetails;
+       $orderInfo=unserialize(base64_decode($orderDetails[0]['orderInfo']));
+       $orderInfo = json_decode(json_encode($orderInfo), true);
+       $result['productImage']=  $orderInfo['pimage']['image'];
+       $result['productTitle']=  $orderInfo['pdetail']['title'];
        $cancelResean=array(
            'Not_interested_anymore'=>'Not interested anymore','Order_delivery_delayed'=>'Order delivery delayed',
            'Order_duplicate_items_by_mistake'=>'Order duplicate items by mistake','Purchased_wrong_item'=>'Purchased wrong item',
