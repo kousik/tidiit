@@ -506,7 +506,7 @@ class Order_model extends CI_Model {
         $orderData = $this->db->get()->result();
         //echo $str = $this->db->last_query();
         //print_r($orderData);
-        $order = !empty($orderData)?$orderData[0]:false;
+        $order = !empty($orderData)?$orderData:false;
         return $order;
     }
     

@@ -253,6 +253,9 @@ class Shopping extends REST_Controller {
             $couponAmount=0;
             $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
             //$countryShortName='IN';
+            if($countryShortName==FALSE){
+                $this->response(array('error' => 'Please provide valid latitude and longitude!'), 400); return FALSE;
+            }
             foreach($allItemArr AS $k){
                 if($k['orderId']==$orderId){
                     $currentLocationTaxDetails=$this->product->get_tax_for_current_location($k['productId'],$countryShortName.'_tax');
@@ -327,11 +330,13 @@ class Shopping extends REST_Controller {
         }
         
         $allIncompleteOrders= $this->order->get_incomplete_order_by_user($userId,'single');
+        //pre($allIncompleteOrders);die;
         $defaultResources=load_default_resources();
         $user=$this->user->get_details_by_id($userId)[0];
         foreach ($allIncompleteOrders As $k){
             $orderInfo = array();
             $mail_template_data = array();
+            //pre($k);die;
             $orderInfo= unserialize(base64_decode($k->orderInfo));
             //pre($orderInfo);die;
             //pre($orderInfo['shipping']);die;
