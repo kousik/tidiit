@@ -684,7 +684,7 @@ class Ajax extends MY_Controller{
         foreach($allItemArr AS $k){
             $orderInfo =  unserialize(base64_decode($k['orderInfo']));
             $k['productTitle'] = $orderInfo['pdetail']->title;
-            $k['qty']=$orderInfo['priceinfo']->qty;
+            $k['qty'] = $k['productQty']?$k['productQty']:$orderInfo['priceinfo']->qty;
             $k['pimage']=$orderInfo['pimage']->image;
             $newAllItemArr[]=$k;
         }

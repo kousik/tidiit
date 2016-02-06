@@ -103,7 +103,7 @@ class Shopping extends MY_Controller{
                 unset($order_update['orderId']);
                 unset($order_update['orderDate']);
                 $order_update['orderUpdatedate'] = date('Y-m-d H:i:s');
-                $order_update['productQty'] = $data['order']->productQty;
+                $order_update['productQty'] = 0;
                 //print_r($order_update);
                 $this->Order_model->update($order_update,$data['orderId']);
             endif;
@@ -798,7 +798,7 @@ class Shopping extends MY_Controller{
                 unset($order_update['orderId']);
                 unset($order_update['orderDate']);
                 $order_update['orderUpdatedate'] = date('Y-m-d H:i:s');
-                $order_update['productQty'] = $data['order']->productQty;
+                $order_update['productQty'] = 0;
                 //print_r($order_update);
                 $this->Order_model->update($order_update,$data['orderId']);
             endif;
