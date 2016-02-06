@@ -1282,6 +1282,10 @@ class Shopping extends MY_Controller{
         $data['user']= $user;
         $data['userMenuActive']= '';
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
+        
+        $data['feedback']=$this->load->view('feedback',$data,TRUE);
+        $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
+        
         $this->load->view('my/my_carts',$data);
     }
     

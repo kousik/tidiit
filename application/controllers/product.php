@@ -38,6 +38,7 @@ class Product extends MY_Controller{
         $data['breadCrumbStr']=$this->breadCrumb($productDetailsArr[0]->categoryId, $productDetailsArr[0]->title);
         $data['productDetailsArr']=$productDetailsArr;
         $data['productImageArr']=$productImageArr;
+        $data['productPriceArr']=$productPriceArr;
         
         $data['feedback']=$this->load->view('feedback',$data,TRUE);
         $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
