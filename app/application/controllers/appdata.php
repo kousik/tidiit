@@ -877,6 +877,7 @@ class Appdata extends REST_Controller {
         if($countryShortName==FALSE){
             $this->response(array('error' => 'Please provide valid latitude and longitude!'), 400); return FALSE;
         }
+        $adminMailData= load_default_resources();
         
         $this->order->update(array('status'=> 7), $orderId);
         $this->product->update_product_quantity($order->productId,$order->productQty,'+');
@@ -894,6 +895,9 @@ class Appdata extends REST_Controller {
         $sms_data=array('nMessage'=>$sms_data_msg,'receiverMobileNumber'=>$userDetails[0]->mobile,'senderId'=>'','receiverId'=>$userDetails[0]->userId,
         'senderMobileNumber'=>'','nType'=>"SINGLE-ORDER-CANCEL-BUYER");
         send_sms_notification($sms_data);
+        
+        $result['cancelResean']="Selected order has canceled successfully.";
+        success_response_after_post_get($result);
     }
     
     
@@ -1020,7 +1024,7 @@ class Appdata extends REST_Controller {
         $orderDetails[]=$order;  
         
         //pre($orderDetails);die;
-        $adminMailData=  $this->load_default_resources();
+        $adminMailData=  load_default_resources();
         $adminMailData['orderDetails']=$orderDetails;
         $adminMailData['reason']=$reason;
         $adminMailData['comments']=$comments;
@@ -1034,17 +1038,17 @@ class Appdata extends REST_Controller {
         $adminMailData['buyerFullName']=$buyerFullName;
         
         // for buyer
-        $this->_global_tidiit_mail($orderDetails[0]->buyerEmail,'Your Tidiit order TIDIIT-OD-'.$order->orderId.' has canceled successfully',$adminMailData,'single_order_canceled',$buyerFullName);
+        global_tidiit_mail($orderDetails[0]->buyerEmail,'Your Tidiit order TIDIIT-OD-'.$order->orderId.' has canceled successfully',$adminMailData,'single_order_canceled',$buyerFullName);
                 
         /// for seller
-        $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Tidiit order TIDIIT-OD-".$order->orderId.' has canceled by '.$buyerFullName, $adminMailData,'seller_single_order_canceled',$sellerFullName);
+        global_tidiit_mail($orderDetails[0]->sellerEmail, "Tidiit order TIDIIT-OD-".$order->orderId.' has canceled by '.$buyerFullName, $adminMailData,'seller_single_order_canceled',$sellerFullName);
 
         /// for support
         $adminMailData['userFullName']='Tidiit Inc Support';
         $this->load->model('Siteconfig_model','siteconfig');
         //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
         $supportEmail='judhisahoo@gmail.com';
-        $this->_global_tidiit_mail($supportEmail, "Tidiit Order TIDIIT-OD-".$order->orderId.' has canceled by '.$buyerFullName, $adminMailData,'support_single_order_canceled','Tidiit Inc Support');
+        global_tidiit_mail($supportEmail, "Tidiit Order TIDIIT-OD-".$order->orderId.' has canceled by '.$buyerFullName, $adminMailData,'support_single_order_canceled','Tidiit Inc Support');
         return TRUE;
     }
     
