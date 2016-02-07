@@ -479,12 +479,14 @@ class Order_model extends CI_Model {
     }
     
     function add_to_wish_list($dataArr){
-        $this->db->where('productId',$dataArr['productId'])->where('userId',$dataArr['userId'])->where('productPriceId',$dataArr['productPriceId']);
-        if($this->db->count_all_results()>0){
-            return TRUE;
+        $this->db->where('productId',$dataArr['productId'])->where('userId',$dataArr['userId'])->where('productPriceId',$dataArr['productPriceId'])->where('orderType','SINGLE');
+        $no=$this->db->from($this->_table)->count_all_results();
+        //echo $no;die;
+        if($no>0){
+            $this->db->insert($this->_wishlist,$dataArr);
+            return $this->db->insert_id();
         }
-        $this->db->insert($this->_wishlist,$dataArr);
-        return $this->db->insert_id();
+        return FALSE;
     }
     
     function remove_wish_list($userId,$productId,$productPriceId){

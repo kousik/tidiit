@@ -489,6 +489,7 @@ class Shopping extends REST_Controller {
     }
     
     
+    
     function set_wishlist_post(){
         $userId=$this->post('userId');
         $productId=$this->post('productId');
@@ -527,10 +528,33 @@ class Shopping extends REST_Controller {
             pre($orderInfo);die;
     }
     
-    function final_payment_for_single_order_post(){
-        $orderId=  $this->post('orderId');
-        //$orderId=  $this->post('deliveryPerseon');
-        //$orderId=  $this->post('orderId');
+    function group_order_start_post(){
+        $userId=  $this->post('userId');
+        $productId=  $this->post('productId');
+        $productPriceId=  $this->post('productPriceId');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceType=  $this->post('deviceType');
+        $UDID=  $this->post('UDID');
+        $deviceToken=  $this->post('deviceToken');
+        
+        if($userId=="" || $productId =="" || $productPriceId =="" || $latitude=="" || $longitude=="" || $deviceType =="" || $deviceToken=="" || $UDID==""){
+            $this->response(array('error' => 'Please provide user index,product index, product price index,latitude,longitude,device id,device token,device type !'), 400); return FALSE;
+        }
+        
+        $user=$this->user->get_details_by_id($userId);
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }else{
+            $user=$user[0];
+        }
+        $this->load->model('Product_model','product');
+        $productDetails=  $this->product->details($productId);
+        if(empty($productDetails)){
+            $this->response(array('error' => 'Please provide valid product index!'), 400); return FALSE;
+        }
+        
+        
         
     }
     
@@ -567,16 +591,29 @@ class Shopping extends REST_Controller {
     
     function move_to_wish_list_post(){
         $userId=$this->post('userId');
-        $orderId=$this->post('orderId');
-        $orderDetails=$this->order->details($orderId);
-        $orderInfo= unserialize(base64_decode($orderDetails[0]->orderInfo));
-        pre($orderInfo);die;
-        $productId=$orderInfo['priceinfo']->productId;
-        $productPriceId = $orderInfo['priceinfo']->productPriceId;
         $latitude = $this->post('latitude');
         $longitude = $this->post('longitude');
         $deviceType = $this->post('deviceType');
-        $wishListDataArr=array('userId'=>$userId,'productId'=>$productId,'productPriceId'=>$productPriceId,'latitude'=>$latitude,'longitude'=>$longitude,'deviceType'=>$deviceType);
+        
+        $user=$this->user->get_details_by_id($userId);
+        if(empty($user)):
+            $this->response(array('error' => 'Please provide valid user index.'), 400);return FALSE;
+        endif;
+        $orderId=$this->post('orderId');
+        $orderDetails=$this->order->details($orderId);
+        if(empty($orderDetails)):
+            $this->response(array('error' => 'Please provide valid order index.'), 400);return FALSE;
+        elseif($orderDetails[0]->status>0):
+            $this->response(array('error' => 'Please provide valid order index,current is not in truck.'), 400);return FALSE;
+        endif;
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        
+        $orderInfo= unserialize(base64_decode($orderDetails[0]->orderInfo));
+        //pre($orderInfo);die;
+        $productId=$orderInfo['priceinfo']->productId;
+        $productPriceId = $orderInfo['priceinfo']->productPriceId;
+        
+        $wishListDataArr=array('userId'=>$userId,'productId'=>$productId,'productPriceId'=>$productPriceId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType,'fromSource'=>'cart');
         if($this->order->add_to_wish_list($wishListDataArr)):
             $this->order->remove_order_from_cart($orderId,$userId);
             $result=array();
