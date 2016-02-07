@@ -442,10 +442,10 @@ class Shopping extends REST_Controller {
         $recv_email = $user->email;
         $recv_name=$user->firstName.' '.$user->lastName;
         $orderDetails=$this->order->details($orderId);
-        $tidiitStr.=$tidiitStrChr.'-'.$v.',';
+        $tidiitStr.=$tidiitStrChr.'-'.$orderId.',';
         $order_update=array();
         $order_update['isPaid'] = 1;
-        $this->order->update($order_update,$v);
+        $this->order->update($order_update,$orderId);
         $order=$this->order->get_single_order_by_id($orderId);
         $orderinfo=unserialize(base64_decode($order->orderInfo));
         $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
@@ -453,9 +453,9 @@ class Shopping extends REST_Controller {
         $mPesaId=$this->order->add_mpesa(array('latitude'=>$latitude,'userId'=>$userId,'longitude'=>$longitude,'appSource'=>$deviceType));
         $this->order->edit_payment(array('paymentType'=>'mPesa','mPesaId'=>$mPesaId),$orderId);
         
-        $mail_template_view_data=$this->load_default_resources();
+        $mail_template_view_data=load_default_resources();
         $mail_template_view_data['single_order_success']=$mail_template_data;
-        $this->_global_tidiit_mail($recv_email, "Payment has completed for your Tidiit order TIDIIT-OD-".$v, $mail_template_view_data,'single_order_success_sod_final_payment',$recv_name);
+        global_tidiit_mail($recv_email, "Payment has completed for your Tidiit order TIDIIT-OD-".$orderId, $mail_template_view_data,'single_order_success_sod_final_payment',$recv_name);
         $this->_sent_single_order_complete_mail_sod_final_payment($orderId);
         
         /// here to preocess SMS to logistics partner
@@ -590,7 +590,7 @@ class Shopping extends REST_Controller {
     function _sent_single_order_complete_mail_sod_final_payment($orderId){
         $orderDetails=  $this->order->details($orderId);
         //pre($orderDetails);die;
-        $adminMailData=  $this->load_default_resources();
+        $adminMailData=  load_default_resources();
         $adminMailData['orderDetails']=$orderDetails;
         $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
         //pre($orderInfoDataArr);die;
@@ -599,7 +599,7 @@ class Shopping extends REST_Controller {
         $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
         $buyerFullName=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
         $adminMailData['buyerFullName']=$buyerFullName;
-        $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Payment has submited for Tidiit order TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'seller_single_order_success_sod_final_payment',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
+        global_tidiit_mail($orderDetails[0]->sellerEmail, "Payment has submited for Tidiit order TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'seller_single_order_success_sod_final_payment',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
 
         /// for support
         $adminMailData['userFullName']='Tidiit Inc Support';
@@ -608,7 +608,7 @@ class Shopping extends REST_Controller {
         $this->load->model('Siteconfig_model','siteconfig');
         //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
         $supportEmail='judhisahoo@gmail.com';
-        $this->_global_tidiit_mail($supportEmail, "Payment has submited for Tidiit Order TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'support_single_order_success_sod_final_payment','Tidiit Inc Support');
+        global_tidiit_mail($supportEmail, "Payment has submited for Tidiit Order TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'support_single_order_success_sod_final_payment','Tidiit Inc Support');
         //die;
         
         return TRUE;

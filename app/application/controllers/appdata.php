@@ -858,6 +858,9 @@ class Appdata extends REST_Controller {
         $comments=  $this->post('comments');
         $latitude=  $this->post('latitude');
         $longitude=  $this->post('longitude');
+        $deviceType=  $this->post('deviceType');
+        $UDID=  $this->post('UDID');
+        $deviceToken=  $this->post('deviceToken');
         
         $userDetails=  $this->user->get_details_by_id($userId);
         if(empty($userDetails)){
@@ -866,6 +869,10 @@ class Appdata extends REST_Controller {
         $order      = $this->order->get_single_order_by_id($orderId);
         if(empty($order)){
             $this->response(array('error' => 'Invalid order index. Please try again!'), 400); return FALSE;
+        }
+        
+        if($deviceType=="" || $UDID=="" || $deviceToken==""){
+            $this->response(array('error' => 'Please provide device type,device id,device token.'), 400); return FALSE;
         }
         
         if($reason=="" && $other_reason==""){
