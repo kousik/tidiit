@@ -863,7 +863,7 @@ class Appdata extends REST_Controller {
         if(empty($userDetails)){
             $this->response(array('error' => 'Invalid user index. Please try again!'), 400); return FALSE;
         }
-        $order      = $this->Order_model->get_single_order_by_id($orderId);
+        $order      = $this->order->get_single_order_by_id($orderId);
         if(empty($order)){
             $this->response(array('error' => 'Invalid order index. Please try again!'), 400); return FALSE;
         }
