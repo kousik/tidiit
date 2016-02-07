@@ -896,6 +896,7 @@ class Appdata extends REST_Controller {
         send_sms_notification($sms_data);
     }
     
+    
     function send_notification($data){
         /*
         $notify['senderId'] = ;

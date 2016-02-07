@@ -41,6 +41,7 @@
             // URL for access ajax data
             myJsMain = window.myJsMain || {};
             myJsMain.baseURL = '<?php echo BASE_URL;?>';
+            myJsMain.showHowItWorksBoxLoaded =0;
             myJsMain.securityCode='<?php echo $this->session->userdata("secret");?>';
             <?php if($this->session->userdata('FE_SESSION_VAR')==''):?>
             myJsMain.isLogedIn=false;

@@ -369,6 +369,126 @@ class Shopping extends REST_Controller {
         success_response_after_post_get($result);
     }
     
+    function single_order_mpesa_payment_post(){
+        $userId=  $this->post('userId');
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        $deviceType = $this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken==""){
+            $this->response(array('error' => 'Please provide user index,latitude,longitude,device id,device token !'), 400); return FALSE;
+        }
+        
+        $allIncompleteOrders= $this->order->get_incomplete_order_by_user($userId,'single');
+        //pre($allIncompleteOrders);die;
+        $defaultResources=load_default_resources();
+        $user=$this->user->get_details_by_id($userId)[0];
+        foreach ($allIncompleteOrders As $k){
+            $orderInfo = array();
+            $mail_template_data = array();
+            //pre($k);die;
+            $orderInfo= unserialize(base64_decode($k->orderInfo));
+            //pre($orderInfo);die;
+            //pre($orderInfo['shipping']);die;
+            //pre($orderInfo['pdetail']);die;
+            //pre($orderInfo['priceinfo']);die;
+           
+            $mPesaId=$this->order->add_mpesa(array('latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId));
+            $this->order->add_payment(array('orderId'=>$k->orderId,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'single'));
+            $this->product->update_product_quantity($orderInfo['priceinfo']->productId,$orderInfo['priceinfo']->qty);
+            $orderUpdateArr=array('orderUpdatedate'=>date('Y-m-d H:i:s'),'udidPayment'=>$UDID,'deviceTokenPayment'=>$deviceToken,
+                'latitudePayment'=>$latitude,'longitudePayment'=>$longitude,'isPaid'=>1);
+            $orderUpdateArr['status']=2;
+            $this->order->update($orderUpdateArr,$k->orderId);
+            /// sendin SMS to user
+            /*$sms_data=array('nMessage'=>'You have successfull placed an order TIDIIT-OD-'.$k->orderId.' for '.$orderInfo['pdetail']->title.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'],
+                'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
+                'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER');*/
+            //send_sms_notification($sms_data);
+            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderInfo;
+            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$k->orderId;
+            $mail_template_view_data=$defaultResources;
+            $mail_template_view_data['single_order_success']=$mail_template_data;
+            $receiverFullName=$user->firstName.' '.$user->lastName;
+            global_tidiit_mail($user->email, "Your Tidiit order - TIDIIT-OD-".$k->orderId.' has placed successfully', $mail_template_view_data,'single_order_success',$receiverFullName);
+            
+            $this->sent_single_order_complete_mail($k->orderId);
+        }
+        $result=array();
+        $result['message']='Thanks you for shopping with '.$defaultResources['MainSiteBaseURL'].'.Order placed successfully for each item selected.For More details check your "My Order" section.';
+        success_response_after_post_get($result);
+    }
+    
+    function single_order_mpesa_payment_final_post(){
+        $userId=  $this->post('userId');
+        $orderId=  $this->post('orderId');
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        $deviceType = $this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken==""){
+            $this->response(array('error' => 'Please provide user index,latitude,longitude,device id,device token !'), 400); return FALSE;
+        }
+        
+        //$orderId=0;
+        $tidiitStrChr='TIDIIT-OD';
+        $tidiitStr='';
+        //Send Email message
+        $user = $this->user->get_details_by_id($userId)[0]; 
+        $recv_email = $user->email;
+        $recv_name=$user->firstName.' '.$user->lastName;
+        $orderDetails=$this->order->details($orderId);
+        $tidiitStr.=$tidiitStrChr.'-'.$v.',';
+        $order_update=array();
+        $order_update['isPaid'] = 1;
+        $this->order->update($order_update,$v);
+        $order=$this->order->get_single_order_by_id($orderId);
+        $orderinfo=unserialize(base64_decode($order->orderInfo));
+        $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
+        $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$orderId;
+        $mPesaId=$this->order->add_mpesa(array('latitude'=>$latitude,'userId'=>$userId,'longitude'=>$longitude,'appSource'=>$deviceType));
+        $this->order->edit_payment(array('paymentType'=>'mPesa','mPesaId'=>$mPesaId),$orderId);
+        
+        $mail_template_view_data=$this->load_default_resources();
+        $mail_template_view_data['single_order_success']=$mail_template_data;
+        $this->_global_tidiit_mail($recv_email, "Payment has completed for your Tidiit order TIDIIT-OD-".$v, $mail_template_view_data,'single_order_success_sod_final_payment',$recv_name);
+        $this->_sent_single_order_complete_mail_sod_final_payment($orderId);
+        
+        /// here to preocess SMS to logistics partner
+        /*$logisticsData=$PaymentDataArr['logisticsData'];
+        if(!empty($logisticsData) && array_key_exists('deliveryStaffContactNo', $logisticsData)):
+            $logisticMobileNo=$logisticsData['deliveryStaffContactNo'];
+            if($logisticMobileNo!=""):
+                $sms=$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.' please process the delivery.';
+                /// sendin SMS to allmember
+                $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$logisticMobileNo,'senderId'=>'','receiverId'=>'',
+                'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
+                send_sms_notification($sms_data);
+            endif;
+        endif;*/
+        
+        /// SMS to payer
+        $sms='Thanks for the payment.We have received for Tidiit order '.$tidiitStr.'.';
+        $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
+        'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
+        send_sms_notification($sms_data);
+        
+        /// here send mail to logistic partner
+        /*$mailBody="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
+        $this->_global_tidiit_mail($PaymentDataArr['logisticsData']['deliveryStaffEmail'],'Tidiit payment submited  for Order '.$tidiitStr,$mailBody,'',$recv_name);
+        unset($_SESSION['PaymentData']);*/
+        
+        
+        $result=array();
+        $result['message']='Thanks for the payment before order is Out for delivery';
+        success_response_after_post_get($result);
+    }
+    
+    
     function set_wishlist_post(){
         $userId=$this->post('userId');
         $productId=$this->post('productId');
@@ -406,6 +526,14 @@ class Shopping extends REST_Controller {
         $orderInfo= unserialize(base64_decode($orderDetails[0]->orderInfo));
             pre($orderInfo);die;
     }
+    
+    function final_payment_for_single_order_post(){
+        $orderId=  $this->post('orderId');
+        //$orderId=  $this->post('deliveryPerseon');
+        //$orderId=  $this->post('orderId');
+        
+    }
+    
     
     function sent_single_order_complete_mail($orderId){
         $orderDetails=  $this->order->details($orderId);
@@ -459,7 +587,32 @@ class Shopping extends REST_Controller {
         endif;
     }
     
-    
+    function _sent_single_order_complete_mail_sod_final_payment($orderId){
+        $orderDetails=  $this->order->details($orderId);
+        //pre($orderDetails);die;
+        $adminMailData=  $this->load_default_resources();
+        $adminMailData['orderDetails']=$orderDetails;
+        $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
+        //pre($orderInfoDataArr);die;
+        $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
+        /// for seller
+        $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+        $buyerFullName=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
+        $adminMailData['buyerFullName']=$buyerFullName;
+        $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Payment has submited for Tidiit order TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'seller_single_order_success_sod_final_payment',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
+
+        /// for support
+        $adminMailData['userFullName']='Tidiit Inc Support';
+        $adminMailData['sellerFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
+        $adminMailData['buyerFullName']=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
+        $this->load->model('Siteconfig_model','siteconfig');
+        //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
+        $supportEmail='judhisahoo@gmail.com';
+        $this->_global_tidiit_mail($supportEmail, "Payment has submited for Tidiit Order TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'support_single_order_success_sod_final_payment','Tidiit Inc Support');
+        //die;
+        
+        return TRUE;
+    }
 }
     
 ?>

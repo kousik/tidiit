@@ -82,7 +82,8 @@ myJsMain.commonFunction = {
            url: myJsMain.baseURL+'ajax/reset_secret/',
            data: SecretTextSetAjaxData,
            success: function(){
-               myJsMain.commonFunction.showHowItWorksBox();
+               if(myJsMain.showHowItWorksBoxLoaded==0)
+                    myJsMain.commonFunction.showHowItWorksBox();
            }
          });
         return str;
@@ -96,6 +97,7 @@ myJsMain.commonFunction = {
                 success: function(msg){
                     myJsMain.commonFunction.hidePleaseWait();
                     if(msg!=''){
+                        myJsMain.showHowItWorksBoxLoaded=1;
                         jQuery('#autoLoadHowItWorks').html(msg)
                     }
                 }
