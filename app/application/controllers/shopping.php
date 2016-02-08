@@ -329,6 +329,8 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => 'Please provide user index,latitude,longitude,device id,device token !'), 400); return FALSE;
         }
         
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        
         $allIncompleteOrders= $this->order->get_incomplete_order_by_user($userId,'single');
         //pre($allIncompleteOrders);die;
         $defaultResources=load_default_resources();
@@ -385,6 +387,7 @@ class Shopping extends REST_Controller {
         //pre($allIncompleteOrders);die;
         $defaultResources=load_default_resources();
         $user=$this->user->get_details_by_id($userId)[0];
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
         foreach ($allIncompleteOrders As $k){
             $orderInfo = array();
             $mail_template_data = array();
@@ -438,6 +441,8 @@ class Shopping extends REST_Controller {
         $tidiitStrChr='TIDIIT-OD';
         $tidiitStr='';
         //Send Email message
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        
         $user = $this->user->get_details_by_id($userId)[0]; 
         $recv_email = $user->email;
         $recv_name=$user->firstName.' '.$user->lastName;
@@ -497,6 +502,7 @@ class Shopping extends REST_Controller {
         $latitude = $this->post('latitude');
         $longitude = $this->post('longitude');
         $deviceType = $this->post('deviceType');
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
         $wishListDataArr=array('userId'=>$userId,'productId'=>$productId,'productPriceId'=>$productPriceId,'latitude'=>$latitude,'longitude'=>$longitude,'deviceType'=>$deviceType);
         if($this->order->add_to_wish_list($wishListDataArr)):
             $result=array();
@@ -554,10 +560,146 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => 'Please provide valid product index!'), 400); return FALSE;
         }
         
+        $cart = $this->order->tidiit_get_user_orders($user->userId, 0);//print_r($cart);die;//$user->userId
+        $prod_price_info = $this->product->get_products_price_details_by_id($productPriceId);
+        $is_cart_update = false;
+        if($cart): 
+            foreach ($cart as $item):            
+                if(($item->productId == $productId) && ( $item->orderType== "GROUP")):
+                    $data['orderId'] = $item->orderId;
+                    $is_cart_update = true;
+                endif;
+            endforeach;
+        endif;
+
+
+        $orderinfo = [];
+        $orderinfo['pdetail'] = $productDetails[0];
+        $orderinfo['priceinfo'] = $prod_price_info;
+        $productImageArr = $this->product->get_products_images($productId);
+        $orderinfo['pimage'] = $productImageArr[0];
+
+        $country_name=  get_counry_code_from_lat_long($latitude, $longitude);
+        $taxDetails = $this->product->get_tax_for_current_location($productId, $country_name.'_tax');
+        $taxCol = $country_name.'_tax';
+        $taxPercentage = $taxDetails->$taxCol;
+        $orderAmountBeforeTax = $prod_price_info->price;
+        $cTax = ($orderAmountBeforeTax*$taxPercentage)/100;
+        $orderAmount = $orderAmountBeforeTax+$cTax;
+        //$orderDataArr=array('taxAmount'=>$cTax,'discountAmount'=>$data['couponAmount'],'orderAmount'=>$orderAmount);
+
         
-        
+        //Order first step
+        $order_data = array();
+        $order_data['orderType'] = 'GROUP';
+        $order_data['productId'] = $productId;
+        $order_data['productPriceId'] = $productPriceId;
+        $order_data['orderDate'] = date('Y-m-d H:i:s');
+        $order_data['status'] = 0;
+        $order_data['orderInfo'] = base64_encode(serialize($orderinfo));
+        //Add Order
+        if(!isset($data['orderId'])):
+            $order_data['productQty'] = 0;
+            $order_data['userId'] = $user->userId;
+            $order_data['orderAmount'] = $orderAmount;
+            $order_data['subTotalAmount'] = $prod_price_info->price;
+            $order_data['taxAmount'] = $cTax;
+            $qrCodeFileName=time().'-'.rand(1, 50).'.png';
+            $order_data['qrCodeImageFile']=$qrCodeFileName;
+            $order_data['IP']=  $this->input->ip_address();
+            $orderId = $this->order->add($order_data);
+            $data['orderId']=$orderId;
+            $params=array();
+            $params['data'] = $orderId;
+            $params['savename'] = $this->config->item('ResourcesPath').'qr_code/'.$qrCodeFileName;
+            $this->tidiitrcode->generate($params);
+        endif;
+
+        $order_data['orderId'] = $data['orderId'];
+        $order_data['productPriceId'] = $productPriceId;
+        $data['order'] = $this->order->get_single_order_by_id($data['orderId']);
+        //==============================================//
+        if($is_cart_update):
+            if(isset($data['orderId'])):
+                $order_update['orderInfo'] = base64_encode(serialize($orderinfo));
+                $order_update['orderAmount'] = $orderAmount;
+                $order_update['subTotalAmount'] = $prod_price_info->price;
+                $order_update['taxAmount'] = $cTax;
+                unset($order_update['orderId']);
+                unset($order_update['orderDate']);
+                $order_update['orderUpdatedate'] = date('Y-m-d H:i:s');
+                $order_update['productQty'] = 0;
+                //print_r($order_update);
+                $this->order->update($order_update,$data['orderId']);
+            endif;
+        endif;
+
+        $a = $this->_get_available_order_quantity($data['orderId']);
+        $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
+
+        //=============================================//
+        if($data['order']->groupId):
+            $data['group'] = $this->user->get_group_by_id($data['order']->groupId);
+            $data['groupId'] = $data['order']->groupId;
+        else:
+            $data['group'] = false;
+            $data['groupId'] = '';
+        endif;
+        //$my_groups = $this->user->get_my_groups();
+        //$data['CatArr'] = $this->_get_user_select_cat_array();
+        $data['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
+        $data['totalQty'] = $prod_price_info->qty;
+        $data['priceInfo'] = $prod_price_info;
+        //$data['userMenuActive']=7;
+        //$data['countryDataArr'] = $this->Country->get_all1();
+        //$data['myGroups']=$my_groups;
+        //$data['user']=$user;
+        //$data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
+        //$this->load->view('group_order/group_order',$data);
+        success_response_after_post_get($data);
     }
     
+    function process_my_group_orders_by_id_post(){
+        $orderId=$this->post('orderId');
+        $userId=$this->post('userId');
+        $latitude=$this->post('latitude');
+        $logitude=$this->post('logitude');
+        
+        
+        $data['order'] = $this->order->get_single_order_by_id($orderId);
+        $productId = $data['order']->productId;
+        $productPriceId = $data['order']->productPriceId;
+        if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
+            $this->response(array('error' => 'Please provide the product index, product price index.'), 400);
+        endif;
+        $data['orderId'] = $data['order']->orderId;
+        $product = $this->product->details($productId);
+        $product = $product[0];
+        $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
+        $a = $this->_get_available_order_quantity($data['orderId']);
+        $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
+        
+        //=============================================//
+        if($data['order']->groupId):
+            $data['group'] = $this->User_model->get_group_by_id($data['order']->groupId);
+            $data['groupId'] = $data['order']->groupId;
+        else:
+            $data['group'] = false;
+            $data['groupId'] = 0;
+        endif;
+
+        $my_groups = $this->User_model->get_my_groups();
+        $data['CatArr'] = $this->_get_user_select_cat_array();
+        $data['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
+        $data['totalQty'] = $prod_price_info->qty;
+        $data['priceInfo'] = $prod_price_info;
+        $data['userMenuActive']=7;
+        $data['countryDataArr']=$this->Country->get_all1();
+        $data['myGroups'] = $my_groups;
+        $data['user'] = $user;
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
+        $this->load->view('group_order/group_order',$data);
+    }
     
     function sent_single_order_complete_mail($orderId){
         $orderDetails=  $this->order->details($orderId);
@@ -649,6 +791,16 @@ class Shopping extends REST_Controller {
         //die;
         
         return TRUE;
+    }
+    
+    function _get_available_order_quantity($orderId){
+        $pevorder = $this->order->get_single_order_by_id($orderId);
+        if($pevorder->parrentOrderID):
+            $availQty = $this->order->get_available_order_quantity($pevorder->parrentOrderID);
+        else:
+            $availQty = $this->order->get_available_order_quantity($orderId);
+        endif;
+        return $availQty;
     }
 }
     
