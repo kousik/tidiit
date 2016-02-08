@@ -665,7 +665,7 @@ class Shopping extends REST_Controller {
         $latitude=$this->post('latitude');
         $logitude=$this->post('logitude');
         
-        
+        $country_name=  get_counry_code_from_lat_long($latitude, $longitude);
         $data['order'] = $this->order->get_single_order_by_id($orderId);
         $productId = $data['order']->productId;
         $productPriceId = $data['order']->productPriceId;
@@ -675,30 +675,40 @@ class Shopping extends REST_Controller {
         $data['orderId'] = $data['order']->orderId;
         $product = $this->product->details($productId);
         $product = $product[0];
-        $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
+        $prod_price_info = $this->product->get_products_price_details_by_id($productPriceId);
         $a = $this->_get_available_order_quantity($data['orderId']);
         $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
         
         //=============================================//
         if($data['order']->groupId):
-            $data['group'] = $this->User_model->get_group_by_id($data['order']->groupId);
+            $data['group'] = $this->user->get_group_by_id($data['order']->groupId);
             $data['groupId'] = $data['order']->groupId;
         else:
             $data['group'] = false;
             $data['groupId'] = 0;
         endif;
 
-        $my_groups = $this->User_model->get_my_groups();
-        $data['CatArr'] = $this->_get_user_select_cat_array();
+        //$my_groups = $this->user->get_my_groups();
+        //$data['CatArr'] = $this->_get_user_select_cat_array();
         $data['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
         $data['totalQty'] = $prod_price_info->qty;
         $data['priceInfo'] = $prod_price_info;
         $data['userMenuActive']=7;
-        $data['countryDataArr']=$this->Country->get_all1();
-        $data['myGroups'] = $my_groups;
-        $data['user'] = $user;
-        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
-        $this->load->view('group_order/group_order',$data);
+        //$data['countryDataArr']=$this->Country->get_all1();
+        //$data['myGroups'] = $my_groups;
+        //$data['user'] = $user;
+        //$data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
+        //$this->load->view('group_order/group_order',$data);
+        success_response_after_post_get($data);
+    }
+    
+    function show_my_buyers_clubs_for_order_post(){
+        $userId=  $this->post('userId');
+        $myGroupDataArr=$this->user->get_my_groups_apps($userId);
+        $my_groups = $myGroupDataArr;
+        $result['myGroups']=$my_groups;
+        $result['ajaxType']="yes";
+        success_response_after_post_get($result);
     }
     
     function sent_single_order_complete_mail($orderId){
