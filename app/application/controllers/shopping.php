@@ -548,6 +548,8 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => 'Please provide user index,product index, product price index,latitude,longitude,device id,device token,device type !'), 400); return FALSE;
         }
         
+        $country_name=  get_counry_code_from_lat_long($latitude, $longitude);
+        
         $user=$this->user->get_details_by_id($userId);
         if(empty($user)){
             $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
@@ -579,7 +581,7 @@ class Shopping extends REST_Controller {
         $productImageArr = $this->product->get_products_images($productId);
         $orderinfo['pimage'] = $productImageArr[0];
 
-        $country_name=  get_counry_code_from_lat_long($latitude, $longitude);
+        
         $taxDetails = $this->product->get_tax_for_current_location($productId, $country_name.'_tax');
         $taxCol = $country_name.'_tax';
         $taxPercentage = $taxDetails->$taxCol;
@@ -704,6 +706,10 @@ class Shopping extends REST_Controller {
     
     function show_my_buyers_clubs_for_order_post(){
         $userId=  $this->post('userId');
+        $user=$this->user->get_details_by_id($userId);
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
         $myGroupDataArr=$this->user->get_my_groups_apps($userId);
         $my_groups = $myGroupDataArr;
         $result['myGroups']=$my_groups;
