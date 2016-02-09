@@ -549,7 +549,9 @@ class Shopping extends REST_Controller {
         }
         
         $country_name=  get_counry_code_from_lat_long($latitude, $longitude);
-        
+        if($country_name==""){
+            $this->response(array('error' => 'Please provide valid latitude and longitude for getting country for tax calculation'), 400); return FALSE;
+        }
         $user=$this->user->get_details_by_id($userId);
         if(empty($user)){
             $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
@@ -581,7 +583,7 @@ class Shopping extends REST_Controller {
         $productImageArr = $this->product->get_products_images($productId);
         $orderinfo['pimage'] = $productImageArr[0];
 
-        
+        //echo $country_name;die;
         $taxDetails = $this->product->get_tax_for_current_location($productId, $country_name.'_tax');
         $taxCol = $country_name.'_tax';
         $taxPercentage = $taxDetails->$taxCol;
@@ -695,7 +697,7 @@ class Shopping extends REST_Controller {
         $data['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
         $data['totalQty'] = $prod_price_info->qty;
         $data['priceInfo'] = $prod_price_info;
-        $data['userMenuActive']=7;
+        //$data['userMenuActive']=7;
         //$data['countryDataArr']=$this->Country->get_all1();
         //$data['myGroups'] = $my_groups;
         //$data['user'] = $user;
@@ -715,6 +717,36 @@ class Shopping extends REST_Controller {
         $result['myGroups']=$my_groups;
         $result['ajaxType']="yes";
         success_response_after_post_get($result);
+    }
+    
+    function update_order_buying_club_id_post(){
+        $groupId = $this->post('groupId');
+        $orderId = $this->post('orderId');
+        $group = $this->user->get_group_by_id($groupId,TRUE);
+        $data['groupId'] = $groupId;
+        $this->order->update($data, $orderId);
+        $group = json_decode(json_encode($group), true);
+        $data['group'] = $group;
+        
+        
+        $data['order'] = $this->order->get_single_order_by_id($orderId);
+        $productId = $data['order']->productId;
+        $productPriceId = $data['order']->productPriceId;
+        if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
+            $this->response(array('error' => 'Please provide the product index, product price index.'), 400);
+        endif;
+        $data['orderId'] = $data['order']->orderId;
+        $product = $this->product->details($productId);
+        $product = $product[0];
+        $prod_price_info = $this->product->get_products_price_details_by_id($productPriceId);
+        $a = $this->_get_available_order_quantity($data['orderId']);
+        $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
+
+        
+        $data['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
+        $data['totalQty'] = $prod_price_info->qty;
+        $data['priceInfo'] = $prod_price_info;
+        success_response_after_post_get($data);
     }
     
     function sent_single_order_complete_mail($orderId){
