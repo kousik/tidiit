@@ -505,8 +505,10 @@ class User_model extends CI_Model {
                         $groups[$grp->groupId] = $grp;
                         foreach($users as $ukey => $usrId):
                             $udatas = $this->get_details_by_id($usrId);
-                                pre($udatas);pre('$udatas');
-                            $udata[] = $udatas[0];
+                            //pre($udatas);pre('$udatas');
+                            if(!empty($udatas)){
+                                $udata[] = $udatas[0];
+                            }
                         endforeach;
                     endif;
                 endif;
