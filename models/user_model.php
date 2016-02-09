@@ -490,10 +490,10 @@ class User_model extends CI_Model {
         if($datas):
             $groups = array();
             foreach($datas as $key => $grp):
-                pre($grp);
+                pre($grp.' kkkkkkk');
                 $users = explode(",", $grp->groupUsers);
                 $udata = array();
-                pre($users);
+                pre($users.'rrrrrrrr');
                 if($users):                        
                     $grp->users = $udata;
                 
