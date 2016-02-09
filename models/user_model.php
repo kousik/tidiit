@@ -486,7 +486,7 @@ class User_model extends CI_Model {
     public function get_my_on_groups(){
         $query = $this->db->query("SELECT *  FROM `{$this->_group}` WHERE FIND_IN_SET('{$this->session->userdata('FE_SESSION_VAR')}',groupUsers) > 0 ORDER BY `groupId` DESC  ");
         $datas = $query->result();
-        pre($datas);
+        //pre($datas);
         if($datas):
             $groups = array();
             foreach($datas as $key => $grp):
@@ -499,11 +499,13 @@ class User_model extends CI_Model {
                 
                     $getgpadmin = $this->get_details_by_id($grp->groupAdminId); 
                     if(!empty($getgpadmin)):
+                        pre($getgpadmin);pre('$getgpadmin');
                         $grp->admin= $getgpadmin[0];
                         $grp->hide = true;
                         $groups[$grp->groupId] = $grp;
                         foreach($users as $ukey => $usrId):
                             $udatas = $this->get_details_by_id($usrId);
+                                pre($udatas);pre('$udatas');
                             $udata[] = $udatas[0];
                         endforeach;
                     endif;
