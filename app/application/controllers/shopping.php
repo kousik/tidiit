@@ -493,8 +493,6 @@ class Shopping extends REST_Controller {
         success_response_after_post_get($result);
     }
     
-    
-    
     function set_wishlist_post(){
         $userId=$this->post('userId');
         $productId=$this->post('productId');
@@ -667,7 +665,7 @@ class Shopping extends REST_Controller {
         $orderId=$this->post('orderId');
         $userId=$this->post('userId');
         $latitude=$this->post('latitude');
-        $logitude=$this->post('logitude');
+        $longitude=$this->post('longitude');
         
         $country_name=  get_counry_code_from_lat_long($latitude, $longitude);
         $data['order'] = $this->order->get_single_order_by_id($orderId);
@@ -720,8 +718,16 @@ class Shopping extends REST_Controller {
     }
     
     function update_order_buying_club_id_post(){
-        $groupId = $this->post('groupId');
+        $userId = $this->post('userId');
+        $user=$this->user->get_details_by_id($userId);
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
         $orderId = $this->post('orderId');
+        if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
+            $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
+        }
+        $groupId = $this->post('groupId');
         $group = $this->user->get_group_by_id($groupId,TRUE);
         $data['groupId'] = $groupId;
         $this->order->update($data, $orderId);
@@ -747,6 +753,65 @@ class Shopping extends REST_Controller {
         $data['totalQty'] = $prod_price_info->qty;
         $data['priceInfo'] = $prod_price_info;
         success_response_after_post_get($data);
+    }
+    
+    function set_qty_for_buying_club_order_post(){
+        $userId = $this->post('userId');
+        $user=$this->user->get_details_by_id($userId);
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
+        $orderId = $this->post('orderId');
+        if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
+            $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
+        }
+        $qty=  $this->post('qty');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        
+        $order = $this->order->get_single_order_by_id($orderId);
+        $prod_price_info = $this->product->get_products_price_details_by_id($order->productPriceId);
+
+        $single_price = ($prod_price_info->price/$prod_price_info->qty);
+        $price = number_format($single_price, 2, '.', '');
+        $totalprice = number_format($price*$qty, 2, '.', '');
+
+        $country_name=  get_counry_code_from_lat_long($latitude, $longitude);
+        if($country_name==''){
+            $this->response(array('error' => 'Please provide valid latitude and longitude for getting country for tax calculation'), 400); return FALSE;
+        }
+        $taxDetails = $this->product->get_tax_for_current_location($order->productId, $country_name.'_tax');
+        $taxCol = $country_name.'_tax';
+        $taxPercentage = $taxDetails->$taxCol;
+        $orderAmountBeforeTax = $totalprice;
+        $cTax = ($orderAmountBeforeTax*$taxPercentage)/100;
+        $orderAmount = $orderAmountBeforeTax+$cTax;
+
+        $order_update = [];
+        $order_update['orderAmount'] = $orderAmount;
+        $order_update['subTotalAmount'] = $totalprice;
+        $order_update['productQty'] = $qty;
+        $order_update['taxAmount'] = $cTax;
+        $this->order->update($order_update,$orderId);
+        $result=array('message'=>'success');
+        success_response_after_post_get($result);
+    }
+    
+    function review_buying_club_order_post(){
+        $userId=  $this->post('userId');
+        $orderId=  $this->post('orderId');
+        $user=$this->user->get_details_by_id($userId);
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
+        if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
+            $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
+        }
+        
+        $order = $this->order->get_single_order_by_id($orderId);
+        $orderInfo=json_decode(json_encode($order->orderInfo), true);
+        $result=array();
+        
     }
     
     function sent_single_order_complete_mail($orderId){
@@ -777,7 +842,6 @@ class Shopping extends REST_Controller {
         send_sms_notification($sms_data);
         return TRUE;
     }
-    
     
     function move_to_wish_list_post(){
         $userId=$this->post('userId');
