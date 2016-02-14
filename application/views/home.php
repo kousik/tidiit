@@ -21,7 +21,7 @@
                     <?php endif;
                     if(!empty($slider2)):?>
                     <!-- start banner section -->
-                    <div class="banner_sec">
+                    <div class="banner_sec" style="display: none;">
                         <ul id="demo2">
                             <?php foreach ($slider2 AS $k): ?>
                             <li>
