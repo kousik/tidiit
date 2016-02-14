@@ -835,6 +835,10 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
         }
         
+        if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
+            $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
+        }
+        
         if(!$coupon):
             $this->response(array('error' => 'Invalid promo code or promo code has expaired!!'), 400); return FALSE;
         endif;
@@ -941,6 +945,165 @@ class Shopping extends REST_Controller {
         success_response_after_post_get($result);
     }
     
+    function buying_club_leader_sod_payment_post(){
+        $orderId=  $this->post('orderId');
+        $userId=  $this->post('userId');
+        
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        $deviceType = $this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $orderId){
+            $this->response(array('error' => 'Please provide user index,order index,latitude,longitude,device id,device token !'), 400); return FALSE;
+        }
+        
+        if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
+            $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
+        }
+        
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        
+        $orderDetails= $this->order->details($orderId);
+        $orderinfo=json_decode(json_encode(unserialize(base64_decode($orderDetails[0]->orderInfo))), true);
+                
+        //pre($allIncompleteOrders);die;
+        $defaultResources=load_default_resources();
+        $user=$this->user->get_details_by_id($userId)[0];
+        $pevorder = $this->order->get_single_order_by_id($orderId);
+        $a = $this->_get_available_order_quantity($orderId);
+        $prod_price_info = $this->product->get_products_price_details_by_id($pevorder->productPriceId);
+        $order_update=array('status'=>2);
+        $update = $this->order->update($order_update,$orderId);
+        $this->order->order_group_status_update($orderId,$order_update['status'],$pevorder->parrentOrderID);
+        $order = $this->order->get_single_order_by_id($orderId);
+        $group = $this->user->get_group_by_id($order->groupId);
+        $this->product->update_product_quantity($prod_price_info->productId,$prod_price_info->qty);
+        foreach($group->users as $key => $usr):
+            $mail_template_data=array();
+            $data['senderId'] = $userId;
+            $data['receiverId'] = $usr->userId;
+            $data['nType'] = 'BUYING-CLUB-ORDER';
+
+            $data['nTitle'] = 'New Buying Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+            $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
+            $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club[".$group->groupTitle."] order product.<br>";
+            $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
+            $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
+            $data['nMessage'] .= "Want to process the order ? <br>";
+            $data['nMessage'] .= "<a href='".$defaultResources['MainSiteBaseURL']."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
+            $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
+            $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+            $data['orderId'] =$orderId;
+
+
+            $data['isRead'] = 0;
+            $data['status'] = 1;
+            $data['createDate'] = date('Y-m-d H:i:s');
+
+            //Send Email message
+            $recv_email = $usr->email;
+            $sender_email = $group->admin->email;
+
+            $mail_template_view_data=$defaultResources;
+            $mail_template_view_data['group_order_start']=$mail_template_data;
+            $this->_global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
+            //pre($data);die;
+            $this->user->notification_add($data);
+
+            /// sendin SMS to allmember
+            $sms_data=array('nMessage'=>'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'],
+                'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$usr->userId,
+                'senderMobileNumber'=>$group->admin->mobile,'nType'=>'CREATE-'.$data['nType']);
+            send_sms_notification($sms_data);
+        endforeach;
+        $settlementOnDeliveryId=$this->order->add_sod(array('latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId,'appSource'=>$deviceType));
+        $this->order->add_payment(array('orderId'=>$orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'group'));
+        $result=array();
+        $result['message']='Group invited to group member successfully.Your group order started successfully,';
+        success_response_after_post_get($result);
+    }
+    
+    function buying_club_leader_mpesa_payment_post(){
+        $orderId=  $this->post('orderId');
+        $userId=  $this->post('userId');
+        
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        $deviceType = $this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $orderId){
+            $this->response(array('error' => 'Please provide user index,order index,latitude,longitude,device id,device token !'), 400); return FALSE;
+        }
+        
+        if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
+            $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
+        }
+        
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        
+        $orderDetails= $this->order->details($orderId);
+        $orderinfo=json_decode(json_encode(unserialize(base64_decode($orderDetails[0]->orderInfo))), true);
+                
+        //pre($allIncompleteOrders);die;
+        $defaultResources=load_default_resources();
+        $user=$this->user->get_details_by_id($userId)[0];
+        $pevorder = $this->order->get_single_order_by_id($orderId);
+        $a = $this->_get_available_order_quantity($orderId);
+        $prod_price_info = $this->product->get_products_price_details_by_id($pevorder->productPriceId);
+        $order_update=array('status'=>2);
+        $update = $this->order->update($order_update,$orderId);
+        $this->order->order_group_status_update($orderId,$order_update['status'],$pevorder->parrentOrderID);
+        $order = $this->order->get_single_order_by_id($orderId);
+        $group = $this->user->get_group_by_id($order->groupId);
+        $this->product->update_product_quantity($prod_price_info->productId,$prod_price_info->qty);
+        foreach($group->users as $key => $usr):
+            $mail_template_data=array();
+            $data['senderId'] = $userId;
+            $data['receiverId'] = $usr->userId;
+            $data['nType'] = 'BUYING-CLUB-ORDER';
+
+            $data['nTitle'] = 'New Buying Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+            $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
+            $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club[".$group->groupTitle."] order product.<br>";
+            $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
+            $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
+            $data['nMessage'] .= "Want to process the order ? <br>";
+            $data['nMessage'] .= "<a href='".$defaultResources['MainSiteBaseURL']."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
+            $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
+            $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+            $data['orderId'] =$orderId;
+
+
+            $data['isRead'] = 0;
+            $data['status'] = 1;
+            $data['createDate'] = date('Y-m-d H:i:s');
+
+            //Send Email message
+            $recv_email = $usr->email;
+            $sender_email = $group->admin->email;
+
+            $mail_template_view_data=$defaultResources;
+            $mail_template_view_data['group_order_start']=$mail_template_data;
+            $this->_global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
+            //pre($data);die;
+            $this->user->notification_add($data);
+
+            /// sendin SMS to allmember
+            $sms_data=array('nMessage'=>'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'],
+                'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$usr->userId,
+                'senderMobileNumber'=>$group->admin->mobile,'nType'=>'CREATE-'.$data['nType']);
+            send_sms_notification($sms_data);
+        endforeach;
+        $mPesaId=$this->order->add_mpesa(array('latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId,'appSource'=>$deviceType));
+        $this->order->add_payment(array('orderId'=>$orderId,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'group'));
+        $result=array();
+        $result['message']='Group invited to group member successfully.Your group order started successfully,';
+        success_response_after_post_get($result);
+    }
     
     
     function sent_single_order_complete_mail($orderId){
