@@ -475,6 +475,8 @@ class Ajax extends MY_Controller{
                     $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-re-order-accept-process/".base64_encode($orderId*226201)."/".base64_encode(100)."' class='btn btn-success btn-lg'>Accept</a><br>";
                     $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID1']=$orderId;
                     $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                    $data['orderId'] =$orderId;
+                    
 
                     $data['isRead'] = 0;
                     $data['status'] = 1;
@@ -1438,8 +1440,6 @@ class Ajax extends MY_Controller{
             endif;    
         endif;
     }
-    
-    
     
      public function order_delivery_image_resize($fileName){
         $PHOTOPATH=$this->config->item('ResourcesPath').'order_delivery/';

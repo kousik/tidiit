@@ -326,6 +326,8 @@ class Shopping extends MY_Controller{
                         $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
                         $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
                         $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                        $data['orderId'] =$orderId;
+                        
 
                         $data['isRead'] = 0;
                         $data['status'] = 1;
@@ -1557,6 +1559,7 @@ class Shopping extends MY_Controller{
                         $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
                         $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
                         $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                        $data['orderId'] =$orderId;
 
                         $data['isRead'] = 0;
                         $data['status'] = 1;
@@ -1593,6 +1596,7 @@ class Shopping extends MY_Controller{
                             $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
                             $data['nMessage'] .= "";
                             $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                            $data['orderId'] =$orderId;
 
                             $data['isRead'] = 0;
                             $data['status'] = 1;
@@ -1864,6 +1868,7 @@ class Shopping extends MY_Controller{
                 $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERAMT']=$order->orderAmount;;
                 $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERQTY']=$order->productQty;
                 $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                $data['orderId'] =$orderId;
 
                 $data['isRead'] = 0;
                 $data['status'] = 1;
@@ -1894,6 +1899,7 @@ class Shopping extends MY_Controller{
                 $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
                 $data['nMessage'] .= "";
                 $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                $data['orderId'] =$orderId;
 
                 $data['isRead'] = 0;
                 $data['status'] = 1;

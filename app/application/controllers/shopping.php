@@ -809,10 +809,139 @@ class Shopping extends REST_Controller {
         }
         
         $order = $this->order->get_single_order_by_id($orderId);
-        $orderInfo=json_decode(json_encode($order->orderInfo), true);
+        $tempOrderInfo=unserialize(base64_decode($order->orderInfo));
+        $orderInfo=json_decode(json_encode($tempOrderInfo), true);
         $result=array();
-        
+        $result['order']=$order;
+        $result['orderInfo']=$orderInfo;
+        success_response_after_post_get($result);
     }
+    
+    function buying_club_order_coupon_set_post(){
+        $this->load->model('Coupon_model','coupon');
+        $promocode=$this->post('couponCode',TRUE);
+        $orderId = $this->post('orderId',TRUE);
+        $userId = $this->post('userId',TRUE);
+        $latitude = $this->post('latitude',TRUE);
+        $longitude = $this->post('longitude',TRUE);
+        $coupon = $this->coupon->is_coupon_code_exists($promocode);
+        $orderDetails=$this->order->details($orderId,TRUE);
+        if(empty($orderDetails)){
+            $this->response(array('error' => 'Invalid order index provided.'), 400); return FALSE;
+        }
+        
+        $userDetails=  $this->user->get_details_by_id($userId);
+        if(empty($userDetails)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
+        
+        if(!$coupon):
+            $this->response(array('error' => 'Invalid promo code or promo code has expaired!!'), 400); return FALSE;
+        endif;
+        
+        $ordercoupon = $this->coupon->is_coupon_code_valid_for_single($coupon);
+        
+        if($ordercoupon):
+            $this->response(array('error' => 'Invalid promo code or promo code has expaired!!'), 400); return FALSE;
+        else:
+            //$ctotal = $this->cart->total();
+            //$allItemArr=$this->order->get_all_cart_item($userDetails[0]->userId,'single');
+            $orderIdArr=array();
+            foreach($orderDetails As $k){
+                $orderIdArr[]=$k['orderId'];
+            }
+            /*if($this->coupon->is_coupon_recently_used($orderIdArr,$coupon->couponId)==TRUE){
+                $this->response(array('error' => 'Promo code has alrady used in your current session.'), 400); return FALSE;
+            }*/
+            //pre($orderDetails);die;
+            $ctotal=0;
+            foreach($orderDetails AS $k){ //pre($k);die;
+                $ctotal +=$k['subTotalAmount'];
+            }
+            if($coupon->type == 'percentage'):
+                $amt = ($coupon->amount/100)*$orderDetails['subTotalAmount'];
+                $amt1 = number_format($amt, 2, '.', '');
+                $data['couponAmount'] = substr($amt1, 0, -3);
+            elseif($coupon->type == 'fix'):
+                $data['couponAmount'] = $coupon->amount;
+            endif;
+            $tax=0;
+            $grandTotal=0;
+            $couponAmount=0;
+            $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+            //$countryShortName='IN';
+            if($countryShortName==FALSE){
+                $this->response(array('error' => 'Please provide valid latitude and longitude!'), 400); return FALSE;
+            }
+            foreach($orderDetails AS $k){
+                if($k['orderId']==$orderId){
+                    $currentLocationTaxDetails=$this->product->get_tax_for_current_location($k['productId'],$countryShortName.'_tax');
+                    $taxCol=$countryShortName.'_tax';
+                    $taxPercentage=$currentLocationTaxDetails->$taxCol;
+                    $orderAmountBeforeTax=$k['subTotalAmount']-$data['couponAmount'];
+                    $cTax=$orderAmountBeforeTax*$taxPercentage/100;
+                    $orderAmount=$orderAmountBeforeTax+$cTax;
+                    $orderDataArr=array('taxAmount'=>$cTax,'discountAmount'=>$data['couponAmount'],'orderAmount'=>$orderAmount);
+                    $this->order->update($orderDataArr,$k['orderId']);
+                    $this->order->tidiit_creat_order_coupon(array('orderId'=>$k['orderId'],'couponId'=>$coupon->couponId,'amount'=>$data['couponAmount']));
+                    $couponAmount +=$data['couponAmount'];
+                }else{
+                    $cTax=$k['taxAmount'];
+                    $orderAmount=$k['orderAmount'];
+                    $couponAmount +=$k['discountAmount'];
+                }
+                
+                $tax +=$cTax;
+                $grandTotal +=$orderAmount;
+            }
+            
+            $data['tax'] = number_format(round($tax,0,PHP_ROUND_HALF_UP),2);
+            //$grandTotal=round($ctotal - $data['couponAmount']+round($tax,0,PHP_ROUND_HALF_UP),0,PHP_ROUND_HALF_UP);
+            $data['grandTotal'] = number_format(round($grandTotal,0,PHP_ROUND_HALF_UP),2);
+            
+            $result['message'] = "Promo code has been applied successfully!";
+            $data['couponAmount'] = number_format(round($couponAmount,0,PHP_ROUND_HALF_UP),2);
+            $result['content'] = $data;
+            success_response_after_post_get($result);
+        endif;
+    }
+    
+    function buying_club_order_coupon_unset_post(){
+        $this->load->model('Coupon_model','coupon');
+        $orderId=$this->post('orderId',TRUE);
+        $userId=$this->post('userId',TRUE);
+        $latitude = $this->post('latitude',TRUE);
+        $longitude = $this->post('longitude',TRUE);
+        $orderDetails=$this->order->details($orderId);
+        if(empty($orderDetails)){
+            $this->response(array('error' => 'Invalid order index provided.'), 400); return FALSE;
+        }
+        
+        $userDetails=  $this->user->get_details_by_id($userId);
+        if(empty($userDetails)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
+        
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        //$countryShortName='IN';
+        $currentLocationTaxDetails=$this->product->get_tax_for_current_location($orderDetails[0]->productId,$countryShortName.'_tax');
+        $taxCol=$countryShortName.'_tax';
+        $taxPercentage=$currentLocationTaxDetails->$taxCol;
+        $tax=$orderDetails[0]->subTotalAmount*$taxPercentage/100;
+        
+        $orderDataArr=array();
+        $orderDataArr['taxAmount'] = $tax;
+        $orderDataArr['orderAmount'] = $orderDetails[0]->subTotalAmount+$tax;
+        $orderDataArr['discountAmount'] ='';
+        $this->order->update($orderDataArr,$orderId);
+        
+        $this->coupon->remove_order($orderId);
+        $result['message'] = "Selected promo code removed form selected item.";
+        $result['ajaxType']='yes';
+        success_response_after_post_get($result);
+    }
+    
+    
     
     function sent_single_order_complete_mail($orderId){
         $orderDetails=  $this->order->details($orderId);
