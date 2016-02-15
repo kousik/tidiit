@@ -327,6 +327,8 @@ class Shopping extends MY_Controller{
                         $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
                         $data['nMessage'] .= "Thanks <br> Tidiit Team.";
                         $data['orderId'] =$orderId;
+                        $data['productId'] =$orderinfo['priceinfo']->productId;
+                        $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
                         
 
                         $data['isRead'] = 0;
@@ -1560,6 +1562,8 @@ class Shopping extends MY_Controller{
                         $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
                         $data['nMessage'] .= "Thanks <br> Tidiit Team.";
                         $data['orderId'] =$orderId;
+                        $data['productId'] =$orderinfo['priceinfo']->productId;
+                        $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
 
                         $data['isRead'] = 0;
                         $data['status'] = 1;
@@ -1597,6 +1601,8 @@ class Shopping extends MY_Controller{
                             $data['nMessage'] .= "";
                             $data['nMessage'] .= "Thanks <br> Tidiit Team.";
                             $data['orderId'] =$orderId;
+                            $data['productId'] =$orderinfo['priceinfo']->productId;
+                            $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
 
                             $data['isRead'] = 0;
                             $data['status'] = 1;
@@ -1869,6 +1875,8 @@ class Shopping extends MY_Controller{
                 $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERQTY']=$order->productQty;
                 $data['nMessage'] .= "Thanks <br> Tidiit Team.";
                 $data['orderId'] =$orderId;
+                $data['productId'] =$orderinfo['priceinfo']->productId;
+                $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
 
                 $data['isRead'] = 0;
                 $data['status'] = 1;
@@ -1900,6 +1908,8 @@ class Shopping extends MY_Controller{
                 $data['nMessage'] .= "";
                 $data['nMessage'] .= "Thanks <br> Tidiit Team.";
                 $data['orderId'] =$orderId;
+                $data['productId'] =$orderinfo['priceinfo']->productId;
+                $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
 
                 $data['isRead'] = 0;
                 $data['status'] = 1;

@@ -476,6 +476,8 @@ class Ajax extends MY_Controller{
                     $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID1']=$orderId;
                     $data['nMessage'] .= "Thanks <br> Tidiit Team.";
                     $data['orderId'] =$orderId;
+                    $data['productId'] =$orderinfo['priceinfo']->productId;
+                    $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
                     
 
                     $data['isRead'] = 0;

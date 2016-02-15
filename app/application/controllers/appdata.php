@@ -88,7 +88,7 @@ class Appdata extends REST_Controller {
         }
         
         if($password =="" || $confirmPassword =="" || $firstName =="" || $lastName=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
-            $this->response(array('error' => 'All fields are required amd must be filled up.'), 400); return FALSE;
+            $this->response(array('error' => 'Please provide password,confirm password,first name,last name,device type,device token,udid.'), 400); return FALSE;
         }
         
         if($this->user->check_username_exists_without_type($email)==TRUE){
@@ -150,7 +150,16 @@ class Appdata extends REST_Controller {
         $mobile=$this->post('mobile');
         $fax=$this->post('fax');
         $rowDOB=$this->post('DOB');
+        $deviceType=$this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if($firstName=="" || $lastName =="" || $contactNo=="" || $email == "" || $mobile=="" || $rowDOB=="" || $deviceType=="" || $UDID=="" || $deviceToken==""){
+            $this->response(array('error' => 'Please provide first name,last name,contact number,email,mobile,DOB,device type,UDUD,device token'), 400); return FALSE;
+        } 
+        
         $DOB="00-00-0000";
+        
         $dobArr=  explode('-',$rowDOB);
         if(!empty($dobArr)):
             if(strlen($dobArr[2])==4):
@@ -273,13 +282,16 @@ class Appdata extends REST_Controller {
         $phone=  $this->post('phone');
         $address=  $this->post('address');
         $productTypeId=  $this->post('productTypeId');
-        mail('gippy.gupta@gmail.com','all post data',  json_encode($_POST));
-        mail('judhisahoo@gmail.com','all post data',  json_encode($_POST));
-        if(trim($productTypeId)==""){
-            $this->response(array('error' => 'Please provide prodcut type for current user.'), 400); return FALSE;
+        
+        $deviceType=  $this->post('deviceType');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceToken=  $this->post('deviceToken');
+        $UDID=  $this->post('UDID');
+        
+        if(trim($productTypeId)=="" || $firstName =="" || $lastName=="" || $userId=="" || $countryId=="" || $cityId=="" || $zipId=="" || $localityId=="" || $phone=="" || $address=="" || $latitude=="" || $longitude=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
+            $this->response(array('error' => 'Please provide prodcut type,first name,last name,user index,city index,zip index, locality index,phone,address,latitude,longitude,device type,divice token,UDID for current user.'), 400); return FALSE;
         }
-        mail('gippy.gupta@gmail.com','productTypeId',$productTypeId);
-        mail('judhisahoo@gmail.com','productTypeId',$productTypeId);
         $productTypeIdArr=  explode(',', $productTypeId);
         
         if ($productTypeIdArr[0] == "") { 
@@ -294,13 +306,8 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Please provide prodcut type for current user.'), 400); return FALSE;
         }
         
-        mail('gippy.gupta@gmail.com','$productTypeIdArr',  json_encode($productTypeIdArr));
-        mail('judhisahoo@gmail.com','$productTypeIdArr',  json_encode($productTypeIdArr));
-        
         foreach ($productTypeIdArr AS $k =>$v){
             $rs=$this->db->from('category')->where('categoryId',$v)->get()->result_array();
-            mail('gippy.gupta@gmail.com','category details of '.$v,  json_encode($rs));
-            mail('judhisahoo@gmail.com','category details of '.$v,  json_encode($rs));
             if(count($rs)==0):
                 $this->response(array('error' => 'Invalid product type id.'), 400); return FALSE;
             endif;
@@ -343,6 +350,16 @@ class Appdata extends REST_Controller {
     
     function retrive_your_password_post(){
         $email=$this->post('email');
+        $deviceType=  $this->post('deviceType');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceToken=  $this->post('deviceToken');
+        $UDID=  $this->post('UDID');
+        
+        if($latitude=="" || $longitude=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
+            $this->response(array('error' => 'Please provide latitude,longitude,devive type,device token,UDID.'), 400); return FALSE;
+        }
+        
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->response(array('error' => 'Please provide valid email.'), 400); return FALSE;
         }
@@ -372,6 +389,17 @@ class Appdata extends REST_Controller {
         $oldPassword=$this->post('oldPassword');
         $newPassword=$this->post('newPassword');
         $newConfirmPassword=$this->post('newConfirmPassword');
+        
+        $deviceType=  $this->post('deviceType');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceToken=  $this->post('deviceToken');
+        $UDID=  $this->post('UDID');
+        
+        if($latitude=="" || $longitude=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
+            $this->response(array('error' => 'Please provide latitude,longitude,devive type,device token,UDID.'), 400); return FALSE;
+        }
+        
         if($userId =="" && $oldPassword=="" && $newPassword =="" && $newConfirmPassword ==""):
             $this->response(array('error' => 'Please provide all data.'), 400); return FALSE;
         else:
@@ -431,6 +459,16 @@ class Appdata extends REST_Controller {
         $deviceType=$this->post('deviceType');
         $mpesaFullName=$this->post('mpesaFullName');
         $mpesaAccount=$this->post('mpesaAccount');
+        
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceToken=  $this->post('deviceToken');
+        $UDID=  $this->post('UDID');
+        
+        if($latitude=="" || $longitude=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
+            $this->response(array('error' => 'Please provide latitude,longitude,devive type,device token,UDID.'), 400); return FALSE;
+        }
+        
         if($userId =="" && $mpesaFullName=="" && $mpesaAccount ==""):
             $this->response(array('error' => 'Please provide all data.'), 400); return FALSE;
         else:
@@ -455,6 +493,15 @@ class Appdata extends REST_Controller {
         $rand_keys = array_rand($colors, 1);
         $groupColor = $colors[$rand_keys];
         $groupUsersArr=  explode(',', $groupUsers);
+        
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceToken=  $this->post('deviceToken');
+        $UDID=  $this->post('UDID');
+        
+        if($latitude=="" || $longitude=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
+            $this->response(array('error' => 'Please provide latitude,longitude,devive type,device token,UDID.'), 400); return FALSE;
+        }
         
         $notify = array();
         if($groupAdminId=="" || $groupTitle=="" || trim($productType)=="" || trim($deviceType)=="" || count($groupUsersArr)==0){
@@ -527,6 +574,17 @@ class Appdata extends REST_Controller {
     function edit_group_get(){
         $adminId=$this->get('userId');
         $groupId=$this->get('groupId');
+        
+        $deviceType=  $this->post('deviceType');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceToken=  $this->post('deviceToken');
+        $UDID=  $this->post('UDID');
+        
+        if($latitude=="" || $longitude=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
+            $this->response(array('error' => 'Please provide latitude,longitude,devive type,device token,UDID.'), 400); return FALSE;
+        }
+        
         $userDetails=  $this->user->get_details_by_id($adminId);
         if(empty($userDetails)){
             $this->response(array('error' => 'Invalid Buying Club index. Please try again!'), 400); return FALSE;
@@ -587,6 +645,17 @@ class Appdata extends REST_Controller {
         $groupId = $this->post('groupId');
         $adminId = $this->post('userId');
         $groupTitle = $this->post('groupTitle');
+        
+        $deviceType=  $this->post('deviceType');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceToken=  $this->post('deviceToken');
+        $UDID=  $this->post('UDID');
+        
+        if($latitude=="" || $longitude=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
+            $this->response(array('error' => 'Please provide latitude,longitude,devive type,device token,UDID.'), 400); return FALSE;
+        }
+        
         //$productType = $this->input->post('productType');
         $groupUsersArr = $this->post('groupUsers');
         
@@ -713,6 +782,16 @@ class Appdata extends REST_Controller {
     function delete_group_post(){
         $groupId=  $this->post('groupId');
         $userId=  $this->post('userId');
+        
+        $deviceType=  $this->post('deviceType');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceToken=  $this->post('deviceToken');
+        $UDID=  $this->post('UDID');
+        
+        if($latitude=="" || $longitude=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
+            $this->response(array('error' => 'Please provide latitude,longitude,devive type,device token,UDID.'), 400); return FALSE;
+        }
         if($userId>0):
             $this->user->group_delete($groupId);
             success_response_after_post_get(array('message'=>'Selected group deleted successfully.'));

@@ -146,6 +146,13 @@ class Shopping extends REST_Controller {
     function remove_item_from_cart_post(){
         $userId = $this->post('userId');
         $orderId = $this->post('orderId');
+        
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceType=  $this->post('deviceType');
+        $UDID=  $this->post('UDID');
+        $deviceToken=  $this->post('deviceToken');
+        
         if($userId=="" || $orderId ==""){
             $this->response(array('error' => 'Please provide user index,order index !'), 400); return FALSE;
         }
@@ -212,17 +219,29 @@ class Shopping extends REST_Controller {
         $userId = $this->post('userId',TRUE);
         $latitude = $this->post('latitude',TRUE);
         $longitude = $this->post('longitude',TRUE);
+        $deviceType = $this->post('deviceType',TRUE);
+        
+        $UDID=  $this->post('UDID');
+        $deviceToken=  $this->post('deviceToken');
+        if($deviceType=="" || $UDID == "" || $deviceToken == ""){
+            $this->response(array('error' => 'Invalid device type,UDID,device Token provide!'), 400); return FALSE;
+        }
         $coupon = $this->coupon->is_coupon_code_exists($promocode);
         if(!$coupon):
             $this->response(array('error' => 'Invalid promo code or promo code has expaired!!'), 400); return FALSE;
         endif;
-        
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        //$countryShortName='IN';
+        $userDetails=  $this->user->get_details_by_id($userId);
+        if(empty($userDetails)){
+            $this->response(array('error' => 'Invalid user index provide!'), 400); return FALSE;
+        }
+            
         $ordercoupon = $this->coupon->is_coupon_code_valid_for_single($coupon);
         
         if($ordercoupon):
             $this->response(array('error' => 'Invalid promo code or promo code has expaired!!'), 400); return FALSE;
         else:
-           $userDetails=  $this->user->get_details_by_id($userId);
             //$ctotal = $this->cart->total();
             $allItemArr=$this->order->get_all_cart_item($userDetails[0]->userId,'single');
             $orderIdArr=array();
@@ -251,8 +270,6 @@ class Shopping extends REST_Controller {
             $tax=0;
             $grandTotal=0;
             $couponAmount=0;
-            $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
-            //$countryShortName='IN';
             if($countryShortName==FALSE){
                 $this->response(array('error' => 'Please provide valid latitude and longitude!'), 400); return FALSE;
             }
@@ -500,7 +517,13 @@ class Shopping extends REST_Controller {
         $latitude = $this->post('latitude');
         $longitude = $this->post('longitude');
         $deviceType = $this->post('deviceType');
+        $UDID = $this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
         $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        
+        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $productId=="" || $productPriceId==""){
+            $this->response(array('error' => 'Please provide user index,latitude,longitude,device id,device token,product index,product price index !'), 400); return FALSE;
+        }
         $wishListDataArr=array('userId'=>$userId,'productId'=>$productId,'productPriceId'=>$productPriceId,'latitude'=>$latitude,'longitude'=>$longitude,'deviceType'=>$deviceType);
         if($this->order->add_to_wish_list($wishListDataArr)):
             $result=array();
@@ -598,6 +621,7 @@ class Shopping extends REST_Controller {
         $order_data['productPriceId'] = $productPriceId;
         $order_data['orderDate'] = date('Y-m-d H:i:s');
         $order_data['status'] = 0;
+        $order_data['appSource'] =$deviceType;
         $order_data['orderInfo'] = base64_encode(serialize($orderinfo));
         //Add Order
         if(!isset($data['orderId'])):
@@ -666,9 +690,20 @@ class Shopping extends REST_Controller {
         $userId=$this->post('userId');
         $latitude=$this->post('latitude');
         $longitude=$this->post('longitude');
+        $deviceType=  $this->post('deviceType');
+        $UDID=  $this->post('UDID');
+        $deviceToken=  $this->post('deviceToken');
         
         $country_name=  get_counry_code_from_lat_long($latitude, $longitude);
-        $data['order'] = $this->order->get_single_order_by_id($orderId);
+        
+        if($deviceToken == "" || $deviceType =="" || $UDID =="" ){
+            $this->response(array('error' => 'Please provide the device token,device type, UDID.'), 400);
+        }
+        $order=$this->order->get_single_order_by_id($orderId);
+        if(empty($order)){
+            $this->response(array('error' => 'Please valid order index.'), 400);
+        }
+        $data['order'] = $order;
         $productId = $data['order']->productId;
         $productPriceId = $data['order']->productPriceId;
         if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
@@ -719,11 +754,20 @@ class Shopping extends REST_Controller {
     
     function update_order_buying_club_id_post(){
         $userId = $this->post('userId');
+        $orderId = $this->post('orderId');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceType=  $this->post('deviceType');
+        $UDID=  $this->post('UDID');
+        $deviceToken=  $this->post('deviceToken');
+        if($userId=="" || $orderId =="" || $latitude=="" || $longitude=="" || $deviceToken="" || $UDID=="" || $deviceType==""){
+            $this->response(array('error' => 'Please provide valid user index,order index,latitude,longitude,device type,devce token,UDID!'), 400); return FALSE;
+        }
         $user=$this->user->get_details_by_id($userId);
         if(empty($user)){
             $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
         }
-        $orderId = $this->post('orderId');
+        
         if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
             $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
         }
@@ -752,22 +796,33 @@ class Shopping extends REST_Controller {
         $data['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
         $data['totalQty'] = $prod_price_info->qty;
         $data['priceInfo'] = $prod_price_info;
+        $data['message']="success";
         success_response_after_post_get($data);
     }
     
     function set_qty_for_buying_club_order_post(){
         $userId = $this->post('userId');
+        $orderId = $this->post('orderId');
+        $qty=  $this->post('qty');
+        
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceType=  $this->post('deviceType');
+        $UDID=  $this->post('UDID');
+        $deviceToken=  $this->post('deviceToken');
+        if($userId=="" || $orderId=="" || $UDID=="" || $deviceToken=="" || $deviceType=="" || $latitude=="" || $longitude=="" ||$qty==""){
+            $this->response(array('error' => 'Please provide user index,order index,UDID,device token,device type,latitude,longitude,quntity!'), 400); return FALSE;
+        }
+        
+        $country_name=  get_counry_code_from_lat_long($latitude, $longitude);
         $user=$this->user->get_details_by_id($userId);
         if(empty($user)){
             $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
         }
-        $orderId = $this->post('orderId');
+        
         if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
             $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
         }
-        $qty=  $this->post('qty');
-        $latitude=  $this->post('latitude');
-        $longitude=  $this->post('longitude');
         
         $order = $this->order->get_single_order_by_id($orderId);
         $prod_price_info = $this->product->get_products_price_details_by_id($order->productPriceId);
@@ -776,7 +831,7 @@ class Shopping extends REST_Controller {
         $price = number_format($single_price, 2, '.', '');
         $totalprice = number_format($price*$qty, 2, '.', '');
 
-        $country_name=  get_counry_code_from_lat_long($latitude, $longitude);
+        
         if($country_name==''){
             $this->response(array('error' => 'Please provide valid latitude and longitude for getting country for tax calculation'), 400); return FALSE;
         }
@@ -809,8 +864,8 @@ class Shopping extends REST_Controller {
         }
         
         $order = $this->order->get_single_order_by_id($orderId);
-        $tempOrderInfo=unserialize(base64_decode($order->orderInfo));
-        $orderInfo=json_decode(json_encode($tempOrderInfo), true);
+        $orderInfo=json_decode(json_encode(unserialize(base64_decode($order->orderInfo))), true);
+        //pre($orderInfo);die;
         $result=array();
         $result['order']=$order;
         $result['orderInfo']=$orderInfo;
@@ -824,6 +879,14 @@ class Shopping extends REST_Controller {
         $userId = $this->post('userId',TRUE);
         $latitude = $this->post('latitude',TRUE);
         $longitude = $this->post('longitude',TRUE);
+        
+        $deviceType=  $this->post('deviceType');
+        $UDID=  $this->post('UDID');
+        $deviceToken=  $this->post('deviceToken');
+        
+        if($userId=="" || $orderId=="" || $UDID=="" || $deviceToken=="" || $deviceType=="" || $latitude=="" || $longitude=="" || $couponCode==""){
+            $this->response(array('error' => 'Please provide user index,order index,UDID,device token,device type,latitude,longitude,coupon Code!'), 400); return FALSE;
+        }
         $coupon = $this->coupon->is_coupon_code_exists($promocode);
         $orderDetails=$this->order->details($orderId,TRUE);
         if(empty($orderDetails)){
@@ -916,6 +979,7 @@ class Shopping extends REST_Controller {
         $userId=$this->post('userId',TRUE);
         $latitude = $this->post('latitude',TRUE);
         $longitude = $this->post('longitude',TRUE);
+        
         $orderDetails=$this->order->details($orderId);
         if(empty($orderDetails)){
             $this->response(array('error' => 'Invalid order index provided.'), 400); return FALSE;
@@ -955,7 +1019,7 @@ class Shopping extends REST_Controller {
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
         
-        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $orderId){
+        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $orderId==""){
             $this->response(array('error' => 'Please provide user index,order index,latitude,longitude,device id,device token !'), 400); return FALSE;
         }
         
@@ -989,13 +1053,15 @@ class Shopping extends REST_Controller {
             $data['nTitle'] = 'New Buying Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
             $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
             $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club[".$group->groupTitle."] order product.<br>";
-            $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
-            $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
+            $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']['title']."</a><br>";
+            $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']['title'];
             $data['nMessage'] .= "Want to process the order ? <br>";
-            $data['nMessage'] .= "<a href='".$defaultResources['MainSiteBaseURL']."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
+            $data['nMessage'] .= "<a href='".$defaultResources['MainSiteBaseURL']."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".$defaultResources['MainSiteBaseURL']."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
             $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
             $data['nMessage'] .= "Thanks <br> Tidiit Team.";
             $data['orderId'] =$orderId;
+            $data['productId'] =$orderinfo['priceinfo']['productId'];
+            $data['productPriceId'] =$orderinfo['priceinfo']['productPriceId'];
 
 
             $data['isRead'] = 0;
@@ -1008,7 +1074,7 @@ class Shopping extends REST_Controller {
 
             $mail_template_view_data=$defaultResources;
             $mail_template_view_data['group_order_start']=$mail_template_data;
-            $this->_global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
+            global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
             //pre($data);die;
             $this->user->notification_add($data);
 
@@ -1035,7 +1101,7 @@ class Shopping extends REST_Controller {
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
         
-        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $orderId){
+        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $orderId==""){
             $this->response(array('error' => 'Please provide user index,order index,latitude,longitude,device id,device token !'), 400); return FALSE;
         }
         
@@ -1069,14 +1135,15 @@ class Shopping extends REST_Controller {
             $data['nTitle'] = 'New Buying Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
             $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
             $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club[".$group->groupTitle."] order product.<br>";
-            $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
-            $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
+            $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']['title']."</a><br>";
+            $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']['title'];
             $data['nMessage'] .= "Want to process the order ? <br>";
             $data['nMessage'] .= "<a href='".$defaultResources['MainSiteBaseURL']."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
             $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
             $data['nMessage'] .= "Thanks <br> Tidiit Team.";
             $data['orderId'] =$orderId;
-
+            $data['productId'] =$orderinfo['priceinfo']['productId'];
+            $data['productPriceId'] =$orderinfo['priceinfo']['productPriceId'];
 
             $data['isRead'] = 0;
             $data['status'] = 1;
@@ -1088,7 +1155,7 @@ class Shopping extends REST_Controller {
 
             $mail_template_view_data=$defaultResources;
             $mail_template_view_data['group_order_start']=$mail_template_data;
-            $this->_global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
+            global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
             //pre($data);die;
             $this->user->notification_add($data);
 
@@ -1104,6 +1171,8 @@ class Shopping extends REST_Controller {
         $result['message']='Group invited to group member successfully.Your group order started successfully,';
         success_response_after_post_get($result);
     }
+    
+    
     
     
     function sent_single_order_complete_mail($orderId){
@@ -1207,5 +1276,3 @@ class Shopping extends REST_Controller {
         return $availQty;
     }
 }
-    
-?>

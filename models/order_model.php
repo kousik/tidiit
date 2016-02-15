@@ -537,7 +537,9 @@ class Order_model extends CI_Model {
 
     function is_valid_order_by_order_id_user_id($orderId,$userId,$status=0){
         $this->db->where('orderId',$orderId)->where('userId',$userId)->where('status',$status);
-        if($this->db->from($this->_table)->count_all_results()>0){
+        $no=$this->db->from($this->_table)->count_all_results();
+        //echo $this->db->last_query();die;
+        if($no>0){
             return TRUE;
         }else{
             return FALSE;
