@@ -436,8 +436,6 @@ class Product_model extends CI_Model {
                 return $this->db->query($sql)->result();
 	}
 	
-	
-	
 	public function products_for_discount($app=false){
             $sql="SELECT p.productId,p.Title,pc.CountryID "
                     . " FROM product AS p JOIN `product_country` AS pc ON(pc.productId=p.productId) WHERE p.Status=1";
@@ -506,8 +504,6 @@ class Product_model extends CI_Model {
 		return TRUE;
 	}
 	
-	
-	
 	public function copy_tag($productId,$NewCopyproductId){
 		$OldTagArr=$this->db->select('*')->from($this->_table_tag)->where('productId',$productId)->get()->result();
 		$BatchArr=array();
@@ -521,7 +517,6 @@ class Product_model extends CI_Model {
 		return TRUE;
 	}
 	
-        
         public function get_all_tag(){
             return $this->db->select('*')->from($this->_tag)->order_by("tagId", "desc")->get()->result();
         }
@@ -531,7 +526,6 @@ class Product_model extends CI_Model {
 		$this->db->update($this->_tag,$DataArr);
 		return TRUE;
 	}
-        
         
         public function get_top_category($categoryId){
             //echo '$categoryId = '.$categoryId;
@@ -551,8 +545,6 @@ class Product_model extends CI_Model {
             }       
         }
         
-        
-    
     function is_exist_deal_for_category($TopcategoryId,$RegionID){
         $rs=$this->db->from($this->_table_deal)->where('RegionID',$RegionID)->where('categoryId',$TopcategoryId)->get()->result();
         if(count($rs)>0)
@@ -560,7 +552,6 @@ class Product_model extends CI_Model {
         else
             return FALSE;
     }
-    
         
     public function get_recent($noOfItem=12,$app=false){
         $sql="SELECT p.productId,p.title,p.lowestPrice,p.heighestPrice,p.qty,p.minQty,pi.image,c.categoryName "

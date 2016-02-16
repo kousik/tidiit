@@ -52,8 +52,6 @@ class Shopping extends MY_Controller{
         $productImageArr = $this->Product_model->get_products_images($productId);
         $orderinfo['pimage'] = $productImageArr[0];
 
-
-
         $country_name = $this->session->userdata('FE_SESSION_USER_LOCATION_VAR');
         $taxDetails = $this->Product_model->get_tax_for_current_location($productId, $country_name.'_tax');
         $taxCol = $country_name.'_tax';
@@ -464,7 +462,6 @@ class Shopping extends MY_Controller{
         $this->load->view('group_order/order_default_message',$data);
     }
 
-
     /**
      * 
      * @param type $orderId
@@ -540,9 +537,7 @@ class Shopping extends MY_Controller{
         endif;
         return $availQty;
     }
-    
-    
-    
+        
     //AJAX = Function
     /**
      * 
@@ -620,8 +615,6 @@ class Shopping extends MY_Controller{
             $this->cart->update($data);
         }
     }
-    
-    
     
     function process_group_parent_order($orderId, $reorder = false){
         if(!$orderId):
@@ -1094,7 +1087,6 @@ class Shopping extends MY_Controller{
         $this->load->view('single_order/single_order_checkout',$data);
     }
     
-    
     /**
      * 
      */
@@ -1397,9 +1389,11 @@ class Shopping extends MY_Controller{
             $supportEmail='judhisahoo@gmail.com';
             $this->_global_tidiit_mail($supportEmail, "Buying Club order no - TIDIIT-OD-".$order->parrentOrderID.' has placed from Tidiit Inc Ltd', $adminMailData,'support_group_order_success','Tidiit Inc Support');
             //die;
+            $this->order->update(array('status'=>2),$order->parrentOrderID);
             ///mail to Buyer CLub
             $allChieldOrdersData=$this->Order_model->get_all_chield_order($order->parrentOrderID);
             foreach($allChieldOrdersData AS $k){
+                $this->order->update(array('status'=>2),$k->orderId);
                 $orderDetails=  $this->Order_model->details($k->orderId);
                 $adminMailData=array();
                 $adminMailData=  $this->load_default_resources();

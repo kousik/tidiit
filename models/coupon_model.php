@@ -272,7 +272,7 @@ class Coupon_model extends CI_Model{
 
     public function is_coupon_code_exists($code){
         //$coupons = $this->db->from($this->_coupon)->where('code',$code)->get()->result();
-        $sql="SELECT * FROM coupon WHERE `code`='".$code."' AND CURDATE() BETWEEN `startDate` AND `endDate` AND Status=1";
+        $sql="SELECT * FROM coupon WHERE `code`='".$code."' AND CURDATE() BETWEEN `startDate` AND `endDate` AND status=1";
         //echo $sql;die;
         $coupons=$this->db->query($sql)->result();
         if($coupons):

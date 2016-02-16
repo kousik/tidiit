@@ -48,6 +48,8 @@ class Appdata extends REST_Controller {
     function login_post(){
         $userName=$this->post('userName');
         $password=$this->post('password');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
         $deviceType=$this->post('deviceType');
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
@@ -56,7 +58,7 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Please provide valid email.'), 400); return FALSE;
         }
         
-        if($userName!="" && $password!="" && $deviceToken!="" && $deviceType!="" && $UDID!=""){
+        if($userName!="" && $password!="" && $deviceToken!="" && $deviceType!="" && $UDID!="" && $latitude!="" && $longitude!=""){
             $rs=$this->user->check_login_data($userName,$password,'buyer');
             if(count($rs)>0){
                 $this->user->add_login_history(array('userId'=>$rs[0]->userId,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'udid'=>$UDID,'appSource'=>$deviceType));
@@ -64,7 +66,7 @@ class Appdata extends REST_Controller {
                 success_response_after_post_get($parram);
             }else{$this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;}
         }else{
-            $this->response(array('error' => 'Please provide Username,password,device token,device type,UDID.'), 400);
+            $this->response(array('error' => 'Please provide Username,password,device token,device type,UDID,latitude,longitude'), 400);
             //echo json_encode(array('error' => 'Problem in saving user, please try again.'));
             return false;
         }
@@ -76,6 +78,8 @@ class Appdata extends REST_Controller {
         $confirmPassword=$this->post('confirmPassword');
         $firstName=$this->post('firstName');
         $lastName=$this->post('lastName');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
         $deviceType=$this->post('deviceType');
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
@@ -87,8 +91,8 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Password and confirm password is not matching.'), 400); return FALSE;
         }
         
-        if($password =="" || $confirmPassword =="" || $firstName =="" || $lastName=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
-            $this->response(array('error' => 'Please provide password,confirm password,first name,last name,device type,device token,udid.'), 400); return FALSE;
+        if($password =="" || $confirmPassword =="" || $firstName =="" || $lastName=="" || $deviceType=="" || $deviceToken=="" || $UDID=="" || $latitude =="" || $longitude==""){
+            $this->response(array('error' => 'Please provide password,confirm password,first name,last name,device type,device token,udid,latitude,longitude.'), 400); return FALSE;
         }
         
         if($this->user->check_username_exists_without_type($email)==TRUE){
@@ -150,12 +154,14 @@ class Appdata extends REST_Controller {
         $mobile=$this->post('mobile');
         $fax=$this->post('fax');
         $rowDOB=$this->post('DOB');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
         $deviceType=$this->post('deviceType');
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
         
-        if($firstName=="" || $lastName =="" || $contactNo=="" || $email == "" || $mobile=="" || $rowDOB=="" || $deviceType=="" || $UDID=="" || $deviceToken==""){
-            $this->response(array('error' => 'Please provide first name,last name,contact number,email,mobile,DOB,device type,UDUD,device token'), 400); return FALSE;
+        if($firstName=="" || $lastName =="" || $contactNo=="" || $email == "" || $mobile=="" || $rowDOB=="" || $deviceType=="" || $UDID=="" || $deviceToken=="" || $latitude=="" || $longitude==""){
+            $this->response(array('error' => 'Please provide first name,last name,contact number,email,mobile,DOB,device type,UDUD,device token,latitude,longitude'), 400); return FALSE;
         } 
         
         $DOB="00-00-0000";
@@ -860,6 +866,7 @@ class Appdata extends REST_Controller {
     }
     
     function my_notification_details_post(){
+        $this->load->model('Product_model','product');
         $userId=$this->post('userId');
         $notificationId=$this->post('notificationId');
         if($userId=="" || $notificationId==""){
@@ -870,14 +877,35 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Invalid user id. Please try again!'), 400); return FALSE;
         }
         $details=$this->user->notification_single($notificationId,TRUE);
+        
         if(!$details){
             $this->response(array('error' => 'Invalid notification id. Please try again!'), 400); return FALSE;
         }
+        
+        $result=array();
+        if($details['nType']=='BUYING-CLUB-ORDER'){
+            $orderId=$details['orderId'];
+            $prodctImageArr=$this->product->get_products_images($details['productId']);
+            $prodctDetails=$this->product->details($details['productId']);
+            $prodctPriceDetails=$this->product->get_products_price_details_by_id($details['productPriceId']);
+            //pre($prodctPriceDetails);die;
+            $result['image']=$prodctImageArr[0]->image;
+            $result['title']=$prodctDetails[0]->title;
+            $result['productPrice']=$prodctPriceDetails->price;
+            $result['productQty']=$prodctPriceDetails->qty;
+            $result['notificationTitle']=  strip_tags($details['nTitle']);
+            $result['orderId']=  $details['orderId'];
+            $tempArr=  explode('[',$details['nMessage']);
+            $tempArr1= explode(']',$tempArr[1]);
+            $result['clubTitle']=$tempArr1[0];
+        }else{
+            $result['notications_details']=$details;
+        }
+        //pre($details);die;
         $cond['id'] = $notificationId;
         $setdata['isRead'] = 1;
         $this->user->notification_update($cond, $setdata);
-        $result=array();
-        $result['notications_details']=$details;
+        //pre($result);die;
         success_response_after_post_get($result);
     }
     
