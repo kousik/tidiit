@@ -383,17 +383,26 @@ class User_model extends CI_Model {
                     $udatas = $this->get_details_by_id($usrId);
                 else
                     $udatas = $this->get_details_by_id($usrId,TRUE);
-                $udata[] = $udatas[0];
+                if(!empty($udatas))
+                    $udata[] = $udatas[0];
             endforeach;
         endif;
         if($app==FALSE):
-            $group->users = $udata;
-            $getgpadmin = $this->get_details_by_id($group->groupAdminId); 
-            $group->admin = $getgpadmin[0];
+            if(!empty($udata)):
+                $group->users = $udata;
+                $getgpadmin = $this->get_details_by_id($group->groupAdminId); 
+                $group->admin = $getgpadmin[0];
+            else:
+                return array();
+            endif;
         else:
-            $group['users'] = $udata; 
-            $getgpadmin = $this->get_details_by_id($group['groupAdminId'],TRUE); 
-            $group['admin'] = $getgpadmin[0];
+            if(!empty($udata)):
+                $group['users'] = $udata; 
+                $getgpadmin = $this->get_details_by_id($group['groupAdminId'],TRUE); 
+                $group['admin'] = $getgpadmin[0];
+            else:
+                return array();
+            endif;
         endif;    
         return $group;
     }

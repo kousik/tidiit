@@ -778,6 +778,9 @@ class Shopping extends REST_Controller {
         }
         $groupId = $this->post('groupId');
         $group = $this->user->get_group_by_id($groupId,TRUE);
+        if(empty($group)){
+            $this->response(array('error' => 'Please provide valid group index!'), 400); return FALSE;
+        }
         $data['groupId'] = $groupId;
         $this->order->update($data, $orderId);
         $group = json_decode(json_encode($group), true);
