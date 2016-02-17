@@ -879,11 +879,16 @@ class Shopping extends REST_Controller {
         }
         
         $order = $this->order->get_single_order_by_id($orderId);
-        $orderInfo=json_decode(json_encode(unserialize(base64_decode($order->orderInfo))), true);
+        $orderInfo=unserialize(base64_decode($order->orderInfo));
+        $order = json_decode(json_encode($this->order->get_single_order_by_id($orderId)), true);
+        $order['productTitle']=$orderInfo['pdetail']->title;
+        $order['qty']=$orderInfo['priceinfo']->qty;
+        $order['pimage']=$orderInfo['pimage']->image;
         //pre($order);die;
         $result=array();
-        $result['order']=json_decode(json_encode($order), true);
-        $result['orderInfo']=$orderInfo;
+        $newAllItemArr=array();
+        $newAllItemArr[]=$order;
+        $result['allItemArr']=$newAllItemArr;
         success_response_after_post_get($result);
     }
     
