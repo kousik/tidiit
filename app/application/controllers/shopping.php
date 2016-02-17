@@ -1084,7 +1084,7 @@ class Shopping extends REST_Controller {
         //pre($orderinfo);die;
         $info['orderInfo'] = base64_encode(serialize($orderinfo));
         $this->order->update($info, $orderId);
-        $orderinfo=json_decode(json_encode(unserialize(base64_decode($orderinfo))), true);
+        $orderinfo=json_decode(json_encode(unserialize(base64_decode($orderDetails[0]->orderInfo))), true);
         //pre($or)
         foreach($group->users as $key => $usr):
             $mail_template_data=array();
