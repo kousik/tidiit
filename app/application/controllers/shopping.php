@@ -1203,7 +1203,7 @@ class Shopping extends REST_Controller {
             $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']['title']."</a><br>";
             $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']['title'];
             $data['nMessage'] .= "Want to process the order ? <br>";
-            $data['nMessage'] .= "<a href='".$defaultResources['MainSiteBaseURL']."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
+            $data['nMessage'] .= "<a href='".$defaultResources['MainSiteBaseURL']."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".$defaultResources['MainSiteBaseURL']."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
             $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
             $data['nMessage'] .= "Thanks <br> Tidiit Team.";
             $data['orderId'] =$orderId;
