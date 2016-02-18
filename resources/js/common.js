@@ -90,7 +90,7 @@ myJsMain.commonFunction = {
     },
     showHowItWorksBox:function(){
         if(myJsMain.isLogedIn==false && pathArr[1]=="" ){
-            myJsMain.commonFunction.showPleaseWait();
+            /*myJsMain.commonFunction.showPleaseWait();
             jQuery.ajax({
                 type: "POST",
                 url: myJsMain.baseURL+'ajax/show_how_it_works/',
@@ -101,7 +101,7 @@ myJsMain.commonFunction = {
                         jQuery('#autoLoadHowItWorks').html(msg)
                     }
                 }
-            });
+            });*/
         }
         
     },

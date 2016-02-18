@@ -7,10 +7,12 @@ class Content extends MY_Controller{
     }
     
     function show_content($str){
+        //echo $str;die('rrr');
         if($str==""){
             redirect(BASE_URL);
         }
         $id=  base64_decode($str);
+        //pre($id);die;
         $contentDetails=  $this->cms->get_content_by_id($id);
         if(empty($contentDetails)){
             redirect(BASE_URL);

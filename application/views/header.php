@@ -29,8 +29,8 @@
                                 </div>
                                 <div class="col-md-5 col-sm-5 padng_left_none">
                                     <ul class="sub_menu">
-                                        <li><a href="<?php echo BASE_URL.'buyer-protection/MTc==/';?>">Buyer Protection <i class="fa fa-lock"></i></a></li>
-                                        <li><a href="<?php echo BASE_URL.'help/MTU=/';?>">Help <i class="fa fa-question-circle"></i></a></li>
+                                        <li><a href="<?php echo BASE_URL.'content/buyer-protection/MTc==/';?>">Buyer Protection <i class="fa fa-lock"></i></a></li>
+                                        <li><a href="<?php echo BASE_URL.'content/help/MTU=/';?>">Help <i class="fa fa-question-circle"></i></a></li>
                                         <li><a href="javascript:void(0);" class="showLogin">My Account <i class="fa fa-user"></i></a></li>
                                     </ul>
                                 </div>
