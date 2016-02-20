@@ -879,17 +879,24 @@ class Shopping extends REST_Controller {
         }
         
         $order = $this->order->get_single_order_by_id($orderId);
+        $groupDetails = $this->user->get_group_by_id($order->groupId,TRUE);
         $orderInfo=unserialize(base64_decode($order->orderInfo));
         $order = json_decode(json_encode($this->order->get_single_order_by_id($orderId)), true);
         $order['productTitle']=$orderInfo['pdetail']->title;
         $order['qty']=$orderInfo['priceinfo']->qty;
         $order['pimage']=$orderInfo['pimage']->image;
-        $order['orderInfo']=json_decode(json_encode($orderInfo), true);;
+        
+        //$order['orderInfo']=json_decode(json_encode($orderInfo), true);;
         //pre($order);die;
         $result=array();
         $newAllItemArr=array();
         $newAllItemArr[]=$order;
         $result['allItemArr']=$newAllItemArr;
+        if($userId==$groupDetails['groupAdminId']){
+            $result['isLeader']='yes';
+        }else{
+            $result['isLeader']='no';
+        }
         success_response_after_post_get($result);
     }
     
@@ -1239,6 +1246,141 @@ class Shopping extends REST_Controller {
     }
     
     function accept_buying_club_order_invite_post(){
+        $orderId=$this->post('orderId');
+        $userId=$this->post('userId');
+        
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        $deviceType = $this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $orderId==""){
+            $this->response(array('error' => 'Please provide user index,order index,latitude,longitude,device id,device token !'), 400); return FALSE;
+        }
+        
+        $user=$this->user->get_details_by_id($userId)[0];
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index to process the invitation!'), 400); return FALSE;
+        }
+        $order=$this->order->get_single_order_by_id($orderId);
+        if($order->userId==$user->userId){
+            $this->response(array('error' => 'Please provide valid user index to accept the invitation!'), 400); return FALSE;
+        }
+        if(empty($order)){
+            $this->response(array('error' => 'Please provide valid order index to accept the invitation!'), 400); return FALSE;
+        }
+        $data['order'] = $order;
+        $productId = $data['order']->productId;
+        $productPriceId = $data['order']->productPriceId;
+        
+        if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
+            $this->response(array('error' => 'Please provide valid order index to process the invitation!'), 400); return FALSE;
+        endif;
+        
+        $product = $this->product->details($productId);
+        $product = $product[0];
+        $prod_price_info = $this->product->get_products_price_details_by_id($productPriceId);
+        
+        $a = $this->_get_available_order_quantity($orderId);
+        $availQty = $prod_price_info->qty - $a[0]->productQty;
+        
+        if($prod_price_info->qty == $availQty):
+            $this->response(array('error' => 'This Buying Club order process already done. There is no available quantity for you. Please contact your Buying Club Leader!'), 400); return FALSE;
+        endif;
+        
+        if(!$this->user->user_exists_on_group($userId,$data['order']->groupId)):
+            $this->response(array('error' => 'You can not process this order because you are not member of this Buying Club.'), 400); return FALSE;
+        endif;
+        $result=array();
+        if($data['order']->groupId):
+            $orderInfo=json_decode(json_encode(unserialize(base64_decode($order->orderInfo))), true);
+            $result['group'] = json_decode(json_encode($this->user->get_group_by_id($data['order']->groupId)), true);
+            //$result['group'] = $this->user->get_group_by_id($data['order']->groupId);
+            $result['groupId'] = $data['order']->groupId;
+        else:
+            $result['group'] = false;
+            $result['groupId'] = 0;
+        endif;
+        //pre($result);die;
+        //$parrentOrderInfo=unserialize(base64_decode($order->orderInfo)) ;
+        
+        $order_data = array();
+        $order_data['orderType'] = 'GROUP';
+        $order_data['productId'] = $productId;
+        $order_data['productPriceId'] = $productPriceId;
+        $order_data['orderDate'] = date('Y-m-d H:i:s');
+        $order_data['status'] = 0;
+        $order_data['parrentOrderID'] = $data['order']->orderId;
+        $order_data['groupId'] = $data['order']->groupId;
+        $order_data['productQty'] = 0;
+        $order_data['userId'] = $userId;
+        
+        $exists_order = $this->order->is_parent_group_order_available($data['order']->orderId, $user->userId);
+        
+        //pre($exists_order);die;
+
+        $orderinfo = [];
+        $orderinfo['pdetail'] = $product;
+        $orderinfo['priceinfo'] = $prod_price_info;
+        $productImageArr = $this->product->get_products_images($productId);
+        $orderinfo['pimage'] = $productImageArr[0];
+        $order_data['orderInfo'] = base64_encode(serialize($orderinfo));
+        $reorder=FALSE;
+        if($reorder):
+            if($exists_order && $exists_order->status == 0):
+                $this->order->update($order_data,$exists_order->orderId);
+                $parentOrderId = $exists_order->orderId;
+            else:    
+                //$parentOrderId = $this->order->add($order_data);
+                $qrCodeFileName=time().'-'.rand(1, 50).'.png';
+                $order_data['qrCodeImageFile']=$qrCodeFileName;
+                $order_data['latitude']=  $latitude;
+                $order_data['longitude']=  $longitude;
+                $order_data['appSource']= $deviceType;
+                $qrCodeOrderId=$this->order->add($order_data);
+                $parentOrderId=$qrCodeOrderId;
+                $params=array();
+                $params['data']=$qrCodeOrderId;
+                $qrCodeFilePath=SITE_RESOURCES_PATH.'qr_code/'.$qrCodeFileName;
+                $params['savename']=$qrCodeFilePath;
+                $this->tidiitrcode->generate($params);
+                @copy($qrCodeFilePath,MAIN_SERVER_RESOURCES_PATH.'qr_code/'.$qrCodeFileName);
+                @unlink($qrCodeFilePath);
+            endif;
+        else:
+            if(!$exists_order):
+                $qrCodeFileName=time().'-'.rand(1, 50).'.png';
+                $order_data['qrCodeImageFile']=$qrCodeFileName;
+                $order_data['latitude']=  $latitude;
+                $order_data['longitude']=  $longitude;
+                $order_data['appSource']= $deviceType;
+                $qrCodeOrderId=$this->order->add($order_data);
+                $parentOrderId=$qrCodeOrderId;
+                $params=array();
+                $params['data']=$qrCodeOrderId;
+                $qrCodeFilePath=SITE_RESOURCES_PATH.'qr_code/'.$qrCodeFileName;
+                $params['savename']=$qrCodeFilePath;
+                $this->tidiitrcode->generate($params);
+                @copy($qrCodeFilePath,MAIN_SERVER_RESOURCES_PATH.'qr_code/'.$qrCodeFileName);
+                @unlink($qrCodeFilePath);
+            elseif($exists_order && $exists_order->status == 0):
+                $this->order->update($order_data,$exists_order->orderId);
+                $parentOrderId = $exists_order->orderId;
+            else:
+                $this->response(array('error' => 'This Buying Club order process already done. Please try to process for new order!'), 400); return FALSE;
+            endif;
+        endif;
+        //$this->process_my_parent_group_orders_by_id($orderId,$userId);
+        
+        $result['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
+        $result['totalQty'] = $prod_price_info->qty;
+        $result['orderId'] = $parentOrderId;
+        //$result['priceInfo'] = $prod_price_info;
+        success_response_after_post_get($result);
+    }
+    
+    function decline_buying_club_order_invite_post(){
         $orderId=$this->post('orderId');
         $userId=$this->post('userId');
         
