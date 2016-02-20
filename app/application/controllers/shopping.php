@@ -884,6 +884,7 @@ class Shopping extends REST_Controller {
         $order['productTitle']=$orderInfo['pdetail']->title;
         $order['qty']=$orderInfo['priceinfo']->qty;
         $order['pimage']=$orderInfo['pimage']->image;
+        $order['orderInfo']=json_decode(json_encode($orderInfo), true);;
         //pre($order);die;
         $result=array();
         $newAllItemArr=array();
@@ -1537,6 +1538,148 @@ class Shopping extends REST_Controller {
         
         $settlementOnDeliveryId=$this->order->add_sod(array('latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId,'appSource'=>$deviceType));
         $this->order->add_payment(array('orderId'=>$orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'group'));
+        
+        $mail_template_data=array();
+        foreach($group->users as $key => $usr):
+            if($me->userId != $usr->userId):
+                $mail_template_data=array();
+                $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                $data['receiverId'] = $usr->userId;
+                $data['nType'] = 'BUYING-CLUB-ORDER-CONTINUE';
+
+                $data['nTitle'] = 'Buying Club['.$group->groupTitle.'] order continue by <b>'.$me->firstName.' '.$me->lastName.'</b>';
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$usr->firstName.' '.$usr->lastName;
+                $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club[".$group->groupTitle."].<br>";
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
+                $data['nMessage'] .= "Order item is ".$orderinfo['pdetail']->title."<br /><br />";
+                $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+
+                $data['isRead'] = 0;
+                $data['status'] = 1;
+                $data['createDate'] = date('Y-m-d H:i:s');
+
+                //Send Email message
+                $recv_email = $usr->email;
+                $sender_email = $me->email;
+
+                $mail_template_view_data=$this->load_default_resources();
+                $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
+                $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+                $this->user->notification_add($data);
+
+                /// sendin SMS to allmember
+                $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'],
+                'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
+                'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
+                send_sms_notification($sms_data);
+            endif;
+        endforeach;
+        $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+        $data['receiverId'] = $group->admin->userId;
+        $data['nType'] = 'BUYING-CLUB-ORDER-CONTINUE';
+        $data['nTitle'] = 'Your Buying Club['.$group->groupTitle.'] order continue by <b>'.$me->firstName.' '.$me->lastName.'</b>';
+        $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club['.$group->groupTitle.'].<br>";
+        $data['nMessage'] .= 'Order item is '.$orderinfo['pdetail']->title."<br /><br/>";
+        $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+        $data['isRead'] = 0;
+        $data['status'] = 1;
+        $data['createDate'] = date('Y-m-d H:i:s');
+
+        //Send Email message
+        $recv_email = $group->admin->email;
+        $sender_email = $me->email;
+        $mail_template_view_data=load_default_resources();
+        if(empty($mail_template_data)){
+            $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$me->firstName.' '.$me->lastName;
+            $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
+            $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
+        }
+        $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
+        global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+
+        $this->user->notification_add($data);
+
+        $sms_data=array('nMessage'=>$me->firstName.' '.$me->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of your Buying Club['.$group->groupTitle.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'],
+                'receiverMobileNumber'=>$group->admin->mobile,'senderId'=>'','receiverId'=>$data['receiverId'],
+                'senderMobileNumber'=>$me->mobile,'nType'=>"BUYING-CLUB-ORDER-INVITED-MEMBER-COMPLETE");
+                send_sms_notification($sms_data);
+        if($order_update['status'] == 2):
+            $this->sent_buying_club_order_complete_mail($order);
+        endif;
+        $result=array();
+        $result['message']='Group invited to group member successfully.Your group order started successfully,';
+        success_response_after_post_get($result);
+    }
+    
+    function buying_club_member_mpesa_payment_post(){
+        $orderId=  $this->post('orderId');
+        $userId=  $this->post('userId');
+        
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        $deviceType = $this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $orderId==""){
+            $this->response(array('error' => 'Please provide user index,order index,latitude,longitude,device id,device token !'), 400); return FALSE;
+        }
+        
+        if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
+            $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
+        }
+        
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        
+        $orderDetails= $this->order->details($orderId);
+        $orderinfo=json_decode(json_encode(unserialize(base64_decode($orderDetails[0]->orderInfo))), true);
+                
+        //pre($allIncompleteOrders);die;
+        $defaultResources=load_default_resources();
+        $user=$this->user->get_details_by_id($userId)[0];
+        $pevorder = $this->order->get_single_order_by_id($orderId);
+        $a = $this->_get_available_order_quantity($orderId);
+        $prod_price_info = $this->product->get_products_price_details_by_id($pevorder->productPriceId);
+        //pre($prod_price_info);pre($a);die;
+        if($prod_price_info->qty == $a[0]->productQty):
+            $order_update=array('status'=>2,'isPaid'=>1);
+            $order_update['orderDate'] = date('Y-m-d H:i:s');
+        else:
+            $order_update=array('status'=>1,'isPaid'=>1);
+            $order_update['orderDate'] = date('Y-m-d H:i:s');
+        endif;
+        
+        $update = $this->order->update($order_update,$orderId);
+        $this->order->order_group_status_update($orderId,$order_update['status'],$pevorder->parrentOrderID);
+        $order = $this->order->get_single_order_by_id($orderId);
+        $group = $this->user->get_group_by_id($order->groupId);
+        
+        $orderinfo = array();
+        $pro = $this->product->details($order->productId);
+        $orderinfo['pdetail'] = $pro[0];
+        $orderinfo['priceinfo'] = $this->product->get_products_price_details_by_id($order->productPriceId);
+        $productImageArr =$this->product->get_products_images($order->productId);
+        $orderinfo['pimage'] = $productImageArr[0];            
+
+        $userShippingDataDetails = $this->user->get_user_shipping_information($userId);
+        $orderinfo['shipping'] = $userShippingDataDetails[0];
+        $group = $this->user->get_group_by_id($order->groupId);    
+        if($order->groupId):
+            $orderinfo['group'] = $group;
+        endif;
+        //pre($orderinfo);die;
+        $info['orderInfo'] = base64_encode(serialize($orderinfo));
+        $this->order->update($info, $orderId);
+        $allOrderArray=array();
+        $paymentGatewayAmount=$order->orderAmount;
+        $me = $this->user->get_details_by_id($userId)[0];
+        
+        //$settlementOnDeliveryId=$this->order->add_sod(array('latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId,'appSource'=>$deviceType));
+        //$this->order->add_payment(array('orderId'=>$orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'group'));
+        
+        $mPesaId=$this->order->add_mpesa(array('latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId,'appSource'=>$deviceType));
+        $this->order->add_payment(array('orderId'=>$orderId,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'group'));
         
         $mail_template_data=array();
         foreach($group->users as $key => $usr):
