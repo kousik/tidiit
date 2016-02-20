@@ -1,4 +1,4 @@
-<?php 
+<?php
 class Ajax extends MY_Controller{
     public function __construct(){
             parent::__construct();
@@ -6,7 +6,7 @@ class Ajax extends MY_Controller{
             $this->load->model('Country');
             $this->db->cache_off();
     }
-    
+
     public function get_state_checkbox(){
         $this->load->model('Country');
         $countryId=$this->input->post('countryId',TRUE);
@@ -26,10 +26,10 @@ class Ajax extends MY_Controller{
                         $i++;
                 }
         }else{
-                $html='There is no state for select country';	
+                $html='There is no state for select country';
         }
         echo $html;die;
-    }   
+    }
 
     public function get_edit_state(){
             $this->load->model('Country');
@@ -43,7 +43,7 @@ class Ajax extends MY_Controller{
             $html .= '</select>';
             echo $html;die;
     }
-    
+
     public function get_exist_geozone_state(){
         $this->load->model('Zeozone_model');
         $this->load->model("Country");
@@ -80,7 +80,7 @@ class Ajax extends MY_Controller{
         }
         return FALSE;
     }
-    
+
     public function is_user_name_exists(){
         $userName=  $this->input->post('userName',TRUE);
         if($this->User_model->check_username_exists_without_type($userName)){
@@ -89,7 +89,7 @@ class Ajax extends MY_Controller{
             echo 0;die;
         }
     }
-    
+
     public function is_user_email_exists(){
         $email=  $this->input->post('email',TRUE);
         if($this->User_model->check_email_exists_without_type($email)){
@@ -98,7 +98,7 @@ class Ajax extends MY_Controller{
             echo 0;die;
         }
     }
-    
+
     function is_edit_user_email_exists(){
         $email=  $this->input->post('email',TRUE);
         $userId=  $this->input->post('userId',TRUE);
@@ -108,7 +108,7 @@ class Ajax extends MY_Controller{
             echo 0;die;
         }
     }
-    
+
     public function check_category_name(){
         $this->load->model('Category_model');
         $categoryName=$this->input->post('categoryName',TRUE);
@@ -118,7 +118,7 @@ class Ajax extends MY_Controller{
             echo 0;die;
         }
     }
-    
+
     public function check_edit_category_name(){
         $this->load->model('Category_model');
         $categoryName=$this->input->post('categoryName',TRUE);
@@ -129,7 +129,7 @@ class Ajax extends MY_Controller{
                 echo 0;die;
         }
     }
-    
+
     function show_order_delivery_details(){
         $this->load->model('Order_model','order');
         $orderId=$this->input->post('orderId',TRUE);
@@ -149,7 +149,7 @@ class Ajax extends MY_Controller{
         $data['orderId']=$orderId;
         echo json_encode(array('content'=>$this->load->view('webadmin/order_delivery_details',$data,true)));die;
     }
-    
+
     function show_order_details(){
         $this->load->model('Order_model');
         $orderId=$this->input->post('orderId',TRUE);
@@ -167,7 +167,7 @@ class Ajax extends MY_Controller{
         //pre($data);die;
         echo json_encode(array('content'=>$this->load->view('webadmin/order_details',$data,true)));die;
     }
-    
+
     function show_order_group_details(){
         $this->load->model('Order_model');
         $groupId=$this->input->post('groupId',TRUE);
@@ -180,7 +180,7 @@ class Ajax extends MY_Controller{
         //pre($data);die;
         echo json_encode(array('content'=>$this->load->view('webadmin/order_group_details',$data,true)));die;
     }
-    
+
     function update_order_delivered(){
         $this->load->model('Logistics_model');
         $this->load->model('Order_model');
@@ -189,19 +189,19 @@ class Ajax extends MY_Controller{
         if($order->orderType=='SINGLE'):
             $this->single_order_delivered_mail($order);
             $this->Order_model->update(array('status'=>6),$orderId);
-        else:    
+        else:
             $this->group_order_delivered_mail($order);
             $this->Order_model->update(array('status'=>6),$orderId);
         endif;
         echo json_encode(array('result'=>'good'));die;
     }
-    
+
     function single_order_delivered_mail($order){
         $orderId=$order->orderId;
         $this->load->model('Order_model');
         $orderDetails=  $this->Order_model->details($order->orderId);
         $orderDeliveryDetails=  $this->Order_model->get_latest_delivery_details($order->orderId);
-        
+
         //pre($orderDetails);die;
         $adminMailData=  $this->load_default_resources();
         $adminMailData['orderDetails']=$orderDetails;
@@ -215,10 +215,10 @@ class Ajax extends MY_Controller{
         $adminMailData['sellerFullName']=$sellerFullName;
         $buyerFullName=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
         $adminMailData['buyerFullName']=$buyerFullName;
-        
+
         // for buyer
         $this->_global_tidiit_mail($orderDetails[0]->buyerEmail,'Your Tidiit order TIDIIT-OD-'.$order->orderId.' has delivered successfully',$adminMailData,'single_order_delivered',$buyerFullName);
-                
+
         /// for seller
         $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Tidiit order TIDIIT-OD-".$order->orderId.' has delivered successfully', $adminMailData,'seller_single_order_delivered',$sellerFullName);
 
@@ -228,15 +228,15 @@ class Ajax extends MY_Controller{
         //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
         $supportEmail='judhisahoo@gmail.com';
         $this->_global_tidiit_mail($supportEmail, "Tidiit Order TIDIIT-OD-".$order->orderId.' has delivered successfully', $adminMailData,'support_single_order_delivered','Tidiit Inc Support');
-        
+
         $sms='Your Tidiit order TIDIIT-OD-'.$order->orderId.' has been delivered by our logistic partner '.$orderDeliveryDetails[0]['logisticsCompanyName'].'.For any query please visit our Customer Service Section at '.base_url();
         $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$orderDetails[0]->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
         'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-DELIVERED');
         send_sms_notification($sms_data);
-        
+
         return TRUE;
     }
-    
+
     function group_order_delivered_mail($order){
         $orderDetails=  $this->Order_model->details($order->orderId);
         $orderDeliveryDetails=  $this->Order_model->get_latest_delivery_details($order->orderId);
@@ -251,33 +251,33 @@ class Ajax extends MY_Controller{
         $orderLeaderFullName=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
         $sellerFullName=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
         $buyerFullName=$orderDetails[0]->buyerFirstName.' '.$orderDetails[0]->buyerFirstName;
-        
+
         $adminMailData['leaderFullName']=$orderLeaderFullName;
         $adminMailData['sellerFullName']=$sellerFullName;
         $adminMailData['buyerFullName']=$buyerFullName;
-        
+
         $this->_global_tidiit_mail($orderDetails[0]->buyerEmail, "Tiidit Buying Club order - TIDIIT-OD-".$order->orderId.' has delivered successfully.', $adminMailData,'group_order_delivered',$buyerFullName);
-        
+
         if($order->parrentOrderID>0):
             $this->_global_tidiit_mail($orderInfoDataArr['group']->admin->email, "Tiidit Buying Club order - TIDIIT-OD-".$order->orderId.' has delivered successfully.', $adminMailData,'group_order_delivered_leader',$orderLeaderFullName);
         endif;
-        
+
         /// for seller
         $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Tidiit Buying Club order TIDIIT-OD-".$order->orderId.' has delivered successfully.', $adminMailData,'seller_group_order_delivered',$sellerFullName);
-        
+
         /// for support
         $adminMailData['userFullName']='Tidiit Inc Support';
         $this->load->model('Siteconfig_model','siteconfig');
         //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
         $supportEmail='judhisahoo@gmail.com';
         $this->_global_tidiit_mail($supportEmail, "Tidiit Buying Club order TIDIIT-OD-".$order->orderId.' has delivered successfully.', $adminMailData,'support_group_order_delivered','Tidiit Inc Support');
-        
+
         // the group member
         $sms='Your Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] order TIDIIT-OD-'.$order->orderId.' has been delivered by our logistic partner '.$orderDeliveryDetails[0]['logisticsCompanyName'].'.For any query please visit our Customer Service Section at '.base_url();
         $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$orderDetails[0]->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
         'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-DELIVERED');
         send_sms_notification($sms_data);
-        
+
         if($order->userId!=$orderInfoDataArr['group']->admin->userId):
             // the group member
             $sms='Your Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] member['.$buyerFullName.'] order TIDIIT-OD-'.$order->orderId.' has been delivered by our logistic partner '.$orderDeliveryDetails[0]['logisticsCompanyName'].'.For any query please visit our Customer Service Section at '.base_url();
@@ -287,7 +287,7 @@ class Ajax extends MY_Controller{
         endif;
         return TRUE;
     }
-    
+
     function check_is_exist_start_weight(){
         $startWeight=$this->input->post('startWeight',TRUE);
         $countryCode=$this->input->post('countryCode',TRUE);
@@ -300,6 +300,27 @@ class Ajax extends MY_Controller{
         else:
             echo '';die;
         endif;
+    }
+
+    function faq_topics_exists(){
+        $this->load->model('Faq_model');
+        $faqTopics=  $this->input->post('faqTopics',TRUE);
+        $faqTopicsType=$this->input->post('faqTopicsType',TRUE);
+        if($this->Faq_model->check_faq_topics_exist($faqTopics,$faqTopicsType)==TRUE){
+            echo 'exist';die;
+        }else{
+            echo 'no';die;
+        }
+    }
+    
+    function help_topics_exists(){
+        $this->load->model('Help_model');
+        $helpTopics=  $this->input->post('helpTopics',TRUE);
+        if($this->Help_model->check_help_topics_exist($helpTopics)==TRUE){
+            echo 'exist';die;
+        }else{
+            echo 'no';die;
+        }
     }
 }
 

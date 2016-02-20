@@ -1,18 +1,24 @@
 <?php
-class Faq_model extends CI_Model{
-	public $_table='faq';
-	public $_topics='faq_topics';
+class Help_model extends CI_Model{
+	public $_table='help';
+	public $_topics='help_topics';
 	
 	function __construct() {
 		parent::__construct();
 	}
 	
 	public function get_all_admin(){
-            return $this->db->select('f.*,ft.faqTopics')->from($this->_table.' f')->join($this->_topics.' ft','f.=ft.faqTopicsId')->get()->result();
+		$this->db->select('*')->from($this->_table)->where('status <',2);
+		return $this->db->get()->result();
 	}
 	
+	public function get_answer($question){
+		$this->db->select('*')->from($this->_table)->like('question',$question);
+		return $this->db->get()->result();
+	}
+        
         function get_details($faqId){
-            return $this->db->select('f.*,ft.faqTopics')->from($this->_table.' f')->join($this->_topics.' ft','f.=ft.faqTopicsId')->where('f.faqId',$faqId)->get()->result();
+            return $this->db->from($this->_table)->where('faqId',$faqId)->get()->result();
         }
 	
 	public function add($dataArr){
@@ -43,13 +49,9 @@ class Faq_model extends CI_Model{
 		return $this->db->get()->result();
 	}
         
-    function get_all_admin_topics(){
+    function get_all_admin_help_topics(){
         return $this->db->get($this->_topics)->result();
     }    
-    
-    function get_all_active_topic(){
-        return $this->db->get_where($this->_topics,array('status'=>1))->result();
-    }
     
     public function add_topics($dataArr){
         $this->db->insert($this->_topics,$dataArr);
@@ -74,8 +76,8 @@ class Faq_model extends CI_Model{
         return TRUE;
     }
     
-    function check_faq_topics_exist($faqTopics,$faqTopicsType){
-        $rs=$this->db->from($this->_topics)->where('faqTopics',$faqTopics)->where('faqTopicsType',$faqTopicsType)->get()->result();
+    function check_help_topics_exist($helpTopics){
+        $rs=$this->db->from($this->_topics)->where('helpTopics',$helpTopics)->get()->result();
         if(count($rs)>0){
             return TRUE;
         }else{

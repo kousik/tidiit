@@ -65,6 +65,12 @@
             <tr height="20" bgcolor="#DFDFDF">
               <td  style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/logistics/viewlist';?>">Logistics manager</a> </td>
             </tr>
+            <tr height="20" bgcolor="#DFDFDF">
+              <td  style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/faq_topics/viewlist';?>">FAQ Topics manager</a> </td>
+            </tr>
+            <tr height="20" bgcolor="#DFDFDF">
+              <td  style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/help_topics/viewlist';?>">Help Topics manager</a> </td>
+            </tr>
   </table>
       
       </td>

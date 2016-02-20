@@ -1,10 +1,8 @@
-<?php echo $AdminHomeLeftPanel;
-
-//print_r($UserDataArr);die;?>
+<?php echo $AdminHomeLeftPanel;?>
 <table cellspacing=5 cellpadding=5 width=90% border=0 >
   
   <tr id="PageHeading">
-    <td class="PageHeading" >FAQ Manager</td>
+    <td class="PageHeading" >FAQ Topics Manager</td>
   </tr>
 
   
@@ -15,7 +13,10 @@
     <td style="padding-left:50px;"><div id="MessaeBox" style="font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; color:#009900; text-decoration:blink; text-align:center;"><?php echo $this->session->flashdata('Message');?></div></td>
   </tr>
   <tr>
-    <td style="padding-left:10px;"><input type="button" name="AddBtn" id="AddBtn" value="Add FAQ" onclick="ShowAddAdminBox();" class="btn-primary btn-large"/></td>
+    <td style="padding-left:10px;"><input type="button" name="AddBtn" id="AddBtn" value="Add FAQ Topics" onclick="ShowAddAdminBox();" class="btn-large btn-primary"/></td>
+  </tr>
+  <tr>
+    <td style="height: 20px;;">&nbsp;</td>
   </tr>
 <script language="javascript">
 
@@ -37,16 +38,9 @@ function ShowAddAdminBox()
 	$('#ListBox').fadeOut(400);
 	
 	$('#EditBox').fadeIn(2500);
-	$('#Editquestion').val(DataArr[id]['question']);
-	$('#Editanswer').val(DataArr[id]['answer']);
-	$('#Edittype').val(DataArr[id]['type']);
-	if(document.AdminEdit.Editstatus[0].value==DataArr[id]['status'])
-	{
-		document.AdminEdit.Editstatus[0].checked=true;
-	}else{
-		document.AdminEdit.Editstatus[1].checked=true;
-	}
-	$('#faqId').val(DataArr[id]['faqId']);
+	$('#EditfaqTopics').val(DataArr[id]['faqTopics']);
+	$('#EditfaqTopicsType').val(DataArr[id]['faqTopicsType']);
+	$('#faqTopicsId').val(DataArr[id]['faqTopicsId']);
 	
  }
 
@@ -62,6 +56,8 @@ function ShowAddAdminBox()
  function CancelAdd()
  {
  	$('#AddBox').fadeOut('fast');
+ 	$('#AddUserBox').fadeOut('fast');
+ 	$('#ViewAllUserBox').fadeOut('fast');
  	$('#EditBox').hide();
 	$('#PageHeading').fadeIn(3000);
 	$('#ListBox').fadeIn(3000);
@@ -69,14 +65,14 @@ function ShowAddAdminBox()
 	return false;
  }
  
-function AskDelete(id)
-{
-	if(confirm('Are you sure to delete(Y/N) ?'))
-	{
-		location.href='<?php echo base_url()?>webadmin/faq/delete/'+id;
-	}
-	return false;
+function AskDelete(id){
+    if(confirm('Are you sure to delete(Y/N) ?')){
+        location.href='<?php echo base_url()?>webadmin/faq_topics/delete/'+id;
+    }
+    return false;
 }
+
+
  </script>
   <tr>
   <td valign="top"> 
@@ -86,41 +82,36 @@ function AskDelete(id)
     <td>
 	<table width="100%" border="0" align="center" cellpadding="1" cellspacing="1" id="ListBox" class="alt_row">
   <tr class="ListHeadingLable" bgcolor="#DFDFDF" height="25px;">
-    <td width="6%">Sl No </td>
-    <td width="20%">Questions</td>
-    <td width="40%">Answer</td>
-    <td width="7%">Type</td>
-    <td width="7%">Status</td>
-    <td width="10%">Action</td>
+    <td width="4%">Sl No </td>
+    <td width="18%">Faq Topics </td>
+    <td width="15%">FAQ Topics Type</td>
+    <td width="5%">status</td>
+    <td width="25%">Action</td>
   </tr>
   <script language="javascript">
   var DataArr=new Array(<?=count($DataArr)?>);
   </script>
   <?php $val=0; 
   if(count($DataArr)>0){
-  foreach($DataArr as $InerArr){?>
-  <tr class="ListTestLable <?php if($val%2 == 0){ echo 'oddtbl'; } else { echo 'eventbl'; } ?>" height="20px;">
+  foreach($DataArr as $InerArr){ //pre($InerArr);?>
+  <tr class="ListTestLable <?php if($val%2 == 0){ echo 'oddtbl'; } else { echo 'eventbl'; } ?>" height="20px;" style=" text-align: center;">
     <td><?php echo $val+1;?></td>
-    <td><?php echo $InerArr->question;?></td>
-    <td><?php echo $InerArr->answer;?></td>
-    <td><?php echo $InerArr->type;?></td>
+    <td><?php echo $InerArr->faqTopics;?></td>
+    <td><?php echo $InerArr->faqTopicsType;?></td>
     <td><?php echo ($InerArr->status=='1')?'Active':'Inactive';?></td>
     <td>
 	<?php if($InerArr->status=='1'){$action=0;}else{$action=1;}?>
-	<a href="<?php echo base_url().'webadmin/faq/change_status/'.$InerArr->faqId.'/'.$action;?>" class="AdminDashBoardLinkText"><?php if($InerArr->status=='1'){?><img src="<?php echo $SiteImagesURL.'webadmin/';?>active1.png" alt="Inactive" title="Inactive" /><?php }else{?><img src="<?php echo $SiteImagesURL.'webadmin/';?>inactive1.png" alt="Active" title="Active" /><?php }?></a>
-	&nbsp;&nbsp;
-	<a href="<?php echo base_url().'webadmin/faq/view_edit/'.$InerArr->faqId;?>" class="AdminDashBoardLinkText edit"></a>
-	&nbsp;&nbsp;
-	<a href="javascript:void(0);" onclick="AskDelete('<?php echo $InerArr->faqId;?>');" class="AdminDashBoardLinkText delete"></a>
+	<a href="<?php echo base_url().'webadmin/faq_topics/change_status/'.$InerArr->faqTopicsId.'/'.$action;?>" class="AdminDashBoardLinkText"><?php if($InerArr->status=='1'){?><img src="<?php echo $SiteImagesURL.'webadmin/';?>active1.png" alt="" title="Inactive" /><?php }else{?><img src="<?php echo $SiteImagesURL.'webadmin/';?>inactive1.png" alt="" title="Active" /><?php }?></a>
+        &nbsp;&nbsp;<a href="javascript:void(0);" onclick="ShowEditBox('<?php echo $InerArr->faqTopicsId;?>');" class="AdminDashBoardLinkText edit"></a>
+        <a href="javascript:void(0);" onclick="AskDelete('<?php echo $InerArr->faqTopicsId;?>');" class="AdminDashBoardLinkText delete"></a> &nbsp; 
 	</td> 
   </tr>
   <script language="javascript">
-  DataArr[<?php echo $InerArr->faqId?>]=new Array();
-  DataArr[<?php echo $InerArr->faqId?>]['faqId']='<?php echo $InerArr->faqId?>';
-  DataArr[<?php echo $InerArr->faqId?>]['question']='<?php echo $InerArr->question?>';
-  DataArr[<?php echo $InerArr->faqId?>]['answer']='<?php echo $InerArr->answer?>';
-  DataArr[<?php echo $InerArr->faqId?>]['type']='<?php echo $InerArr->type?>';
-  DataArr[<?php echo $InerArr->faqId?>]['status']='<?php echo $InerArr->status?>';
+  DataArr[<?php echo $InerArr->faqTopicsId?>]=new Array();
+  DataArr[<?php echo $InerArr->faqTopicsId?>]['faqTopicsId']='<?php echo $InerArr->faqTopicsId?>';
+  DataArr[<?php echo $InerArr->faqTopicsId?>]['faqTopics']='<?php echo $InerArr->faqTopics?>';
+  DataArr[<?php echo $InerArr->faqTopicsId?>]['faqTopicsType']='<?php echo $InerArr->faqTopicsType?>';
+  DataArr[<?php echo $InerArr->faqTopicsId?>]['status']='<?php echo $InerArr->status?>';
   </script>
   <?php $val++;}
   }else{?>
@@ -132,10 +123,10 @@ function AskDelete(id)
   </tr>
  
   <tr>
-    <td><form name="AdminEdit" id="AdminEdit" method="post" action="<?=base_url()?>webadmin/faq/edit/">
+    <td><form name="AdminEdit" id="AdminEdit" method="post" action="<?php echo base_url()?>webadmin/faq_topics/edit/">
 <table width="70%" border="0" align="center" cellpadding="0" cellspacing="0" id="EditBox" style="display:none;">
   <tr>
-    <th colspan="4"><span class="PageHeading">Faq Edit Form</span></th>
+    <th colspan="4"><span class="PageHeading">FAQ Topics Edit Form</span></th>
   </tr>
   <tr>
     <td align="left" valign="top" height="40px;">&nbsp;</td>
@@ -145,51 +136,40 @@ function AskDelete(id)
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable"> question </td>
-    <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"><input name="Editquestion" type="text" id="Editquestion"  class="required" /></td>
-  </tr>
-  <tr>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-  </tr>
-  <tr>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable">answer</td>
-    <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"><textarea name="Editanswer" id="Editanswer" class="required"></textarea></td>
-  </tr>
-
-  <tr>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-  </tr>
-  <tr>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable">Type</td>
+    <td align="left" valign="top" class="ListHeadingLable">FAQ Topics Type</td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top">
-        <select name="Edittype" id="Edittype" class="required">
-            <option value="">Selecct</option>
-            <option value="seller">Seller</option>
-            <option value="buyer">Buyer</option>
-        </select>
-    </td>
+		<select name="EditfaqTopicsType" id="EditfaqTopicsType" class="required">
+			<option value="">Select</option>
+			<option value="buyer">Buyer</option>
+			<option value="seller">Seller</option>
+		</select>
+	</td>
   </tr>
-
+  
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
   </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable">FAQ Topics </td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top"><input name="EditfaqTopics" type="text" id="EditfaqTopics"  class="required" /></td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  
+
   <tr class="ListHeadingLable">
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">status</td>
+    <td align="left" valign="top" class="ListHeadingLable">status</td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top">Active
       <input name="Editstatus" type="radio" value="1"  class="required" checked=""/>
@@ -207,8 +187,8 @@ function AskDelete(id)
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top"><label></label></td>
     <td align="left" valign="top"><input type="submit" name="Submit3" value="Submit" class="btn-primary btn-large"/>&nbsp;&nbsp;&nbsp;
-      <input type="button" name="Submit22" value="Cancel" onclick="return CancelAdd();" class="btn-primary btn-large"/>
-	  <input  type="hidden" name="faqId"  id="faqId" value=""/></td>
+      <input type="button" name="Submit22" value="Cancel" onclick="return CancelAdd();" class=" btn-large btn-primary"/>
+	  <input  type="hidden" name="faqTopicsId"  id="faqTopicsId" value=""/></td>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
@@ -226,29 +206,31 @@ function AskDelete(id)
 </form></td>
   </tr>
   <tr>
-    <td><form name="AdminAdd" id="AdminAdd" method="post" action="<?=base_url()?>webadmin/faq/add" >
+    <td><form name="AdminAdd" id="AdminAdd" method="post" action="<?php echo base_url();?>webadmin/faq_topics/add" >
 <table width="70%" border="0" align="center" cellpadding="0" cellspacing="0" id="AddBox" style="display:none;">
   <tr>
     <th width="13%" align="left" valign="top" scope="col">&nbsp;</th>
     <th width="18%" align="left" valign="top" scope="col">&nbsp;</th>
     <th width="3%" align="left" valign="top" scope="col" class="PageHeading">&nbsp;</th>
-    <th width="66%" align="left" valign="top" scope="col"><span class="PageHeading">FAQ Add Form </span></th>
-  </tr>
-  <tr>
-    <td align="left" valign="top" height="50px">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
+    <th width="66%" align="left" valign="top" scope="col"><span class="PageHeading">FAQ Topics Add Form </span></th>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable">Type</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable">FAQ Topics Type</td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"> <select name="type" id="type" class="required">
-            <option value="">Select</option>
-            <option value="seller">Seller</option>
-            <option value="buyer">Buyer</option>
-        </select></td>
+    <td align="left" valign="top">
+		<select name="faqTopicsType" id="faqTopicsType" class="required">
+			<option value="">Select</option>
+			<option value="buyer">Buyer</option>
+			<option value="seller">Seller</option>
+		</select>
+	</td>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
@@ -258,39 +240,11 @@ function AskDelete(id)
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable">Faq Topics</td>
+    <td align="left" valign="top" class="ListHeadingLable"> FAQ Topics </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"> <select name="faqTopicsId" id="faqTopicsId" class="required">
-            <option value="">Select</option>
-            <?php foreach($topicsDataArr As $k){ ?>
-            <option value="<?php echo $k->faqTopicsId;?>"><?php echo $k->faqTopics;?></option>
-            <?php }?>
-        </select></td>
+    <td align="left" valign="top"><input name="faqTopics" type="text" id="faqTopics"  class="required" /></td>
   </tr>
-  <tr>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-  </tr>
-  <tr>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable"> Question </td>
-    <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"><input name="question" type="text" id="question"  class="required" /></td>
-  </tr>
-  <tr>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-  </tr>
-  <tr>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable">Answer</td>
-    <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"> <textarea name="answer" id="answer" class="required"></textarea></td>
-  </tr>
+  
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
@@ -334,15 +288,7 @@ function AskDelete(id)
 </table>
 </form></td>
   </tr>
-  <tr>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <td></td>
-  </tr>
+  
 </table></td>
   </tr>
 
@@ -350,6 +296,21 @@ function AskDelete(id)
 <?php echo $AdminHomeRest;?>
 <script>
 $(document).ready(function(){
-	$("#AdminAdd").validate();	
+	$("#AdminAdd").validate();
+	$("#AdminEdit").validate();
+        
+        $('#faqTopics').on('blur',function(){
+            $.ajax({
+                type:"POST",
+                url:'<?php echo ADMIN_BASE_URL.'ajax/faq_topics_exists/';?>',
+                data:'faqTopics='+$('#faqTopics').val()+'&faqTopicsType='+$('#faqTopicsType').val(),
+                success:function(msg){
+                    if(msg=='exist'){
+                        alert($('#faqTopics').val()+' is already exists,Please enter new one.');
+                        $('#faqTopics').val('');
+                    }
+                }
+            });
+        });
 });
 </script>

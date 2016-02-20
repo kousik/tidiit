@@ -12,23 +12,12 @@ class Faq extends MY_Controller{
 	public function viewlist(){
 		$data=$this->_show_admin_logedin_layout();
 		$data['DataArr']=$this->Faq_model->get_all_admin();
+		$data['topicsDataArr']=$this->Faq_model->get_all_active_topic();
 		$this->load->view('webadmin/faq_list',$data);
 	}
 	
         function view_edit($faqId){
             $data=$this->_show_admin_logedin_layout();
-            $data['ckeditor'] = array(
-                    //ID of the textarea that will be replaced
-                    'id' 	=> 	'Editanswer',
-                    'path'	=>	$this->config->item('SiteJSURL').'ckeditor',
-                    'judhipath'	=>	$this->config->item('SiteJSURL'),
-                    //Optionnal values
-                    'config' => array(
-                            'toolbar' 	=> 	"Full", 	//Using the Full toolbar
-                            'width' 	=> 	"90%",	//Setting a custom width
-                            'height' 	=> 	'250px',	//Setting a custom height
-                    )
-            );
             $data['DataArr']=$this->Faq_model->get_details($faqId);
             $data['faqId']=$faqId;
             $this->load->view('webadmin/faq_edit',$data);
@@ -39,12 +28,14 @@ class Faq extends MY_Controller{
 		$answer=$this->input->post('answer',TRUE);
 		$status=$this->input->post('status',TRUE);
 		$type=$this->input->post('type',TRUE);
+		$faqTopicsId=$this->input->post('faqTopicsId',TRUE);
 		
 		$dataArr=array(
 		'question'=>$question,
 		'answer'=>$answer,
 		'status'=>$status,
-		'type'=>$type
+		'type'=>$type,
+		'faqTopicsId'=>$faqTopicsId
 		);
 		
 		//print_r($dataArr);die;
