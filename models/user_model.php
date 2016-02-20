@@ -537,13 +537,16 @@ class User_model extends CI_Model {
                 if($users):                        
                     foreach($users as $ukey => $usrId):
                         $udatas = $this->get_details_by_id($usrId,true);
-                        $udata[] = $udatas[0];
+                        if(!empty($udatas))
+                            $udata[] = $udatas[0];
                     endforeach;
                 endif;
-                $grp['users'] = $udata;
+                if(!empty($udata))
+                    $grp['users'] = $udata;
 
                 $getgpadmin = $this->get_details_by_id($grp['groupAdminId']); 
-                $grp['admin'] = $getgpadmin[0];
+                if(!empty($getgpadmin))
+                    $grp['admin'] = $getgpadmin[0];
                 $grp['hide'] = true;
                 $groups[] = $grp;
             endforeach;
