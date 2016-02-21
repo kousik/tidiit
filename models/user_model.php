@@ -589,7 +589,7 @@ class User_model extends CI_Model {
     
     
     public function notification_edit($dataArray,$notificationId){
-        $this->db->where('notificationId',$notificationId);
+        $this->db->where('id',$notificationId);
         $this->db->update($this->_notification,$dataArray);
         return TRUE;		
     }
