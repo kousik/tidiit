@@ -1924,8 +1924,9 @@ class Shopping extends REST_Controller {
             success_response_after_post_get($data);die;
         }else if($orderDetails[0]->productQty==""){
             $groupId = $orderDetails[0]->groupId;
-            $group = $this->user->get_group_by_id($groupId,TRUE);
+            $group = json_decode(json_encode($this->user->get_group_by_id($groupId,TRUE)), true);
             $data=array();
+            $data['group'] = $group;
             $data['groupId'] = $groupId;
             
             $data['order'] = $this->order->get_single_order_by_id($orderId);
@@ -1938,17 +1939,18 @@ class Shopping extends REST_Controller {
             $a = $this->_get_available_order_quantity($data['orderId']);
             $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
 
-            $data['screen_name']="show_quantity_selection";
+            $data['screen_name']="show_quantity_entry";
             $data['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
             $data['totalQty'] = $prod_price_info->qty;
             $data['priceInfo'] = $prod_price_info;
-            success_response_after_post_get($data);
+            success_response_after_post_get($data);die;
         }else{
             $data=array();
             $data['screen_name']="show_shipping_address";
             success_response_after_post_get($data);
         }
     }
+    
     
     
     function group_order_final_mail_check_post(){
