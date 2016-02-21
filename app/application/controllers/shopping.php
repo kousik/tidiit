@@ -1896,13 +1896,13 @@ class Shopping extends REST_Controller {
         $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
         
         $orderDetails= $this->order->details($orderId);
-        
+        //pre($orderDetails);die;
         if($orderDetails[0]->groupId==0){
             /// need to show group selection screen
             $data=array();
             $data['screen_name']="show_buying_club_selection";
             success_response_after_post_get($data);die;
-        }else if($orderDetails[0]->productQty==""){
+        }else if($orderDetails[0]->productQty==0){
             $groupId = $orderDetails[0]->groupId;
             $group = json_decode(json_encode($this->user->get_group_by_id($groupId,TRUE)), true);
             $data=array();
