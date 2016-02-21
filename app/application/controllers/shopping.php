@@ -1482,7 +1482,7 @@ class Shopping extends REST_Controller {
             $declient_data['acceptDeclineState'] =2;
             $this->user->notification_edit($declient_data,$notificationId);
             
-            //Send Email message
+            $this->order->update(array('reOrder'=>1,'cancelOrderUserId'=>$userId),$orderId);
             
             /// sendin SMS to Leader
             $smsMsg='Buying Club['.$group->groupTitle.']  member['.$usr->firstName.' '.$usr->lastName.'] has decline the invitation Tidiit order TIDIIT-OD-'.$order->orderId.'.';
@@ -1901,14 +1901,14 @@ class Shopping extends REST_Controller {
             /// need to show group selection screen
             $data=array();
             $data['screen_name']="show_buying_club_selection";
-            success_response_after_post_get($data);die;
+            success_response_after_post_get($data);
         }else if($orderDetails[0]->productQty==0){
             $groupId = $orderDetails[0]->groupId;
             $data=array();
             $data['groupId'] = $groupId;
             $data['orderId'] = $orderId;
             $data['screen_name']="show_quantity_entry";
-            success_response_after_post_get($data);die;
+            success_response_after_post_get($data);
         }else{
             $data=array();
             $data['screen_name']="show_shipping_address";
