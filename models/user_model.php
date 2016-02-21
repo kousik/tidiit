@@ -587,6 +587,13 @@ class User_model extends CI_Model {
         return $this->db->insert_id();
     }
     
+    
+    public function notification_edit($dataArray,$notificationId){
+        $this->db->where('notificationId',$notificationId);
+        $this->db->update($this->_notification,$dataArray);
+        return TRUE;		
+    }
+    
     /**
      * 
      * @param type $receiverId

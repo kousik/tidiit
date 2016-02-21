@@ -292,7 +292,9 @@ if ( ! function_exists('send_sms_notification')):
      */
     $SMS_SEND_ALLOW=$CI->siteconfig->get_value_by_name('SMS_SEND_ALLOW');
     if($SMS_SEND_ALLOW=='yes'){
-        if(!array_key_exists('receiverMobileNumber', $data) || $data['receiverMobileNumber']==""){
+        if(!array_key_exists('receiverMobileNumber', $data)){
+            return FALSE;
+        }elseif($data['receiverMobileNumber']==""){
             return FALSE;
         }else{
             //Send Mobile message

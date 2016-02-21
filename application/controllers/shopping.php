@@ -666,7 +666,6 @@ class Shopping extends MY_Controller{
         
         $exists_order = $this->Order_model->is_parent_group_order_available($data['order']->orderId, $user->userId);
 
-
         $orderinfo = [];
         $orderinfo['pdetail'] = $product;
         $orderinfo['priceinfo'] = $prod_price_info;
