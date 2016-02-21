@@ -1904,25 +1904,10 @@ class Shopping extends REST_Controller {
             success_response_after_post_get($data);die;
         }else if($orderDetails[0]->productQty==0){
             $groupId = $orderDetails[0]->groupId;
-            $group = json_decode(json_encode($this->user->get_group_by_id($groupId,TRUE)), true);
             $data=array();
-            $data['group'] = $group;
             $data['groupId'] = $groupId;
-            
-            $data['order'] = $this->order->get_single_order_by_id($orderId);
-            $productId = $data['order']->productId;
-            $productPriceId = $data['order']->productPriceId;
-            $data['orderId'] = $data['order']->orderId;
-            $product = $this->product->details($productId);
-            $product = $product[0];
-            $prod_price_info = $this->product->get_products_price_details_by_id($productPriceId);
-            $a = $this->_get_available_order_quantity($data['orderId']);
-            $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
-
+            $data['orderId'] = $orderId;
             $data['screen_name']="show_quantity_entry";
-            $data['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
-            $data['totalQty'] = $prod_price_info->qty;
-            $data['priceInfo'] = $prod_price_info;
             success_response_after_post_get($data);die;
         }else{
             $data=array();
