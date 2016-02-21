@@ -1389,11 +1389,11 @@ class Shopping extends MY_Controller{
             $supportEmail='judhisahoo@gmail.com';
             $this->_global_tidiit_mail($supportEmail, "Buying Club order no - TIDIIT-OD-".$order->parrentOrderID.' has placed from Tidiit Inc Ltd', $adminMailData,'support_group_order_success','Tidiit Inc Support');
             //die;
-            $this->order->update(array('status'=>2),$order->parrentOrderID);
+            $this->Order_model->update(array('status'=>2),$order->parrentOrderID);
             ///mail to Buyer CLub
             $allChieldOrdersData=$this->Order_model->get_all_chield_order($order->parrentOrderID);
             foreach($allChieldOrdersData AS $k){
-                $this->order->update(array('status'=>2),$k->orderId);
+                $this->Order_model->update(array('status'=>2),$k->orderId);
                 $orderDetails=  $this->Order_model->details($k->orderId);
                 $adminMailData=array();
                 $adminMailData=  $this->load_default_resources();
