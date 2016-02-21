@@ -1445,9 +1445,9 @@ class Shopping extends REST_Controller {
                     //Send Email message
                     $recv_email = $usr->email;
                     $sender_email = $me->email;
-                    $mail_template_view_data=$load_default_resources();
+                    $mail_template_view_data=load_default_resources();
                     $mail_template_view_data['group_order_decline']=$mail_template_data;
-                    $this->_global_tidiit_mail($recv_email, "Buying Club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline',$usr->firstName.' '.$usr->lastName);
+                    global_tidiit_mail($recv_email, "Buying Club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline',$usr->firstName.' '.$usr->lastName);
                     
                     $this->user->notification_add($data);
                 endif;
@@ -1455,7 +1455,8 @@ class Shopping extends REST_Controller {
             $data['receiverId'] = $group->admin->userId;
             
             unset($data['nMessage']);
-            
+            $mail_template_view_data=load_default_resources();
+            $defaultResources=$mail_template_view_data;
             $mail_template_data=array();
             $data['senderId'] = $userId;
             $data['nType'] = 'BUYING-CLUB-ORDER-DECLINE';
@@ -1463,7 +1464,7 @@ class Shopping extends REST_Controller {
             $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ORDER_ID']=$order->orderId;
             $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ADMIN_NAME']=$me->firstName.' '.$me->lastName;
             $data['nMessage'] = "Hi, <br> Sorry! I can not process this order right now.<br>";
-            $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-re-order-process/".base64_encode($orderId*226201)."' class='btn btn-warning btn-lg'>Re-order now</a><br><br>";
+            $data['nMessage'] .= "<a href='".$defaultResources['MainSiteBaseURL']."shopping/group-re-order-process/".base64_encode($orderId*226201)."' class='btn btn-warning btn-lg'>Re-order now</a><br><br>";
             $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ORDER_ID1']=$orderId;
             $data['nMessage'] .= "Thanks <br> Tidiit Team.";
             $data['isRead'] = 0;
@@ -1473,9 +1474,9 @@ class Shopping extends REST_Controller {
             //Send Email message
             $recv_email = $group->admin->email;
             $sender_email = $me->email;
-            $mail_template_view_data=$this->load_default_resources();
+            $mail_template_view_data=load_default_resources();
             $mail_template_view_data['group_order_decline']=$mail_template_data;
-            $this->_global_tidiit_mail($recv_email, "Buying Club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline_admin',$group->admin->firstName.' '.$group->admin->lastName);
+            global_tidiit_mail($recv_email, "Buying Club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline_admin',$group->admin->firstName.' '.$group->admin->lastName);
             $this->user->notification_add($data);
             
             $declient_data=array();
