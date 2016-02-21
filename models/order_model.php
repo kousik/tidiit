@@ -460,7 +460,7 @@ class Order_model extends CI_Model {
     function get_all_cart_item($userId,$orderType=''){
         $this->db->select('o.*,c.IN_tax,c.KE_tax')->from($this->_table.' AS o');
         $this->db->join('product_category pc','pc.productId=o.productId')->join('category c','pc.categoryId=c.categoryId');
-        $this->db->where('o.userId',$userId)->where('o.status <',2);
+        $this->db->where('o.userId',$userId)->where('o.status',0);
         if($orderType!='')
             $this->db->where('orderType', strtoupper($orderType));
         
@@ -471,11 +471,8 @@ class Order_model extends CI_Model {
         $this->db->where('orderId',$orderId);
         $this->delete($this->_order_coupon);
         
-        $this->db->where_in('orderId',$orderId)->where('userId',$userId)->where('status',0);
+        $this->db->where_in('orderId',$orderId)->where('userId',$userId);
         $this->db->delete($this->_table);
-        
-        $this->db->where('userId',$userId)->where('status',0)->from('order');
-        $this->session->set_userdata('TotalItemInCart',$this->db->count_all_results());
     }
     
     function add_to_wish_list($dataArr){
