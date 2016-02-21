@@ -1896,6 +1896,61 @@ class Shopping extends REST_Controller {
         success_response_after_post_get($result);
     }
     
+    function buying_club_cart_process_post(){
+        $userId=  $this->post('userId');
+        $orderId=  $this->post('orderId');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceType=  $this->post('deviceType');
+        $deviceToken=  $this->post('deviceToken');
+        $UDID=  $this->post('UDID');
+        
+        if($userId=="" || $orderId=="" || $latitude=="" || $longitude=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
+            $this->response(array('error' => 'Please provide user index,order index,latitude,longitude,device id,device token and udid !'), 400); return FALSE;
+        }
+        
+        if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
+            $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
+        }
+        
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        
+        $orderDetails= $this->order->details($orderId);
+        
+        if($orderDetails[0]->groupId==0){
+            /// need to show group selection screen
+            $data=array();
+            $data['screen_name']="show_buying_club_selection";
+            success_response_after_post_get($data);die;
+        }else if($orderDetails[0]->productQty==""){
+            $groupId = $orderDetails[0]->groupId;
+            $group = $this->user->get_group_by_id($groupId,TRUE);
+            $data=array();
+            $data['groupId'] = $groupId;
+            
+            $data['order'] = $this->order->get_single_order_by_id($orderId);
+            $productId = $data['order']->productId;
+            $productPriceId = $data['order']->productPriceId;
+            $data['orderId'] = $data['order']->orderId;
+            $product = $this->product->details($productId);
+            $product = $product[0];
+            $prod_price_info = $this->product->get_products_price_details_by_id($productPriceId);
+            $a = $this->_get_available_order_quantity($data['orderId']);
+            $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
+
+            $data['screen_name']="show_quantity_selection";
+            $data['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
+            $data['totalQty'] = $prod_price_info->qty;
+            $data['priceInfo'] = $prod_price_info;
+            success_response_after_post_get($data);
+        }else{
+            $data=array();
+            $data['screen_name']="show_shipping_address";
+            success_response_after_post_get($data);
+        }
+    }
+    
+    
     function group_order_final_mail_check_post(){
         $orderId=$this->post('orderId');
         $order = $this->order->get_single_order_by_id($orderId);
