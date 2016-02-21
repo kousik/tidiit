@@ -391,7 +391,7 @@ class Shopping extends MY_Controller{
                     $data['receiverId'] = $group->admin->userId;
                     $data['nType'] = 'BUYING-CLUB-ORDER-CONTINUE';
                     $data['nTitle'] = 'Your Buying Club['.$group->groupTitle.'] order continue by <b>'.$me->firstName.' '.$me->lastName.'</b>';
-                    $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club['.$group->groupTitle.'].<br>";
+                    $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club[".$group->groupTitle."].<br>";
                     $data['nMessage'] .= 'Order item is '.$orderinfo['pdetail']->title."<br /><br/>";
                     $data['nMessage'] .= "Thanks <br> Tidiit Team.";
                     $data['isRead'] = 0;
