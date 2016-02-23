@@ -877,7 +877,7 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Invalid user id. Please try again!'), 400); return FALSE;
         }
         $details=$this->user->notification_single($notificationId,TRUE);
-        pre($details);die;
+        //pre($details);die;
         if(!$details){
             $this->response(array('error' => 'Invalid notification id. Please try again!'), 400); return FALSE;
         }
@@ -907,7 +907,16 @@ class Appdata extends REST_Controller {
         $setdata['isRead'] = 1;
         $this->user->notification_update($cond, $setdata);
         
-        
+        if($details['acceptDeclineState']==0){
+            $result['accepted']='no';
+            $result['declined']='no';
+        }else if($details['acceptDeclineState']==1){
+            $result['accepted']='yes';
+            $result['declined']='no';
+        }else if($details['acceptDeclineState']==2){
+            $result['accepted']='no';
+            $result['declined']='yes';
+        }
         //pre($result);die;
         success_response_after_post_get($result);
     }
@@ -932,16 +941,6 @@ class Appdata extends REST_Controller {
         $result['orderDetails']=  $orderDetails;
         $result['orderInfo']=  $orderInfo;
         $result['order_state_data']=$this->order->get_state(true);
-        if($details['acceptDeclineState']==0){
-            $result['accepted']='no';
-            $result['declined']='no';
-        }else if($details['acceptDeclineState']==1){
-            $result['accepted']='yes';
-            $result['declined']='no';
-        }else if($details['acceptDeclineState']==2){
-            $result['accepted']='no';
-            $result['declined']='yes';
-        }
         success_response_after_post_get($result);
     }
     
