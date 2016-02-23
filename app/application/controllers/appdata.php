@@ -877,7 +877,7 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Invalid user id. Please try again!'), 400); return FALSE;
         }
         $details=$this->user->notification_single($notificationId,TRUE);
-        
+        pre($details);die;
         if(!$details){
             $this->response(array('error' => 'Invalid notification id. Please try again!'), 400); return FALSE;
         }
@@ -905,6 +905,17 @@ class Appdata extends REST_Controller {
         $cond['id'] = $notificationId;
         $setdata['isRead'] = 1;
         $this->user->notification_update($cond, $setdata);
+        if($details['acceptDeclineState']==0){
+            $result['accepted']='no';
+            $result['declined']='no';
+        }else if($details['acceptDeclineState']==1){
+            $result['accepted']='yes';
+            $result['declined']='no';
+        }else if($details['acceptDeclineState']==2){
+            $result['accepted']='no';
+            $result['declined']='yes';
+        }
+        
         //pre($result);die;
         success_response_after_post_get($result);
     }
