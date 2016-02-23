@@ -292,6 +292,18 @@ if ( ! function_exists('send_sms_notification')):
      */
     $SMS_SEND_ALLOW=$CI->siteconfig->get_value_by_name('SMS_SEND_ALLOW');
     if($SMS_SEND_ALLOW=='yes'){
+        $smsLogPath=MAIN_SERVER_RESOURCES_PATH.'sms_log/'.date('d-m-Y').'/';
+        if(!is_dir($smsLogPath)){ //create the folder if it's not already exists
+          @mkdir($smsLogPath,0755,TRUE);
+        } 
+        $data = $data['nMessage'];
+        $smsLogFile=$smsLogPath.time().uniqid().'.txt';
+        if ( ! write_file($smsLogFile, $data)){
+             //echo 'Unable to write the file';
+        }else{
+             //echo 'File written!';
+        }
+        //die('rrr');
         if(!array_key_exists('receiverMobileNumber', $data)){
             return FALSE;
         }elseif($data['receiverMobileNumber']==""){

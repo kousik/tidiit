@@ -209,7 +209,7 @@ class Shopping extends REST_Controller {
     }
     
     function test_get(){
-        pre($_SERVER['DOCUMENT_ROOT']);die;
+        send_sms_notification('test');
     }
     
     function single_order_coupon_set_post(){
@@ -1916,8 +1916,6 @@ class Shopping extends REST_Controller {
             success_response_after_post_get($data);
         }
     }
-    
-    
     
     function group_order_final_mail_check_post(){
         $orderId=$this->post('orderId');
