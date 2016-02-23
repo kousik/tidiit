@@ -577,9 +577,9 @@ class Appdata extends REST_Controller {
         endif;
     }
     
-    function edit_group_get(){
-        $adminId=$this->get('userId');
-        $groupId=$this->get('groupId');
+    function show_edit_group_post(){
+        $adminId=$this->post('userId');
+        $groupId=$this->post('groupId');
         
         $deviceType=  $this->post('deviceType');
         $latitude=  $this->post('latitude');
