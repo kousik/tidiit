@@ -1491,9 +1491,9 @@ class Shopping extends REST_Controller {
             'senderMobileNumber'=>'','nType'=>$data['nType']);
             send_sms_notification($sms_data);
         endif;
-        
-        $this->session->set_flashdata('msg', 'Sorry for Buying Club order cancelation!');
-        redirect(BASE_URL.'shopping/ord-message');
+        $result= array();
+        $result['message']='Sorry for Buying Club order cancelation!';
+        success_response_after_post_get($result);
     }
     
     function process_my_parent_group_orders_by_id($orderId,$userId){
