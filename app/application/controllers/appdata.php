@@ -898,6 +898,7 @@ class Appdata extends REST_Controller {
             $tempArr=  explode('[',$details['nMessage']);
             $tempArr1= explode(']',$tempArr[1]);
             $result['clubTitle']=$tempArr1[0];
+        //}elseif(){
         }else{
             $result['notications_details']=$details;
         }
@@ -905,16 +906,7 @@ class Appdata extends REST_Controller {
         $cond['id'] = $notificationId;
         $setdata['isRead'] = 1;
         $this->user->notification_update($cond, $setdata);
-        if($details['acceptDeclineState']==0){
-            $result['accepted']='no';
-            $result['declined']='no';
-        }else if($details['acceptDeclineState']==1){
-            $result['accepted']='yes';
-            $result['declined']='no';
-        }else if($details['acceptDeclineState']==2){
-            $result['accepted']='no';
-            $result['declined']='yes';
-        }
+        
         
         //pre($result);die;
         success_response_after_post_get($result);
@@ -940,6 +932,16 @@ class Appdata extends REST_Controller {
         $result['orderDetails']=  $orderDetails;
         $result['orderInfo']=  $orderInfo;
         $result['order_state_data']=$this->order->get_state(true);
+        if($details['acceptDeclineState']==0){
+            $result['accepted']='no';
+            $result['declined']='no';
+        }else if($details['acceptDeclineState']==1){
+            $result['accepted']='yes';
+            $result['declined']='no';
+        }else if($details['acceptDeclineState']==2){
+            $result['accepted']='no';
+            $result['declined']='yes';
+        }
         success_response_after_post_get($result);
     }
     
