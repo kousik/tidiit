@@ -59,7 +59,7 @@ class Shopping extends REST_Controller {
         $is_cart_update = false;
         
         $countryShortName=  get_counry_code_from_lat_long($cartDataArr['latitude'], $cartDataArr['longitude']);
-        $countryShortName='IN';
+        //$countryShortName='IN';
         
         $currentLocationTaxDetails=$this->product->get_tax_for_current_location($cartDataArr['productId'],$countryShortName.'_tax');
         $taxCol=$countryShortName.'_tax';
@@ -209,7 +209,12 @@ class Shopping extends REST_Controller {
     }
     
     function test_get(){
-        send_sms_notification('test');
+        $orderId=$this->get('orderId');
+        $order = $this->order->get_single_order_by_id($orderId);
+        $pro = $this->product->details($order->productId);
+        $orderinfo['pdetail'] = $pro[0];
+        $orderinfo['priceinfo'] = $this->product->get_products_price_details_by_id($order->productPriceId);
+        pre($orderinfo);die;
     }
     
     function single_order_coupon_set_post(){
@@ -1221,6 +1226,7 @@ class Shopping extends REST_Controller {
             $data['isRead'] = 0;
             $data['status'] = 1;
             $data['createDate'] = date('Y-m-d H:i:s');
+            $data['appSource'] = $deviceType;
 
             //Send Email message
             $recv_email = $usr->email;
@@ -1316,8 +1322,8 @@ class Shopping extends REST_Controller {
         $order_data['productQty'] = 0;
         $order_data['userId'] = $userId;
         
-        $exists_order = $this->order->is_parent_group_order_available($data['order']->orderId, $user->userId);
-        
+        //$exists_order = $this->order->is_parent_group_order_available($data['order']->orderId, $user->userId);
+        $exists_order=false;
         //pre($exists_order);die;
 
         $orderinfo = [];
@@ -1380,7 +1386,124 @@ class Shopping extends REST_Controller {
         success_response_after_post_get($result);
     }
     
+    function buying_club_re_order_me_post(){
+        $orderId=$this->post('orderId');
+        $userId=$this->post('userId');
+        
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        $deviceType = $this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $orderId==""){
+            $this->response(array('error' => 'Please provide user index,order index,latitude,longitude,device id,device token !'), 400); return FALSE;
+        }
+        
+        $user=$this->user->get_details_by_id($userId)[0];
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index to process the invitation!'), 400); return FALSE;
+        }
+        $order=$this->order->get_single_order_by_id($orderId);
+        /*if($order->userId==$user->userId){
+            $this->response(array('error' => 'Please provide valid user index to accept the invitation!'), 400); return FALSE;
+        }*/
+        if(empty($order)){
+            $this->response(array('error' => 'Please provide valid order index to accept the invitation!'), 400); return FALSE;
+        }
+        $data['order'] = $order;
+        $productId = $data['order']->productId;
+        $productPriceId = $data['order']->productPriceId;
+        
+        if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
+            $this->response(array('error' => 'Please provide valid order index to process the invitation!'), 400); return FALSE;
+        endif;
+        
+        $product = $this->product->details($productId);
+        $product = $product[0];
+        $prod_price_info = $this->product->get_products_price_details_by_id($productPriceId);
+        
+        $a = $this->_get_available_order_quantity($orderId);
+        $availQty = $prod_price_info->qty - $a[0]->productQty;
+        
+        if($prod_price_info->qty == $availQty):
+            $this->response(array('error' => 'This Buying Club order process already done. There is no available quantity for you. Please contact your Buying Club Leader!'), 400); return FALSE;
+        endif;
+        
+        if(!$this->user->user_exists_on_group($userId,$data['order']->groupId)):
+            $this->response(array('error' => 'You can not process this order because you are not member of this Buying Club.'), 400); return FALSE;
+        endif;
+        $result=array();
+        if($data['order']->groupId):
+            $orderInfo=json_decode(json_encode(unserialize(base64_decode($order->orderInfo))), true);
+            $result['group'] = json_decode(json_encode($this->user->get_group_by_id($data['order']->groupId)), true);
+            //$result['group'] = $this->user->get_group_by_id($data['order']->groupId);
+            $result['groupId'] = $data['order']->groupId;
+        else:
+            $result['group'] = false;
+            $result['groupId'] = 0;
+        endif;
+        //pre($result);die;
+        //$parrentOrderInfo=unserialize(base64_decode($order->orderInfo)) ;
+        
+        $order_data = array();
+        $order_data['orderType'] = 'GROUP';
+        $order_data['productId'] = $productId;
+        $order_data['productPriceId'] = $productPriceId;
+        $order_data['orderDate'] = date('Y-m-d H:i:s');
+        $order_data['status'] = 0;
+        $order_data['parrentOrderID'] = $data['order']->orderId;
+        $order_data['groupId'] = $data['order']->groupId;
+        $order_data['productQty'] = 0;
+        $order_data['userId'] = $userId;
+        
+        $exists_order = $this->order->is_parent_group_order_available($data['order']->orderId, $user->userId);
+        //pre($exists_order);die;
+
+        $orderinfo = [];
+        $orderinfo['pdetail'] = $product;
+        $orderinfo['priceinfo'] = $prod_price_info;
+        $productImageArr = $this->product->get_products_images($productId);
+        $orderinfo['pimage'] = $productImageArr[0];
+        $order_data['orderInfo'] = base64_encode(serialize($orderinfo));
+        /// re-oreder by leader started here
+        if($exists_order && $exists_order->status == 0):
+            $this->order->update($order_data,$exists_order->orderId);
+            $qrCodeOrderId=$exists_order->orderId;
+            $parentOrderId = $exists_order->orderId;
+            $groupId=$exists_order->groupId;
+        else:    
+            $groupId=$order_data['groupId'];
+            //$parentOrderId = $this->order->add($order_data);
+            $qrCodeFileName=time().'-'.rand(1, 50).'.png';
+            $order_data['qrCodeImageFile']=$qrCodeFileName;
+            $order_data['latitude']=  $latitude;
+            $order_data['longitude']=  $longitude;
+            $order_data['appSource']= $deviceType;
+            $qrCodeOrderId=$this->order->add($order_data);
+            $parentOrderId=$qrCodeOrderId;
+            $params=array();
+            $params['data']=$qrCodeOrderId;
+            $qrCodeFilePath=SITE_RESOURCES_PATH.'qr_code/'.$qrCodeFileName;
+            $params['savename']=$qrCodeFilePath;
+            $this->tidiitrcode->generate($params);
+            @copy($qrCodeFilePath,MAIN_SERVER_RESOURCES_PATH.'qr_code/'.$qrCodeFileName);
+            @unlink($qrCodeFilePath);
+        endif;
+        //$this->process_my_parent_group_orders_by_id($orderId,$userId);
+        $result['orderId']=$qrCodeOrderId;
+        $result['groupId']=$groupId;
+        $result['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
+        $result['totalQty'] = $prod_price_info->qty;
+        $result['orderId'] = $parentOrderId;
+        //$result['priceInfo'] = $prod_price_info;
+        success_response_after_post_get($result);
+    }
+    
     function decline_buying_club_order_invite_post(){
+        $orderId=$this->post('orderId');
+        $productId=$this->post('productId');
+        $productPriceId=$this->post('productPriceId');
         $orderId=$this->post('orderId');
         $userId=$this->post('userId');
         $notificationId=$this->post('notificationId');
@@ -1391,8 +1514,8 @@ class Shopping extends REST_Controller {
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
         
-        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $orderId==""){
-            $this->response(array('error' => 'Please provide user index,order index,latitude,longitude,device id,device token !'), 400); return FALSE;
+        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $orderId=="" || $productId=="" || $productPriceId==""){
+            $this->response(array('error' => 'Please provide user index,order index,latitude,longitude,device id,device token,product index,product price index !'), 400); return FALSE;
         }
         
         $user=$this->user->get_details_by_id($userId)[0];
@@ -1441,7 +1564,8 @@ class Shopping extends REST_Controller {
                     $data['isRead'] = 0;
                     $data['status'] = 1;
                     $data['createDate'] = date('Y-m-d H:i:s');
-
+                    $data['appSource'] = $deviceType;
+                    
                     //Send Email message
                     $recv_email = $usr->email;
                     $sender_email = $me->email;
@@ -1469,7 +1593,11 @@ class Shopping extends REST_Controller {
             $data['nMessage'] .= "Thanks <br> Tidiit Team.";
             $data['isRead'] = 0;
             $data['status'] = 1;
+            $data['orderId'] = $orderId;
+            $data['productId'] = $productId;
+            $data['productPriceId'] = $productPriceId;
             $data['createDate'] = date('Y-m-d H:i:s');
+            $data['appSource'] = $deviceType;
             
             //Send Email message
             $recv_email = $group->admin->email;
@@ -1681,7 +1809,7 @@ class Shopping extends REST_Controller {
                 $data['isRead'] = 0;
                 $data['status'] = 1;
                 $data['createDate'] = date('Y-m-d H:i:s');
-
+                $data['appSource'] = $deviceType;
                 //Send Email message
                 $recv_email = $usr->email;
                 $sender_email = $me->email;
@@ -1708,7 +1836,8 @@ class Shopping extends REST_Controller {
         $data['isRead'] = 0;
         $data['status'] = 1;
         $data['createDate'] = date('Y-m-d H:i:s');
-
+        $data['appSource'] = $deviceType;
+        
         //Send Email message
         $recv_email = $group->admin->email;
         $sender_email = $me->email;
@@ -1819,7 +1948,7 @@ class Shopping extends REST_Controller {
                 $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
                 $data['nMessage'] .= "Order item is ".$orderinfo['pdetail']->title."<br /><br />";
                 $data['nMessage'] .= "Thanks <br> Tidiit Team.";
-
+                $data['appSource'] = $deviceType;
                 $data['isRead'] = 0;
                 $data['status'] = 1;
                 $data['createDate'] = date('Y-m-d H:i:s');
@@ -1850,7 +1979,7 @@ class Shopping extends REST_Controller {
         $data['isRead'] = 0;
         $data['status'] = 1;
         $data['createDate'] = date('Y-m-d H:i:s');
-
+        $data['appSource'] = $deviceType;
         //Send Email message
         $recv_email = $group->admin->email;
         $sender_email = $me->email;

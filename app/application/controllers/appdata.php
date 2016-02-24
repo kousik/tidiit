@@ -541,7 +541,8 @@ class Appdata extends REST_Controller {
                 $this->response(array('error' => 'Invalid user id provided for group cration'), 400); return FALSE;
             }
         }
-        $rs=$this->user->is_all_users_exists_for_group_by_admin_id($groupAdminId,  implode(',', $groupUsersArr));
+        $groupUsers=implode(',', $groupUsersArr);
+        $rs=$this->user->is_all_users_exists_for_group_by_admin_id($groupAdminId,$groupUsers);
         if($rs!=FALSE){
             $this->response(array('error' => 'All users are already attached with "Buying Club"['.$rs->groupTitle.'],Instead of create another Buying Club please use exist one.'), 400); return FALSE;
         }
@@ -639,19 +640,22 @@ class Appdata extends REST_Controller {
         }
         $result['CatArr']=  $categoryMenyArr;
         
-        
         $result['group']=$group;
-        $result['orderId']=0;
-        $result['reorder'] = 1;
         $result['user']=$user;
         success_response_after_post_get($result);
     }
     
-    function edit_group_post(){
-        $groupId = $this->post('groupId');
-        $adminId = $this->post('userId');
-        $groupTitle = $this->post('groupTitle');
-        
+    function show_edit_group_for_reorder_post(){
+        $adminId=$this->post('userId');
+        $orderId=$this->post('orderId');
+        $order=$this->order->details($orderId,TRUE);
+        if(empty($order)){
+            $this->response(array('error' => 'Invalid parrent order index provided,so unable to process it for reorder.'), 400); return FALSE;
+        }
+        if($order[0]['groupId']==0){
+            $this->response(array('error' => 'This parrent order has no has buying club,so unable to process it for reorder.'), 400); return FALSE;
+        }
+        $groupId=$order[0]['groupId'];
         $deviceType=  $this->post('deviceType');
         $latitude=  $this->post('latitude');
         $longitude=  $this->post('longitude');
@@ -662,8 +666,92 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Please provide latitude,longitude,devive type,device token,UDID.'), 400); return FALSE;
         }
         
-        //$productType = $this->input->post('productType');
-        $groupUsersArr = $this->post('groupUsers');
+        $userDetails=  $this->user->get_details_by_id($adminId);
+        if(empty($userDetails)){
+            $this->response(array('error' => 'Invalid Buying Club index. Please try again!'), 400); return FALSE;
+        }
+        $isExist=$this->user->is_group_exist_group_id_admin_id($groupId,$adminId);
+        if(count($isExist)==0){
+            $this->response(array('error' => 'Profided buying club index is not match with buying club leadr index. Please provide correct index!'), 400); return FALSE;
+        }
+        $group = $this->user->get_group_by_id($groupId,TRUE);
+        if(!$group):
+            $this->response(array('error' => 'Invalid Buying Club index. Please try again!'), 400); return FALSE;
+        endif;
+        $user = $this->user->get_details_by_id($adminId,TRUE);
+        if(!$user):
+            $this->response(array('error' => 'Invalid user index. Please try again!'), 400); return FALSE;
+        endif;
+        $result=array();
+        $result['countryDataArr']=$this->Country->get_all1();
+        $menuArr=array();
+        $TopCategoryData=$this->category->get_top_category_for_product_list();
+        //$AllButtomCategoryData=$this->Category_model->buttom_category_for_product_list();
+        foreach($TopCategoryData as $k){
+            $SubCateory=$this->category->get_subcategory_by_category_id($k->categoryId);
+            if(count($SubCateory)>0){
+                foreach($SubCateory as $kk => $vv){
+                    $menuArr[$vv->categoryId]=$k->categoryName.' -> '.$vv->categoryName;
+                    $ThirdCateory=$this->category->get_subcategory_by_category_id($vv->categoryId);
+                    if(count($ThirdCateory)>0){
+                        foreach($ThirdCateory AS $k3 => $v3){
+                            // now going for 4rath
+                            $menuArr[$v3->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName;
+                            $FourthCateory=$this->category->get_subcategory_by_category_id($v3->categoryId);
+                            if(count($FourthCateory)>0){ //print_r($v3);die;
+                                foreach($FourthCateory AS $k4 => $v4){
+                                    $menuArr[$v4->categoryId]=$k->categoryName.' -> '.$vv->categoryName.' -> '.$v3->categoryName.' -> '.$v4->categoryName;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $categoryMenyArr=array();
+        foreach($menuArr As $k => $v){
+            $categoryMenyArr[]=array('categoryId'=>$k,'categoryName'=>$v);
+        }
+        $result['CatArr']=  $categoryMenyArr;
+        
+        
+        $result['group']=$group;
+        $result['groupId']=$groupId;
+        $result['orderId']=$orderId;
+        $result['reorder'] = 1;
+        $result['user']=$user;
+        success_response_after_post_get($result);
+    }
+    
+    function edit_group_post(){
+        $groupId = $this->post('groupId');
+        $adminId = $this->post('userId');
+        $groupTitle = $this->post('groupTitle');
+        $productType=$this->post('productType');
+        $groupUsers=$this->post('groupUsers');
+        
+        $deviceType=  $this->post('deviceType');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceToken=  $this->post('deviceToken');
+        $UDID=  $this->post('UDID');
+        
+        if($latitude=="" || $longitude=="" || $deviceType=="" || $deviceToken=="" || $UDID=="" || $productType=="" || $groupTitle=="" || $groupId=="" || $adminId==""){
+            $this->response(array('error' => 'Please provide latitude,longitude,devive type,device token,UDID,product type,buying lcub title,buying club index,user index.'), 400); return FALSE;
+        }
+        $groupUsersArr=  explode(',', $groupUsers);
+        if(count($groupUsersArr)==0){
+            $this->response(array('error' => 'Please provide atleast oen member for group'), 400); return FALSE;
+        }
+        
+        if($this->user->group_title_exists_edit($groupTitle,$groupId)){
+            $this->response(array('error' => $groupTitle.' is already created by some one,Your "Buying Club" Name must be unique.'), 400); return FALSE;
+        }
+        
+        $userDetails=$this->user->get_details_by_id($groupAdminId);
+        if(count($userDetails)==0){
+            $this->response(array('error' => 'Invalid grop admin index'), 400); return FALSE;
+        }
         
         $colors = array('red','maroon','purple','green','blue');
         $rand_keys = array_rand($colors, 1);
@@ -673,7 +761,160 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Please select the at least one Buying Club member!'), 400); return FALSE;
         endif;
         
+        if ($groupUsersArr[0] == "") { 
+            unset($groupUsersArr[0]); 
+        }
+        
+        if (end($groupUsersArr) == "") { 
+            array_pop($groupUsersArr); 
+        }
+        
+        $productTypeDetails=$this->category->get_details_by_id($productType);
+        if(count($productTypeDetails)==0 || $productTypeDetails[0]->parrentCategoryId==0){
+            $this->response(array('error' => 'Invalid product Type id'), 400); return FALSE;
+        }
+        
+        foreach($groupUsersArr AS $k => $v){
+            $userDetails=$this->user->get_details_by_id($v);
+            if(count($userDetails)==0){
+                $this->response(array('error' => 'Invalid user id provided for group cration'), 400); return FALSE;
+            }
+        }
+        
         $groupUsers = implode(",", $groupUsersArr);
+        
+        $bfrUpdateGroup = $this->user->get_group_by_id($groupId);
+        $bfrUsers = explode(",", $bfrUpdateGroup->groupUsers);
+        $olduser = array();
+        $deluser = array();
+        $newUser = array();
+        foreach($groupUsersArr as $guser):
+            if(in_array($guser, $bfrUsers)):
+                $olduser[] = $guser;
+            else:
+                $newUser[] = $guser;
+            endif;
+        endforeach;
+        foreach($bfrUsers as $bfruser):
+            if(!in_array($bfruser, $groupUsersArr)):
+                $deluser[] = $bfruser;
+            endif;
+        endforeach;        
+        
+        $groupIdUpdate = $this->user->group_update(array('groupTitle'=>$groupTitle,'groupUsers'=>$groupUsers,'groupColor'=>$groupColor,'productType'=>$productType), $groupId);
+        if($groupIdUpdate):
+            $adminDataArr=  $this->user->get_details_by_id($adminId);
+            foreach($olduser as $ouser):
+                $receiverDetails=$this->user->get_details_by_id($ouser);
+                $notify['senderId'] = $adminId;
+                $notify['receiverId'] = $ouser;
+                $notify['nType'] = "BUYING-CLUB-MODIFY";
+                $notify['receiverMobileNumber'] = $receiverDetails[0]->mobile;
+                $notify['senderMobileNumber'] = $adminDataArr[0]->mobile;
+                $notify['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
+                $notify['adminEmail'] = $adminDataArr[0]->email;
+                $notify['adminContactNo'] = $adminDataArr[0]->contactNo;
+                $notify['nTitle'] = $groupTitle;
+                $notify['appSource'] = $deviceType;
+                $this->send_notification($notify);
+            endforeach;
+            foreach($newUser as $nuser):
+                $receiverDetails=$this->user->get_details_by_id($nuser);
+                $notify['senderId'] = $adminId;
+                $notify['receiverId'] = $nuser;
+                $notify['receiverMobileNumber'] = $receiverDetails[0]->mobile;
+                $notify['senderMobileNumber'] = $adminDataArr[0]->mobile;
+                $notify['nType'] = "BUYING-CLUB-MODIFY-NEW";
+                $notify['nTitle'] = $groupTitle;
+                $notify['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
+                $notify['adminEmail'] = $adminDataArr[0]->email;
+                $notify['adminContactNo'] = $adminDataArr[0]->contactNo;
+                $notify['appSource'] = $deviceType;
+                $this->send_notification($notify);
+            endforeach;
+
+            foreach($deluser as $duser):
+                $receiverDetails=$this->user->get_details_by_id($duser);
+                $notify['senderId'] = $adminId;
+                $notify['receiverId'] = $duser;
+                $notify['nType'] = "BUYING-CLUB-MODIFY-DELETE";
+                $notify['receiverMobileNumber'] = $receiverDetails[0]->mobile;
+                $notify['senderMobileNumber'] = $adminDataArr[0]->mobile;
+                $notify['nTitle'] = $groupTitle;
+                $notify['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
+                $notify['adminEmail'] = $adminDataArr[0]->email;
+                $notify['adminContactNo'] = $adminDataArr[0]->contactNo;
+                $notify['appSource'] = $deviceType;
+                $this->send_notification($notify);
+            endforeach;
+            success_response_after_post_get(array('message'=>'Selected group data updated successfully.'));
+        else:    
+            $this->response(array('error' => 'Some error happen. Please try again!'), 400); return FALSE;
+        endif;
+    }
+    
+    function edit_group_for_reorder_post(){
+        $groupId = $this->post('groupId');
+        $adminId = $this->post('userId');
+        $orderId = $this->post('orderId');
+        $groupTitle = $this->post('groupTitle');
+        $productType=$this->post('productType');
+        $groupUsers=$this->post('groupUsers');
+                
+        $deviceType=  $this->post('deviceType');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceToken=  $this->post('deviceToken');
+        $UDID=  $this->post('UDID');
+        
+        if($latitude=="" || $longitude=="" || $deviceType=="" || $deviceToken=="" || $UDID=="" || $adminId=="" || $groupId=="" || $groupTitle=="" || $productType=="" || $groupUsers==""){
+            $this->response(array('error' => 'Please provide latitude,longitude,devive type,device token,UDID,user index,buying club index,buying club title,product type,group user.'), 400); return FALSE;
+        }
+        
+        $groupUsersArr=  explode(',', $groupUsers);
+        if(count($groupUsersArr)==0){
+            $this->response(array('error' => 'Please provide atleast oen member for group'), 400); return FALSE;
+        }
+        
+        if($this->user->group_title_exists_edit($groupTitle,$groupId)){
+            $this->response(array('error' => $groupTitle.' is already created by some one,Your "Buying Club" Name must be unique.'), 400); return FALSE;
+        }
+        
+        $userDetails=$this->user->get_details_by_id($groupAdminId);
+        if(count($userDetails)==0){
+            $this->response(array('error' => 'Invalid grop admin index'), 400); return FALSE;
+        }
+        
+        $colors = array('red','maroon','purple','green','blue');
+        $rand_keys = array_rand($colors, 1);
+        $groupColor = $colors[$rand_keys];
+        
+        if(!$groupUsersArr):
+            $this->response(array('error' => 'Please select the at least one Buying Club member!'), 400); return FALSE;
+        endif;
+        
+        if ($groupUsersArr[0] == "") { 
+            unset($groupUsersArr[0]); 
+        }
+        
+        if (end($groupUsersArr) == "") { 
+            array_pop($groupUsersArr); 
+        }
+        
+        $productTypeDetails=$this->category->get_details_by_id($productType);
+        if(count($productTypeDetails)==0 || $productTypeDetails[0]->parrentCategoryId==0){
+            $this->response(array('error' => 'Invalid product Type id'), 400); return FALSE;
+        }
+        
+        foreach($groupUsersArr AS $k => $v){
+            $userDetails=$this->user->get_details_by_id($v);
+            if(count($userDetails)==0){
+                $this->response(array('error' => 'Invalid user id provided for group cration'), 400); return FALSE;
+            }
+        }
+        
+        $groupUsers = implode(",", $groupUsersArr);
+        
         $bfrUpdateGroup = $this->user->get_group_by_id($groupId);
         $bfrUsers = explode(",", $bfrUpdateGroup->groupUsers);
         $olduser = array();
@@ -706,6 +947,7 @@ class Appdata extends REST_Controller {
                 $notify['adminEmail'] = $adminDataArr[0]->email;
                 $notify['adminContactNo'] = $adminDataArr[0]->contactNo;
                 $notify['nTitle'] = $groupTitle;
+                $notify['appSource'] = $deviceType;
                 $this->send_notification($notify);
             endforeach;
             foreach($newUser as $nuser):
@@ -719,6 +961,7 @@ class Appdata extends REST_Controller {
                 $notify['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
                 $notify['adminEmail'] = $adminDataArr[0]->email;
                 $notify['adminContactNo'] = $adminDataArr[0]->contactNo;
+                $notify['appSource'] = $deviceType;
                 $this->send_notification($notify);
             endforeach;
 
@@ -733,52 +976,58 @@ class Appdata extends REST_Controller {
                 $notify['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
                 $notify['adminEmail'] = $adminDataArr[0]->email;
                 $notify['adminContactNo'] = $adminDataArr[0]->contactNo;
+                $notify['appSource'] = $deviceType;
                 $this->send_notification($notify);
             endforeach;
-            $reorder = $this->post('reorder');
             
-            if($reorder):
-                $this->load->model('Order_model','order');
-                $orderId = $this->post('orderId');
-                $order = $this->order->get_single_order_by_id($orderId);
-                $pro = $this->product->details($order->productId);
-                $orderinfo['pdetail'] = $pro[0];
-                $group = $this->user->get_group_by_id($groupId);
+            $this->load->model('Order_model','order');
+            $orderId = $this->post('orderId');
+            $order = $this->order->get_single_order_by_id($orderId);
+            $pro = $this->product->details($order->productId);
+            $orderinfo['pdetail'] = $pro[0];
+            $orderinfo['priceinfo'] = $this->product->get_products_price_details_by_id($order->productPriceId);
+            
+            $group = $this->user->get_group_by_id($groupId);
+            $mail_template_data=array();
+            $mail_template_view_data=load_default_resources();
+            foreach($group->users as $key => $usr):
                 $mail_template_data=array();
-                foreach($group->users as $key => $usr):
-                    $mail_template_data=array();
-                    $data['senderId'] = $adminId;
-                    $data['receiverId'] = $usr->userId;
-                    $data['nType'] = 'BUYING-CLUB-ORDER';
-                    $data['nTitle'] = 'Buying Club Re-order [TIDIIT-OD'.$order->orderId.'] running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
-                    $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID']=$order->orderId;
-                    $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ADMIN_NAME']=$group->admin->firstName.' '.$group->admin->lastName;
-                    $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club order product.<br>";
-                    $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
-                    $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
-                    $data['nMessage'] .= "Want to process the order ? <br>";
-                    $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-re-order-accept-process/".base64_encode($orderId*226201)."/".base64_encode(100)."' class='btn btn-success btn-lg'>Accept</a><br>";
-                    $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID1']=$orderId;
-                    $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                $data['senderId'] = $adminId;
+                $data['receiverId'] = $usr->userId;
+                $data['nType'] = 'BUYING-CLUB-ORDER';
+                $data['nTitle'] = 'Buying Club Re-order [TIDIIT-OD'.$order->orderId.'] running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+                $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID']=$order->orderId;
+                $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ADMIN_NAME']=$group->admin->firstName.' '.$group->admin->lastName;
+                $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club order product.<br>";
+                $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
+                $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
+                $data['nMessage'] .= "Want to process the order ? <br>";
+                $data['nMessage'] .= "<a href='".$mail_template_view_data['MainSiteBaseURL']."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".$mail_template_view_data['MainSiteBaseURL']."shopping/group-re-order-accept-process/".base64_encode($orderId*226201)."/".base64_encode(100)."' class='btn btn-success btn-lg'>Accept</a><br>";
+                $mail_template_data['TEMPLATE_GROUP_RE_ORDER_START_ORDER_ID1']=$orderId;
+                $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                $data['orderId'] =$orderId;
+                $data['productId'] =$orderinfo['priceinfo']->productId;
+                $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
 
-                    $data['isRead'] = 0;
-                    $data['status'] = 1;
-                    $data['createDate'] = date('Y-m-d H:i:s');
-                    $data['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
-                    $data['adminEmail'] = $adminDataArr[0]->email;
-                    $data['adminContactNo'] = $adminDataArr[0]->contactNo;
+                $data['isRead'] = 0;
+                $data['status'] = 1;
+                $data['createDate'] = date('Y-m-d H:i:s');
+                $data['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
+                $data['adminEmail'] = $adminDataArr[0]->email;
+                $data['adminContactNo'] = $adminDataArr[0]->contactNo;
+                $data['appSource'] = $deviceType;
 
-                    //Send Email message
-                    $recv_email = $usr->email;
-                    $sender_email = $group->admin->email;
-                    /// firing mail
-                    $mail_template_view_data=load_default_resources();
-                    $mail_template_view_data['group_order_re_start']=$mail_template_data;
-                    global_tidiit_mail($recv_email, "Buying Club Order Re-Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_re_start');
-                    
-                    $this->user->notification_add($data);
-                endforeach;
-            endif;
+                //Send Email message
+                $recv_email = $usr->email;
+                $sender_email = $group->admin->email;
+                /// firing mail
+
+                $mail_template_view_data['group_order_re_start']=$mail_template_data;
+                global_tidiit_mail($recv_email, "Buying Club Order Re-Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_re_start');
+
+                $this->user->notification_add($data);
+            endforeach;
+            
             success_response_after_post_get(array('message'=>'Selected group data updated successfully.'));
         else:    
             $this->response(array('error' => 'Some error happen. Please try again!'), 400); return FALSE;
@@ -861,7 +1110,15 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Invalid user id. Please try again!'), 400); return FALSE;
         }
         $result=array();
-        $result['my_notications']=$this->user->notification_all_my_app($userId);
+        $myNoticationsNew=array();
+        $myNotications=$this->user->notification_all_my_app($userId);
+        foreach($myNotications AS $k){
+            $k['nTitle']=  strip_tags($k['nTitle']);
+            $k['createDate']=  date('d-m-Y H:i:s',  strtotime($k['createDate']));
+            $myNoticationsNew[]=$k;
+        }
+        //pre($myNoticationsNew);die;
+        $result['my_notications']=$myNoticationsNew;
         success_response_after_post_get($result);
     }
     
@@ -883,8 +1140,8 @@ class Appdata extends REST_Controller {
         }
         
         $result=array();
-        if($details['nType']=='BUYING-CLUB-ORDER'){
-            $orderId=$details['orderId'];
+        if($details['nType']=='BUYING-CLUB-ORDER' || $details['nType']=='BUYING-CLUB-ORDER-DECLINE'){
+            //$orderId=$details['orderId'];
             $prodctImageArr=$this->product->get_products_images($details['productId']);
             $prodctDetails=$this->product->details($details['productId']);
             $prodctPriceDetails=$this->product->get_products_price_details_by_id($details['productPriceId']);
@@ -898,7 +1155,6 @@ class Appdata extends REST_Controller {
             $tempArr=  explode('[',$details['nMessage']);
             $tempArr1= explode(']',$tempArr[1]);
             $result['clubTitle']=$tempArr1[0];
-        //}elseif(){
         }else{
             $result['notications_details']=$details;
         }
