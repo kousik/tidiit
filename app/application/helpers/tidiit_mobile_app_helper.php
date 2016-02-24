@@ -296,9 +296,9 @@ if ( ! function_exists('send_sms_notification')):
         if(!is_dir($smsLogPath)){ //create the folder if it's not already exists
           @mkdir($smsLogPath,0755,TRUE);
         } 
-        $data = $data['nMessage'];
+        $dataMessage = $data['nMessage'];
         $smsLogFile=$smsLogPath.time().uniqid().'.txt';
-        if ( ! write_file($smsLogFile, $data)){
+        if ( ! write_file($smsLogFile, $dataMessage)){
              //echo 'Unable to write the file';
         }else{
              //echo 'File written!';
