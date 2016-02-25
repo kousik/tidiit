@@ -845,6 +845,16 @@ class User_model extends CI_Model {
         endif;
     }
     
+    function group_title_exists_edit($groupTitle,$groupId){
+        $this->db->where('groupTitle',$groupTitle)->where('groupId !=',$groupId);
+        $this->db->from($this->_group);
+        if($this->db->count_all_results()>0):
+            return TRUE;
+        else:
+            return FALSE;
+        endif;
+    }
+    
     function get_all_buyer(){
         $rs=$this->db->from($this->_table)->where('status >',0)->where('userType','buyer')->get()->result();
         //echo $this->db->last_query();

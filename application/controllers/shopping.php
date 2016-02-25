@@ -664,7 +664,8 @@ class Shopping extends MY_Controller{
         $order_data['productQty'] = 0;
         $order_data['userId'] = $this->session->userdata('FE_SESSION_VAR');
         
-        $exists_order = $this->Order_model->is_parent_group_order_available($data['order']->orderId, $user->userId);
+        $exists_order=false;
+        //$exists_order = $this->Order_model->is_parent_group_order_available($data['order']->orderId, $user->userId);
 
         $orderinfo = [];
         $orderinfo['pdetail'] = $product;
