@@ -399,18 +399,18 @@ WHERE c.categoryId =".$categoryId;
     }
     
     function get_root_category($categoryId){
-        $sql = "SELECT * FROM `{$this->_table}` WHERE parrentCategoryId = ".$categoryId." AND status = 1";
+        $sql = "SELECT * FROM `{$this->_table}` WHERE categoryId = ".$categoryId." AND status = 1";
         $rs = $this->db->query($sql)->result();
         if($rs):
             foreach($rs as $key => $cat):
-                if($key == 0):
+                //if($key == 0):
                     $datails = $this->get_details_by_id($cat->categoryId);
                     if($datails[0]->parrentCategoryId == 0):
                         return $datails[0];
                     else:
-                        $this->get_root_category($cat->categoryId);
+                        return $this->get_root_category($cat->parrentCategoryId);
                     endif;
-                endif;
+                //endif;
             endforeach;  
         else:
             $details = $this->get_details_by_id($categoryId);

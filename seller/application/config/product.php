@@ -8,9 +8,10 @@ $config['mobileProcessorCores']=array('1'=>'Duo Core','2'=>'Celeron','3'=>'Xeon'
 $config['mobileProcessorBrand']=array('1'=>'Asus','2'=>'Intel','3'=>'AMD');
 $config['mobileBatteryType']=array('1'=>'Intex','2'=>'Micromax','3'=>'Samsung','4'=>'LG','5'=>'Karbonn','6'=>'Gionee','7'=>'Lenovo','8'=>'BlackBerry','9'=>'Huawei','10'=>'Sagetel');
 $config['priceRangeSettings']=array(
-  'mobile'=>array('start'=>5,'consistencyNo'=>5,'end'=>5000),  
+  'mobile'=>array('start'=>5,'consistencyNo'=>5,'end'=>5000),
   'laptop'=>array('start'=>1,'consistencyNo'=>2,'end'=>500),  
-  'desktop'=>array('start'=>1,'consistencyNo'=>2,'end'=>500),  
+  'desktop'=>array('start'=>1,'consistencyNo'=>2,'end'=>500),
+  'clothes'=>array('start'=>5,'consistencyNo'=>5,'end'=>5000)
 );
 $config['lengthClass']=array('1'=>'Centimeter','2'=>'Millimeter','3'=>'Inch');
 $config['weightClass']=array('1'=>'Kilogram','2'=>'Gram','3'=>'Pound','4'=>'Quintal');

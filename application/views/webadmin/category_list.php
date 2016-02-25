@@ -42,8 +42,27 @@ function ShowAddAdminBox(){
 	$('#ManageSEOTable').hide();
 	$('#ListBox').fadeOut(500);
 	$('#AddBox').fadeIn(3500);
+    $("#last_no_add").click();
+    $('input:checkbox[name="options[]"]').each(function(){
+        $(this).prop('checked', false);
+    });
 }
  function ShowEditBox(id){
+     $('input:checkbox[name="options[]"]').each(function(){
+         $(this).prop('checked', false);
+     });
+
+     var options = DataArr[id]['option_ids'].split(",");
+
+     if (options.length > 0 && options[0] != '' ) {
+         reorder(options);
+         $('input:checkbox[name="options[]"]').each(function(){
+             if(jQuery.inArray( $(this).val(), options )!=-1){
+                 $(this).prop('checked', true);
+             }
+         });
+     }
+
  	$('#MessaeBox').html("");
 	$('#AddBtn').fadeOut();
 	$('#BatchActionRow').fadeOut();
@@ -71,7 +90,13 @@ function ShowAddAdminBox(){
         }
         $('#EditEditcategoryImageImg').attr('height','100').attr('width','100').attr('src',srcData);	
         <?php //}?>
-	$('#categoryId').val(DataArr[id]['categoryId']);
+	    $('#categoryId').val(DataArr[id]['categoryId']);
+
+         if(DataArr[id]['is_last'] == 1){
+             $("#last_yes").click();
+         } else {
+             $("#last_no").click();
+         }
 	
  }
 
@@ -102,7 +127,44 @@ function AskDelete(id){
 	}
 	return false;
 }
+$(document).ready(function() {
+    $('#last_yes, #last_yes_add').on('change', function () {
+        $('tr.option-list').show();
+    });
+
+    $('#last_no, #last_no_add').on('change', function () {
+        $('tr.option-list').hide();
+    });
+
+    $( ".sortable" ).sortable({
+        revert: true
+    });
+});
+
+function reorder(orderedArray) {
+    var el, pre,
+        p = document.getElementById(orderedArray[0]).parentNode;
+    orderedArray.forEach(function (a, b, c) {
+        if (b > 0) {
+            el = document.getElementById(a);
+            pre = document.getElementById(c[b - 1]);
+
+            p.insertBefore(el, pre.nextSibling);
+        }
+    });
+}
+
+
  </script>
+    <style type="text/css">
+        ul.sortable li {
+            height: 25px;
+            margin-bottom: 5px;
+            padding-left: 5px;
+            list-style-type: none;
+            cursor: move;
+        }
+    </style>
  <tr id="BatchActionRow">
   	<td>
 		<input type="button" name="BatchActive" id="BatchActive" value="Batch Active" class="btn-primary btn-large"/>
@@ -184,6 +246,8 @@ function AskDelete(id){
   DataArr[<?php echo $InerArr->categoryId?>]['image']='<?php echo $InerArr->image?>';
   DataArr[<?php echo $InerArr->categoryId?>]['userCategoryView']='<?php echo $InerArr->userCategoryView?>';
   DataArr[<?php echo $InerArr->categoryId?>]['status']='<?php echo $InerArr->status?>';
+  DataArr[<?php echo $InerArr->categoryId?>]['is_last']='<?php echo $InerArr->is_last?>';
+  DataArr[<?php echo $InerArr->categoryId?>]['option_ids']='<?php echo $InerArr->option_ids?>';
   </script>
   <?php $val++;}
   }else{?>
@@ -319,6 +383,39 @@ function AskDelete(id){
         <input type="file" name="EditcategoryImage" id="EditcategoryImage" style="display:none;">
     </td>
   </tr>
+    <tr>
+        <td align="left" valign="top">&nbsp;</td>
+        <td align="left" valign="top">&nbsp;</td>
+        <td align="left" valign="top">&nbsp;</td>
+        <td align="left" valign="top">&nbsp;</td>
+    </tr>
+
+
+
+    <tr class="ListHeadingLable">
+        <td align="left" valign="top">&nbsp;</td>
+        <td align="left" valign="top">Want to add Product Option Groups?</td>
+        <td align="left" valign="top"><label><strong>:</strong></label></td>
+        <td align="left" valign="top">Yes
+            <input name="is_last" type="radio" value="1" id="last_yes"/>
+            &nbsp;No
+            <input name="is_last" type="radio" value="0" id="last_no"/></td>
+    </tr>
+
+    <tr class="ListHeadingLable option-list" style="display: none;">
+        <td align="left" valign="top">&nbsp;</td>
+        <td align="left" valign="top">Select Option Group</td>
+        <td align="left" valign="top"><label><strong>:</strong></label></td>
+        <td align="left" valign="top">
+            <div>
+                <ul class="sortable">
+            <?php foreach($options as $kop => $opt){?>
+                    <li class="ui-state-default" id="<?=$opt->id?>"><input name="options[]" type="checkbox" value="<?=$opt->id?>" class="options"/> <?=$opt->name?> -- [ <?=$opt->display_name?> ]</li>
+            <?php }?>
+                </ul>
+            </div>
+        </td>
+    </tr>
   
   <tr>
     <td align="left" valign="top">&nbsp;</td>
@@ -499,7 +596,37 @@ function AskDelete(id){
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
   </tr>
-  
+
+    <tr class="ListHeadingLable">
+        <td align="left" valign="top">&nbsp;</td>
+        <td align="left" valign="top">Want to add Product Option Groups?</td>
+        <td align="left" valign="top"><label><strong>:</strong></label></td>
+        <td align="left" valign="top">Yes
+            <input name="is_last" type="radio" value="1" id="last_yes_add"/>
+            &nbsp;No
+            <input name="is_last" type="radio" value="0" id="last_no_add"/></td>
+    </tr>
+
+    <tr class="ListHeadingLable option-list" style="display: none;">
+        <td align="left" valign="top">&nbsp;</td>
+        <td align="left" valign="top">Select Option Group</td>
+        <td align="left" valign="top"><label><strong>:</strong></label></td>
+        <td align="left" valign="top">
+            <div>
+                <ul class="sortable">
+                    <?php foreach($options as $kop => $opt){?>
+                        <li class="ui-state-default"><input name="options[]" type="checkbox" value="<?=$opt->id?>" class="options"/> <?=$opt->name?> -- [ <?=$opt->display_name?> ]</li>
+                    <?php }?>
+                </ul>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td align="left" valign="top">&nbsp;</td>
+        <td align="left" valign="top">&nbsp;</td>
+        <td align="left" valign="top">&nbsp;</td>
+        <td align="left" valign="top">&nbsp;</td>
+    </tr>
   <tr class="ListHeadingLable">
     <td align="left" valign="top"><input  type="hidden" name="parrentCategoryId" value="<?php echo $parrentData[0]->categoryId;?>"/></td>
     <td align="left" valign="top" class="ListHeadingLable">status</td>

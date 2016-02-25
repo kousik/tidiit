@@ -62,6 +62,9 @@
             <tr height="20" bgcolor="#DFDFDF">
               <td  style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/coupon/viewlist';?>">Coupon manager</a> </td>
             </tr>
+              <tr height="20" bgcolor="#DFDFDF">
+                  <td  style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/options/viewlist';?>">Options manager</a> </td>
+              </tr>
             <tr height="20" bgcolor="#DFDFDF">
               <td  style="padding-left:10px;"><img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>&nbsp;<a href="<?php echo base_url().'webadmin/logistics/viewlist';?>">Logistics manager</a> </td>
             </tr>

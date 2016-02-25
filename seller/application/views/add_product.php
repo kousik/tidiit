@@ -206,7 +206,7 @@ jQuery(document).ready(function(){
         'img2':'required extension:jpg:png',
 		'img3':'required extension:jpg:png',
         'bulkQty': 'required',
-        'price': 'required',
+        'price': 'required'
       },
 
       onSubmit: function(invalid, e) {
@@ -223,7 +223,7 @@ jQuery(document).ready(function(){
           }else{
               e.preventDefault();
           }
-      },
+      }
       
     });
 });

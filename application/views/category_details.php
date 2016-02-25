@@ -187,7 +187,7 @@
                     <div class="item col-md-3 col-sm-3 col-xs-6">
                         <div class="prodct_box prodct_box1"> 
                             <?php if($pro->qty < $pro->minQty):?>
-                            <a href="javascript//">
+                            <a href="javascript://">
                             <?php else :?>
                             <a href="<?=BASE_URL.'product/details/'.base64_encode($pro->productId);?>"> 
                             <?php endif;?> 
@@ -213,7 +213,7 @@
                             <p><?=$pro->lowestPrice.' - '.$pro->heighestPrice;?></p>
                             <p>
                                 <?php if($pro->qty < $pro->minQty):?>
-                                    <a href="javascript//">View Details &nbsp;<i class="fa fa-caret-right"></i></a>
+                                    <a href="javascript://">View Details &nbsp;<i class="fa fa-caret-right"></i></a>
                                 <?php else:?>
                                 <a href="<?=BASE_URL.'product/details/'.base64_encode($pro->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a>
                                 <?php endif;?>

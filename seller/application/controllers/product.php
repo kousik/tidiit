@@ -3,6 +3,7 @@ class Product extends MY_Controller{
     public function __construct(){
             parent::__construct();
             $this->load->model('Product_model');
+            $this->load->model('Option_model');
             $this->load->model('Category_model');
             $this->load->model('Brand_model');
             parse_str($_SERVER['QUERY_STRING'],$_GET);
@@ -36,11 +37,20 @@ class Product extends MY_Controller{
             //echo '$categoryId  ='.$categoryId;die;
             $menuArr=array();
             $TopCategoryData=$this->Category_model->get_top_category_for_product_list();
-            $categoryDetailsArr=$this->Category_model->get_details_by_id($categoryId);
+            $categoryDetailsArr = $this->Category_model->get_details_by_id($categoryId);
             $data['brandArr']=$this->Brand_model->get_all();
             $data['categoryId']=$categoryId;
             $productPageTypeArr=$this->Product_model->get_page_template();
-            //pre($productPageTypeArr);die;
+            $rootCategory = $this->Category_model->get_root_category($categoryId);
+
+            if($categoryDetailsArr[0]->option_ids):
+                $pieces = explode(",", $categoryDetailsArr[0]->option_ids);
+                $options = $this->Option_model->get_bulk_options($pieces);
+                $data['options'] = $options;
+                $data['options_arrenge'] = $pieces;
+            else:
+                $data['options'] = '';
+            endif;
             $templateName='';
             foreach($productPageTypeArr As $k){
                 if($k->productViewTemplateID==$categoryDetailsArr[0]->view){
@@ -49,7 +59,11 @@ class Product extends MY_Controller{
                 }
             }
             //pre($productPageTypeArr[$categoryDetailsArr[0]->view]);die;
-            $viewPage='add_product_'.$templateName;
+            if($templateName && $templateName == "mobile.php"):
+                $viewPage='add_product_'.$templateName;
+            else:
+                $viewPage='add_product_common.php';
+            endif;
             //echo substr($templateName,0,-4);die;
             $data['productPageType']=substr($templateName,0,-4);
             //echo $viewPage;die;
@@ -830,6 +844,178 @@ class Product extends MY_Controller{
         $retView=ob_get_contents();
         ob_end_clean();
         return $retView;
+    }
+
+
+
+    public function add_common_product(){
+        //pre($_POST);die;
+        $categoryId=$this->input->post('categoryId',TRUE);
+        $retDataArr=$this->default_data_validate();
+        if($retDataArr['status']=='fail'){
+            $this->session->set_flashdata('Message',$retDataArr['data']);
+            redirect(BASE_URL.'product/add_product/'.$categoryId);
+            //echo json_encode(array('result'=>'bad','msg'=>$retDataArr['data']));
+        }else{
+            //pre($_POST);die;
+            $config=array(
+                array('field'   => 'brandId','label'   => 'Brand','rules'   => 'trim|required|xss_clean'),
+                array('field'   => 'qty','label'   => 'Quantity','rules'   => 'trim|required|xss_clean'),
+                array('field'   => 'minQty','label'   => 'Minimum Quantity','rules'   => 'trim|required|xss_clean'),
+                array('field'   => 'bulkQty','label'   => 'First Quantity Range','rules'   => 'trim|required|xss_clean'),
+                array('field'   => 'price','label'   => 'First Price Range','rules'   => 'trim|required|xss_clean'),
+            );
+            $type='mobile';
+
+            $brandId=$this->input->post('brandId',TRUE);
+            $categoryId=$this->input->post('categoryId',TRUE);
+            $taxable=$this->input->post('taxable',TRUE);
+            $minQty=$this->input->post('minQty',TRUE);
+            $qty=$this->input->post('qty',TRUE);
+            $length=$this->input->post('length',TRUE);
+            $width=$this->input->post('width',TRUE);
+            $height=$this->input->post('height',TRUE);
+            $lengthClass=$this->input->post('lengthClass',TRUE);
+            $weight=$this->input->post('weight',TRUE);
+            $weightClass=$this->input->post('weightClass',TRUE);
+            $bulkQty=$this->input->post('bulkQty',TRUE);
+            $price=$this->input->post('price',TRUE);
+            $total_price_row_added=$this->input->post('total_price_row_added',TRUE);
+
+            $status=$this->input->post('status',TRUE);
+            $this->form_validation->set_rules($config);
+
+            if($this->form_validation->run() == FALSE){
+                $data=validation_errors();
+                //pre($data);die;
+                //return array('status'=>'fail','data'=>$data);
+                $this->session->set_flashdata('Message',$data);
+                redirect(BASE_URL.'product/add_product/'.$categoryId);
+            }else{
+                $priceArr=array();
+                $lowestPrice=$price;
+                $priceArr[]=array('qty'=>$bulkQty,'price'=>$price);
+                for($i=1;$i<$total_price_row_added;$i++){
+                    $bulkQty=$this->input->post('bulkQty_'.$i,TRUE);
+                    $price=$this->input->post('price_'.$i,TRUE);
+
+                    if($bulkQty=="" || $price==""){
+                        //echo '$bulkQty= '.$bulkQty.'  === $price '.$price;die;
+                        $this->session->set_flashdata('Message','Please fill the price and relted quanity');
+                        redirect(BASE_URL.'product/add_product/'.$categoryId);
+                    }
+                    $priceArr[]=array('qty'=>$bulkQty,'price'=>$price);
+                }
+                usort($priceArr, 'sortingProductPriceArr');
+                $heighestPrice=$price;
+                $minQty=$priceArr[count($priceArr)-1]['qty'];
+                //$dataArr=$retDataArr['data'];
+                $dataArr=array('taxable'=>$taxable,'minQty'=>$minQty,'qty'=>$qty,'length'=>$length,'width'=>$width,
+                    'height'=>$height,'lengthClass'=>$lengthClass,'weight'=>$weight,'weightClass'=>$weightClass,'status'=>$status,
+                    'lowestPrice'=>$lowestPrice,'heighestPrice'=>$heighestPrice);
+                $ParrentDataArr=$this->Category_model->get_all_parrent_details($categoryId);
+                //pre($ParrentDataArr);
+                if($ParrentDataArr[0]->secondParentcategoryId==""){
+                    $dataArr['CategoryID1']=$ParrentDataArr[0]->firstParentcategoryId;
+                    $dataArr['CategoryID2']=$categoryId;
+                }else{
+                    $dataArr['CategoryID1']=$ParrentDataArr[0]->secondParentcategoryId;
+                    $dataArr['CategoryID2']=$ParrentDataArr[0]->firstParentcategoryId;
+                    $dataArr['CategoryID3']=$categoryId;
+                }
+                if(!empty($mobileConnectivity)){$dataArr['mobileConnectivity']=implode(',', $mobileConnectivity);}
+                $tag=$retDataArr['data']['tag'];
+                unset($retDataArr['data']['tag']);
+                $mobileDataArr=array_merge($retDataArr['data'],$dataArr);
+                //pre($mobileDataArr);die;
+                //echo base64_encode(serialize($mobileDataArr));die;
+                //pre($priceArr);die;
+
+                $config['upload_path'] =$this->config->item('ResourcesPath').'product/original/';
+                $config['allowed_types'] = 'jpg|png|jpeg';
+                $config['file_name']	= strtolower(my_seo_freindly_url($mobileDataArr['title'])).'-'.rand(1,9).'-'.time();
+                $config['max_size']	= '2047';
+                $config['max_width'] = '1550';
+                $config['max_height'] = '1550';
+                //$config['max_width']  = '1024';
+                //$config['max_height']  = '1024';
+                $upload_files=array();
+                $this->load->library('upload');
+                //pre($_FILES);die;
+                $blank=0;
+                foreach ($_FILES as $fieldname => $fileObject){  //fieldname is the form field name
+                    //pre($fileObject);
+                    if (!empty($fileObject['name'])){
+                        $this->upload->initialize($config);
+                        if (!$this->upload->do_upload($fieldname)){
+                            foreach($upload_files AS $k){
+                                @unlink($this->config->item('ResourcesPath').'product/original/'.$k);
+                            }
+                            $errors = $this->upload->display_errors();
+                            //pre($errors);die;
+                            $this->session->set_flashdata('Message',$errors);
+                            redirect(base_url().'product/add_product/'.$categoryId);
+                        }
+                        else
+                        {
+                            // Code After Files Upload Success GOES HERE
+                            $data=$this->upload->data();
+                            $this->product_image_resize($data['file_name']);
+                            $upload_files[]=$data['file_name'];
+                        }
+                    }else{
+                        if(substr($fieldname,-1)==1)
+                            $blank++;
+                    }
+                }
+            }
+            //die($blank.' = rrr');
+            //if($blank==1 || $blank==2){
+            if($blank==1){
+                @unlink($this->config->item('ResourcesPath').'product/original/'.$upload_files[0]);
+                $this->session->set_flashdata('Message','Please upload at least two image for this product.');
+                redirect(BASE_URL.'product/add_product/'.$categoryId);
+            }
+            //pre($upload_files);die;
+
+            $productId=$this->Product_model->add($mobileDataArr);
+            //$productId=1;
+            //echo 'product added done.<br>';
+            $imageBatchArr=array();
+            foreach ($upload_files AS $k =>$v){
+                $imageBatchArr[]=array('productId'=>$productId,'image'=>$v);
+            }
+            $this->Product_model->add_image($imageBatchArr);
+            //echo 'image uploaded done.<br>';
+
+            $productTagArr=array('productId'=>$productId,'tagStr'=>$tag);
+            $this->Product_model->add_product_tag($productTagArr);
+            //echo 'tag added done.<br>';
+
+            $newPriceArr=array();
+            foreach ($priceArr AS $k){
+                $k['productId']=$productId;
+                $newPriceArr[]=$k;
+            }
+
+            //pre($newPriceArr);die;
+            $this->Product_model->add_product_price($newPriceArr);
+            //echo 'price added done.<br>';
+
+
+            $this->Product_model->add_product_category(array('productId'=>$productId,'categoryId'=>$categoryId));
+
+            //echo 'product category done.<br>';
+            $this->Product_model->add_product_owner(array('productId'=>$productId,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+            $this->Product_model->add_brand(array('productId'=>$productId,'brandId'=>$brandId));
+
+            //Add product option values
+            $this->Option_model->saveOptionsValues( $this->input->post('options',TRUE)?$this->input->post('options',TRUE):[], $productId );
+
+            $this->session->set_flashdata('Message','Product added successfully.');
+            redirect(base_url().'product/viewlist');
+        }
+
     }
     
     

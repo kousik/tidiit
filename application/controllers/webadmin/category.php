@@ -4,6 +4,7 @@ class Category extends MY_Controller{
 		parent::__construct();
 		$this->load->model('Category_model');
 		$this->load->model('Product_model');
+        $this->load->model('Option_model');
 	}
 	
 	public function index(){
@@ -13,6 +14,7 @@ class Category extends MY_Controller{
 	public function viewlist($parrentId=0){
 		$data=$this->_show_admin_logedin_layout();
 		$data['DataArr']=$this->Category_model->get_all($parrentId);
+        $data['options']=$this->Option_model->get_all_admin();
 		//echo '$parrentId :- '.$parrentId;die;
 		if($parrentId==0){
 			$Arr=new stdClass();
@@ -66,7 +68,9 @@ class Category extends MY_Controller{
                         'image'=>$image,
                         'metaTitle'=>$metaTitle,
                         'metaKeyWord'=>$metaKeyWord,
-                        'metaDescription'=>$metaDescription
+                        'metaDescription'=>$metaDescription,
+                        'is_last' => $this->input->post('is_last',TRUE),
+                        'option_ids' => ($this->input->post('is_last',TRUE) && $this->input->post('options',TRUE))?implode(",",$this->input->post('options',TRUE)):''
                     );
 
                     //print_r($dataArr);die;
@@ -113,7 +117,9 @@ class Category extends MY_Controller{
                         'userCategoryView'=>$userCategoryView,
                         'metaTitle'=>$metaTitle,
                         'metaKeyWord'=>$metaKeyWord,
-                        'metaDescription'=>$metaDescription
+                        'metaDescription'=>$metaDescription,
+                        'is_last' => $this->input->post('is_last',TRUE),
+                        'option_ids' => ($this->input->post('is_last',TRUE) && $this->input->post('options',TRUE))?implode(",",$this->input->post('options',TRUE)):''
                     );
             if($image!=""){
                 $dataArr['image']=$image;
@@ -121,6 +127,7 @@ class Category extends MY_Controller{
             //print_r($dataArr);die;
             
             $this->Category_model->edit($dataArr,$CategoryID);
+
 
             $this->session->set_flashdata('Message','Category updated successfully.');
             redirect(base_url().'webadmin/category/viewlist/'.$parrentCategoryId);
