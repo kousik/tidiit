@@ -683,18 +683,23 @@ class Ajax extends MY_Controller{
     function show_cart(){
         $data=array();
         $user = $this->_get_current_user_details();
-        $allItemArr=$this->Order_model->get_all_cart_item($user->userId);
-        $newAllItemArr=array();
-        foreach($allItemArr AS $k){
-            $orderInfo =  unserialize(base64_decode($k['orderInfo']));
-            $k['productTitle'] = $orderInfo['pdetail']->title;
-            $k['qty'] = $k['productQty']?$k['productQty']:$orderInfo['priceinfo']->qty;
-            $k['pimage']=$orderInfo['pimage']->image;
-            $newAllItemArr[]=$k;
-        }
-        //pre($newAllItemArr);die;
-        $data['allItemArr']=$newAllItemArr;
-        $data['user']= $user;
+        if($user):
+            $allItemArr=$this->Order_model->get_all_cart_item($user->userId);
+            $newAllItemArr=array();
+            foreach($allItemArr AS $k){
+                $orderInfo =  unserialize(base64_decode($k['orderInfo']));
+                $k['productTitle'] = $orderInfo['pdetail']->title;
+                $k['qty'] = $k['productQty']?$k['productQty']:$orderInfo['priceinfo']->qty;
+                $k['pimage']=$orderInfo['pimage']->image;
+                $newAllItemArr[]=$k;
+            }
+            //pre($newAllItemArr);die;
+            $data['allItemArr']=$newAllItemArr;
+            $data['user']= $user;
+        else:
+            $data['allItemArr']=[];
+            $data['user']= "";
+        endif;
         $ret=$this->load->view('cart',$data,true);
         echo $ret;die;
     }
