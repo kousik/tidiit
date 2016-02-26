@@ -106,6 +106,19 @@ class Option_model extends CI_Model{
         $this->db->delete('product_option_values');
     }
 
+    public function get_product_option_values($productId){
+        $this->db->select('*')->from('product_option_values');
+        $this->db->where('productId', $productId);
+        $result = $this->db->get()->result();
+        $data = [];
+        if($result):
+            foreach($result as $key => $opt):
+                $data[$opt->option_id][] = $opt;
+            endforeach;
+        endif;
+        return $data;
+    }
+
 
         
 }

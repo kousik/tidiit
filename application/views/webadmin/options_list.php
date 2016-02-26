@@ -206,8 +206,9 @@ $brandImageURL=SiteResourcesURL.'brand/admin/';
         <td align="left" valign="top">
             <select name="type" id="type">
                 <option value="text">Text</option>
+                <option value="textarea">TextArea</option>
                 <option value="checkbox">Checkbox</option>
-                <option value="radiobox">Radiobox</option>
+                <option value="radio">Radiobox</option>
             </select>
         </td>
     </tr>

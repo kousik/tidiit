@@ -291,7 +291,14 @@ class Product extends MY_Controller{
                 break;
             }
         }
-        $functionName='edit_'.substr($templateName,0,-4);
+
+        if($templateName && $templateName == "mobile.php"):
+            $viewPage =$templateName;
+        else:
+            $viewPage = 'common.php';
+        endif;
+
+        $functionName='edit_'.substr($viewPage,0,-4);
         $this->$functionName($productId/999999);
     }
     
@@ -847,7 +854,9 @@ class Product extends MY_Controller{
     }
 
 
-
+    /**
+     *
+     */
     public function add_common_product(){
         //pre($_POST);die;
         $categoryId=$this->input->post('categoryId',TRUE);
@@ -865,7 +874,6 @@ class Product extends MY_Controller{
                 array('field'   => 'bulkQty','label'   => 'First Quantity Range','rules'   => 'trim|required|xss_clean'),
                 array('field'   => 'price','label'   => 'First Price Range','rules'   => 'trim|required|xss_clean'),
             );
-            $type='mobile';
 
             $brandId=$this->input->post('brandId',TRUE);
             $categoryId=$this->input->post('categoryId',TRUE);
@@ -1017,7 +1025,203 @@ class Product extends MY_Controller{
         }
 
     }
-    
-    
+
+    /**
+     * @param $productId
+     */
+    function edit_common($productId){
+        $this->config->load('product');
+        $data=$this->_get_logedin_template();
+        $this->load->model('User_model');
+        $productPriceArr=$this->Product_model->get_products_price($productId);
+        $productImageArr=$this->Product_model->get_products_images($productId);
+        //pre($productImageArr); //die;
+        $productDetails=$this->Product_model->details($productId);
+        $allTagArr=$this->Product_model->get_tag_by_product_id($productId);
+        $details=$productDetails[0];
+        //pre($details);
+        $data['detail']=$details;
+        $data['bulkQty']=$productPriceArr[0]->qty;
+        $data['bulkPrice']=$productPriceArr[0]->price;
+        $data['totalPriceRowAdded']=count($productPriceArr);
+        $data['productPriceView']=  $this->get_price_data_for_edit($productPriceArr,'mobile');
+        $data['brandArr']=$this->Brand_model->get_all();
+        $data['tag']=$allTagArr->productTag;
+        $data['productImageArr']=$productImageArr;
+        $data['categoryId']=$productDetails[0]->categoryId;
+        $data['productPageType']='mobile';
+
+        $categoryDetailsArr = $this->Category_model->get_details_by_id($data['categoryId']);
+        if($categoryDetailsArr[0]->option_ids):
+            $pieces = explode(",", $categoryDetailsArr[0]->option_ids);
+            $options = $this->Option_model->get_bulk_options($pieces);
+            $data['options'] = $options;
+            $data['options_arrenge'] = $pieces;
+        else:
+            $data['options'] = '';
+        endif;
+        $options = $this->Option_model->get_product_option_values($productId);
+        $data['proptions'] = $options;
+        //print_r($options);die;
+        $this->load->view('edit_common_product',$data);
+    }
+
+    public function update_common_product(){
+        //pre($_POST);die;
+
+        $productId = $this->input->post('productId',TRUE);
+        $enc_pro_id = $productId*999999;
+        $retDataArr=$this->default_data_validate();
+        if($retDataArr['status']=='fail'):
+            $this->session->set_flashdata('Message',$retDataArr['data']);
+            redirect(BASE_URL.'product/edit_product/'.$enc_pro_id);
+        else:
+            $config=array(
+                array('field'   => 'brandId','label'   => 'Brand','rules'   => 'trim|required|xss_clean'),
+                array('field'   => 'qty','label'   => 'Quantity','rules'   => 'trim|required|xss_clean'),
+                array('field'   => 'minQty','label'   => 'Minimum Quantity','rules'   => 'trim|required|xss_clean'),
+                array('field'   => 'bulkQty','label'   => 'First Quantity Range','rules'   => 'trim|required|xss_clean'),
+                array('field'   => 'price','label'   => 'First Price Range','rules'   => 'trim|required|xss_clean'),
+            );
+
+
+            $brandId=$this->input->post('brandId',TRUE);
+            $categoryId=$this->input->post('categoryId',TRUE);
+            $taxable=$this->input->post('taxable',TRUE);
+            $minQty=$this->input->post('minQty',TRUE);
+            $qty=$this->input->post('qty',TRUE);
+            $length=$this->input->post('length',TRUE);
+            $width=$this->input->post('width',TRUE);
+            $height=$this->input->post('height',TRUE);
+            $lengthClass=$this->input->post('lengthClass',TRUE);
+            $weight=$this->input->post('weight',TRUE);
+            $weightClass=$this->input->post('weightClass',TRUE);
+            $bulkQty=$this->input->post('bulkQty',TRUE);
+            $price=$this->input->post('price',TRUE);
+            $total_price_row_added=$this->input->post('total_price_row_added',TRUE);
+
+            //$status=$this->input->post('status',TRUE);
+            $this->form_validation->set_rules($config);
+            if($this->form_validation->run() == FALSE):
+                $data=validation_errors();
+                $this->session->set_flashdata('Message',$data);
+                redirect(BASE_URL.'product/edit_product/'.$enc_pro_id);
+            else:
+                $priceArr=array();
+                $lowestPrice=$price;
+                $priceArr[]=array('qty'=>$bulkQty,'price'=>$price);
+                for($i=1;$i<$total_price_row_added;$i++){
+                    $bulkQty=$this->input->post('bulkQty_'.$i,TRUE);
+                    $price=$this->input->post('price_'.$i,TRUE);
+
+                    if($bulkQty=="" || $price==""){
+                        //echo '$bulkQty= '.$bulkQty.'  === $price '.$price;die;
+                        $this->session->set_flashdata('Message','Please fill the price and relted quanity');
+                        redirect(BASE_URL.'product/edit_product/'.$enc_pro_id);
+                    }
+                    $priceArr[]=array('qty'=>$bulkQty,'price'=>$price);
+                }
+                usort($priceArr, 'sortingProductPriceArr');
+                $newPriceArr=array();
+                foreach ($priceArr AS $k):
+                    $k['productId']=$productId;
+                    $newPriceArr[]=$k;
+                endforeach;
+
+                $this->Product_model->edit_product_price($newPriceArr,$productId);
+
+                $heighestPrice=$price;
+                $minQty=$priceArr[count($priceArr)-1]['qty'];
+                $dataArr=array('taxable'=>$taxable,'minQty'=>$minQty,'qty'=>$qty,'length'=>$length,'width'=>$width,
+                    'height'=>$height,'lengthClass'=>$lengthClass,'weight'=>$weight,'weightClass'=>$weightClass,
+                    'lowestPrice'=>$lowestPrice,'heighestPrice'=>$heighestPrice);
+                $ParrentDataArr=$this->Category_model->get_all_parrent_details($categoryId);
+                //pre($ParrentDataArr);
+                if($ParrentDataArr[0]->secondParentcategoryId==""){
+                    $dataArr['CategoryID1']=$ParrentDataArr[0]->firstParentcategoryId;
+                    $dataArr['CategoryID2']=$categoryId;
+                }else{
+                    $dataArr['CategoryID1']=$ParrentDataArr[0]->secondParentcategoryId;
+                    $dataArr['CategoryID2']=$ParrentDataArr[0]->firstParentcategoryId;
+                    $dataArr['CategoryID3']=$categoryId;
+                }
+                if(!empty($mobileConnectivity)){$dataArr['mobileConnectivity']=implode(',', $mobileConnectivity);}
+                $tag=$retDataArr['data']['tag'];
+                unset($retDataArr['data']['tag']);
+                $mobileDataArr=array_merge($retDataArr['data'],$dataArr);
+
+                $config['upload_path'] =$this->config->item('ResourcesPath').'product/original/';
+                $config['allowed_types'] = 'jpg|png|jpeg';
+                $config['file_name']	= strtolower(my_seo_freindly_url($mobileDataArr['title'])).'-'.rand(1,9).'-'.time();
+                $config['max_size']	= '2047';
+                $config['max_width'] = '1550';
+                $config['max_height'] = '1550';
+                //$config['max_width']  = '1024';
+                //$config['max_height']  = '1024';
+                $upload_files=array();
+                $this->load->library('upload');
+                //pre($_FILES);die;
+                $blank=0;
+                foreach ($_FILES as $fieldname => $fileObject):
+                    //fieldname is the form field name
+                    //pre($fileObject);
+                    if (!empty($fileObject['name'])):
+                        $this->upload->initialize($config);
+                        if (!$this->upload->do_upload($fieldname)):
+                            foreach($upload_files AS $k):
+                                @unlink($this->config->item('ResourcesPath').'product/original/'.$k);
+                            endforeach;
+                            $errors = $this->upload->display_errors();
+                            //pre($errors);die;
+                            $this->session->set_flashdata('Message',$errors);
+                            redirect(BASE_URL.'product/edit_product/'.$enc_pro_id);
+                        else:
+                            // Code After Files Upload Success GOES HERE
+                            $currgImgNo=substr($fieldname,3);
+                            $oldUploadedFileName=$this->input->post('oldImgFile'.$currgImgNo,TRUE);
+                            $this->Product_model->remove_product_by_file($oldUploadedFileName,$productId);
+                            $this->delete_product_file($oldUploadedFileName);
+                            $data=$this->upload->data();
+                            $this->product_image_resize($data['file_name']);
+                            $upload_files[]=$data['file_name'];
+                        endif;
+                    else:
+                        if(substr($fieldname,-1)==1)
+                            $blank++;
+                    endif;
+                endforeach;
+
+                $this->Product_model->edit($mobileDataArr,$productId);
+
+                //$productId=1;
+                //echo 'product added done.<br>';
+                $imageBatchArr=array();
+                if(!empty($upload_files)):
+                    foreach ($upload_files AS $k =>$v):
+                        $imageBatchArr[]=array('productId'=>$productId,'image'=>$v);
+                    endforeach;
+                endif;
+
+
+                if(!empty($imageBatchArr)):
+                    //pre($imageBatchArr);die;
+                    $this->Product_model->edit_image_product($imageBatchArr,$productId);
+                endif;
+                //pre($imageBatchArr);die;
+                $productTagArr=array('productId'=>$productId,'tagStr'=>$tag);
+                $this->Product_model->edit_product_tag($productTagArr);
+
+
+
+                $this->Product_model->edit_brand(array('brandId'=>$brandId),$productId);
+
+                //Add product option values
+                $this->Option_model->saveOptionsValues( $this->input->post('options',TRUE)?$this->input->post('options',TRUE):[], $productId );
+
+                $this->session->set_flashdata('Message','Product updated successfully.');
+                redirect(base_url().'product/viewlist');
+            endif;
+        endif;
+    }
 }
 ?>

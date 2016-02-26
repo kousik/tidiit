@@ -1,17 +1,5 @@
 <?php echo $html_heading;
 $productPageTypeArr = $this->config->item('productPageTypeArr');
-$mobileBoxContents = $this->config->item('mobileBoxContents');
-$mobileColor = $this->config->item('mobileColor');
-$mobileDisplayResolution = $this->config->item('mobileDisplayResolution');
-$mobileConnectivity = $this->config->item('mobileConnectivity');
-$mobileOS = $this->config->item('mobileOS');
-$mobileProcessorCores = $this->config->item('mobileProcessorCores');
-$mobileBatteryType = $this->config->item('mobileBatteryType');
-$mobileProcessorBrand = $this->config->item('mobileProcessorBrand');
-$mobileCameraArr = $this->config->item('mobileCamera');
-$ramData = $this->config->item('ramData');
-$internalMemory = $this->config->item('internalMemory');
-$expandableMemory = $this->config->item('expandableMemory');
 $warrantyDuration = $this->config->item('warrantyDuration');
 $priceRangeSettingsArr = $this->config->item('priceRangeSettings');
 $priceRangeSettingsDataArr = $priceRangeSettingsArr[$productPageType];
@@ -232,7 +220,7 @@ $priceRangeSettingsDataArr = $priceRangeSettingsArr[$productPageType];
                                                             </div>
                                                         <?php endif;?>
 
-                                                        <?php if($optdata->type == 'checkbox' || $optdata->type == 'radiobox'):?>
+                                                        <?php if($optdata->type == 'checkbox' || $optdata->type == 'radio'):?>
                                                         <?php foreach ($pieces AS $k => $v): ?>
                                                             <div class="<?=$optdata->type?>" style="width:33%;float: left;">
                                                                 <?php
