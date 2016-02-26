@@ -541,6 +541,7 @@ class Product extends MY_Controller{
     function delete($productId){
         $ProductImages=$this->Product_model->get_products_images($productId);
         $this->Product_model->delete($productId);
+        $this->Option_model->delete_product_option_values($productId);
         foreach($ProductImages as $k){
                 $this->delete_product_file($k->Image);
         }

@@ -119,7 +119,10 @@ class Option_model extends CI_Model{
         return $data;
     }
 
-
+    public function delete_product_option_values($productId){
+        $this->db->where('productId', $productId);
+        $this->db->delete('product_option_values');
+    }
         
 }
 ?>
