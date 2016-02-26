@@ -932,6 +932,8 @@ class Product extends MY_Controller{
                     $dataArr['CategoryID2']=$ParrentDataArr[0]->firstParentcategoryId;
                     $dataArr['CategoryID3']=$categoryId;
                 }
+
+                $dataArr['isOptionsAdded'] = 1;
                 if(!empty($mobileConnectivity)){$dataArr['mobileConnectivity']=implode(',', $mobileConnectivity);}
                 $tag=$retDataArr['data']['tag'];
                 unset($retDataArr['data']['tag']);

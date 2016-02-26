@@ -119,6 +119,19 @@ class Option_model extends CI_Model{
         return $data;
     }
 
+    public function get_product_display_option_values($productId){
+        $this->db->select('*')->from('product_option_values');
+        $this->db->where('productId', $productId);
+        $result = $this->db->get()->result();
+        $data = [];
+        if($result):
+            foreach($result as $key => $opt):
+                $data[$opt->option_id][$opt->name][] = $opt->value;
+            endforeach;
+        endif;
+        return $data;
+    }
+
     public function delete_product_option_values($productId){
         $this->db->where('productId', $productId);
         $this->db->delete('product_option_values');

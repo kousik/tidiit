@@ -4,6 +4,7 @@ class Product extends MY_Controller{
         parent::__construct();
         $this->load->model('User_model');
         $this->load->model('Product_model');
+        $this->load->model('Option_model');
         $this->load->model('Category_model');
         //parse_str($_SERVER['QUERY_STRING'],$_GET);
         $this->db->cache_off();
@@ -42,7 +43,8 @@ class Product extends MY_Controller{
         
         $data['feedback']=$this->load->view('feedback',$data,TRUE);
         $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
-        
+        $data['options'] = $this->Option_model->get_product_display_option_values($productId);
+        //print_r($data['options']);die;
         $this->load->view('details',$data);
     }
     

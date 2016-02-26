@@ -487,6 +487,7 @@ jQuery(document).ready(function(){
         <div class="topseller_zne">
           <h3 id="similiarProduct" class="section-head"> Item Details </h3>
           <div class="comp comp-product-specs">
+            <?php if(!$productDetailsArr[0]->isOptionsAdded):?>
             <div class="spec-section expanded">
               <div class="spec-title-wrp">
                 <h3 class="spec-title"> <i class="sd-icon sd-icon-plus "></i> <i class="sd-icon sd-icon-minus"></i> Highlights </h3>
@@ -859,6 +860,65 @@ jQuery(document).ready(function(){
                 
               </div>
             </div>
+            <?php else :?>
+                <?php $expand = false;if($options):?>
+                <div class="spec-section expanded">
+                    <div class="spec-title-wrp">
+                        <h3 class="spec-title"> <i class="sd-icon sd-icon-plus "></i> <i class="sd-icon sd-icon-minus"></i> Highlights </h3>
+                    </div>
+                    <div class="spec-body">
+                        <ul class="dtls-list clear">
+                        <?php foreach($options as $opkey => $opval): $keytitle = $opval;  ?>
+                            <li class="col-xs-12 dtls-li">
+                                <span class="col-md-2" style="padding-right: 1px;padding-left: 1px;"><?=key($keytitle)?></span><span class="col-md-1">:</span><span class="col-md-9" style="padding-right: 1px;padding-left: 1px;"><?=implode(", ", $opval[key($keytitle)])?></span>
+                            </li>
+                        <?php endforeach;?>
+                        </ul>
+                    </div>
+                </div>
+                <?php $expand = true; endif;?>
+
+                <div class="spec-section expanded">
+                    <div class="spec-title-wrp">
+                        <h3 class="spec-title"> <i class="sd-icon sd-icon-plus "></i> <i class="sd-icon sd-icon-minus"></i>Description </h3>
+                    </div>
+                    <div itemprop="description" class="spec-body">
+                        <div class="detailssubbox"><?php echo $productDetailsArr[0]->description?></div>
+                    </div>
+                </div>
+
+                <div class="spec-section expanded">
+                    <div class="spec-title-wrp">
+                        <h3 class="spec-title"> <i class="sd-icon sd-icon-plus "></i> <i class="sd-icon sd-icon-minus"></i>Others Specification </h3>
+                    </div>
+                    <div itemprop="description" class="spec-body">
+                        <div class="detailssubbox">
+                            <ul id="accordion" style="width:100%;">
+                                <li><div class="product-spec">Dimensions</div>
+                                    <ul>
+                                        <table width="100%" cellspacing="2" cellpadding="0" border="0">
+                                            <tbody>
+                                            <?php if( $productDetailsArr[0]->height || $productDetailsArr[0]->width || $productDetailsArr[0]->length ): ?>
+                                                <tr>
+                                                    <td width="20%">Height/Width/Length</td>
+                                                    <td><?=$productDetailsArr[0]->height?"Height : ".$productDetailsArr[0]->height." ":""?><?=$productDetailsArr[0]->width?"Width : ".$productDetailsArr[0]->width." ":""?><?=$productDetailsArr[0]->length?"Length : ".$productDetailsArr[0]->length." ":""?> </td>
+                                                </tr>
+                                            <?php endif;?>
+                                            <?php if( $productDetailsArr[0]->weight ): ?>
+                                                <tr>
+                                                    <td width="20%">Weight</td>
+                                                    <td><?php echo $productDetailsArr[0]->weight?> </td>
+                                                </tr>
+                                            <?php endif;?>
+                                            </tbody>
+                                        </table>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            <?php endif;?>
           </div>
         </div>
       </div>
