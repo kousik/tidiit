@@ -2232,10 +2232,10 @@ class Shopping extends REST_Controller {
         pre($rs);die;
         
         $user=$this->user->app_get_details_by_id($userId);
-        pre($user);die;
+        /*pre($user);die;
         if(empty($user)){
             $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
-        }
+        }*/
         
         if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
             $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
