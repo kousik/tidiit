@@ -43,12 +43,13 @@ class Buying_club extends REST_Controller {
         
         
         $data['groupId'] = $groupId;
+        pre($data);
         $this->order->update($data, $orderId);
         $group = json_decode(json_encode($group), true);
         $data['group'] = $group;
+        pre($data);
         
-        
-        $data['order'] = $this->order->get_single_order_by_id($orderId);
+        die;$data['order'] = $this->order->get_single_order_by_id($orderId);
         $productId = $data['order']->productId;
         $productPriceId = $data['order']->productPriceId;
         if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
