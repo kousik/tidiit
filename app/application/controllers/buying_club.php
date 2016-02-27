@@ -53,9 +53,11 @@ class Buying_club extends REST_Controller {
             $this->response(array('error' => 'Please provide the product index, product price index.'), 400);
         endif;
         $data['orderId'] = $data['order']->orderId;
+        pre($data);
         $product = $this->product->details($productId);
         $product = $product[0];
         $prod_price_info = $this->product->get_products_price_details_by_id($productPriceId);
+        pre($data);die;
         $a = $this->_get_available_order_quantity($data['orderId']);
         $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
         pre($data);die;
