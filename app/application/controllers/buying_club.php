@@ -16,7 +16,7 @@ class Buying_club extends REST_Controller {
     }
     
     function checking_user_data_post(){
-        $userId=$this->post($userId);
+        $userId=$this->post('userId');
         $user=$this->user->get_details_id($userId);
         pre($user);die;
     }
