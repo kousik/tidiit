@@ -584,7 +584,11 @@ class Product_model extends CI_Model {
             $data = $this->db->from($this->_table_price)->where('productPriceId',$productPriceId)->get()->result_array();
         else    
             $data = $this->db->from($this->_table_price)->where('productPriceId',$productPriceId)->get()->result();
-        return $data[0];
+        
+        if(empty($data))
+            return array();
+        else
+            return $data[0];
     }
     
     function update_view($productId){
