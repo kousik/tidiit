@@ -776,6 +776,7 @@ class Shopping extends REST_Controller {
         if($userId=="" || $orderId =="" || $latitude=="" || $longitude=="" || $deviceToken="" || $UDID=="" || $deviceType==""){
             $this->response(array('error' => 'Please provide valid user index,order index,latitude,longitude,device type,devce token,UDID!'), 400); return FALSE;
         }
+        echo $userId.'==';die;
         $user=$this->user->get_details_by_id($userId);
         pre($user);die;
         if(empty($user)){
