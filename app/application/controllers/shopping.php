@@ -209,12 +209,15 @@ class Shopping extends REST_Controller {
     }
     
     function test_get(){
-        $orderId=$this->get('orderId');
+        /*$orderId=$this->get('orderId');
         $order = $this->order->get_single_order_by_id($orderId);
         $pro = $this->product->details($order->productId);
         $orderinfo['pdetail'] = $pro[0];
         $orderinfo['priceinfo'] = $this->product->get_products_price_details_by_id($order->productPriceId);
-        pre($orderinfo);die;
+        pre($orderinfo);die;*/
+        $userId=  $this->get('userId');
+        $rs=  $this->user->get_details_by_id($userId);
+        pre($rs);die;
     }
     
     function single_order_coupon_set_post(){
