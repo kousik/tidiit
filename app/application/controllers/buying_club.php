@@ -43,13 +43,9 @@ class Buying_club extends REST_Controller {
         
         
         $data['groupId'] = $groupId;
-        pre($data);die;
         $this->order->update($data, $orderId);
         $group = json_decode(json_encode($group), true);
         $data['group'] = $group;
-        pre($data);
-        
-        die;
         $data['order'] = $this->order->get_single_order_by_id($orderId);
         $productId = $data['order']->productId;
         $productPriceId = $data['order']->productPriceId;
@@ -62,7 +58,7 @@ class Buying_club extends REST_Controller {
         $prod_price_info = $this->product->get_products_price_details_by_id($productPriceId);
         $a = $this->_get_available_order_quantity($data['orderId']);
         $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
-
+        pre($data);die;
         
         $data['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
         $data['totalQty'] = $prod_price_info->qty;
