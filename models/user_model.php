@@ -66,20 +66,18 @@ class User_model extends CI_Model {
     }
     
     public function app_get_details_by_id($userId){
-        return $this->db->from($this->_table)->where('userId',$userId)->get()->result();
+        $sql="SELECT * FROM user WHERE userId=".$userId;
+        $query =$this->db->query($sql);
+         return $query->result();
     }
 
     public function get_details_by_id($userId,$app=false){
         if($app==false):
-            $rs=$this->db->from($this->_table)->where('userId',$userId)->get()->result();
-            //echo $this->db->last_query();
-            pre($rs);
-            return $rs;
+            $query =$this->db->get_where($this->_table, array('userId' => $userId));
+            return $query->result();
         else:
-            $rs=$this->db->from($this->_table)->where('userId',$userId)->get()->result_array();
-            //echo $this->db->last_query();
-            //pre($rs);
-            return $rs;
+            $query =$this->db->get_where($this->_table, array('userId' => $userId));
+            return $query->result_array();
         endif;
     }
 
