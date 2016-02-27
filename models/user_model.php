@@ -861,6 +861,15 @@ class User_model extends CI_Model {
         return $rs;
     }
     
+    function is_valid_admin_for_group($groupId,$adminId){
+        $rs=  $this->is_group_exist_group_id_admin_id($groupId, $adminId);
+        if(count($rs)>0){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
+    
     function is_group_exist_group_id_admin_id($groupId,$adminId){
         return $this->db->from($this->_group)->where('groupId',$groupId)->where('groupAdminId',$adminId)->get()->result();
     }

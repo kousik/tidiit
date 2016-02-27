@@ -506,7 +506,7 @@ class Shopping extends REST_Controller {
         
         /// here send mail to logistic partner
         /*$mailBody="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
-        $this->_global_tidiit_mail($PaymentDataArr['logisticsData']['deliveryStaffEmail'],'Tidiit payment submited  for Order '.$tidiitStr,$mailBody,'',$recv_name);
+        global_tidiit_mail($PaymentDataArr['logisticsData']['deliveryStaffEmail'],'Tidiit payment submited  for Order '.$tidiitStr,$mailBody,'',$recv_name);
         unset($_SESSION['PaymentData']);*/
         
         
@@ -786,6 +786,11 @@ class Shopping extends REST_Controller {
         if(empty($group)){
             $this->response(array('error' => 'Please provide valid group index!'), 400); return FALSE;
         }
+        
+        if(!$this->user->is_valid_admin_for_group($groupId,$userId)){
+            $this->response(array('error' => 'Invallid group index as you are not leader of the group.'), 400); return FALSE;
+        }
+        
         $data['groupId'] = $groupId;
         $this->order->update($data, $orderId);
         $group = json_decode(json_encode($group), true);
@@ -1399,8 +1404,13 @@ class Shopping extends REST_Controller {
         if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $orderId==""){
             $this->response(array('error' => 'Please provide user index,order index,latitude,longitude,device id,device token !'), 400); return FALSE;
         }
-        
-        $user=$this->user->get_details_by_id($userId)[0];
+        $userArr=$this->user->get_details_by_id($userId);
+        //pre($userArr);die;
+        if(empty($userArr)){
+            $this->response(array('error' => 'Please provide valid user index to process the invitation!'), 400); return FALSE;
+        }
+        $user=$userArr[0];
+        //pre($user);die;
         if(empty($user)){
             $this->response(array('error' => 'Please provide valid user index to process the invitation!'), 400); return FALSE;
         }
@@ -1814,9 +1824,9 @@ class Shopping extends REST_Controller {
                 $recv_email = $usr->email;
                 $sender_email = $me->email;
 
-                $mail_template_view_data=$this->load_default_resources();
+                $mail_template_view_data=load_default_resources();
                 $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
-                $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+                global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                 $this->user->notification_add($data);
 
                 /// sendin SMS to allmember
@@ -1856,11 +1866,13 @@ class Shopping extends REST_Controller {
                 'receiverMobileNumber'=>$group->admin->mobile,'senderId'=>'','receiverId'=>$data['receiverId'],
                 'senderMobileNumber'=>$me->mobile,'nType'=>"BUYING-CLUB-ORDER-INVITED-MEMBER-COMPLETE");
                 send_sms_notification($sms_data);
+        $result=array();        
         if($order_update['status'] == 2):
             $this->sent_buying_club_order_complete_mail($order);
-        endif;
-        $result=array();
-        $result['message']='Group invited to group member successfully.Your group order started successfully,';
+            $result['message']='Your payment has received successfully,We are processing your order shortly and By separate notification we will update about your order. ';
+        else:
+            $result['message']='Your payment has received successfully';
+        endif;        
         success_response_after_post_get($result);
     }
     
@@ -1957,9 +1969,9 @@ class Shopping extends REST_Controller {
                 $recv_email = $usr->email;
                 $sender_email = $me->email;
 
-                $mail_template_view_data=$this->load_default_resources();
+                $mail_template_view_data=load_default_resources();
                 $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
-                $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+                global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                 $this->user->notification_add($data);
 
                 /// sendin SMS to allmember

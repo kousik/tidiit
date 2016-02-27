@@ -880,7 +880,7 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => $groupTitle.' is already created by some one,Your "Buying Club" Name must be unique.'), 400); return FALSE;
         }
         
-        $userDetails=$this->user->get_details_by_id($groupAdminId);
+        $userDetails=$this->user->get_details_by_id($adminId);
         if(count($userDetails)==0){
             $this->response(array('error' => 'Invalid grop admin index'), 400); return FALSE;
         }
