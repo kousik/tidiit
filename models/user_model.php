@@ -66,10 +66,15 @@ class User_model extends CI_Model {
     }
 
     public function get_details_by_id($userId,$app=false){
-        if($app==FALSE)
-            return $this->db->from($this->_table)->where('userId',$userId)->get()->result();
-        else
-            return $this->db->from($this->_table)->where('userId',$userId)->get()->result_array();
+        if($app==FALSE):
+            $rs=$this->db->from($this->_table)->where('userId',$userId)->get()->result();
+            echo $this->db->last_query();
+            return $rs;
+        else:
+            $rs=$this->db->from($this->_table)->where('userId',$userId)->get()->result_array();
+            echo $this->db->last_query();
+            return $rs;
+        endif;
     }
 
     public function get_active_user($app=false){
