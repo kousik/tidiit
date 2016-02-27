@@ -2217,7 +2217,7 @@ class Shopping extends REST_Controller {
         return $availQty;
     }
     
-    function update_order_buying_club_id_post(){
+    function update_order_id_buying_club_id_post(){
         $userId = $this->post('userId');
         $orderId = $this->post('orderId');
         $latitude=  $this->post('latitude');
