@@ -765,6 +765,12 @@ class Shopping extends REST_Controller {
         success_response_after_post_get($result);
     }
     
+    function get_user_details_from_model($userId){
+        $rs=  $this->user->app_get_details_by_id($userId);
+        pre($rs);
+        return $rs;
+    }
+    
     function update_order_buying_club_id_post(){
         $userId = $this->post('userId');
         $orderId = $this->post('orderId');
@@ -776,6 +782,9 @@ class Shopping extends REST_Controller {
         if($userId=="" || $orderId =="" || $latitude=="" || $longitude=="" || $deviceToken="" || $UDID=="" || $deviceType==""){
             $this->response(array('error' => 'Please provide valid user index,order index,latitude,longitude,device type,devce token,UDID!'), 400); return FALSE;
         }
+        $rs=$this->get_user_details_from_model($userId);
+        pre($rs);die;
+        
         $user=$this->user->app_get_details_by_id($userId);
         pre($user);die;
         if(empty($user)){
