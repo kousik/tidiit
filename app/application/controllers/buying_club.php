@@ -27,7 +27,23 @@ class Buying_club extends REST_Controller {
             $this->response(array('error' => 'Please provide valid user index,order index,latitude,longitude,device type,devce token,UDID!'), 400); return FALSE;
         }
         $user=$this->user->get_details_by_id($userId);
-        pre($user);die;
+        
+        if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
+            $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
+        }
+        $groupId = $this->post('groupId');
+        $group = $this->user->get_group_by_id($groupId,TRUE);
+        if(empty($group)){
+            $this->response(array('error' => 'Please provide valid group index!'), 400); return FALSE;
+        }
+        
+        if(!$this->user->is_valid_admin_for_group($groupId,$userId)){
+            $this->response(array('error' => 'Invallid group index as you are not leader of the group.'), 400); return FALSE;
+        }
+        
+        
+        pre($user);
+        pre($group);die;
     }
     
     function update_order_buying_club_id_post(){
