@@ -57,11 +57,7 @@ class Buying_club extends REST_Controller {
         $product = $product[0];
         $prod_price_info = $this->product->get_products_price_details_by_id($productPriceId);
         $a = $this->_get_available_order_quantity($data['orderId']);
-        pre($data);
-        echo 'kkkkkk';
-        
         $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
-        pre($data);die;
         
         $data['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
         $data['totalQty'] = $prod_price_info->qty;
@@ -128,5 +124,15 @@ class Buying_club extends REST_Controller {
         $data['priceInfo'] = $prod_price_info;
         $data['message']="success";
         success_response_after_post_get($data);
+    }
+    
+    function _get_available_order_quantity($orderId){
+        $pevorder = $this->order->get_single_order_by_id($orderId);
+        if($pevorder->parrentOrderID):
+            $availQty = $this->order->get_available_order_quantity($pevorder->parrentOrderID);
+        else:
+            $availQty = $this->order->get_available_order_quantity($orderId);
+        endif;
+        return $availQty;
     }
 }
