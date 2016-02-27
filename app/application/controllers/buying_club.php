@@ -16,7 +16,16 @@ class Buying_club extends REST_Controller {
     }
     
     function checking_user_data_post(){
-        $userId=$this->post('userId');
+        $userId = $this->post('userId');
+        $orderId = $this->post('orderId');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceType=  $this->post('deviceType');
+        $UDID=  $this->post('UDID');
+        $deviceToken=  $this->post('deviceToken');
+        if($userId=="" || $orderId =="" || $latitude=="" || $longitude=="" || $deviceToken="" || $UDID=="" || $deviceType==""){
+            $this->response(array('error' => 'Please provide valid user index,order index,latitude,longitude,device type,devce token,UDID!'), 400); return FALSE;
+        }
         $user=$this->user->get_details_by_id($userId);
         pre($user);die;
     }
