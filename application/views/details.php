@@ -215,7 +215,8 @@ jQuery(document).ready(function(){
               <input name="my_input" value="4" id="rating_simple2" type="hidden">
               </span> <span class="ratings-wrapper"> <a class="showRatingTooltip"> 7 Ratings</a> </span> <span>Be the first to review</span> <!--<span>Q&A </span>--> </div>
             <div class="pdp-e-i-keyfeatures">
-              <ul>
+            <?php if(!$productDetailsArr[0]->isOptionsAdded):?>
+                <ul>
                 <?php $warrantyDurationData='';if(array_key_exists($productDetailsArr[0]->warrantyDuration, $warrantyDuration)){$warrantyDurationData=$warrantyDuration[$productDetailsArr[0]->warrantyDuration];}?>  
                 <li title="<?php echo $warrantyDurationData;?> Brand Warranty">-&nbsp; <?php echo $warrantyDurationData;?> Brand Warranty</li>
                 <li title="<?php echo $productDetailsArr[0]->screenSize;?> Display">-&nbsp;<?php echo $productDetailsArr[0]->screenSize;?> Display</li>
@@ -231,6 +232,9 @@ jQuery(document).ready(function(){
                 <li title="<?php echo $productDetailsArr[0]->processorSpeed;?> <?php echo $processorType;?> processor">-&nbsp;<?php echo $productDetailsArr[0]->processorSpeed;?> <?php echo $processorType;?> processor</li>
                 <li class="pdp-e-i-keyspecs"><i style="visibility:hidden">-&nbsp;</i><span class="viewSpecs"><a href="#allDetails" onClick="ScrollMe('allDetails'); return false;">View all item details</a></span></li>
               </ul>
+            <?php else: ?>
+                <div class="detailssubbox"><?php echo $productDetailsArr[0]->shortDescription?></div>
+            <?php endif;?>
             </div>
          <hr class="divider-horizontal">
              <?php foreach ($productPriceArr As $k){?>
