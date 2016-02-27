@@ -220,6 +220,12 @@ class Shopping extends REST_Controller {
         pre($rs);die;
     }
     
+    function test_post(){
+        $userId=  $this->post('userId');
+        $rs=  $this->user->app_get_details_by_id($userId);
+        pre($rs);die;
+    }
+    
     function single_order_coupon_set_post(){
         $this->load->model('Coupon_model','coupon');
         $promocode=$this->post('couponCode',TRUE);
