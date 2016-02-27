@@ -69,10 +69,12 @@ class User_model extends CI_Model {
         if($app==FALSE):
             $rs=$this->db->from($this->_table)->where('userId',$userId)->get()->result();
             echo $this->db->last_query();
+            pre($rs);
             return $rs;
         else:
             $rs=$this->db->from($this->_table)->where('userId',$userId)->get()->result_array();
             echo $this->db->last_query();
+            pre($rs);
             return $rs;
         endif;
     }
