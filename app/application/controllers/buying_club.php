@@ -42,8 +42,31 @@ class Buying_club extends REST_Controller {
         }
         
         
-        pre($user);
-        pre($group);die;
+        $data['groupId'] = $groupId;
+        $this->order->update($data, $orderId);
+        $group = json_decode(json_encode($group), true);
+        $data['group'] = $group;
+        
+        
+        $data['order'] = $this->order->get_single_order_by_id($orderId);
+        $productId = $data['order']->productId;
+        $productPriceId = $data['order']->productPriceId;
+        if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
+            $this->response(array('error' => 'Please provide the product index, product price index.'), 400);
+        endif;
+        $data['orderId'] = $data['order']->orderId;
+        $product = $this->product->details($productId);
+        $product = $product[0];
+        $prod_price_info = $this->product->get_products_price_details_by_id($productPriceId);
+        $a = $this->_get_available_order_quantity($data['orderId']);
+        $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
+
+        
+        $data['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
+        $data['totalQty'] = $prod_price_info->qty;
+        $data['priceInfo'] = $prod_price_info;
+        $data['message']="success";
+        success_response_after_post_get($data);
     }
     
     function update_order_buying_club_id_post(){
