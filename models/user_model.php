@@ -64,20 +64,12 @@ class User_model extends CI_Model {
         $this->db->update($this->_table,array('status'=>$status));
         return TRUE;
     }
-    
-    public function app_get_details_by_id($userId){
-        $sql="SELECT * FROM user WHERE userId=".$userId;
-        $query =$this->db->query($sql);
-         return $query->result();
-    }
 
     public function get_details_by_id($userId,$app=false){
-        if($app==false):
-            $query =$this->db->get_where($this->_table, array('userId' => $userId));
-            return $query->result();
+        if($app==FALSE):
+            return $this->db->from($this->_table)->where('userId',$userId)->get()->result();
         else:
-            $query =$this->db->get_where($this->_table, array('userId' => $userId));
-            return $query->result_array();
+            return $this->db->from($this->_table)->where('userId',$userId)->get()->result_array();
         endif;
     }
 
