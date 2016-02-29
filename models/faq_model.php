@@ -1,47 +1,48 @@
 <?php
 class Faq_model extends CI_Model{
-	public $_table='faq';
-	public $_topics='faq_topics';
-	
-	function __construct() {
-		parent::__construct();
-	}
-	
-	public function get_all_admin(){
-            return $this->db->select('f.*,ft.faqTopics')->from($this->_table.' f')->join($this->_topics.' ft','f.=ft.faqTopicsId')->get()->result();
-	}
-	
-        function get_details($faqId){
-            return $this->db->select('f.*,ft.faqTopics')->from($this->_table.' f')->join($this->_topics.' ft','f.=ft.faqTopicsId')->where('f.faqId',$faqId)->get()->result();
-        }
-	
-	public function add($dataArr){
-		$this->db->insert($this->_table,$dataArr);
-		return $this->db->insert_id();
-	}
-	
-	public function edit($DataArr,$faqId){
-		$this->db->where('faqId',$faqId);
-		$this->db->update($this->_table,$DataArr);
-		//echo $this->db->last_query();die;
-		return TRUE;		
-	}
-	
-	public function change_status($faqId,$status){
-		$this->db->where('faqId',$faqId);
-		$this->db->update($this->_table,array('status'=>$status));
-		return TRUE;
-	}
-	
-	public function delete($faqId){
-		$this->db->delete($this->_table, array('faqId' => $faqId)); 
-		return TRUE;
-	}
-	
-	public function get_all($type){
-		$this->db->select('*')->from($this->_table)->where('status',1)->where('type',$type);
-		return $this->db->get()->result();
-	}
+    public $_table='faq';
+    public $_topics='faq_topics';
+
+    function __construct() {
+        parent::__construct();
+    }
+
+    public function get_all_admin(){
+        return $this->db->select('f.*,ft.faqTopics')->from($this->_table.' f')->join($this->_topics.' ft','f.faqTopicsId=ft.faqTopicsId')->get()->result();
+    }
+
+    function get_details($faqId){
+        return $this->db->select('f.*,ft.faqTopics')->from($this->_table.' f')->join($this->_topics.' ft','f.faqTopicsId=ft.faqTopicsId')->where('f.faqId',$faqId)->get()->result();
+    }
+    
+
+    public function add($dataArr){
+            $this->db->insert($this->_table,$dataArr);
+            return $this->db->insert_id();
+    }
+
+    public function edit($DataArr,$faqId){
+            $this->db->where('faqId',$faqId);
+            $this->db->update($this->_table,$DataArr);
+            //echo $this->db->last_query();die;
+            return TRUE;		
+    }
+
+    public function change_status($faqId,$status){
+            $this->db->where('faqId',$faqId);
+            $this->db->update($this->_table,array('status'=>$status));
+            return TRUE;
+    }
+
+    public function delete($faqId){
+            $this->db->delete($this->_table, array('faqId' => $faqId)); 
+            return TRUE;
+    }
+
+    public function get_all($type){
+            $this->db->select('*')->from($this->_table)->where('status',1)->where('type',$type);
+            return $this->db->get()->result();
+    }
         
     function get_all_admin_topics(){
         return $this->db->get($this->_topics)->result();
@@ -81,5 +82,9 @@ class Faq_model extends CI_Model{
         }else{
             return FALSE;
         }
+    }
+    
+    function get_topics_by_type($type){
+        return $this->db->get_where($this->_topics,array('faqTopicsType'=>$type))->result();
     }
 }

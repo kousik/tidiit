@@ -89,6 +89,7 @@ function AskDelete(id)
     <td width="6%">Sl No </td>
     <td width="20%">Questions</td>
     <td width="40%">Answer</td>
+    <td width="10%">Faq Toptics</td>
     <td width="7%">Type</td>
     <td width="7%">Status</td>
     <td width="10%">Action</td>
@@ -103,6 +104,7 @@ function AskDelete(id)
     <td><?php echo $val+1;?></td>
     <td><?php echo $InerArr->question;?></td>
     <td><?php echo $InerArr->answer;?></td>
+    <td><?php echo $InerArr->faqTopics;?></td>
     <td><?php echo $InerArr->type;?></td>
     <td><?php echo ($InerArr->status=='1')?'Active':'Inactive';?></td>
     <td>
@@ -120,6 +122,7 @@ function AskDelete(id)
   DataArr[<?php echo $InerArr->faqId?>]['question']='<?php echo $InerArr->question?>';
   DataArr[<?php echo $InerArr->faqId?>]['answer']='<?php echo $InerArr->answer?>';
   DataArr[<?php echo $InerArr->faqId?>]['type']='<?php echo $InerArr->type?>';
+  DataArr[<?php echo $InerArr->faqId?>]['faqTopicsId']='<?php echo $InerArr->faqTopicsId?>';
   DataArr[<?php echo $InerArr->faqId?>]['status']='<?php echo $InerArr->status?>';
   </script>
   <?php $val++;}
@@ -145,6 +148,37 @@ function AskDelete(id)
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable">Type</td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top">
+        <select name="Edittype" id="Edittype" class="required">
+            <option value="">Selecct</option>
+            <option value="seller">Seller</option>
+            <option value="buyer">Buyer</option>
+        </select>
+    </td>
+  </tr>
+<tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable">Faq Topics</td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top"> <select name="faqTopicsId" id="faqTopicsId" class="required">
+            <option value="">Select</option>
+            <?php foreach($topicsDataArr As $k){ ?>
+            <option value="<?php echo $k->faqTopicsId;?>"><?php echo $k->faqTopics;?></option>
+            <?php }?>
+        </select></td>
+  </tr>
+  
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top" class="ListHeadingLable"> question </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top"><input name="Editquestion" type="text" id="Editquestion"  class="required" /></td>
@@ -160,25 +194,6 @@ function AskDelete(id)
     <td align="left" valign="top" class="ListHeadingLable">answer</td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top"><textarea name="Editanswer" id="Editanswer" class="required"></textarea></td>
-  </tr>
-
-  <tr>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-  </tr>
-  <tr>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable">Type</td>
-    <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top">
-        <select name="Edittype" id="Edittype" class="required">
-            <option value="">Selecct</option>
-            <option value="seller">Seller</option>
-            <option value="buyer">Buyer</option>
-        </select>
-    </td>
   </tr>
 
   <tr>
@@ -260,12 +275,13 @@ function AskDelete(id)
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top" class="ListHeadingLable">Faq Topics</td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"> <select name="faqTopicsId" id="faqTopicsId" class="required">
-            <option value="">Select</option>
-            <?php foreach($topicsDataArr As $k){ ?>
-            <option value="<?php echo $k->faqTopicsId;?>"><?php echo $k->faqTopics;?></option>
-            <?php }?>
-        </select></td>
+    <td align="left" valign="top">
+        <span id="faqTopicsIdSpan">
+            <select name="faqTopicsId" id="faqTopicsId" class="required">
+                <option value="">Select Topics</option>
+            </select>
+        </span>
+    </td>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
@@ -350,6 +366,19 @@ function AskDelete(id)
 <?php echo $AdminHomeRest;?>
 <script>
 $(document).ready(function(){
-	$("#AdminAdd").validate();	
+    $("#AdminAdd").validate();	
+    jQuery(document).ready(function(){
+        jQuery('#type').on('change',function(){
+            jQuery.ajax({
+                type: "POST",
+                url:'<?php echo ADMIN_BASE_URL.'ajax/show_faq_topics_by_type/'?>',
+                data:"type="+jQuery(this).val(),
+                dataType:'json',
+                success:function(data){
+                    jQuery('#faqTopicsIdSpan').html(data.content);
+                }
+            });
+        }); 
+    });
 });
 </script>

@@ -322,5 +322,24 @@ class Ajax extends MY_Controller{
             echo 'no';die;
         }
     }
+    
+    function show_faq_topics_by_type(){
+        $type=$this->input->post('type',TRUE);
+        $actionType=$this->input->post('actionType',TRUE);
+        $this->load->model('Faq_model');
+        $faqTopicsArr=  $this->Faq_model->get_topics_by_type($type);
+        if($actionType==""):
+            $html='<select name="faqTopicsId" id="faqTopicsId" class="required"><option value="">Select</option>';
+        else:
+            $html='<select name="EditfaqTopicsId" id="EditfaqTopicsId" class="required"><option value="">Select</option>';
+        endif;
+        if(!empty($faqTopicsArr)){
+            foreach ($faqTopicsArr As $k){
+                $html.='<option value="'.$k->faqTopicsId.'">'.$k->faqTopics.'</option>';
+            }
+        }
+        $html.='</select>';
+        echo json_encode(array('content'=>$html));die;
+    }
 }
 

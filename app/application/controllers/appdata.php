@@ -1152,9 +1152,13 @@ class Appdata extends REST_Controller {
             $result['productQty']=$prodctPriceDetails->qty;
             $result['notificationTitle']=  strip_tags($details['nTitle']);
             $result['orderId']=  $details['orderId'];
-            $tempArr=  explode('[',$details['nMessage']);
-            $tempArr1= explode(']',$tempArr[1]);
-            $result['clubTitle']=$tempArr1[0];
+            $result['productId']=  $details['productId'];
+            $result['productPriceId']=  $details['productPriceId'];
+            if($details['nType']=='BUYING-CLUB-ORDER'):
+                $tempArr=  explode('[',$details['nMessage']);
+                $tempArr1= explode(']',$tempArr[1]);
+                $result['clubTitle']=$tempArr1[0];
+            endif;
         }else{
             $result['notications_details']=$details;
         }
