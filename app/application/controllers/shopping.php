@@ -15,7 +15,7 @@ class Shopping extends REST_Controller {
         $this->load->library('tidiitrcode');
     }
     
-    function add_to_cart_post(){
+    function add_to_cart_pseost(){
         $productId = $this->post('productId');
         $userId = $this->post('userId');
         $productPriceId = $this->post('productPriceId');
@@ -1274,6 +1274,7 @@ class Shopping extends REST_Controller {
         $deviceType = $this->post('deviceType');
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
+        $notificationId=$this->post('notificationId');
         
         if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $orderId==""){
             $this->response(array('error' => 'Please provide user index,order index,latitude,longitude,device id,device token !'), 400); return FALSE;
@@ -1391,6 +1392,9 @@ class Shopping extends REST_Controller {
                 $this->response(array('error' => 'This Buying Club order process already done. Please try to process for new order!'), 400); return FALSE;
             endif;
         endif;
+        $accept_data=array();
+        $accept_data['acceptDeclineState'] =2;
+        $this->user->notification_edit($accept_data,$notificationId);
         //$this->process_my_parent_group_orders_by_id($orderId,$userId);
         
         $result['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
