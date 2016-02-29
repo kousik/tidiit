@@ -37,7 +37,6 @@ class Faq extends MY_Controller{
 		'type'=>$type,
 		'faqTopicsId'=>$faqTopicsId
 		);
-		
 		//print_r($dataArr);die;
 		$this->Faq_model->add($dataArr);
 		
