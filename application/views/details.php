@@ -234,6 +234,7 @@ jQuery(document).ready(function(){
               </ul>
             <?php else: ?>
                 <div class="detailssubbox"><?php echo $productDetailsArr[0]->shortDescription?></div>
+                <p class="pdp-e-i-keyspecs pull-right"><i style="visibility:hidden">-&nbsp;</i><span class="viewSpecs"><a href="#allDetails" onClick="ScrollMe('allDetails'); return false;">View all item details</a></span></p>
             <?php endif;?>
             </div>
          <hr class="divider-horizontal">
