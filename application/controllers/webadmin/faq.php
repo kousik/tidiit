@@ -38,6 +38,7 @@ class Faq extends MY_Controller{
 		'faqTopicsId'=>$faqTopicsId
 		);
 		//print_r($dataArr);die;
+                
 		$this->Faq_model->add($dataArr);
 		
 		$this->session->set_flashdata('Message','FAQ added successfully.');
