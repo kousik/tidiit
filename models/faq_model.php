@@ -12,8 +12,9 @@ class Faq_model extends CI_Model{
     }
 
     function get_details($faqId){
-        return $this->db->select('f.*,ft.faqTopics')->from($this->_table.' f')->join($this->_topics.' ft','f.=ft.faqTopicsId')->where('f.faqId',$faqId)->get()->result();
+        return $this->db->select('f.*,ft.faqTopics')->from($this->_table.' f')->join($this->_topics.' ft','f.faqTopicsId=ft.faqTopicsId')->where('f.faqId',$faqId)->get()->result();
     }
+    
 
     public function add($dataArr){
             $this->db->insert($this->_table,$dataArr);

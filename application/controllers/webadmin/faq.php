@@ -18,7 +18,9 @@ class Faq extends MY_Controller{
 	
         function view_edit($faqId){
             $data=$this->_show_admin_logedin_layout();
-            $data['DataArr']=$this->Faq_model->get_details($faqId);
+            $details=$this->Faq_model->get_details($faqId);
+            $data['DataArr']=$details;
+            $data['topicsDataArr']=$this->Faq_model->get_topics_by_type($details[0]->type);
             $data['faqId']=$faqId;
             $this->load->view('webadmin/faq_edit',$data);
         }

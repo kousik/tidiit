@@ -378,21 +378,7 @@ $(document).ready(function(){
                     jQuery('#faqTopicsIdSpan').html(data.content);
                 }
             });
-            
-            /*jQuery.post( <?php //echo ADMIN_BASE_URL.'ajax/show_faq_topics_by_type/'?>, {
-                type: jQuery(this).val()
-            },
-            function(data){ 
-                if(data.content){
-                    //jQuery('tr#'+cartId).remove();
-                    var item = "(<? //count($this->cart->contents())-1?> Item<?php //if(count($this->cart->contents())-1 > 1): echo 's';endif;?>)";
-                    jQuery('span.js-cart-item').text(item);
-                    jQuery('.'+cartId).hide();
-                    window.location.href = myJsMain.baseURL+'shopping/my-cart/';
-                }
-            }, 'json' );*/
         }); 
-        
     });
 });
 </script>

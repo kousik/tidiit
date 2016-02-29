@@ -39,6 +39,43 @@
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable"> Type </td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top"><select name="Edittype" id="Edittype" class="required">
+            <option value="">Select</option>
+            <option value="seller" <?php if($DataArr[0]->type=='seller'){?>selected<?php }?>>Seller</option>
+            <option value="buyer" <?php if($DataArr[0]->type=='buyer'){?>selected<?php }?>>Buyer</option>
+        </select></td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable">Faq topics </td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+            <td align="left" valign="top"><span id="faqTopicsIdSpan">
+        <select name="EditfaqTopicsId" id="EditfaqTopicsId" class="required">
+            <option value="">Select</option>
+            <?php foreach($topicsDataArr As $k){ ?>
+            <option value="<?php echo $k->faqTopicsId;?>" <?php if($DataArr[0]->faqTopicsId==$k->faqTopicsId){?>selected<?php }?>><?php echo $k->faqTopics;?></option>
+            <?php }?>
+        </select>
+        </span>
+        </td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  
+  <tr>
+    <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top" class="ListHeadingLable"> question </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top"><input name="Editquestion" type="text" id="Editquestion"  class="required" value="<?php echo $DataArr[0]->question;?>" /></td>
@@ -62,22 +99,7 @@
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
   </tr>
-  <tr>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable"> Type </td>
-    <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"><select name="Edittype" id="Edittype" class="required">
-            <option value="">Select</option>
-            <option value="seller" <?php if($DataArr[0]->type=='seller'){?>selected<?php }?>>Seller</option>
-            <option value="buyer" <?php if($DataArr[0]->type=='buyer'){?>selected<?php }?>>Buyer</option>
-        </select></td>
-  </tr>
-  <tr>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">&nbsp;</td>
-  </tr>
+  
   
   <tr>
     <td align="left" valign="top">&nbsp;</td>
@@ -128,6 +150,19 @@
 <script>
 $(document).ready(function(){
     $("#AdminEdit").validate();	
+    jQuery(document).ready(function(){
+        jQuery('#Edittype').on('change',function(){
+            jQuery.ajax({
+                type: "POST",
+                url:'<?php echo ADMIN_BASE_URL.'ajax/show_faq_topics_by_type/'?>',
+                data:"type="+jQuery(this).val()+'&actionType=edit',
+                dataType:'json',
+                success:function(data){
+                    jQuery('#faqTopicsIdSpan').html(data.content);
+                }
+            });
+        }); 
+    });
 });
 
 function CancelAdd(){
