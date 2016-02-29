@@ -237,17 +237,17 @@ function reorder(orderedArray) {
   <script language="javascript">
   DataArr[<?php echo $InerArr->categoryId?>]=new Array();
   DataArr[<?php echo $InerArr->categoryId?>]['categoryId']='<?php echo $InerArr->categoryId?>';
-  DataArr[<?php echo $InerArr->categoryId?>]['categoryName']='<?php echo str_replace(array("\r\n","\n\r","\r", "\n"), '', stripslashes($InerArr->categoryName));?>';
-  DataArr[<?php echo $InerArr->categoryId?>]['shortDescription']='<?php echo $InerArr->shortDescription?>';
-  DataArr[<?php echo $InerArr->categoryId?>]['metaTitle']='<?php echo $InerArr->metaTitle?>';
-  DataArr[<?php echo $InerArr->categoryId?>]['metaKeyWord']='<?php echo $InerArr->metaKeyWord?>';
-  DataArr[<?php echo $InerArr->categoryId?>]['metaDescription']='<?php echo $InerArr->metaDescription?>';
+  DataArr[<?php echo $InerArr->categoryId?>]['categoryName']="<?php echo str_replace(array("\r\n","\n\r","\r", "\n"), '', stripslashes($InerArr->categoryName));?>";
+  DataArr[<?php echo $InerArr->categoryId?>]['shortDescription']="<?php echo $InerArr->shortDescription?>";
+  DataArr[<?php echo $InerArr->categoryId?>]['metaTitle']="<?php echo $InerArr->metaTitle?>";
+  DataArr[<?php echo $InerArr->categoryId?>]['metaKeyWord']="<?php echo $InerArr->metaKeyWord?>";
+  DataArr[<?php echo $InerArr->categoryId?>]['metaDescription']="<?php echo $InerArr->metaDescription?>";
   DataArr[<?php echo $InerArr->categoryId?>]['view']='<?php echo $InerArr->view?>';
   DataArr[<?php echo $InerArr->categoryId?>]['image']='<?php echo $InerArr->image?>';
   DataArr[<?php echo $InerArr->categoryId?>]['userCategoryView']='<?php echo $InerArr->userCategoryView?>';
   DataArr[<?php echo $InerArr->categoryId?>]['status']='<?php echo $InerArr->status?>';
   DataArr[<?php echo $InerArr->categoryId?>]['is_last']='<?php echo $InerArr->is_last?>';
-  DataArr[<?php echo $InerArr->categoryId?>]['option_ids']='<?php echo $InerArr->option_ids?>';
+  DataArr[<?php echo $InerArr->categoryId?>]['option_ids']="<?php echo $InerArr->option_ids?>";
   </script>
   <?php $val++;}
   }else{?>
