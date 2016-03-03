@@ -15,7 +15,7 @@ class Shopping extends REST_Controller {
         $this->load->library('tidiitrcode');
     }
     
-    function add_to_cart_pseost(){
+    function add_to_cart_post(){
         $productId = $this->post('productId');
         $userId = $this->post('userId');
         $productPriceId = $this->post('productPriceId');
