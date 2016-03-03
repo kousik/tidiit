@@ -2078,6 +2078,12 @@ class Shopping extends REST_Controller {
         $this->sent_buying_club_order_complete_mail($order);
     }
     
+    function sent_buying_club_order_complete_mail_check_get(){
+        $ordeerId=$this->get('orderId');
+        $order=$this->order->get_single_order_by_id($ordeerId);
+        $this->sent_buying_club_order_complete_mail($order);
+    }
+    
     /*
      * 
      * send mail to Buying Club member and leader after success payment by all member as well leader
@@ -2088,11 +2094,11 @@ class Shopping extends REST_Controller {
             //echo '$order id '.$order->parrentOrderID;
             /// mail to leader and seller and support
             $orderDetails=  $this->order->details($order->parrentOrderID);
-            //pre($orderDetails); die;
+            pre($orderDetails);  //die;
             $adminMailData=  load_default_resources();
             $adminMailData['orderDetails']=$orderDetails;
             $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
-            //pre($orderInfoDataArr);die;
+            pre($orderInfoDataArr);die;
             $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
             $adminMailData['orderParrentId']=$order->parrentOrderID;
             $adminMailData['userFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
