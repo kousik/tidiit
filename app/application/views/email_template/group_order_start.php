@@ -42,8 +42,8 @@
 				   Hi, <br /><br /> You have requested to buy Buying Club order product. <br /><br />
 				   Product details : <a href='#'><?php echo $group_order_start['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE'];?></a><br /><br />
 				   <strong>Want to process the order ?</strong><br /><br />
-				   <a href='<?php echo BASE_URL;?>shopping/group-order-decline/<?php echo base64_encode($group_order_start['TEMPLATE_GROUP_ORDER_START_ORDERID']*226201);?>'>Decline the Buying Club Order</a><br /><br />
-				   <a href='<?php echo BASE_URL;?>shopping/group-order-accept-process/<?php echo base64_encode($group_order_start['TEMPLATE_GROUP_ORDER_START_ORDERID']*226201);?>'>Accept the Buying Club Order</a><br /><br />
+				   <a href='<?php echo $group_order_start['MainSiteBaseURL'];?>shopping/group-order-decline/<?php echo base64_encode($group_order_start['TEMPLATE_GROUP_ORDER_START_ORDERID']*226201);?>'>Decline the Buying Club Order</a><br /><br />
+				   <a href='<?php echo $group_order_start['MainSiteBaseURL'];?>shopping/group-order-accept-process/<?php echo base64_encode($group_order_start['TEMPLATE_GROUP_ORDER_START_ORDERID']*226201);?>'>Accept the Buying Club Order</a><br /><br />
 				   </font>
 					
 					</td>
