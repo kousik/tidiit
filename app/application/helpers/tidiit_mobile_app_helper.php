@@ -238,13 +238,14 @@ if ( ! function_exists('load_default_resources')){
 if ( ! function_exists('global_tidiit_mail')){
 	function global_tidiit_mail($to,$subject,$dataResources,$tempplateName="",$toName=""){
 		$CI=& get_instance();
+            pre($dataResources);    
             $message='';
             if($tempplateName==""){
                 $message=$dataResources;
             }else{
                 $message=  $CI->load->view('email_template/'.$tempplateName,$dataResources,TRUE);
             }
-            ///echo $message;die;
+            echo $message;//die;
             //echo $to;die;
             $CI->load->library('email');
             $CI->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');

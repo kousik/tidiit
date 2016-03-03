@@ -2147,10 +2147,11 @@ class Shopping extends REST_Controller {
                         break;
                     }
                 }
+                pre($adminMailData);
                 //echo '<br>$order id '.$k->orderId.'<br>';
                 $adminMailData['userFullName']=$userFullName;
                 global_tidiit_mail($email, "Your Buying Club Tidiit order TIDIIT-OD-".$k->orderId.' has placed successfully', $adminMailData,'group_order_success',$userFullName);
-                pre($adminMailData);die;
+                
                 $sms_data=array('nMessage'=>'Your Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] order TIDIIT-OD-'.$k->orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.$adminMailData['MainSiteBaseURL'],
                 'receiverMobileNumber'=>$mobileNumber,'senderId'=>'','receiverId'=>$orderDetails[0]->userId,
                 'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-PLACED');
@@ -2172,6 +2173,7 @@ class Shopping extends REST_Controller {
                 $supportEmail='judhisahoo@gmail.com';
                 global_tidiit_mail($supportEmail, "Buying Club order no - TIDIIT-OD-".$k->orderId.' has placed from Tidiit Inc Ltd', $adminMailData,'support_group_order_success','Tidiit Inc Support');
             }
+            die('checking');
         }
         return TRUE;
     }
