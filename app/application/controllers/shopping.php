@@ -1843,9 +1843,14 @@ class Shopping extends REST_Controller {
                 $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
                 global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                 $this->user->notification_add($data);
-
+                
+                $userFirstName=$usr->firstName;
+                $userlastName=$usr->lastName;
+                $orderAmount=$order->orderAmount;
+                $orderQuantity=$order->productQty;
+                $groupTitle=$group->groupTitle;
                 /// sendin SMS to allmember
-                $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'],
+                $sms_data=array('nMessage'=>$userFirstName.' '.$userlastName.' has completed payment['.$orderAmount.'] of '.$orderQuantity.' of Buying Club['.$groupTitle.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'],
                 'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
                 'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
                 send_sms_notification($sms_data);
