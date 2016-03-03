@@ -2094,11 +2094,11 @@ class Shopping extends REST_Controller {
             //echo '$order id '.$order->parrentOrderID;
             /// mail to leader and seller and support
             $orderDetails=  $this->order->details($order->parrentOrderID);
-            pre($orderDetails);  //die;
+            //pre($orderDetails);  //die;
             $adminMailData=  load_default_resources();
             $adminMailData['orderDetails']=$orderDetails;
             $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
-            pre($orderInfoDataArr);die;
+            //pre($orderInfoDataArr);die;
             $adminMailData['orderInfoDataArr']=$orderInfoDataArr;
             $adminMailData['orderParrentId']=$order->parrentOrderID;
             $adminMailData['userFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
@@ -2124,7 +2124,7 @@ class Shopping extends REST_Controller {
             //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
             $supportEmail='judhisahoo@gmail.com';
             global_tidiit_mail($supportEmail, "Buying Club order no - TIDIIT-OD-".$order->parrentOrderID.' has placed from Tidiit Inc Ltd', $adminMailData,'support_group_order_success','Tidiit Inc Support');
-            //die;
+            die('till seller and support');
             ///mail to Buyer CLub
             $this->order->update(array('status'=>2),$order->parrentOrderID);
             $allChieldOrdersData=$this->order->get_all_chield_order($order->parrentOrderID);
