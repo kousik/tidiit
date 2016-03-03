@@ -496,7 +496,7 @@ class MY_Controller extends CI_Controller {
         }else{
             $message=  $this->load->view('email_template/'.$tempplateName,$dataResources,TRUE);
         }
-        //echo $message;die;
+        //echo $message.' === '.$to;die;
         $this->load->library('email');
         $this->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
         if($toName!="")

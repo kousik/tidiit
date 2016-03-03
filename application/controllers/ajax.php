@@ -37,7 +37,7 @@ class Ajax extends MY_Controller{
             $email=$this->input->post('email',TRUE);
             $userName=$email;
             $receiveNewsLetter = 1;
-            
+                
             $dataArr=array('userName'=>$userName,'password'=>  base64_encode($password).'~'.md5('tidiit'),'firstName'=>$firstName,'lastName'=>$lastName,
                 'email'=>$email,'IP'=> $this->input->ip_address(),'userResources'=>'site','userType'=>'buyer','status'=>1);
             $userId=$this->User_model->add($dataArr);

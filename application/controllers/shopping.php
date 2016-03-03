@@ -1269,7 +1269,6 @@ class Shopping extends MY_Controller{
                 endif;
             endif;
         endforeach;
-        
         if(!empty($allOrderArray)):
             if($paymentType=='sod'):
                 redirect(BASE_URL.'shopping/success/');
