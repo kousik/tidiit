@@ -110,10 +110,19 @@
 					</font>
                     <br />
                     <font style="font-family: Verdana, Geneva, sans-serif; color:#666766; font-size:13px; line-height:21px">
-					<?php echo $orderInfo['shipping']->firstName.' '.$orderInfo['shipping']->firstName;?><br/>
-                    <?php echo $orderInfo['shipping']->address.' , '.$orderInfo['shipping']->locality;?><br/>
-                    <?php echo $orderInfo['shipping']->city.' , '.$orderInfo['shipping']->stateName;?><br/>
-                    <?php echo $orderInfo['shipping']->zip.' , '.$orderInfo['shipping']->countryName;?><br/>
+					<?php 
+                    if(is_object($orderInfoDataArr['shipping'])):
+                    echo $orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->firstName;?><br/>
+                    <?php echo $orderInfoDataArr['shipping']->address.' , '.$orderInfoDataArr['shipping']->locality;?><br/>
+                    <?php echo $orderInfoDataArr['shipping']->city.' , '.$orderInfoDataArr['shipping']->stateName;?><br/>
+                    <?php echo $orderInfoDataArr['shipping']->zip.' , '.$orderInfoDataArr['shipping']->countryName;?>
+                    <?php else:
+                        echo $orderInfoDataArr['shipping']['firstName'].' '.$orderInfoDataArr['shipping']['lastName'];?><br/>
+                    <?php echo $orderInfoDataArr['shipping']['address'].' , '.$orderInfoDataArr['shipping']['locality'];?><br/>
+                    <?php echo $orderInfoDataArr['shipping']['city'].' , '.$orderInfoDataArr['shipping']['stateName'];?><br/>
+                    <?php echo $orderInfoDataArr['shipping']['zip'].' , '.$orderInfoDataArr['shipping']['countryName'];?>
+                        
+                    <?php endif; ?><br/>
 					<br />
                     </font> </td>
                   <td width="10%">&nbsp;</td>
