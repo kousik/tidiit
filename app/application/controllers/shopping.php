@@ -2094,7 +2094,7 @@ class Shopping extends REST_Controller {
             //echo '$order id '.$order->parrentOrderID;
             /// mail to leader and seller and support
             $orderDetails=  $this->order->details($order->parrentOrderID);
-            pre($orderDetails);  //die;
+            //pre($orderDetails);  //die;
             $adminMailData=  load_default_resources();
             $adminMailData['orderDetails']=$orderDetails;
             $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
@@ -2147,7 +2147,7 @@ class Shopping extends REST_Controller {
                         break;
                     }
                 }
-                pre($adminMailData);
+                //pre($adminMailData);
                 //echo '<br>$order id '.$k->orderId.'<br>';
                 $adminMailData['userFullName']=$userFullName;
                 global_tidiit_mail($email, "Your Buying Club Tidiit order TIDIIT-OD-".$k->orderId.' has placed successfully', $adminMailData,'group_order_success',$userFullName);
@@ -2173,7 +2173,6 @@ class Shopping extends REST_Controller {
                 $supportEmail='judhisahoo@gmail.com';
                 global_tidiit_mail($supportEmail, "Buying Club order no - TIDIIT-OD-".$k->orderId.' has placed from Tidiit Inc Ltd', $adminMailData,'support_group_order_success','Tidiit Inc Support');
             }
-            die('checking');
         }
         return TRUE;
     }
