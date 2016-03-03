@@ -2094,7 +2094,7 @@ class Shopping extends REST_Controller {
             //echo '$order id '.$order->parrentOrderID;
             /// mail to leader and seller and support
             $orderDetails=  $this->order->details($order->parrentOrderID);
-            //pre($orderDetails);  //die;
+            pre($orderDetails);  //die;
             $adminMailData=  load_default_resources();
             $adminMailData['orderDetails']=$orderDetails;
             $orderInfoDataArr=unserialize(base64_decode($orderDetails[0]->orderInfo));
@@ -2124,7 +2124,7 @@ class Shopping extends REST_Controller {
             //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
             $supportEmail='judhisahoo@gmail.com';
             global_tidiit_mail($supportEmail, "Buying Club order no - TIDIIT-OD-".$order->parrentOrderID.' has placed from Tidiit Inc Ltd', $adminMailData,'support_group_order_success','Tidiit Inc Support');
-            die('till seller and support');
+            //die('till seller and support');
             ///mail to Buyer CLub
             $this->order->update(array('status'=>2),$order->parrentOrderID);
             $allChieldOrdersData=$this->order->get_all_chield_order($order->parrentOrderID);
@@ -2150,7 +2150,7 @@ class Shopping extends REST_Controller {
                 //echo '<br>$order id '.$k->orderId.'<br>';
                 $adminMailData['userFullName']=$userFullName;
                 global_tidiit_mail($email, "Your Buying Club Tidiit order TIDIIT-OD-".$k->orderId.' has placed successfully', $adminMailData,'group_order_success',$userFullName);
-                
+                pre($adminMailData);die;
                 $sms_data=array('nMessage'=>'Your Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] order TIDIIT-OD-'.$k->orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.$adminMailData['MainSiteBaseURL'],
                 'receiverMobileNumber'=>$mobileNumber,'senderId'=>'','receiverId'=>$orderDetails[0]->userId,
                 'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-PLACED');
