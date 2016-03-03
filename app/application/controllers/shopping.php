@@ -1995,7 +1995,7 @@ class Shopping extends REST_Controller {
                 $this->user->notification_add($data);
 
                 /// sendin SMS to allmember
-                $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'],
+                $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of Buying Club['.$group->groupTitle.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'],
                 'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
                 'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
                 send_sms_notification($sms_data);
