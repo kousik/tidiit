@@ -678,7 +678,9 @@ class Shopping extends REST_Controller {
                 $this->order->update($order_update,$data['orderId']);
             endif;
         endif;
-
+        if(!isset($data['orderId'])){
+            $this->response(array('error' => 'Unknown error to generate the order index for start order!'), 400); return FALSE;
+        }
         $a = $this->_get_available_order_quantity($data['orderId']);
         $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
 
