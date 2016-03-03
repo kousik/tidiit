@@ -13,11 +13,11 @@
                      <div class="left_nav">
                          <h4><?php echo $contentDetails[0]->title;?></h4>
                          <ul>
-                             <li><a href="#">Press Releases</a></li>
-                             <li><a href="#">Careers</a></li>
-                             <li><a href="#">Security, Privacy &amp; Accessibility</a></li>
-                             <li><a href="#">Delivery Speeds &amp; Rates</a></li>
-                             <li><a href="#">Returns Are Easy</a></li>
+                             <li><a href="<?php echo BASE_URL.'content/press/Nw==/';?>">Press Releases</a></li>
+                             <li><a href="<?php echo BASE_URL.'content/careers/Ng==/';?>">Careers</a></li>
+                             <li><a href="<?php echo BASE_URL.'content/privacy-policy/Mw==/';?>">Security, Privacy &amp; Accessibility</a></li>
+                             <!--<li><a href="#">Delivery Speeds &amp; Rates</a></li>
+                             <li><a href="#">Returns Are Easy</a></li>-->
                          </ul>
                      </div>
                      
