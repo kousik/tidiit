@@ -8,17 +8,15 @@ class Help_model extends CI_Model{
 	}
 	
 	public function get_all_admin(){
-		$this->db->select('*')->from($this->_table)->where('status <',2);
-		return $this->db->get()->result();
+            return $this->db->select('h.*,ht.helpTopics')->from($this->_table.' h')->join($this->_topics.' ht','h.helpTopicsId=ht.helpTopicsId')->get()->result();
 	}
 	
 	public function get_answer($question){
-		$this->db->select('*')->from($this->_table)->like('question',$question);
-		return $this->db->get()->result();
+            return $this->db->from($this->_table)->like('question',$question)->get()->result();
 	}
         
-        function get_details($faqId){
-            return $this->db->from($this->_table)->where('faqId',$faqId)->get()->result();
+        function get_details($helpId){
+            return $this->db->select('h.*,ht.helpTopics')->from($this->_table.' h')->join($this->_topics.' ht','h.helpTopicsId=ht.helpTopicsId')->where('h.helpId',$helpId)->get()->result();
         }
 	
 	public function add($dataArr){
@@ -26,58 +24,61 @@ class Help_model extends CI_Model{
 		return $this->db->insert_id();
 	}
 	
-	public function edit($DataArr,$faqId){
-		$this->db->where('faqId',$faqId);
+	public function edit($DataArr,$helpId){
+		$this->db->where('helpId',$helpId);
 		$this->db->update($this->_table,$DataArr);
 		//echo $this->db->last_query();die;
 		return TRUE;		
 	}
 	
-	public function change_status($faqId,$status){
-		$this->db->where('faqId',$faqId);
+	public function change_status($helpId,$status){
+		$this->db->where('helpId',$helpId);
 		$this->db->update($this->_table,array('status'=>$status));
 		return TRUE;
 	}
 	
-	public function delete($faqId){
-		$this->db->delete($this->_table, array('faqId' => $faqId)); 
+	public function delete($helpId){
+		$this->db->delete($this->_table, array('helpId' => $helpId)); 
 		return TRUE;
 	}
 	
 	public function get_all($type){
-		$this->db->select('*')->from($this->_table)->where('status',1)->where('type',$type);
-		return $this->db->get()->result();
+            return $this->db->get_where($this->_table,array('status'=>1,'type'=>$type))->result();
 	}
         
     function get_all_admin_help_topics(){
         return $this->db->get($this->_topics)->result();
-    }    
+    }
+    
+    function get_all_active_topic(){
+        return $this->db->get_where($this->_topics,array('status'=>1))->result();
+    }
     
     public function add_topics($dataArr){
         $this->db->insert($this->_topics,$dataArr);
         return $this->db->insert_id();
     }
     
-    public function edit_topics($DataArr,$faqTopicsId){
-            $this->db->where('faqTopicsId',$faqTopicsId);
+    public function edit_topics($DataArr,$helpTopicsId){
+            $this->db->where('helpTopicsId',$helpTopicsId);
             $this->db->update($this->_topics,$DataArr);
             //echo $this->db->last_query();die;
             return TRUE;		
     }
 
-    public function change_status_topics($faqTopicsId,$status){
-        $this->db->where('faqTopicsId',$faqTopicsId);
+    public function change_status_topics($helpTopicsId,$status){
+        $this->db->where('helpTopicsId',$helpTopicsId);
         $this->db->update($this->_topics,array('status'=>$status));
         return TRUE;
     }
 
-    public function delete_topics($faqTopicsId){
-        $this->db->delete($this->_topics, array('faqTopicsId' => $faqTopicsId)); 
+    public function delete_topics($helpTopicsId){
+        $this->db->delete($this->_topics, array('helpTopicsId' => $helpTopicsId)); 
         return TRUE;
     }
     
     function check_help_topics_exist($helpTopics){
-        $rs=$this->db->from($this->_topics)->where('helpTopics',$helpTopics)->get()->result();
+        $rs=$this->db->get_where($this->_topics,array('helpTopics'=>$helpTopics))->result();
         if(count($rs)>0){
             return TRUE;
         }else{
