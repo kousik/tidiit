@@ -1338,6 +1338,7 @@ class Shopping extends REST_Controller {
         $order_data['groupId'] = $data['order']->groupId;
         $order_data['productQty'] = 0;
         $order_data['userId'] = $userId;
+        $order_data['notificationId'] = $notificationId;
         
         //$exists_order = $this->order->is_parent_group_order_available($data['order']->orderId, $user->userId);
         $exists_order=false;
@@ -1548,6 +1549,132 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => 'Please provide valid user index to process the invitation!'), 400); return FALSE;
         }
         $order=$this->order->get_single_order_by_id($orderId);
+        
+        if($order->userId==$user->userId){
+            $this->response(array('error' => 'Please provide valid user index to accept the invitation!'), 400); return FALSE;
+        }
+        if(empty($order)){
+            $this->response(array('error' => 'Please provide valid order index to accept the invitation!'), 400); return FALSE;
+        }
+        
+        $group = $this->user->get_group_by_id($order->groupId);
+        $prod_price_info = $this->product->get_products_price_details_by_id($order->productPriceId);
+        $a = $this->_get_available_order_quantity($orderId);
+        $availQty = $prod_price_info->qty - $a[0]->productQty;
+        $orderInfo = unserialize(base64_decode($order->orderInfo));
+
+        if(!$availQty):
+            $this->response(array('error' => 'Order already completed by other members of this Buying Club.'), 400); return FALSE;
+        endif;
+        
+        if(!$this->user->user_exists_on_group($userId,$order->groupId)):
+            $this->response(array('error' => 'You can not process this order because you are not member of this Buying Club.'), 400); return FALSE;
+        endif;
+        
+        
+        if($order->parrentOrderID == 0):
+            $me = $user;
+            foreach($group->users as $key => $usr):
+                $mail_template_data=array();
+                if($me->userId != $usr->userId):
+                    $data['senderId'] = $userId;
+                    $data['receiverId'] = $usr->userId;
+                    $data['nType'] = 'BUYING-CLUB-ORDER-DECLINE';
+                    $data['nTitle'] = 'Buying Club order [TIDIIT-OD-'.$order->orderId.'] cancel by <b>'.$me->firstName.' '.$me->lastName.'</b>';
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ORDER_ID']=$order->orderId;
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ADMIN_NAME']=$me->firstName.' '.$me->lastName;
+                    $data['nMessage'] = "Hi, <br> Sorry! I can not process this Buying Club order right now.<br>";
+                    $data['nMessage'] .= "";
+                    $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+
+                    $data['isRead'] = 0;
+                    $data['status'] = 1;
+                    $data['createDate'] = date('Y-m-d H:i:s');
+                    $data['appSource'] = $deviceType;
+                    
+                    //Send Email message
+                    $recv_email = $usr->email;
+                    $sender_email = $me->email;
+                    $mail_template_view_data=load_default_resources();
+                    $mail_template_view_data['group_order_decline']=$mail_template_data;
+                    global_tidiit_mail($recv_email, "Buying Club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline',$usr->firstName.' '.$usr->lastName);
+                    
+                    $this->user->notification_add($data);
+                endif;
+            endforeach;
+            $data['receiverId'] = $group->admin->userId;
+            
+            unset($data['nMessage']);
+            $mail_template_view_data=load_default_resources();
+            $defaultResources=$mail_template_view_data;
+            $mail_template_data=array();
+            $data['senderId'] = $userId;
+            $data['nType'] = 'BUYING-CLUB-ORDER-DECLINE';
+            $data['nTitle'] = 'Buying Club order [TIDIIT-OD-'.$order->orderId.'] cancel by <b>'.$me->firstName.' '.$me->lastName.'</b>';
+            $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ORDER_ID']=$order->orderId;
+            $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ADMIN_NAME']=$me->firstName.' '.$me->lastName;
+            $data['nMessage'] = "Hi, <br> Sorry! I can not process this order right now.<br>";
+            $data['nMessage'] .= "<a href='".$defaultResources['MainSiteBaseURL']."shopping/group-re-order-process/".base64_encode($orderId*226201)."' class='btn btn-warning btn-lg'>Re-order now</a><br><br>";
+            $mail_template_data['TEMPLATE_GROUP_ORDER_DECLINE_ORDER_ID1']=$orderId;
+            $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+            $data['isRead'] = 0;
+            $data['status'] = 1;
+            $data['orderId'] = $orderId;
+            $data['productId'] = $productId;
+            $data['productPriceId'] = $productPriceId;
+            $data['createDate'] = date('Y-m-d H:i:s');
+            $data['appSource'] = $deviceType;
+            
+            //Send Email message
+            $recv_email = $group->admin->email;
+            $sender_email = $me->email;
+            $mail_template_view_data=load_default_resources();
+            $mail_template_view_data['group_order_decline']=$mail_template_data;
+            global_tidiit_mail($recv_email, "Buying Club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline_admin',$group->admin->firstName.' '.$group->admin->lastName);
+            $this->user->notification_add($data);
+            
+            $declient_data=array();
+            $declient_data['acceptDeclineState'] =2;
+            $this->user->notification_edit($declient_data,$notificationId);
+            
+            $this->order->update(array('reOrder'=>1,'cancelOrderUserId'=>$userId),$orderId);
+            
+            /// sendin SMS to Leader
+            $smsMsg='Buying Club['.$group->groupTitle.']  member['.$usr->firstName.' '.$usr->lastName.'] has decline the invitation Tidiit order TIDIIT-OD-'.$order->orderId.'.';
+            $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$orderInfo['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfo["group"]->admin->userId,
+            'senderMobileNumber'=>'','nType'=>$data['nType']);
+            send_sms_notification($sms_data);
+        endif;
+        $result= array();
+        $result['message']='Sorry for Buying Club order cancelation!';
+        success_response_after_post_get($result);
+    }
+    
+    function decline_buying_club_cart_order_post(){
+        $orderId=$this->post('orderId');
+        //$productId=$this->post('productId');
+        //$productPriceId=$this->post('productPriceId');
+        $userId=$this->post('userId');
+        //$notificationId=$this->post('notificationId');
+        
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        $deviceType = $this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $orderId==""){
+            $this->response(array('error' => 'Please provide user index,order index,latitude,longitude,device id,device token,product index,product price index !'), 400); return FALSE;
+        }
+        
+        $user=$this->user->get_details_by_id($userId)[0];
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index to process the invitation!'), 400); return FALSE;
+        }
+        $order=$this->order->get_single_order_by_id($orderId);
+        $notificationId=$order->notificationId;
+        $productId=$order->productId;
+        $productPriceId=$order->productPriceId;
         
         if($order->userId==$user->userId){
             $this->response(array('error' => 'Please provide valid user index to accept the invitation!'), 400); return FALSE;
