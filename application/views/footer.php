@@ -89,8 +89,8 @@
                             <ul class="fotr_menu brdr_rit_none">
                                 <h6>Customer Service</h6>
                                 <li><a href="<?php echo BASE_URL.'contact-us/';?>">Contact Us</a></li>
-                                <li><a href="<?php echo BASE_URL.'content/help/MTU=/';?>">Help</a></li>
-                                <li><a href="<?php echo BASE_URL.'content/csutomer-service/MTY=/';?>">Customer Service</a></li>
+                                <li><a href="<?php echo BASE_URL.'help';?>">Help</a></li>
+                                <li><a href="<?php echo BASE_URL.'customer-service';?>">Customer Service</a></li>
                                 <li><a href="#">Brand Owner Report</a></li>
                                 <h6>Payment</h6>
                                 <li><a href="<?php echo BASE_URL.'content/payment-methods/NA==/';?>">Payment Methods</a></li>
