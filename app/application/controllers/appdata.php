@@ -1357,7 +1357,7 @@ class Appdata extends REST_Controller {
         }
         
         $result=array();
-        $result['message']="Your request received successfully,One of our representative will contacts you shortly."
+        $result['message']="Your request received successfully,One of our representative will contacts you shortly.";
         success_response_after_post_get($result);
     }
     
