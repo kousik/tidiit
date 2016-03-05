@@ -192,6 +192,7 @@
         
         jQuery(".showHelpTopicContent").on("click",function(){
             var topicsid=jQuery(this).data('topicsid');
+            myJsMain.commonFunction.showPleaseWait();
             jQuery.ajax({
                 type: "POST",
                 url: myJsMain.baseURL+'<?php echo 'ajax/show_help_topics_by_id/'?>',
@@ -199,6 +200,7 @@
                 dataType:'json',
                 success:function(data){
                     jQuery('.helpTopicsContainer').html(data.content);
+                    myJsMain.commonFunction.hidePleaseWait();
                 }
             });
         });
