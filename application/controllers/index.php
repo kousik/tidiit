@@ -188,4 +188,25 @@ class Index extends MY_Controller{
         
         $this->load->view('brand_zone',$data);
     }
+    
+    function help(){
+        $this->load->model('Help_model');
+        $SEODataArr=array();
+        if($this->is_loged_in()){
+            $data=$this->_get_logedin_template($SEODataArr);
+        }else{
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        }
+        $get_all_active_topic=$this->Help_model->get_all_active_topic();
+        $get_help_topics_data=$this->Help_model->get_topic_details_by_id($get_all_active_topic[0]->helpTopicsId);
+        
+        //pre($get_all_active_topic);die;
+        $data['helpTopicsArr']=$get_all_active_topic;
+        $data['helpDataArr']=$get_help_topics_data;
+        
+        $data['feedback']=$this->load->view('feedback',$data,TRUE);
+        $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
+        
+        $this->load->view('help',$data);
+    }
 }

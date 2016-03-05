@@ -1508,4 +1508,15 @@ class Ajax extends MY_Controller{
              echo 'no';die;
          }
      }
+     
+     function show_help_topics_by_id(){
+         $this->load->model('Help_model');
+         $helpTopicsId=$this->input->post('topicsid',TRUE);
+         $get_help_topics_data=$this->Help_model->get_topic_details_by_id($helpTopicsId);
+         $help_topics_details=$this->Help_model->get_topics_details($helpTopicsId);
+         $data['helpDataArr']=$get_help_topics_data;
+         $data['help_topics_details']=$help_topics_details;
+         $retData=$this->load->view('help_topics_details_ajax',$data,TRUE);
+         echo json_encode(array('content'=>$retData));die;
+     }
 }

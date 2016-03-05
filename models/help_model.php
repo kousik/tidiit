@@ -18,6 +18,10 @@ class Help_model extends CI_Model{
         function get_details($helpId){
             return $this->db->select('h.*,ht.helpTopics')->from($this->_table.' h')->join($this->_topics.' ht','h.helpTopicsId=ht.helpTopicsId')->where('h.helpId',$helpId)->get()->result();
         }
+        
+        function get_topic_details_by_id($helpTopicsId){
+            return $this->db->get_where($this->_table,array('helpTopicsId'=>$helpTopicsId))->result();
+        }
 	
 	public function add($dataArr){
 		$this->db->insert($this->_table,$dataArr);
@@ -54,6 +58,10 @@ class Help_model extends CI_Model{
         return $this->db->get_where($this->_topics,array('status'=>1))->result();
     }
     
+    function get_top_help(){
+        return $this->db->from($this->_table)->limit(1)->get()->result();
+    }
+    
     public function add_topics($dataArr){
         $this->db->insert($this->_topics,$dataArr);
         return $this->db->insert_id();
@@ -84,5 +92,9 @@ class Help_model extends CI_Model{
         }else{
             return FALSE;
         }
+    }
+    
+    function get_topics_details($topicsId){
+        return $this->db->get_where($this->_topics,array('helpTopicsId'=>$topicsId))->result();
     }
 }
