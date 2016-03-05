@@ -113,6 +113,7 @@ $route['products/ord-message']="category/display_default_message";
 $route['logistics/out-for-delivery']="index/out_for_delivery_update/";
 $route['logistics/delivery']="index/delivery_update/";
 $route['help']='index/help';
+$route['customer-service']='index/help';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
