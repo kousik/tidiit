@@ -1319,7 +1319,7 @@ class Appdata extends REST_Controller {
     
     function help_topic_get(){
         $this->load->model('Help_model','help');
-        $get_all_active_topic=$this->help->get_all_active_topic();
+        $get_all_active_topic=$this->help->get_all_active_topic(TRUE);
         //$get_help_topics_data=$this->Help_model->get_topic_details_by_id($get_all_active_topic[0]->helpTopicsId);
         
         //pre($get_all_active_topic);die;
@@ -1331,7 +1331,7 @@ class Appdata extends REST_Controller {
     function help_details_post(){
         $this->load->model('Help_model','help');
         $helpTopicsId=  $this->post('helpTopicsId');
-        $get_help_topics_data=$this->help->get_topic_details_by_id($helpTopicsId);
+        $get_help_topics_data=$this->help->get_topic_details_by_id($helpTopicsId,TRUE);
         $data['helpDataArr']=$get_help_topics_data;
         success_response_after_post_get($data);
     }

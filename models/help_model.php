@@ -19,8 +19,12 @@ class Help_model extends CI_Model{
             return $this->db->select('h.*,ht.helpTopics')->from($this->_table.' h')->join($this->_topics.' ht','h.helpTopicsId=ht.helpTopicsId')->where('h.helpId',$helpId)->get()->result();
         }
         
-        function get_topic_details_by_id($helpTopicsId){
-            return $this->db->get_where($this->_table,array('helpTopicsId'=>$helpTopicsId))->result();
+        function get_topic_details_by_id($helpTopicsId,$app=FALSE){
+            if($app==TRUE){
+                return $this->db->get_where($this->_table,array('helpTopicsId'=>$helpTopicsId))->result_array();
+            }else{
+                return $this->db->get_where($this->_table,array('helpTopicsId'=>$helpTopicsId))->result();
+            }
         }
 	
 	public function add($dataArr){
@@ -54,8 +58,12 @@ class Help_model extends CI_Model{
         return $this->db->get($this->_topics)->result();
     }
     
-    function get_all_active_topic(){
-        return $this->db->get_where($this->_topics,array('status'=>1))->result();
+    function get_all_active_topic($app=FALSE){
+        if($app==TRUE){
+            return $this->db->get_where($this->_topics,array('status'=>1))->result_array();
+        }else{
+            return $this->db->get_where($this->_topics,array('status'=>1))->result();
+        }
     }
     
     function get_top_help(){
