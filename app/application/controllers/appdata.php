@@ -1204,6 +1204,37 @@ class Appdata extends REST_Controller {
         success_response_after_post_get($result);
     }
     
+    function track_order_post(){
+        $orderId=  $this->post('orderId');
+        $userId=  $this->post('userId');
+        $result=array();
+        $orderDetails=$this->order->details($orderId,TRUE);
+        if(empty($orderDetails)){
+            $this->response(array('error' => 'Invalid order index. Please try again!'), 400); return FALSE;
+        }
+        
+        $userDetails=$this->user->get_details_by_id($userId);
+        if(empty($userDetails)){
+            $this->response(array('error' => 'Invalid user index. Please try again!'), 400); return FALSE;
+        }
+        
+        //pre($orderDetails);die;
+        $orderInfo=unserialize(base64_decode($orderDetails[0]['orderInfo']));
+        $orderInfo = json_decode(json_encode($orderInfo), true);
+        //pre($orderInfo);die;
+        $orderDetails[0]['orderDate']=  date('d-m-Y H:i:s',strtotime($orderDetails[0]['orderDate']));
+        $orderDetails[0]['orderUpdatedate']=  date('d-m-Y H:i:s',strtotime($orderDetails[0]['orderUpdatedate']));
+        $orderDetails[0]['cancelDate']=  date('d-m-Y H:i:s',strtotime($orderDetails[0]['cancelDate']));
+        $orderDetails[0]['productImage']=  $orderInfo['pimage']['image'];
+        $orderDetails[0]['productTitle']=  $orderInfo['pdetail']['title'];
+        //pre($orderDetails);die;
+        $result['orderDetails']=  $orderDetails;
+        $result['orderInfo']=  $orderInfo;
+        $result['order_state_data']=$this->order->get_state(true);
+        success_response_after_post_get($result);
+    }
+    
+    
     function show_cancel_my_order_post(){
         $userId=  $this->post('userId');
         $orderId=  $this->post('orderId');
@@ -1286,6 +1317,49 @@ class Appdata extends REST_Controller {
         success_response_after_post_get($result);
     }
     
+    function help_topic_get(){
+        $this->load->model('Help_model','help');
+        $get_all_active_topic=$this->help->get_all_active_topic();
+        //$get_help_topics_data=$this->Help_model->get_topic_details_by_id($get_all_active_topic[0]->helpTopicsId);
+        
+        //pre($get_all_active_topic);die;
+        $data['helpTopicsArr']=$get_all_active_topic;
+        //$data['helpDataArr']=$get_help_topics_data;
+        success_response_after_post_get($data);
+    }
+    
+    function help_details_post(){
+        $this->load->model('Help_model','help');
+        $helpTopicsId=  $this->post('helpTopicsId');
+        $get_help_topics_data=$this->help->get_topic_details_by_id($helpTopicsId);
+        $data['helpDataArr']=$get_help_topics_data;
+        success_response_after_post_get($data);
+    }
+    
+    function help_post(){
+        $name=  $this->post('name');
+        $email=  $this->post('email');
+        $phone=  $this->post('phone');
+        $subject=  $this->post('subject');
+        $message=  $this->post('message');
+        $deviceType=  $this->post('deviceType');
+        $deviceToken=  $this->post('deviceToken');
+        $UDID=  $this->post('UDID');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        
+        if (!filter_var($userName, FILTER_VALIDATE_EMAIL)) {
+            $this->response(array('error' => 'Please provide valid email.'), 400); return FALSE;
+        }
+        
+        if($name=="" || $phone=="" || $subject=="" || $message=="" || $deviceToken=="" || $deviceType=="" || $UDID=="" || $latitude=="" || $longitude==""){
+            $this->response(array('error' => 'Please provide name,phone,subject,message,device token,device type,UDID,latitude,longitude.'), 400); return FALSE;
+        }
+        
+        $result=array();
+        $result['message']="Your request received successfully,One of our representative will contacts you shortly."
+        success_response_after_post_get($result);
+    }
     
     function send_notification($data){
         /*
