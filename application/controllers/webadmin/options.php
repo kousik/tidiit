@@ -63,6 +63,7 @@ class Options extends MY_Controller{
             $this->Option_model->edit($dataArr,$id);
 		    $this->session->set_flashdata('Message','Option Updated successfully.');
         else:
+            //pre($dataArr);die;
             $this->Option_model->add($dataArr);
             $this->session->set_flashdata('Message','Option Added successfully.');
         endif;
