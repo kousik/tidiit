@@ -177,7 +177,7 @@ $brandImageURL=SiteResourcesURL.'brand/admin/';
       <td><form name="AdminEdit" id="AdminEdit" method="post" action="<?php echo base_url();?>webadmin/options/edit/" enctype="multipart/form-data">
 <table width="70%" border="0" align="center" cellpadding="0" cellspacing="0" id="EditBox" style="display:none;">
   <tr>
-    <th colspan="4"><span class="PageHeading">Brand Edit Form</span></th>
+    <th colspan="4"><span class="PageHeading">Option Add Form</span></th>
   </tr>
   <tr>
     <td align="left" valign="top" height="40px;">&nbsp;</td>
@@ -209,6 +209,7 @@ $brandImageURL=SiteResourcesURL.'brand/admin/';
                 <option value="textarea">TextArea</option>
                 <option value="checkbox">Checkbox</option>
                 <option value="radio">Radiobox</option>
+                <option value="dropdown">Dropdown</option>
             </select>
         </td>
     </tr>
