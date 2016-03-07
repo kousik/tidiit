@@ -55,6 +55,11 @@ $brandImageURL=SiteResourcesURL.'brand/admin/';
             $("#rqd_no").click();
         }
 
+        if(DataArr[id]['top'] == 1){
+            $("#top_yes").click();
+        } else {
+            $("#top_no").click();
+        }
 
         $('#id').val(DataArr[id]['id']);
         $('#stype').val("update");
@@ -162,6 +167,7 @@ $brandImageURL=SiteResourcesURL.'brand/admin/';
   DataArr[<?php echo $InerArr->id?>]['option_data']= $("div.op-data-<?php echo $InerArr->id?>").html();
   DataArr[<?php echo $InerArr->id?>]['required']='<?php echo $InerArr->required?>';
   DataArr[<?php echo $InerArr->id?>]['show_price']='<?php echo $InerArr->show_price?>';
+  DataArr[<?php echo $InerArr->id?>]['top']='<?php echo $InerArr->top?>';
       //console.log(DataArr[<?php echo $InerArr->id?>]['option_data']);
   </script>
   <?php $val++;}
@@ -273,13 +279,33 @@ $brandImageURL=SiteResourcesURL.'brand/admin/';
   </tr>
   <tr class="ListHeadingLable">
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top">status</td>
+    <td align="left" valign="top">Show on top product display?</td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top">Active
-      <input name="status" type="radio" value="1"  class="required" id="stat_yes"/>
-&nbsp;Inactive
-<input name="status" type="radio" value="0"  class="required"  id="stat_no"/></td>
+    <td align="left" valign="top">Yes
+      <input name="top" type="radio" value="1"  class="top" id="top_yes"/>
+&nbsp;No
+<input name="top" type="radio" value="0"  class="top"  id="top_no"/></td>
   </tr>
+
+
+    <tr>
+        <td align="left" valign="top">&nbsp;</td>
+        <td align="left" valign="top">&nbsp;</td>
+        <td align="left" valign="top">&nbsp;</td>
+        <td align="left" valign="top">&nbsp;</td>
+    </tr>
+    <tr class="ListHeadingLable">
+        <td align="left" valign="top">&nbsp;</td>
+        <td align="left" valign="top">status</td>
+        <td align="left" valign="top"><label><strong>:</strong></label></td>
+        <td align="left" valign="top">Active
+            <input name="status" type="radio" value="1"  class="required" id="stat_yes"/>
+            &nbsp;Inactive
+            <input name="status" type="radio" value="0"  class="required"  id="stat_no"/></td>
+    </tr>
+
+
+
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
