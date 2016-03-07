@@ -44,7 +44,7 @@ class Product extends MY_Controller{
         $data['feedback']=$this->load->view('feedback',$data,TRUE);
         $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
         $data['options'] = $this->Option_model->get_product_display_option_values($productId);
-        //print_r($data['options']);die;
+        $data['topoptions'] = $this->Option_model->get_product_display_top_option_values($productId);
         $this->load->view('details',$data);
     }
     

@@ -233,8 +233,20 @@ jQuery(document).ready(function(){
                 <li class="pdp-e-i-keyspecs"><i style="visibility:hidden">-&nbsp;</i><span class="viewSpecs"><a href="#allDetails" onClick="ScrollMe('allDetails'); return false;">View all item details</a></span></li>
               </ul>
             <?php else: ?>
-                <div class="detailssubbox"><?php echo $productDetailsArr[0]->shortDescription?></div>
-                <p class="pdp-e-i-keyspecs pull-right"><i style="visibility:hidden">-&nbsp;</i><span class="viewSpecs"><a href="#allDetails" onClick="ScrollMe('allDetails'); return false;">View all item details</a></span></p>
+
+            <?php if($topoptions):?>
+                        <ul>
+                            <?php foreach($topoptions as $topkey => $topval): $tkeytitle = $topval;  ?>
+                                <li>
+                                    -&nbsp; <?=implode(", ", $topval[key($tkeytitle)])?>  <?=key($tkeytitle)?>
+                                </li>
+                            <?php endforeach;?>
+                            <li class="pdp-e-i-keyspecs"><i style="visibility:hidden">-&nbsp;</i><span class="viewSpecs"><a href="#allDetails" onClick="ScrollMe('allDetails'); return false;">View all item details</a></span></li>
+                        </ul>
+                <?php else:?>
+                    <div class="detailssubbox"><?php echo $productDetailsArr[0]->shortDescription?></div>
+                    <p class="pdp-e-i-keyspecs pull-right"><i style="visibility:hidden">-&nbsp;</i><span class="viewSpecs"><a href="#allDetails" onClick="ScrollMe('allDetails'); return false;">View all item details</a></span></p>
+                <?php endif;?>
             <?php endif;?>
             </div>
          <hr class="divider-horizontal">
