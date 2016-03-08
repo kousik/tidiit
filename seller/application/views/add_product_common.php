@@ -220,6 +220,16 @@ $priceRangeSettingsDataArr = $priceRangeSettingsArr[$productPageType];
                                                             </div>
                                                         <?php endif;?>
 
+                                                        <?php if($optdata->type == 'dropdown'):?>
+                                                            <select class="form-control" name="options[<?=$optdata->id?>][]">
+                                                                <?php foreach ($pieces AS $sk => $sv): ?>
+                                                                    <option value="<?=$sv?>"><?=$sv?></option>
+                                                                <?php endforeach; ?>
+                                                            </select>
+                                                        <?php endif;?>
+
+
+
                                                         <?php if($optdata->type == 'checkbox' || $optdata->type == 'radio'):?>
                                                         <?php foreach ($pieces AS $k => $v): ?>
                                                             <div class="<?=$optdata->type?>" style="width:33%;float: left;">

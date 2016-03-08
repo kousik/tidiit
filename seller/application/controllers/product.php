@@ -60,7 +60,8 @@ class Product extends MY_Controller{
             }
             //pre($productPageTypeArr[$categoryDetailsArr[0]->view]);die;
             if($templateName && $templateName == "mobile.php"):
-                $viewPage='add_product_'.$templateName;
+                //$viewPage='add_product_'.$templateName;
+                $viewPage='add_product_common.php';
             else:
                 $viewPage='add_product_common.php';
             endif;
@@ -293,7 +294,8 @@ class Product extends MY_Controller{
         }
 
         if($templateName && $templateName == "mobile.php"):
-            $viewPage =$templateName;
+            //$viewPage =$templateName;
+            $viewPage = 'common.php';
         else:
             $viewPage = 'common.php';
         endif;
