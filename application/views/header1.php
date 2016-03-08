@@ -18,8 +18,7 @@
                         <div class="right_top">
                             <div class="row">
                                 <div class="col-md-4 col-sm-4">
-                                    <p class="wlcm_txt">Welcome <span><a class='iframe' href="<?php echo BASE_URL.'myaccount'?>"><?php echo $this->session->userdata('FE_SESSION_VAR_FNAME');?></a></span> or <span><a class='iframe' href="<?php echo BASE_URL.'logout';?>">Logout</a></span></p>
-                                    
+                                    <p class="wlcm_txt">Welcome !<span><a class='iframe' href="<?php echo BASE_URL.'myaccount'?>"><?php echo $this->session->userdata('FE_SESSION_VAR_FNAME');?></a></span> or <span><a class='iframe' href="<?php echo BASE_URL.'logout';?>">Logout</a></span></p>
                                 </div>
                                 <div class="col-md-3 col-sm-3 search padng_right_none">
                                     <div class="inner">
@@ -30,8 +29,8 @@
                                 <div class="col-md-5 col-sm-5 padng_left_none">
                                     <ul class="sub_menu">
                                         <li><a href="<?php echo BASE_URL.'content/buyer-protection/MTc==/';?>">Buyer Protection <i class="fa fa-lock"></i></a></li>
-                                        <li><a href="<?php echo BASE_URL.'help';?>">Help <i class="fa fa-question-circle"></i></a></li>
-                                        <li><a href="javascript:void(0);" class="showMyAccount">My Account <i class="fa fa-user"></i></a></li>
+                                        <li><a href="<?php echo BASE_URL.'content/help/MTU=/';?>">Help <i class="fa fa-question-circle"></i></a></li>
+                                        <li><a href="javascript:void(0);" class="showLogin">My Account <i class="fa fa-user"></i></a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -77,9 +76,7 @@
                                             <span><i class="fa fa-truck"></i></span>
                                         </div>
                                         <div class="content">
-                                            <h3 class="js-cart-auto-update"><!--<span>`</span>-->
-                                        <?php //number_format($this->cart->total(), 2, '.', '')?>  <?php //count($this->cart->contents())
-                                        echo $this->session->userdata('TotalItemInCart');?> item</h3>
+                                            <h3><span>`</span>0.00 - 0 item</h3>
                                             <p>YOUR TRUCK</p>
                                         </div>
                                     </div>
@@ -92,11 +89,10 @@
             <div class="mdl_menu">
                 <div class="row">
                     <!--<div class="col-md-3 padng_right_none">
-                        <div class="all_catgrs mobl_vrsn" style="cursor: pointer"><h3>All Categories</h3></div>
-                    </div>--->
+                            <div class="all_catgrs mobl_vrsn" style="cursor: pointer"><h3>All Categories</h3></div>
+                    </div>-->
                     <div class="col-md-3 padng_right_none">
-                        <div class="all_catgrs category_inner">
-                            <h3 data-toggle="dropdown">All Categories <span class="down_srrow">&nbsp;</span></h3>
+                        <div class="all_catgrs category_inner"><h3 data-toggle="dropdown">All Categories <span class="down_srrow">&nbsp;</span></h3>
                             <?=$float_menu?>
                         </div>
                     </div>
@@ -109,7 +105,7 @@
                         </ul>
                     </div>
                     <div class="col-md-3 col-sm-4">
-                        <p class="down_app"><a href="#"><img src="<?php echo SiteImagesURL;?>downld_ap.png" /> &nbsp;Download Now</a></p>
+                        <p class="down_app"><a href="#"><img src="<?php echo SiteImagesURL;?>downld_ap.png" /> <span>&nbsp;Download </span>Now</a></p>
                     </div>
                 </div>
             </div>
