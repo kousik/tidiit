@@ -119,7 +119,7 @@ class Product extends REST_Controller {
         }
         $result['options'] = $optionsArr;
         $result['topOptions'] = $topOptionsArr;
-        pre($result);die;
+        //pre($result);die;
         success_response_after_post_get($result);
     }
     
