@@ -211,9 +211,10 @@ jQuery(document).ready(function(){
             
           <div class="col-md-7 img-cont">
             <h2><?php echo $productDetailsArr[0]->title;?></h2>
-            <div class="rating_cont"> <span>
+            <?php /*<div class="rating_cont"> <span>
               <input name="my_input" value="4" id="rating_simple2" type="hidden">
-              </span> <span class="ratings-wrapper"> <a class="showRatingTooltip"> 7 Ratings</a> </span> <span>Be the first to review</span> <!--<span>Q&A </span>--> </div>
+              </span> <span class="ratings-wrapper"> <a class="showRatingTooltip"> 7 Ratings</a> </span> <span>Be the first to review</span> <!--<span>Q&A </span>--> 
+            </div>*/?>
             <div class="pdp-e-i-keyfeatures">
             <?php if(!$productDetailsArr[0]->isOptionsAdded):?>
                 <ul>
