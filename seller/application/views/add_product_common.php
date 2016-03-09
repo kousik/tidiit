@@ -675,15 +675,22 @@ $priceRangeSettingsDataArr = $priceRangeSettingsArr[$productPageType];
                 'metaKeyword': 'required',
                 'tag': 'required',
                 'brandId': 'select:default',
-                <?php if($options): foreach($options as $opj): if($opj->required):?>
+                <?php if($options): foreach($options as $opj): if($opj->required): if($opj->type=='checkbox' || $opj->type=='radio'):?>
                 'options[<?=$opj->id?>][]': 'minoption:1 maxoption:1000',
+                <?php endif;?>
+                <?php /*(if($opj->type=='dropdown'):?>
+                'options[<?=$opj->id?>][]':'select:default',    
+                <?php endif;*/?>
+                <?php if($opj->type=='text' || $opj->type=='textarea'):?>
+                'options[<?=$opj->id?>][]':'required',    
+                <?php endif;?>    
                 <?php endif; endforeach; endif;?>
                 'qty': 'required',
                 'minQty': 'required',
-                'mobileRearCamera': 'select:default',
-                'frontCamera': 'select:default',
-                'processorSpeed': 'required',
-                'processorCores': 'select:default',
+                //'mobileRearCamera': 'select:default',
+                //'frontCamera': 'select:default',
+                //'processorSpeed': 'required',
+                //'processorCores': 'select:default',
                 'img1': 'required extension:jpg:png',
                 'bulkQty': 'select:default',
                 'price': 'required'

@@ -184,7 +184,7 @@ class Product extends MY_Controller{
                     'height'=>$height,'lengthClass'=>$lengthClass,'weight'=>$weight,'weightClass'=>$weightClass,'status'=>$status,
                     'lowestPrice'=>$lowestPrice,'heighestPrice'=>$heighestPrice);
             $ParrentDataArr=$this->Category_model->get_all_parrent_details($categoryId);
-            //pre($ParrentDataArr);
+            pre($ParrentDataArr);
             if($ParrentDataArr[0]->secondParentcategoryId==""){
                 $dataArr['CategoryID1']=$ParrentDataArr[0]->firstParentcategoryId;
                 $dataArr['CategoryID2']=$categoryId;
@@ -205,8 +205,8 @@ class Product extends MY_Controller{
                 $config['allowed_types'] = 'jpg|png|jpeg';
                 $config['file_name']	= strtolower(my_seo_freindly_url($mobileDataArr['title'])).'-'.rand(1,9).'-'.time();
                 $config['max_size']	= '2047';
-                $config['max_width'] = '1550';
-                $config['max_height'] = '1550';
+                $config['max_width'] = '2500';
+                $config['max_height'] = '2500';
                 //$config['max_width']  = '1024';
                 //$config['max_height']  = '1024';
                 $upload_files=array();
@@ -222,7 +222,7 @@ class Product extends MY_Controller{
                                     @unlink($this->config->item('ResourcesPath').'product/original/'.$k);
                             }
                             $errors = $this->upload->display_errors();
-                            //pre($errors);die;
+                            pre($errors);die;
                             $this->session->set_flashdata('Message',$errors);
                             redirect(base_url().'product/add_product/');
                         }
@@ -925,7 +925,7 @@ class Product extends MY_Controller{
                     'height'=>$height,'lengthClass'=>$lengthClass,'weight'=>$weight,'weightClass'=>$weightClass,'status'=>$status,
                     'lowestPrice'=>$lowestPrice,'heighestPrice'=>$heighestPrice);
                 $ParrentDataArr=$this->Category_model->get_all_parrent_details($categoryId);
-                //pre($ParrentDataArr);
+                //pre($ParrentDataArr);die;
                 if($ParrentDataArr[0]->secondParentcategoryId==""){
                     $dataArr['CategoryID1']=$ParrentDataArr[0]->firstParentcategoryId;
                     $dataArr['CategoryID2']=$categoryId;
@@ -948,8 +948,8 @@ class Product extends MY_Controller{
                 $config['allowed_types'] = 'jpg|png|jpeg';
                 $config['file_name']	= strtolower(my_seo_freindly_url($mobileDataArr['title'])).'-'.rand(1,9).'-'.time();
                 $config['max_size']	= '2047';
-                $config['max_width'] = '1550';
-                $config['max_height'] = '1550';
+                $config['max_width'] = '2500';
+                $config['max_height'] = '2500';
                 //$config['max_width']  = '1024';
                 //$config['max_height']  = '1024';
                 $upload_files=array();
@@ -965,7 +965,7 @@ class Product extends MY_Controller{
                                 @unlink($this->config->item('ResourcesPath').'product/original/'.$k);
                             }
                             $errors = $this->upload->display_errors();
-                            //pre($errors);die;
+                            pre($errors);die;
                             $this->session->set_flashdata('Message',$errors);
                             redirect(base_url().'product/add_product/'.$categoryId);
                         }

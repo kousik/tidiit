@@ -202,7 +202,7 @@ jQuery(document).ready(function(){
           
           <!--- New -->
           <div class="col-md-4"> 
-            <a href="<?php echo PRODUCT_DEAILS_EXTRA_BIG.$productImageArr[0]->image;?>" class="MagicZoom" id="Zoomer" rel="selectors-effect-speed: 600; disable-zoom: false;" title="<?php echo $productDetailsArr[0]->title;?>"><img src="<?php echo PRODUCT_DEAILS_EXTRA_BIG.$productImageArr[0]->image;?>"/></a> <br/>
+            <a href="<?php echo PRODUCT_ORIGINAL.$productImageArr[0]->image;?>" class="MagicZoom" id="Zoomer" rel="selectors-effect-speed: 600; disable-zoom: false;" title="<?php echo $productDetailsArr[0]->title;?>"><img src="<?php echo PRODUCT_DEAILS_EXTRA_BIG.$productImageArr[0]->image;?>"/></a> <br/>
             <?php foreach ($productImageArr As $k){?>
             <!-- selector with own title --> 
             <a href="<?php echo PRODUCT_DEAILS_EXTRA_BIG.$k->image;?>" rel="zoom-id: Zoomer;" rev="<?php echo PRODUCT_DEAILS_EXTRA_BIG.$k->image;?>" title="<?php echo $productDetailsArr[0]->title;?>"><img src="<?php echo PRODUCT_DEAILS_SMALL.$k->image;?>" width="75"/></a> 
