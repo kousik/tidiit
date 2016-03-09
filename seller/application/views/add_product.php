@@ -40,7 +40,7 @@
                         <tr>
                             <td class="text-left">
                                 <div class="field buttons">
-                                    <button type="submit" name="submitForProduct" id="submitForProduct">Show for Product Upload</button>
+                                    <button type="submit" name="submitForProduct" id="submitForProduct" class="btn btn-info">Show for Product Upload</button>
                                 </div>
                             </td>
                         </tr>

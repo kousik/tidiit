@@ -10,6 +10,7 @@ class Product extends REST_Controller {
         $this->load->model('Cms_model','cms');
         $this->load->model('Product_model','product');
         $this->load->model('Category_model','category');
+        $this->load->model('Option_model','option');
         $this->load->model('Country');
     }
     
@@ -35,7 +36,7 @@ class Product extends REST_Controller {
         $result['productImageArr']=$productImageArr;
         $result['productPriceArr']=$productPriceArr;
         
-        $mobileBoxContentsArr=$this->config->item('mobileBoxContents');
+        /*$mobileBoxContentsArr=$this->config->item('mobileBoxContents');
         $mobileContentArr=  explode(',', $productDetailsArr[0]['mobileBoxContent']);
         if(!empty($mobileContentArr)):
             $inBox='';
@@ -98,8 +99,27 @@ class Product extends REST_Controller {
         
         $internalMemory=$this->config->item('internalMemory');
         $internalMemoryData='';if(array_key_exists($productDetailsArr[0]['internalMemory'], $internalMemory)){$internalMemoryData=$internalMemory[$productDetailsArr[0]['internalMemory']];}
-        $result['internalMemoryData']=$internalMemoryData;
+        $result['internalMemoryData']=$internalMemoryData;*/
+        $options=$this->option->get_product_display_option_values($productId);
+        $optionsArr=array();
+        foreach($options As $k =>$option){
+            foreach($option As $kk =>$val){
+                //$temp= lcfirst(str_replace(" ","",ucwords(strtolower($kk))));
+                $optionsArr[$kk]= implode(',', $val);
+            }
+        }
         
+        $topOptions=$this->option->get_product_display_top_option_values($productId);
+        $topOptionsArr=array();
+        foreach($topOptions As $k =>$option){
+            foreach($option As $kk =>$val){
+                //$temp= lcfirst(str_replace(" ","",ucwords(strtolower($kk))));
+                $topOptionsArr[$kk]= implode(',', $val);
+            }
+        }
+        $result['options'] = $optionsArr;
+        $result['topOptions'] = $topOptionsArr;
+        pre($result);die;
         success_response_after_post_get($result);
     }
     
