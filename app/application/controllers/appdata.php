@@ -187,6 +187,11 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Please provide valid email.'), 400); return FALSE;
         }
         
+        $user=$this->user->get_details_by_id($userId);
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
+        }
+        
         if($email!="" && $contactNo!="" && $deviceToken!="" && $deviceType!="" && $UDID!="" && $userId!="" && $mobile!=""):
             $myProfileDataArr=array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo,
                     'email'=>$email,'DOB'=>$DOB,'mobile'=>$mobile,'fax'=>$fax,'aboutMe'=>$aboutMe);
