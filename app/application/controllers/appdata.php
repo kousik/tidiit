@@ -1233,8 +1233,7 @@ class Appdata extends REST_Controller {
         $result['order_state_data']=$this->order->get_state(true);
         success_response_after_post_get($result);
     }
-    
-    
+   
     function show_cancel_my_order_post(){
         $userId=  $this->post('userId');
         $orderId=  $this->post('orderId');
@@ -1422,6 +1421,25 @@ class Appdata extends REST_Controller {
             $smsData['nMessage']=  str_replace('<br/>','', $smsData['nMessage']);
             $smsData['nMessage']=  str_replace('<strong>','', $smsData['nMessage']);
             $smsData['nMessage']=  str_replace('</strong>','', $smsData['nMessage']);
+            $smsData['receiverMobileNumber']=$data['receiverMobileNumber'];
+            if(array_key_exists('senderId', $smsData)){
+                $smsData['senderId']=$data['senderId'];
+            }else{
+                $smsData['senderId']=0;
+            }
+            if(array_key_exists('receiverId', $smsData)){
+                $smsData['receiverId']=$data['receiverId'];
+            }else{
+                $smsData['receiverId']=0;
+            }
+            
+            if(array_key_exists('senderMobileNumber', $smsData)){
+                $smsData['senderMobileNumber']=$data['senderMobileNumber'];
+            }else{
+                $smsData['senderMobileNumber']=0;
+            }
+            $smsData['nType']=$data['nType'];
+            
             send_sms_notification($smsData);
         endif;
         
