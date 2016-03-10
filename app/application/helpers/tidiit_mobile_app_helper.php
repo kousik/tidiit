@@ -210,7 +210,7 @@ if ( ! function_exists('success_response_after_post_get')){
 if ( ! function_exists('get_default_urls')){
 	function get_default_urls(){
 		$result=array();
-        $result['site_product_image_url']='http://seller.tidiit.com/resources/product/100X100/';
+        $result['site_product_image_url']='http://seller.tidiit.com/resources/product/';
         //$result['site_image_url']=$this->config->item('MainSiteResourcesURL').'images/';
         $result['site_image_url']='http://tidiit.com/resources/images/';
         $result['site_slider_image_url']='http://tidiit.com/resources/banner/original/';
@@ -230,7 +230,7 @@ if ( ! function_exists('load_default_resources')){
         $data['SiteResourcesURL']='http://tidiit.com/resources/';
         $data['MainSiteBaseURL']='http://tidiit.com/';
         $data['MainSiteImagesURL']='http://tidiit.com/resources/images/';
-        $data['SiteProductImageURL']='http://seller.tidiit.com/resources/product/100X100/';
+        $data['SiteProductImageURL']='http://seller.tidiit.com/resources/product/';
         return $data;
 	}
 }
