@@ -297,19 +297,20 @@ if ( ! function_exists('send_sms_notification')):
         if(!is_dir($smsLogPath)){ //create the folder if it's not already exists
           @mkdir($smsLogPath,0755,TRUE);
         } 
-        $dataMessage = $data['nMessage'];
-        $smsLogFile=$smsLogPath.time().uniqid().'.txt';
-        if ( ! write_file($smsLogFile, $dataMessage)){
-             //echo 'Unable to write the file';
-        }else{
-             //echo 'File written!';
-        }
+        
         //die('rrr');
         if(!array_key_exists('receiverMobileNumber', $data)){
             return FALSE;
         }elseif($data['receiverMobileNumber']==""){
             return FALSE;
         }else{
+            $dataMessage = $data['nMessage'].' message send mobile no '.$data['receiverMobileNumber'];;
+            $smsLogFile=$smsLogPath.time().uniqid().'.txt';
+            if ( ! write_file($smsLogFile, $dataMessage)){
+                 //echo 'Unable to write the file';
+            }else{
+                 //echo 'File written!';
+            }
             //Send Mobile message
             $smsAddHistoryDataArr=array();
             $smsConfig=array('sms_text'=>$data['nMessage'],'receive_phone_number'=>$data['receiverMobileNumber']);
