@@ -140,7 +140,7 @@ class Appdata extends REST_Controller {
                 $userData[0]['DOB']=$userDataDOBArr[2].'-'.$userDataDOBArr[1].'-'.$userDataDOBArr[0];
                 $result['userProfileData']=$userData;
             }else{
-                $result['userProfileData']=$userData;
+                $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
             }
             success_response_after_post_get($result);
         endif;
@@ -206,6 +206,12 @@ class Appdata extends REST_Controller {
     function my_buyers_clubs_get(){
         $result = array();
         $userId=  $this->get('userId');
+        
+        $user=$this->user->get_details_by_id($userId);
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
+        }
+        
         $result['countryDataArr']=$this->Country->get_all1(TRUE);
         //$data['CatArr']=$this->Category_model->get_all(0);
         $menuArr=array();
@@ -249,6 +255,10 @@ class Appdata extends REST_Controller {
         $userShippingDataDetails = array();
         $userId=  $this->get('userId');
         $this->load->model('Country');
+        $user=$this->user->get_details_by_id($userId);
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
+        }
         $userShippingDataDetails=$this->user->get_user_shipping_information($userId);
         //pre($userShippingDataDetails);die;
         if(empty($userShippingDataDetails)){
@@ -303,6 +313,11 @@ class Appdata extends REST_Controller {
         if(trim($productTypeId)=="" || $firstName =="" || $lastName=="" || $userId=="" || $countryId=="" || $cityId=="" || $zipId=="" || $localityId=="" || $phone=="" || $address=="" || $latitude=="" || $longitude=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
             $this->response(array('error' => 'Please provide prodcut type,first name,last name,user index,city index,zip index, locality index,phone,address,latitude,longitude,device type,divice token,UDID for current user.'), 400); return FALSE;
         }
+        
+        $user=$this->user->get_details_by_id($userId);
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
+        }
         $productTypeIdArr=  explode(',', $productTypeId);
         
         if ($productTypeIdArr[0] == "") { 
@@ -349,6 +364,10 @@ class Appdata extends REST_Controller {
         $result = array();
         $financeDataArr=array();
         $userId=  $this->get('userId');
+        $user=$this->user->get_details_by_id($userId);
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
+        }
         $financeDataArr=$this->user->get_finance_info($userId);
         if(empty($financeDataArr)){
             $financeDataArr[0]=array();
@@ -374,6 +393,12 @@ class Appdata extends REST_Controller {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->response(array('error' => 'Please provide valid email.'), 400); return FALSE;
         }
+        
+        $user=$this->user->get_details_by_id($userId);
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
+        }
+        
         $DataArr=$this->user->get_data_by_email($email);
         if(count($DataArr)>0):
             $mail_template_data=array();
@@ -415,6 +440,10 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Please provide all data.'), 400); return FALSE;
         else:
             if($newPassword==$newConfirmPassword):
+                $user=$this->user->get_details_by_id($userId);
+                if(empty($user)){
+                    $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
+                }
                 if($this->user->check_old_password($oldPassword,$userId)==TRUE):
                     $dataArr=array('password'=>  base64_encode($newPassword).'~'.md5('tidiit'));
                     $this->user->edit($dataArr,$userId);
@@ -483,6 +512,10 @@ class Appdata extends REST_Controller {
         if($userId =="" && $mpesaFullName=="" && $mpesaAccount ==""):
             $this->response(array('error' => 'Please provide all data.'), 400); return FALSE;
         else:
+            $user=$this->user->get_details_by_id($userId);
+            if(empty($user)){
+                $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
+            }
             $isAdded=$this->user->get_finance_info($userId);
             if(empty($isAdded)){
                 $this->user->add_finance(array('mpesaFullName'=>$mpesaFullName,'mpesaAccount'=>$mpesaAccount,'userId'=>$userId,'appSource'=>$deviceType));
@@ -597,9 +630,9 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Please provide latitude,longitude,devive type,device token,UDID.'), 400); return FALSE;
         }
         
-        $userDetails=  $this->user->get_details_by_id($adminId);
-        if(empty($userDetails)){
-            $this->response(array('error' => 'Invalid Buying Club index. Please try again!'), 400); return FALSE;
+        $user=  $this->user->get_details_by_id($adminId);
+        if(empty($user)){
+            $this->response(array('error' => 'Invalid user index. Please try again!'), 400); return FALSE;
         }
         $isExist=$this->user->is_group_exist_group_id_admin_id($groupId,$adminId);
         if(count($isExist)==0){
@@ -609,10 +642,7 @@ class Appdata extends REST_Controller {
         if(!$group):
             $this->response(array('error' => 'Invalid Buying Club index. Please try again!'), 400); return FALSE;
         endif;
-        $user = $this->user->get_details_by_id($adminId,TRUE);
-        if(!$user):
-            $this->response(array('error' => 'Invalid user index. Please try again!'), 400); return FALSE;
-        endif;
+        
         $result=array();
         $result['countryDataArr']=$this->Country->get_all1();
         $menuArr=array();

@@ -66,14 +66,14 @@ class User_model extends CI_Model {
     }
 
     public function get_details_by_id($userId,$app=false){
-        $this->get_active_details_by_id($userId,$app);
+        return $this->get_active_details_by_id($userId,$app);
     }
     
     public function get_active_details_by_id($userId,$app=false){
         if($app==FALSE):
-            return $this->db->from($this->_table)->where('userId',$userId)->where('status',1)->get()->result();
+            return $this->db->from($this->_table)->where('userId',$userId)->where('status','1')->get()->result();
         else:
-            return $this->db->from($this->_table)->where('userId',$userId)->where('status',1)->get()->result_array();
+            return $this->db->from($this->_table)->where('userId',$userId)->where('status','1')->get()->result_array();
         endif;
     }
 
