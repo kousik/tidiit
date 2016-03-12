@@ -16,5 +16,7 @@ class Appdata extends REST_Controller {
     
     function show_category_post(){
         $categoryId=  $this->post('categoryId');
+        
+        
     }
 }
