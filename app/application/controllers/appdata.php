@@ -134,7 +134,7 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
         else:
             $userData=$this->user->get_details_by_id($userId,TRUE);
-            if(empty($userData)){
+            if(!empty($userData)){
                 $userDataDOBArr=  explode('-',$userData[0]['DOB']);
                 //pre($userDataDOBArr);die;
                 if(count($userDataDOBArr)>0){
