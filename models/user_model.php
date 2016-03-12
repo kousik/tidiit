@@ -897,4 +897,9 @@ class User_model extends CI_Model {
         $this->db->insert('feedback',$dataArray);
         return $this->db->insert_id();
     }
+    
+    function post_help($dataArray){
+        $this->db->insert('help_request',$dataArray);
+        return $this->db->insert_id();
+    }
 }

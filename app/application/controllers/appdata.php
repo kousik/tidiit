@@ -1384,16 +1384,24 @@ class Appdata extends REST_Controller {
         $latitude=  $this->post('latitude');
         $longitude=  $this->post('longitude');
         
-        if (!filter_var($userName, FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->response(array('error' => 'Please provide valid email.'), 400); return FALSE;
         }
         
-        if($name=="" || $phone=="" || $subject=="" || $message=="" || $deviceToken=="" || $deviceType=="" || $UDID=="" || $latitude=="" || $longitude==""){
+        if($name=="" || $email=="" || $phone=="" || $subject=="" || $message=="" || $deviceToken=="" || $deviceType=="" || $UDID=="" || $latitude=="" || $longitude==""){
             $this->response(array('error' => 'Please provide name,phone,subject,message,device token,device type,UDID,latitude,longitude.'), 400); return FALSE;
         }
         
+        $dataArr=array('email'=>$email,'name'=>$name,'phone'=>$phone,'subject'=>$subject,'message'=>$message,'deviceToken'=>$deviceToken,
+            'deviceType'=>$deviceType,'UDID'=>$UDID,'latitude'=>$latitude,'longitude'=>$longitude);
+        $newId=  $this->user->post_help($dataArr);
+        
         $result=array();
-        $result['message']="Your request received successfully,One of our representative will contacts you shortly.";
+        if($newId>0){
+            $result['message']="Your request received successfully,One of our representative will contacts you shortly.";
+        }else{
+            $result['message']="Unknown error arise to submit help request,Please try again..";
+        }
         success_response_after_post_get($result);
     }
     
