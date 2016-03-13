@@ -161,8 +161,11 @@ class Option_model extends CI_Model{
         $data = [];
         if($optiondatas):
             foreach($optiondatas as $key=> $op):
-                $data[$op->slug]['name'] = $op->display_name;
-                $data[$op->slug]['value'] = explode(",", $op->option_data);
+                if(in_array($op->type, array('checkbox', 'radio', 'dropdown'))):
+                    $data[$op->slug]['name'] = $op->display_name;
+                    $data[$op->slug]['value'] = explode(",", $op->option_data);
+                    $data[$op->slug]['type'] = $op->type;
+                endif;
             endforeach;
             return $data;
         else:

@@ -56,27 +56,50 @@
                   </div>
                   <?php unset($products['brands']);endif; ?>
                     <?php if(isset($options) && $options):
-                        foreach($options as $opkey => $opval):?>
-                        <div class="brand_sec">
-                            <div class="sub_hdng">
-                                <h3><?=$opval['name']?></h3>
-                            </div>
-                            <ul id="options" class="rand_list">
-                                <?php
-                                foreach($opval['value'] as $ovkey => $oval):
-                                    $listval = $oval;
-                                    if($opval['name'] == "Color"):
-                                        $colors = explode("||", $oval);
-                                        $listval = $colors[0];
-                                    endif;?>
-                                    <li style="padding: 5px 5px;float: left;width: 45%;font-size: 12px;">
-                                        <input type="checkbox" class="optionsort" data-name="<?=$opkey?>" value="<?=trim($listval)?>" />
-                                        <span style="margin-left: 2px;"><?=$listval?></span>
-                                    </li>
-                                <?php endforeach;?>
-                            </ul>
-                        </div>
-                  <?php endforeach;
+                        foreach($options as $opkey => $opval):
+                            if($opval['type'] != 'dropdown'):?>
+                                <div class="brand_sec">
+                                    <div class="sub_hdng">
+                                        <h3><?=$opval['name']?></h3>
+                                    </div>
+                                    <ul id="options" class="rand_list">
+                                        <?php
+                                        foreach($opval['value'] as $ovkey => $oval):
+                                            $listval = $oval;
+                                            if($opval['name'] == "Color"):
+                                                $colors = explode("||", $oval);
+                                                $listval = $colors[0];
+                                            endif;?>
+                                            <li style="padding: 5px 5px;float: left;width: 45%;font-size: 12px;">
+                                                <input type="<?=$opval['type']?>" name="<?=$opval['type']?>" class="optionsort" data-name="<?=$opkey?>" value="<?=trim($listval)?>" />
+                                                <span style="margin-left: 2px;"><?=$listval?></span>
+                                            </li>
+
+                                        <?php endforeach;?>
+                                    </ul>
+                                </div>
+                            <?php else:?>
+                                <div class="brand_sec">
+                                    <div class="sub_hdng">
+                                        <h3><?=$opval['name']?></h3>
+                                    </div>
+                                    <ul id="options" class="rand_list">
+                                        <li>
+                                        <select name="" class=""></select>
+                                            <?php foreach($opval['value'] as $ovkey => $oval):
+                                                $listval = $oval;
+                                                if($opval['name'] == "Color"):
+                                                    $colors = explode("||", $oval);
+                                                    $listval = $colors[0];
+                                                endif;?>
+                                                <option value="<?=$listval?>"><?=$listval?></option>
+                                            <?php endforeach;?>
+                                        </select>
+                                        </li>
+                                    </ul>
+                                </div>
+                            <?php endif;?>
+                        <?php endforeach;
                     endif; ?>
               </div>
             </div>
