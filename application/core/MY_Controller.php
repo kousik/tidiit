@@ -558,7 +558,7 @@ class MY_Controller extends CI_Controller {
     function get_site_categories_fixed_menu(){
         $TopCategoryData=$this->Category_model->get_site_categories();
         ob_start();?>
-        <ul class="dropdown-menu multi-level fixed-menu" role="menu" aria-labelledby="dropdownMenu" >
+        <ul class="dropdown-menu multi-level fixed-menu fixed-menu-cat" role="menu" aria-labelledby="dropdownMenu" >
         <?php foreach($TopCategoryData as $key => $cat):?>
         <li <?php if(isset($cat->parent) && $cat->parent):?>class="dropdown-submenu"<?php endif; ?>>
             <a href="javascript:void(0);"><?php echo my_seo_freindly_url($cat->categoryName);?> <span>&nbsp;</span></a>

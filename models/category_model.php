@@ -330,7 +330,86 @@ WHERE c.categoryId =".$categoryId;
         $products['brands'] = $brands;
         return $products;
     }
-    
+
+
+
+    /**
+     *
+     * @param type $categoryId
+     * @param type $offset
+     * @param type $limit
+     * @param type $cond
+     * @return type
+     */
+    public function get_brand_products($brandId, $offset = null, $limit = null, $cond) {
+
+        $group_by = ' GROUP BY p.productId';
+
+        $sort = array('featured','isNew','popular','lowestPrice');
+        $order_by = 'p.popular';
+        if(isset($cond['order_by']) && $cond['order_by'] && in_array($cond['order_by'], $sort)):
+            $order_by = '  ORDER BY '.$cond['order_by'];
+            unset($cond['order_by']);
+        else:
+            $order_by = '  ORDER BY p.popular';
+        endif;
+
+        $order_sort = ' ASC';
+
+        if(isset($cond['order_sort']) && $cond['order_sort']):
+            $order_sort = ' '.$cond['order_sort'];
+            unset($cond['order_sort']);
+        endif;
+
+        $plimit = '';
+        if($offset >= 0 && $limit):
+            $plimit = ' LIMIT '.$offset.', '.$limit;
+        endif;
+
+        $where_str = 'p.status = 1 ';
+
+
+        if(isset($cond['brand']) && $cond['brand']):
+            $brands = implode('","', $cond['brand']);
+            $where_str = $where_str.' AND b.title IN ("'.$brands.'")';
+        else:
+            $where_str = $where_str.' AND b.brandId  IS NOT NULL';
+        endif;
+
+        if(isset($cond['range']) && $cond['range']):
+            $lowestPrice = $cond['range'][0];
+            $heighestPrice = $cond['range'][1];
+            $where_str = $where_str.' AND p.lowestPrice >= '.$lowestPrice.' AND p.lowestPrice <= '.$heighestPrice;
+        endif;
+
+        $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `c`.`categoryName`,
+            `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage`
+            FROM `product` AS p
+            LEFT JOIN product_brand AS pb ON p.productId = pb.productId
+            LEFT JOIN brand AS b ON pb.brandId = b.brandId
+            LEFT JOIN product_category AS pc ON pc.productId = p.productId
+            LEFT JOIN category AS c ON c.categoryId = pc.categoryId
+            LEFT JOIN product_image AS pimage ON pimage.productId = p.productId
+            WHERE {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
+        $rs = $this->db->query($sql)->result();//echo $this->db->last_query();print_r($rs);
+        $products = array();
+        $brands = array();
+        if($rs):
+            foreach($rs as $key => $product):
+                //$product->tags = $this->get_product_tags($product->productId);
+                //$product->seller = $this->get_product_seller($product->productId);
+                // $product->product_price = $this->get_products_price($product->productId);
+                //$product->curent_category = $this->get_details_by_id($categoryId);
+                $products['products'][] =  $product;
+                $brands[$product->btitle] = $product->btitle;
+            endforeach;
+        endif;
+        $products['brands'] = $brands;
+        return $products;
+    }
+
+
+
     /**
      * 
      * @param type $produtcId

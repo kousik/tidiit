@@ -359,7 +359,27 @@ $(document).ready(function () {
         //changeUrlParam ('brand', brand);
         queryString.push('brand', brand);
         getRefinedPro(1,1);
-    }); 
+    });
+
+    $( "body" ).delegate( "ul#options input[class='optionsort']", "click", function() {
+        //$("ul#brand input[class='brandsort']").click(function(){
+        var jqout = $(this);
+        var options = [];
+
+        $('ul#options').find("input[class='optionsort']:checked").each(function() {
+            options.push(jQuery(this).val());
+        });
+
+        if(options){
+            var option = options.join("|");
+        } else {
+            var option = false;
+        }
+
+        var name = $(this).attr('data-name');
+        queryString.push(name, option);
+        getRefinedPro(1,1);
+    });
     
     $( ".jslider-pointer" ).mouseup( function() {
         var prices = $("input[id='Slider1']").val();
@@ -402,6 +422,10 @@ function getRefinedPro(offPage,cls){
             total_pages = data.total_pages;
             if (!$('ul#brand li').length) {
                 $("div.js-add-widget").append(data.brands);
+            }
+
+            if(data.header){
+                $("h2.js-header-title").text(data.header);
             }
             
             if(data.products){ 

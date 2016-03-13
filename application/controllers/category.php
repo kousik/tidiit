@@ -4,6 +4,8 @@ class Category extends MY_Controller{
     public function __construct(){
         parent::__construct();
         //$this->db->cache_off();
+        $this->load->model('Brand_model');
+        $this->load->model('Option_model');
     }
     
     function details($name,$idStr){
@@ -40,13 +42,13 @@ class Category extends MY_Controller{
     
     function display_category_products($name){
         //echo $_SERVER['SERVER_ADDR'];print_r($_GET);die;
-        $SEODataArr=array();        
+        $SEODataArr=array();
         if($this->is_loged_in()):
             $data=$this->_get_logedin_template($SEODataArr);
         else:
             $data=$this->_get_tobe_login_template($SEODataArr);
         endif;
-        
+
         if(!isset($_GET['cpid']) || !$_GET['cpid']):
             $this->session->set_flashdata('error', 'Invalid location. Please click proper category link!');
             redirect(BASE_URL.'products/ord-message');
@@ -67,8 +69,10 @@ class Category extends MY_Controller{
         endif;
         $data['is_last'] = $is_last;
         $data['s_widget_cats'] = $data['widget_cats'];
-        
-        
+
+        $options = $this->Option_model->get_category_product_option_wedgets($currCat->option_ids);
+        $data['options'] = $options;
+
         unset($_GET['cpid']);
         $cond = array();
         $data['sort'] = 'popular';
@@ -90,21 +94,21 @@ class Category extends MY_Controller{
                 $data['range'] = array($ranges[0],$ranges[1]);
             endif;
         endforeach;
-        
+
         $item_per_page = 8;
-        
+
         if(isset($_GET['page']) && $_GET['page']):
             $offset = ($_GET['page'] * $item_per_page);
         else:
             $offset = 0;
         endif;
-        
+
         if(isset($_GET['cls']) && $_GET['cls']):
             $offset = 0;
         else:
             $offset = $offset;
         endif;
-        
+
         $products = $this->Category_model->get_children_categories_products($categoryId, $offset, $limit = $item_per_page, $cond);
         $total_rows = $this->Category_model->get_children_categories_products($categoryId, 0, false, $cond);
         $tr = (isset($total_rows['products'])?$total_rows['products']:false);
@@ -113,7 +117,7 @@ class Category extends MY_Controller{
         $data['total_pages'] = $total_pages;
         $products['brands'] = $total_rows['brands'];
         $data['products'] = $products;
-        
+
 
         if($total_pages <= $item_per_page):
             $data['show_loads'] = true;
@@ -131,10 +135,10 @@ class Category extends MY_Controller{
             $data['brands'] = $this->display_brands_view($total_rows['brands'],$brnd);
             echo json_encode($data);die;
         endif;
-        
+
         $data['feedback']=$this->load->view('feedback',$data,TRUE);
         $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
-        
+
         $this->load->view('category_details',$data);
     }
     
@@ -226,5 +230,109 @@ class Category extends MY_Controller{
         ob_end_clean();
         return $out2;
     }
-    
+
+
+
+    function display_brand_products($bid){
+        //echo $_SERVER['SERVER_ADDR'];print_r($_GET);die;
+        $SEODataArr=array();
+        if($this->is_loged_in()):
+            $data=$this->_get_logedin_template($SEODataArr);
+        else:
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        endif;
+
+        if(!isset($bid) || !$bid):
+            $this->session->set_flashdata('error', 'Invalid location!');
+            redirect(BASE_URL.'products/ord-message');
+        else:
+            $brandId = base64_decode($bid)/226201;
+            $brandDetails = $this->Brand_model->details($brandId);
+            if(!$brandDetails):
+                $this->session->set_flashdata('error', 'Invalid location. Please click proper link!');
+                redirect(BASE_URL.'products/ord-message');
+            endif;
+            $brandDetails = $brandDetails[0];
+        endif;
+        $data['branddetails'] = $brandDetails;
+
+        //unset($_GET['bid']);
+        $cond = array();
+        $data['sort'] = 'popular';
+        $data['brand'] = array();
+        $data['range'] = array(0,100000);
+        foreach($_GET as $key => $get):
+            if($key == 'sort' && $get):
+                $cond['order_by'] = $get;
+                $data['sort'] = $get;
+            endif;
+            if($key == 'brand' && $get):
+                $brands = explode("|", $get);
+                $cond['brand'] = $brands;
+                $data['brand'] = $brands;
+            endif;
+            if($key == 'range' && $get):
+                $ranges = explode("|", $get);
+                $cond['range'] = $ranges;
+                $data['range'] = array($ranges[0],$ranges[1]);
+            endif;
+        endforeach;
+
+        $item_per_page = 8;
+
+        if(isset($_GET['page']) && $_GET['page']):
+            $offset = ($_GET['page'] * $item_per_page);
+        else:
+            $offset = 0;
+        endif;
+
+        if(isset($_GET['cls']) && $_GET['cls']):
+            $offset = 0;
+        else:
+            $offset = $offset;
+        endif;
+
+        $products = $this->Category_model->get_brand_products($brandId, $offset, $limit = $item_per_page, $cond);
+        $total_rows = $this->Category_model->get_brand_products($brandId, 0, false, $cond);
+        $tr = (isset($total_rows['products'])?$total_rows['products']:false);
+        $totalrows = (!empty($tr)?count($tr):0);
+        $total_pages = ceil($totalrows/$item_per_page);
+        $data['total_pages'] = $total_pages;
+        //$products['brands'] = $total_rows['brands'];
+
+
+        $brnds = $this->Brand_model->get_all();
+        $brand = [];
+        foreach($brnds as $bkey => $bdata):
+            $brand[] = $bdata->title;
+        endforeach;
+
+        $products['brands'] = $brand;
+        $data['products'] = $products;
+
+        if($total_pages <= $item_per_page):
+            $data['show_loads'] = true;
+        else:
+            $data['show_loads'] = false;
+        endif;
+        if(isset($_GET['stype']) && $_GET['stype'] == "ajax"):
+            if(isset($_GET['cls']) && $_GET['cls']):
+                $data['cls'] = 1;
+            else:
+                $data['cls'] = 0;
+            endif;
+            $brnd = isset($_GET['brand'])?explode("|", $_GET['brand']):array();
+            $data['header'] = $brnd?implode(", ",$brnd):"All Brands";
+            $data['products'] = $this->create_product_view($products);
+            $data['brands'] = $this->display_brands_view($brand,$brnd);
+            echo json_encode($data);die;
+        endif;
+
+        $data['bheader'] = $data['brand']?implode(", ",$data['brand']):"All Brands";
+
+        $data['feedback']=$this->load->view('feedback',$data,TRUE);
+        $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
+
+        $this->load->view('brand_product_listings',$data);
+    }
 }

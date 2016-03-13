@@ -54,21 +54,30 @@
                           <?php endforeach;?>
                       </ul>
                   </div>
-                    <?php unset($products['brands']);endif; ?>
-                <?php /* ?> <dl id="narrow-by-list">
-                     
-                  <dt class="last even">Size</dt>
-                  <dd class="last even">
-                    <ol class="configurable-swatch-list">
-                      <li> <a class="swatch-link" href="size=3"> <span class="swatch-label"> S </span> <span class="count">(5)</span> </a> </li>
-                      <li> <a class="swatch-link" href="size=4"> <span class="swatch-label"> M </span> <span class="count">(6)</span> </a> </li>
-                      <li> <a class="swatch-link" href="size=5"> <span class="swatch-label"> L </span> <span class="count">(5)</span> </a> </li>
-                      <li> <a class="swatch-link" href="size=6"> <span class="swatch-label"> XL </span> <span class="count">(4)</span> </a> </li>
-                    </ol>
-                  </dd>
-                </dl>
-                 
-                 <?php */ ?>
+                  <?php unset($products['brands']);endif; ?>
+                    <?php if(isset($options) && $options):
+                        foreach($options as $opkey => $opval):?>
+                        <div class="brand_sec">
+                            <div class="sub_hdng">
+                                <h3><?=$opval['name']?></h3>
+                            </div>
+                            <ul id="options" class="rand_list">
+                                <?php
+                                foreach($opval['value'] as $ovkey => $oval):
+                                    $listval = $oval;
+                                    if($opval['name'] == "Color"):
+                                        $colors = explode("||", $oval);
+                                        $listval = $colors[0];
+                                    endif;?>
+                                    <li style="padding: 5px 5px;float: left;width: 45%;font-size: 12px;">
+                                        <input type="checkbox" class="optionsort" data-name="<?=$opkey?>" value="<?=trim($listval)?>" />
+                                        <span style="margin-left: 2px;"><?=$listval?></span>
+                                    </li>
+                                <?php endforeach;?>
+                            </ul>
+                        </div>
+                  <?php endforeach;
+                    endif; ?>
               </div>
             </div>
         </div>

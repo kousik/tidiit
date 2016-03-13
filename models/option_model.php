@@ -153,6 +153,22 @@ class Option_model extends CI_Model{
         $this->db->where('productId', $productId);
         $this->db->delete('product_option_values');
     }
+
+
+    public function get_category_product_option_wedgets($options){
+        $options = explode(",", $options);
+        $optiondatas = $this->db->from("product_options")->where_in('id',$options)->get()->result();
+        $data = [];
+        if($optiondatas):
+            foreach($optiondatas as $key=> $op):
+                $data[$op->slug]['name'] = $op->display_name;
+                $data[$op->slug]['value'] = explode(",", $op->option_data);
+            endforeach;
+            return $data;
+        else:
+            return false;
+        endif;
+    }
         
 }
 ?>

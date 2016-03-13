@@ -110,6 +110,9 @@ $route['404_override'] = 'index/under_construnction';
 $route['products/(:any)']="category/display_category_products/$1";
 $route['products/ord-message']="category/display_default_message";
 
+//Brand - Product listing
+$route['brand/(:any)']="category/display_brand_products/$1";
+
 $route['logistics/out-for-delivery']="index/out_for_delivery_update/";
 $route['logistics/delivery']="index/delivery_update/";
 $route['help']='index/help';
