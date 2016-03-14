@@ -476,10 +476,12 @@ class Order_model extends CI_Model {
     }
     
     function add_to_wish_list($dataArr){
-        $this->db->where('productId',$dataArr['productId'])->where('userId',$dataArr['userId'])->where('productPriceId',$dataArr['productPriceId'])->where('orderType','SINGLE');
+        //$this->db->where('productId',$dataArr['productId'])->where('userId',$dataArr['userId'])->where('productPriceId',$dataArr['productPriceId'])->where('orderType','SINGLE');
+        $this->db->where('productId',$dataArr['productId'])->where('userId',$dataArr['userId'])->where('productPriceId',$dataArr['productPriceId']);
         $no=$this->db->from($this->_table)->count_all_results();
+        //echo $this->db->last_query();die;
         //echo $no;die;
-        if($no>0){
+        if($no==0){
             $this->db->insert($this->_wishlist,$dataArr);
             return $this->db->insert_id();
         }
@@ -490,6 +492,17 @@ class Order_model extends CI_Model {
         $this->db->where('productId',$productId)->where('userId',$userId)->where('productPriceId',$productPriceId);
         $this->db->delete($this->_wishlist);
         return TRUE;
+    }
+    
+    function get_all_item_in_with_list($userId,$app=TRUE){
+        $sql="SELECT w.*,pp.qty,pp.price,p.title,(select pi.image from `product_image` AS `pi` where pi.productId=w.productId limit 0,1) AS `productImage` from ";
+        $sql.= " `wishlist` AS `w` JOIN `product` AS `p` ON(w.productId=p.productId) JOIN `product_price` AS `pp` ON(w.productPriceId=pp.productPriceId) ";
+        $sql .= " WHERE w.userId=$userId";
+        if($app==true){
+            return $this->db->query($sql)->result_array();
+        }else{
+            return $this->db->query($sql)->result();
+        }
     }
     
     public function get_incomplete_order_by_user($userId,$orderType=''){

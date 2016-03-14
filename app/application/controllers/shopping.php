@@ -538,13 +538,13 @@ class Shopping extends REST_Controller {
         if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $productId=="" || $productPriceId==""){
             $this->response(array('error' => 'Please provide user index,latitude,longitude,device id,device token,product index,product price index !'), 400); return FALSE;
         }
-        $wishListDataArr=array('userId'=>$userId,'productId'=>$productId,'productPriceId'=>$productPriceId,'latitude'=>$latitude,'longitude'=>$longitude,'deviceType'=>$deviceType);
+        $wishListDataArr=array('userId'=>$userId,'productId'=>$productId,'productPriceId'=>$productPriceId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType);
         if($this->order->add_to_wish_list($wishListDataArr)):
             $result=array();
             $result['message']='Selected item added to wish list successfully.';
             success_response_after_post_get($result);
         else:
-            $this->response(array('error' => 'Unknow error to add the selected item for wishlist.'), 400);
+            $this->response(array('error' => 'The selected item already in your wishlist.'), 400);
         endif;
     }
     

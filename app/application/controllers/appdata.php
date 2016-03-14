@@ -1575,6 +1575,19 @@ class Appdata extends REST_Controller {
         return TRUE;
     }
     
+    function my_wish_list_post(){
+        $userId=  $this->post('userId');
+        $rs=$this->user->get_details_by_id($userId);
+        if(empty($rs)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
+        $allItemArr=$this->order->get_all_item_in_with_list($userId,TRUE);
+        //pre($newAllItemArr);die;
+        $result=array();
+        $result['allItemArr']=$allItemArr;
+        success_response_after_post_get($result);
+    }
+    
 }
     
 ?>
