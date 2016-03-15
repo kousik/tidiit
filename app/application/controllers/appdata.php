@@ -1587,7 +1587,40 @@ class Appdata extends REST_Controller {
         $result['allItemArr']=$allItemArr;
         success_response_after_post_get($result);
     }
-    
+  
+    function remove_from_wish_list_post(){
+        $userId=  $this->post('userId');
+        $wishListId=  $this->post('wishListId');
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        $deviceType = $this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if($userId=="" || $wishListId == "" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken==""){
+            $this->response(array('error' => 'Please provide user index,wish list index,latitude,longitude,device id,device token !'), 400); return FALSE;
+        }
+        
+        $rs=$this->user->get_details_by_id($userId);
+        if(empty($rs)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
+        
+        $wishListDetails=$this->order->get_wishlist_by_id($wishListId,$userId);
+        //pre($wishListDetails);die;
+        if(empty($wishListDetails)){
+            $this->response(array('error' => 'Please provide valid wish list index!'), 400); return FALSE;
+        }
+        
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        if($countryShortName){
+            ///
+        }
+        $this->order->remove_from_wish_list($wishListId,$userId);
+        $result=array();
+        $result['message']="Selected item removed from wish list successfully";
+        success_response_after_post_get($result);
+    }
 }
     
 ?>

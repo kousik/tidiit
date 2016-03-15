@@ -488,8 +488,8 @@ class Order_model extends CI_Model {
         return FALSE;
     }
     
-    function remove_wish_list($userId,$productId,$productPriceId){
-        $this->db->where('productId',$productId)->where('userId',$userId)->where('productPriceId',$productPriceId);
+    function remove_from_wish_list($wishlistId,$userId){
+        $this->db->where('wishlistId',$wishlistId)->where('userId',$userId);
         $this->db->delete($this->_wishlist);
         return TRUE;
     }
@@ -504,6 +504,11 @@ class Order_model extends CI_Model {
             return $this->db->query($sql)->result();
         }
     }
+    
+    function get_wishlist_by_id($wishlistId,$userId){
+        return $this->db->get_where($this->_wishlist,array('wishlistId'=>$wishlistId,'userId'=>$userId))->result_array();
+    }
+    
     
     public function get_incomplete_order_by_user($userId,$orderType=''){
         //$this->db->limit(1);
