@@ -548,19 +548,6 @@ class Shopping extends REST_Controller {
         endif;
     }
     
-    function unset_wishlist_post(){
-        $userId=$this->post('userId');
-        $productId=$this->post('productId');
-        $productPriceId = $this->post('productPriceId');
-        if($this->order->remove_wish_list($userId,$productId,$productPriceId)):
-            $result=array();
-            $result['message']='Selected item remove from wish list successfully.';
-            success_response_after_post_get($result);
-        else:
-            $this->response(array('error' => 'Unknow error to remove the selected item from wishlist.'), 400);
-        endif;
-    }
-    
     /// not used any where for testing only
     function get_order_details_get(){
         $orderId=$this->get('orderId');

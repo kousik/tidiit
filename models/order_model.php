@@ -479,7 +479,7 @@ class Order_model extends CI_Model {
         //$this->db->where('productId',$dataArr['productId'])->where('userId',$dataArr['userId'])->where('productPriceId',$dataArr['productPriceId'])->where('orderType','SINGLE');
         $this->db->where('productId',$dataArr['productId'])->where('userId',$dataArr['userId'])->where('productPriceId',$dataArr['productPriceId']);
         $no=$this->db->from($this->_table)->count_all_results();
-        //echo $this->db->last_query();die;
+        echo $this->db->last_query();die;
         //echo $no;die;
         if($no==0){
             $this->db->insert($this->_wishlist,$dataArr);
