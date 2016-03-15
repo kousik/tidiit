@@ -1194,7 +1194,11 @@ class Appdata extends REST_Controller {
             if($details['nType']=='BUYING-CLUB-ORDER'):
                 $tempArr=  explode('[',$details['nMessage']);
                 $tempArr1= explode(']',$tempArr[1]);
-                $result['clubTitle']=$tempArr1[0];
+                if(count($tempArr1)>0){
+                    $result['clubTitle']=$tempArr1[0];
+                }else{
+                    $result['clubTitle']='';
+                }
             endif;
         }else{
             $result['notications_details']=$details;
