@@ -1193,8 +1193,8 @@ class Appdata extends REST_Controller {
             $result['productPriceId']=  $details['productPriceId'];
             if($details['nType']=='BUYING-CLUB-ORDER'):
                 $tempArr=  explode('[',$details['nMessage']);
-                $tempArr1= explode(']',$tempArr[1]);
-                if(count($tempArr1)>0){
+                if(count($tempArr)>0){
+                    $tempArr1= explode(']',$tempArr[1]);
                     $result['clubTitle']=$tempArr1[0];
                 }else{
                     $result['clubTitle']='';
