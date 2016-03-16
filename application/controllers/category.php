@@ -78,6 +78,7 @@ class Category extends MY_Controller{
         $data['sort'] = 'popular';
         $data['brand'] = array();
         $data['range'] = array(0,100000);
+        $data['query'] = array();
         foreach($_GET as $key => $get):
             if($key == 'sort' && $get):
                 $cond['order_by'] = $get;
@@ -92,6 +93,18 @@ class Category extends MY_Controller{
                 $ranges = explode("|", $get);
                 $cond['range'] = $ranges;
                 $data['range'] = array($ranges[0],$ranges[1]);
+            endif;
+            if($key == 'query' && $get):
+                $queries = explode("|", $get);
+                $cond['query'] = $queries;
+                $data['query'] = $queries;
+            endif;
+            if($key == 'querys' && $get):
+                if(!isset($cond['query'])):
+                    $cond['query'] = [];
+                endif;
+                array_push( $cond['query'], $get);
+                array_push( $data['query'], $get);
             endif;
         endforeach;
 

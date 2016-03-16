@@ -264,7 +264,8 @@ WHERE c.categoryId =".$categoryId;
         $pcatsId = $this->get_children_categories_id($categoryId);
         $pcatsId[] = $categoryId;
         $pcatsId = implode("','", $pcatsId);        
-        $group_by = ' GROUP BY p.productId';   
+        $group_by = ' GROUP BY p.productId';
+        $join_query = "";
         
         $sort = array('featured','isNew','popular','lowestPrice');
         $order_by = 'p.popular';
@@ -304,6 +305,29 @@ WHERE c.categoryId =".$categoryId;
             $heighestPrice = $cond['range'][1];
             $where_str = $where_str.' AND p.lowestPrice >= '.$lowestPrice.' AND p.lowestPrice <= '.$heighestPrice;
         endif;
+
+        if(isset($cond['query']) && $cond['query']):
+            $join_query .= " LEFT JOIN product_option_values AS popvalue ON popvalue.productId = p.productId ";
+            $qdata = [];
+            foreach($cond['query'] as $qry):
+                $exq = explode("@", $qry);
+                $qdata[$exq[0]][] = $exq[1];
+            endforeach;
+
+            $q_string = " ";
+            $qn = count($qdata);
+            $i = 0;
+            foreach($qdata as $qkey => $qopval):
+                $opval = implode("','", $qopval);
+                $q_string .= " popvalue.option_id = '".$qkey."' AND value IN ('".$opval."')";
+                $i++;
+                if($i < $qn):
+                    $q_string .= " OR ";
+                endif;
+            endforeach;
+
+            $where_str = $where_str.' AND ('.$q_string.') ';
+        endif;
         
         $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `c`.`categoryName`, 
             `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage` 
@@ -313,6 +337,7 @@ WHERE c.categoryId =".$categoryId;
             LEFT JOIN product_category AS pc ON pc.productId = p.productId
             LEFT JOIN category AS c ON c.categoryId = pc.categoryId
             LEFT JOIN product_image AS pimage ON pimage.productId = p.productId
+            {$join_query}
             WHERE {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
         $rs = $this->db->query($sql)->result();//echo $this->db->last_query();print_r($rs);
         $products = array();

@@ -165,6 +165,7 @@ class Option_model extends CI_Model{
                     $data[$op->slug]['name'] = $op->display_name;
                     $data[$op->slug]['value'] = explode(",", $op->option_data);
                     $data[$op->slug]['type'] = $op->type;
+                    $data[$op->slug]['id'] = $op->id;
                 endif;
             endforeach;
             return $data;

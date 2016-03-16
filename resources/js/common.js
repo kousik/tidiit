@@ -377,9 +377,23 @@ $(document).ready(function () {
         }
 
         var name = $(this).attr('data-name');
-        queryString.push(name, option);
+        queryString.push('query', option);
         getRefinedPro(1,1);
     });
+
+    $("body").delegate("ul#options select[class='optionsort']", "change", function() {
+        var jqout = $(this);
+        var options = [];
+        options.push(jQuery(this).val());
+
+
+        var option = options.join("|");
+
+
+        queryString.push('querys', option);
+        getRefinedPro(1,1);
+    });
+
     
     $( ".jslider-pointer" ).mouseup( function() {
         var prices = $("input[id='Slider1']").val();
