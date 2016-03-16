@@ -538,26 +538,13 @@ class Shopping extends REST_Controller {
         if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $productId=="" || $productPriceId==""){
             $this->response(array('error' => 'Please provide user index,latitude,longitude,device id,device token,product index,product price index !'), 400); return FALSE;
         }
-        $wishListDataArr=array('userId'=>$userId,'productId'=>$productId,'productPriceId'=>$productPriceId,'latitude'=>$latitude,'longitude'=>$longitude,'deviceType'=>$deviceType);
+        $wishListDataArr=array('userId'=>$userId,'productId'=>$productId,'productPriceId'=>$productPriceId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType);
         if($this->order->add_to_wish_list($wishListDataArr)):
             $result=array();
             $result['message']='Selected item added to wish list successfully.';
             success_response_after_post_get($result);
         else:
-            $this->response(array('error' => 'Unknow error to add the selected item for wishlist.'), 400);
-        endif;
-    }
-    
-    function unset_wishlist_post(){
-        $userId=$this->post('userId');
-        $productId=$this->post('productId');
-        $productPriceId = $this->post('productPriceId');
-        if($this->order->remove_wish_list($userId,$productId,$productPriceId)):
-            $result=array();
-            $result['message']='Selected item remove from wish list successfully.';
-            success_response_after_post_get($result);
-        else:
-            $this->response(array('error' => 'Unknow error to remove the selected item from wishlist.'), 400);
+            $this->response(array('error' => 'The selected item already in your wishlist.'), 400);
         endif;
     }
     
@@ -902,7 +889,7 @@ class Shopping extends REST_Controller {
         $order = $this->order->get_single_order_by_id($orderId);
         $groupDetails = $this->user->get_group_by_id($order->groupId,TRUE);
         $orderInfo=unserialize(base64_decode($order->orderInfo));
-        $order = json_decode(json_encode($this->order->get_single_order_by_id($orderId)), true);
+        $order = json_decode(json_encode($order), true);
         $order['productTitle']=$orderInfo['pdetail']->title;
         $order['qty']=$orderInfo['priceinfo']->qty;
         $order['pimage']=$orderInfo['pimage']->image;
