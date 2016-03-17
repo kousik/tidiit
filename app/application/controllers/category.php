@@ -53,7 +53,15 @@ class Category extends REST_Controller {
     }
     
     function show_option_filter_post(){
+        $cond=[];
         $categoryId=$this->post('categoryId');
-        
+        //15@black&21@android
+        $filterOptions=$this->post('filterOptions');
+        $queries = explode("&", $filterOptions);
+        $cond['query'] = $queries;
+
+
+        $products = $this->category->get_children_categories_products($categoryId, $offset, $limit = $item_per_page, $cond);
+        $total_rows = $this->category->get_children_categories_products($categoryId, 0, false, $cond);
     }
 }
