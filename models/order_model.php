@@ -560,4 +560,15 @@ class Order_model extends CI_Model {
             return FALSE;
         }
     }
+    
+    function buying_club_has_order($groupId){
+        $this->db->where('groupId',$groupId);
+        $no=$this->db->from($this->_table)->count_all_results();
+        if($no>0){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
+    
 }

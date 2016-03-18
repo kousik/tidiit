@@ -63,6 +63,7 @@ class Appdata extends REST_Controller {
             if(count($rs)>0){
                 $this->user->add_login_history(array('userId'=>$rs[0]->userId,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'udid'=>$UDID,'appSource'=>$deviceType));
                 $parram=array('userId'=>$rs[0]->userId,'message'=>'You have logedin successfully');
+                $parram['total_cart_item']=$this->user->get_total_cart_item($rs[0]->userId);
                 success_response_after_post_get($parram);
             }else{$this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;}
         }else{
@@ -1084,11 +1085,21 @@ class Appdata extends REST_Controller {
         if($latitude=="" || $longitude=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
             $this->response(array('error' => 'Please provide latitude,longitude,devive type,device token,UDID.'), 400); return FALSE;
         }
-        if($userId>0):
+        $user=$this->user->get_details_by_id($userId);
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
+        }
+        
+        if($this->user->is_valid_admin_for_group($groupId,$userId)){
+            $this->response(array('error' => 'You are not leader of the selected buuying club,So not allow for delete the selected buying club.'), 400); return FALSE;
+        }        
+        
+        $isBuyingClubHasOrder=$this->order->buying_club_has_order($groupId);
+        if($isBuyingClubHasOrder==FALSE):
             $this->user->group_delete($groupId);
             success_response_after_post_get(array('message'=>'Selected group deleted successfully.'));
         else:    
-            $this->response(array('error' => 'Invalid user id. Please try again!'), 400); return FALSE;
+            $this->response(array('error' => 'Your selected buying lcub already linked with several order.So it is not allow for delete!'), 400); return FALSE;
         endif;
     }
     
@@ -1649,6 +1660,10 @@ class Appdata extends REST_Controller {
         $result=array();
         $result['message']="Selected item removed from wish list successfully";
         success_response_after_post_get($result);
+    }
+    
+    function get_total_item_in_cart(){
+        
     }
 }
     
