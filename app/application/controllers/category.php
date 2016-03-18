@@ -53,15 +53,66 @@ class Category extends REST_Controller {
     }
     
     function show_option_filter_post(){
+        $offset=NULL;
+        $item_per_page=NULL;
         $cond=[];
         $categoryId=$this->post('categoryId');
-        //15@black&21@android
+        //$filterOptions="brand=Samsung|Micromax|Intex&query=12@Handset|12@Warranty Card|12@User Manual|14@1|14@3|15@Gray|15@Black|21@Android|24@8 MP&sort=popular&range=31800|100000";
         $filterOptions=$this->post('filterOptions');
         $queries = explode("&", $filterOptions);
-        $cond['query'] = $queries;
+        foreach($queries AS $k => $v){
+            if(substr($v,0,5)=='sort='){
+                $sortValArr=  explode('=', $v);
+                $cond['order_by']=$sortValArr[1];
+            }else if(substr($v,0,6)=='brand='){
+                $brandValArr=  explode('=', $v);
+                $cond['brand']=  explode('|',$brandValArr[1]);
+            }else if(substr($v,0,6)=='range='){
+                $rangeValArr=  explode('=', $v);
+                $cond['range']=  explode('|',$rangeValArr[1]);
+            }else if(substr($v,0,6)=='query='){
+                $queryValArr=  explode('=', $v);
+                $cond['query']=  explode('|',$queryValArr[1]);
+            }
+        }
 
 
         $products = $this->category->get_children_categories_products($categoryId, $offset, $limit = $item_per_page, $cond);
         $total_rows = $this->category->get_children_categories_products($categoryId, 0, false, $cond);
+        
+        $result=array();
+        $range = array(0,100000);
+        $result['minimum']=$range[0];
+        $result['maximum']=$range[01];
+        
+        $products['brands'] = $total_rows['brands'];
+        $result['products'] = $products;
+        $this->load->model('Option_model','option');
+        $currentCat = $this->category->get_details_by_id($categoryId);
+        $currCat = $currentCat[0];
+        $options = $this->option->get_category_product_option_wedgets($currCat->option_ids);
+        $result['options'] = $options;
+        
+        /// 2n level +category
+        $is_last = $this->category->is_category_last($categoryId);
+        $result['widget_cats'] = $this->category->get_parent_categories($categoryId);
+        if(!$is_last):
+            $result['body_cats'] = $this->category->display_children_categories($categoryId);
+        endif;
+        $result['is_last'] = $is_last;
+        $result['s_widget_cats'] = $result['widget_cats'];
+        
+        success_response_after_post_get($result);
+    }
+    
+    function sho_search_suggestions_post(){
+        $userRequest=$this->post('userRequest');
+    }
+    
+    function show_option_filter_get(){
+        $cond=[];
+        //$categoryId=$this->post('categoryId');
+        
+        
     }
 }
