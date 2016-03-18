@@ -1222,6 +1222,31 @@ class Appdata extends REST_Controller {
         success_response_after_post_get($result);
     }
     
+    function delete_my_notification_post(){
+        $userId=  $this->post('userId');
+        $notificationId=  $this->post('notificationId');
+        if($userId=="" || $notificationId==""){
+            $this->response(array('error' => 'Invalid user index and notification index. Please try again!'), 400); return FALSE;
+        }
+        $rs=$this->user->get_details_by_id($userId);
+        if(empty($rs)){
+            $this->response(array('error' => 'Invalid user id. Please try again!'), 400); return FALSE;
+        }
+        $details=$this->user->notification_single($notificationId,TRUE);
+        //pre($details);die;
+        if(!$details){
+            $this->response(array('error' => 'Invalid notification id. Please try again!'), 400); return FALSE;
+        }
+        
+        if($details[0]['isRead']==1){
+            $this->response(array('error' => 'Please read the notification before delete it'), 400); return FALSE;
+        }
+        $this->user->notification_delete($notificationId);
+        $result=array();
+        $result['message']="Selected notification deleted successfully";
+        success_response_after_post_get($result);
+    }
+    
     function my_order_details_post(){
         $orderId=$this->post('orderId');
         $result=array();
