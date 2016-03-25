@@ -535,5 +535,203 @@ WHERE c.categoryId =".$categoryId;
         endif;
         return $pcats;
     }
+
+    //==========================Start Search Code=========================//
+
+    function get_auto_serch_populet_by_text($term){
+        $a_json = array();
+        $a_json_row = array();
+
+        $parts = explode(' ', $term);
+        $p = count($parts);
+
+
+        $group_by = ' GROUP BY p.productId';
+        $join_query = "";
+        $order_by = ' ORDER BY p.popular';
+        $order_sort = ' ASC';
+        $where_str = 'p.status = 1 ';
+
+        for($i = 0; $i < $p; $i++):
+            if($i == 0):
+                $where_str .= ' AND ';
+            else:
+                $where_str .= ' OR ';
+            endif;
+            $where_str .= ' (b.title LIKE "%'.$parts[$i].'%"';
+            if(is_numeric($parts[$i])):
+                $where_str .= ' OR (p.lowestPrice >= '.$parts[$i].' AND p.lowestPrice <= '.$parts[$i].')';
+            endif;
+            $where_str .= '  OR p.title LIKE "%'.$parts[$i].'%"';
+            $where_str .= '  OR ptag.tag LIKE "%'.$parts[$i].'%"';
+            $where_str .= ' OR (popvalue.value LIKE "%'.$parts[$i].'%" OR popvalue.value LIKE "%'.$parts[$i].'%"))';
+            $where_str .= '  OR c.categoryName LIKE "%'.$parts[$i].'%"';
+            $where_str .= '  OR b.title LIKE "%'.$parts[$i].'%"';
+
+        endfor;
+
+
+        $join_query .= " LEFT JOIN product_option_values AS popvalue ON popvalue.productId = p.productId ";
+        $join_query .= " LEFT JOIN product_tag AS ptag ON ptag.productId = p.productId ";
+        $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `b`.`brandId` AS `bid`, `c`.`categoryName`, `c`.`categoryId` AS `cid`, `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage`
+            FROM `product` AS p
+            LEFT JOIN product_brand AS pb ON p.productId = pb.productId
+            LEFT JOIN brand AS b ON pb.brandId = b.brandId
+            LEFT JOIN product_category AS pc ON pc.productId = p.productId
+            LEFT JOIN category AS c ON c.categoryId = pc.categoryId
+            LEFT JOIN product_image AS pimage ON pimage.productId = p.productId
+            {$join_query}
+            WHERE {$where_str} {$group_by} {$order_by} {$order_sort} ";
+        $rs = $this->db->query($sql)->result(); //echo $this->db->last_query();print_r($rs);
+
+        if($rs):
+            foreach($rs as $key => $product):
+                $a_json_row['id'] =  $product->productId;
+                $a_json_row["value"] = $product->title;
+                $a_json_row["label"] = $product->title;
+                $a_json_row["type"] = "product";
+                array_push($a_json, $a_json_row);
+
+                $a_json_row['id'] =  $product->cid;
+                $a_json_row["value"] = $product->title."+".$product->categoryName;
+                $a_json_row["label"] = $product->title." in this category ".$product->categoryName;
+                $a_json_row["type"] = "category";
+                array_push($a_json, $a_json_row);
+
+                $a_json_row['id'] =  $product->bid;
+                $a_json_row["value"] = $product->title."+".$product->btitle;
+                $a_json_row["label"] = $product->title." in this brand  ".$product->btitle;
+                $a_json_row["type"] = "brand";
+                array_push($a_json, $a_json_row);
+            endforeach;
+        endif;
+
+        return $a_json;
+    }
+
+
+    /**
+     *
+     * @param type $categoryId
+     * @param type $offset
+     * @param type $limit
+     * @param type $cond
+     * @return type
+     */
+    public function get_search_products($offset = null, $limit = null, $cond) {
+
+
+        $group_by = ' GROUP BY p.productId';
+        $join_query = "";
+
+        $sort = array('featured','isNew','popular','lowestPrice');
+        $order_by = 'p.popular';
+        if(isset($cond['order_by']) && $cond['order_by'] && in_array($cond['order_by'], $sort)):
+            $order_by = '  ORDER BY '.$cond['order_by'];
+            unset($cond['order_by']);
+        else:
+            $order_by = '  ORDER BY p.popular';
+        endif;
+
+        $order_sort = ' ASC';
+
+        if(isset($cond['order_sort']) && $cond['order_sort']):
+            $order_sort = ' '.$cond['order_sort'];
+            unset($cond['order_sort']);
+        endif;
+
+        $plimit = '';
+        if($offset >= 0 && $limit):
+            $plimit = ' LIMIT '.$offset.', '.$limit;
+        endif;
+
+        $where_str = 'p.status = 1 ';
+
+        if(( $cond['qtype'] == "category") && $cond['id'] ):
+            $where_str = $where_str." AND c.categoryId = ".$cond['id']."";
+        endif;
+
+        $bd = false;
+        $bdor = 0;
+        $bdquery = "";
+        $bb = "";
+        if(isset($cond['brand']) && $cond['brand']):
+            $brands = implode('","', $cond['brand']);
+            $bdquery = $bdquery.' AND b.title IN ("'.$brands.'")';
+            $bb = $bb.' b.title IN ("'.$brands.'")';
+            $bd = true;
+        endif;
+
+        if(( $cond['qtype'] == "brand") && $cond['id'] ):
+            $opr = "AND";
+            if($bd):
+                $opr = "OR";
+                $bdquery = " AND ( ".$bb." ";
+            endif;
+            $bdquery = $bdquery." ".$opr." b.brandId = ".$cond['id']."";
+            if($bd):
+                $bdquery = $bdquery." ) ";
+            endif;
+        endif;
+
+        $where_str = $where_str.$bdquery;
+
+        if(isset($cond['range']) && $cond['range']):
+            $lowestPrice = $cond['range'][0];
+            $heighestPrice = $cond['range'][1];
+            $where_str = $where_str.' AND p.lowestPrice >= '.$lowestPrice.' AND p.lowestPrice <= '.$heighestPrice;
+        endif;
+        if(( $cond['qtype'] == "product") && $cond['id'] ):
+            $where_str = $where_str." AND p.productId = ".$cond['id']."";
+        endif;
+
+
+        if(isset($cond['terms']) && $cond['terms']):
+            //$where_str = $where_str." ( ";
+            $join_query .= " LEFT JOIN product_option_values AS popvalue ON popvalue.productId = p.productId ";
+            $qdata = [];
+            $parts = $cond['terms'];
+            $p = count($parts);
+            $qstring = "";
+            for($i = 0; $i < $p; $i++):
+                if($i == 0):
+                    $qstring .= ' AND ( ';
+                else:
+                    $qstring .= ' OR ';
+                endif;
+                $qstring .= ' p.title LIKE "%'.$parts[$i].'%"';
+                $qstring .= '  OR c.categoryName LIKE "%'.$parts[$i].'%"';
+                $qstring .= '  OR b.title LIKE "%'.$parts[$i].'%" ';
+                //$qstring .= ' OR (popvalue.value LIKE "%'.$parts[$i].'%" OR popvalue.value LIKE "%'.$parts[$i].'%") ';
+            endfor;
+
+            $where_str = $where_str.$qstring;
+            $where_str = $where_str." ) ";
+        endif;
+
+
+        $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `c`.`categoryName`,
+            `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage`
+            FROM `product` AS p
+            LEFT JOIN product_brand AS pb ON p.productId = pb.productId
+            LEFT JOIN brand AS b ON pb.brandId = b.brandId
+            LEFT JOIN product_category AS pc ON pc.productId = p.productId
+            LEFT JOIN category AS c ON c.categoryId = pc.categoryId
+            LEFT JOIN product_image AS pimage ON pimage.productId = p.productId
+            {$join_query}
+            WHERE {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
+        $rs = $this->db->query($sql)->result();//echo $this->db->last_query();print_r($rs);
+        $products = array();
+        $brands = array();
+        if($rs):
+            foreach($rs as $key => $product):
+                $products['products'][] =  $product;
+                $brands[$product->btitle] = $product->btitle;
+            endforeach;
+        endif;
+        $products['brands'] = $brands;
+        return $products;
+    }
+
 }
 ?>
