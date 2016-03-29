@@ -115,4 +115,33 @@ class Category extends REST_Controller {
         
         
     }
+    
+    
+    function show_sugestion_post(){
+        $term=$this->post('textForSearch');
+        //$term = $_GET['term'];
+        $a_json_invalid = array(array("id" => "#", "value" => $term, "label" => "Only letters and digits are permitted..."));
+        $json_invalid = json_encode($a_json_invalid);
+        // replace multiple spaces with one
+        $term = preg_replace('/\s+/', ' ', $term);
+        // SECURITY HOLE ***************************************************************
+        // allow space, any unicode letter and digit, underscore and dash
+        if(preg_match("/[^\040\pL\pN_-]/u", $term)) {
+            print $json_invalid;
+            exit;
+        }
+        $this->load->model('Category_model','category');
+        $a_json = $this->category->get_auto_serch_populet_by_text($term);
+        $parts = explode(' ', $term);
+        $a_json = $this->apply_highlight($a_json, $parts);
+        success_response_after_post_get($a_json);
+    }
+    
+    function final_search_data_post(){
+        $searchText=$this->post('searchText');
+        $searchTextType=$this->post('searchTextType');
+        $searchTextTypeId=$this->post('searchTextTypeId');
+        
+    }
+    
 }
