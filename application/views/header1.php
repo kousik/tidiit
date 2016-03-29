@@ -22,8 +22,12 @@
                                 </div>
                                 <div class="col-md-3 col-sm-3 search padng_right_none">
                                     <div class="inner">
-                                        <div class="button-search"><i class="search_icn"></i></div>
-                                        <input type="search" name="search" placeholder="Search" value="">
+                                        <form name="site-search" class="js-site-search" action="<?php echo BASE_URL;?>search/" method="get">
+                                        <div class="button-search js-click-search"><i class="search_icn"></i></div>
+                                        <input type="search" id="topic_title" data-query="" name="s" placeholder="Search" value="<?=isset($_GET['s'])?$_GET['s']:""?>">
+                                            <input type="hidden" name="q" class="js-s-q" value="<?=isset($_GET['q'])?$_GET['q']:""?>">
+                                            <input type="hidden" name="id" class="js-s-id" value="<?=isset($_GET['id'])?$_GET['id']:""?>">
+                                        </form>
                                     </div>
                                 </div>
                                 <div class="col-md-5 col-sm-5 padng_left_none">

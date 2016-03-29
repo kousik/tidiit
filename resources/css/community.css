@@ -31,3 +31,54 @@ p.box, div.box {margin:1em 0 1.5em 0; padding:9px 10px 9px 50px; border-width:1p
 .box.normal-amber{ border-color:#efe3ae; background:#fef6d2; padding:9px 15px; }
 .box.normal-green{ border-color:#d4ebaf; background:#edfcd5; padding:9px 15px;  }
 
+/* highlight results */
+.ui-autocomplete span.hl_results {
+    background-color: #ffff66;
+}
+
+/* loading - the AJAX indicator */
+.ui-autocomplete-loading {
+    background: white url(../images/ui-anim_basic_16x16.gif) right center no-repeat;
+}
+
+/* scroll results */
+.ui-autocomplete {
+    max-height: 250px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+    /* add padding for vertical scrollbar */
+    padding-right: 5px;
+}
+
+.ui-autocomplete li {
+    font-size: 12px;
+}
+
+/* IE 6 doesn't support max-height
+* we use height instead, but this forces the menu to always be this tall
+*/
+* html .ui-autocomplete {
+    height: 250px;
+    width: 320px;
+}
+
+.ui-menu .ui-menu-item a {
+    color: #888;
+}
+.ui-menu .ui-menu-item:hover {
+    display: block;
+    text-decoration: none;
+    color: #3D3D3D;
+    cursor: pointer;
+    background-color: lightgray;
+    background-image: none;
+    border: 1px solid lightgray;
+}
+.ui-widget-content .ui-state-hover, .ui-widget-content .ui-state-focus {
+    border: 1px solid lightgray;
+    background-image: none;
+    background-color: lightgray;
+    font-weight: normal;
+    color: #3D3D3D;
+}

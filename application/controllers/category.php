@@ -348,4 +348,122 @@ class Category extends MY_Controller{
 
         $this->load->view('brand_product_listings',$data);
     }
+
+    function display_search_products(){
+        //echo $_SERVER['SERVER_ADDR'];print_r($_GET);die;
+        $SEODataArr=array();
+        if($this->is_loged_in()):
+            $data=$this->_get_logedin_template($SEODataArr);
+        else:
+            $data=$this->_get_tobe_login_template($SEODataArr);
+        endif;
+
+        if(!isset($_GET['s']) || !$_GET['s']):
+            $this->session->set_flashdata('error', 'Invalid search keyword. Please try again with proper text!');
+            redirect(BASE_URL.'products/ord-message');
+        endif;
+
+
+
+        $cond = array();
+        $data['sort'] = 'popular';
+        $data['brand'] = array();
+        $data['range'] = array(0,100000);
+        $data['query'] = array();
+        foreach($_GET as $key => $get):
+            if($key == 'sort' && $get):
+                $cond['order_by'] = $get;
+                $data['sort'] = $get;
+            endif;
+            if($key == 'brand' && $get):
+                $brands = explode("|", $get);
+                $cond['brand'] = $brands;
+                $data['brand'] = $brands;
+            endif;
+            if($key == 'range' && $get):
+                $ranges = explode("|", $get);
+                $cond['range'] = $ranges;
+                $data['range'] = array($ranges[0],$ranges[1]);
+            endif;
+            if($key == 'query' && $get):
+                $queries = explode("|", $get);
+                $cond['query'] = $queries;
+                $data['query'] = $queries;
+            endif;
+            if($key == 's' && $get):
+                $cond['terms'] = explode("+", $get);
+            endif;
+            if($key == 'q' && $get):
+                $cond['qtype'] = $get;
+            endif;
+            if($key == 'id' && $get):
+                $cond['id'] = $get;
+            endif;
+        endforeach;
+        $data['brand'] = [];
+        if(isset($cond['qtype']) && $cond['qtype'] == "brand"):
+            if(isset($cond['id']) && $cond['id']):
+                $brandDetails = $this->Brand_model->details($cond['id']);
+                $brands = explode("|", $brandDetails[0]->title);
+                $data['brand'] = $brands;
+            endif;
+        endif;
+
+
+        $item_per_page = 8;
+
+        if(isset($_GET['page']) && $_GET['page']):
+            $offset = ($_GET['page'] * $item_per_page);
+        else:
+            $offset = 0;
+        endif;
+
+        if(isset($_GET['cls']) && $_GET['cls']):
+            $offset = 0;
+        else:
+            $offset = $offset;
+        endif;
+
+        $products = $this->Category_model->get_search_products($offset, $limit = $item_per_page, $cond);
+        $total_rows = $this->Category_model->get_search_products(0, false, $cond);
+        $tr = (isset($total_rows['products'])?$total_rows['products']:false);
+        $totalrows = (!empty($tr)?count($tr):0);
+        $total_pages = ceil($totalrows/$item_per_page);
+        $data['total_pages'] = $total_pages;
+
+
+
+        $brnds = $this->Brand_model->get_all();
+        $brand = [];
+        foreach($brnds as $bkey => $bdata):
+            $brand[] = $bdata->title;
+        endforeach;
+
+        $products['brands'] = $brand;
+        $data['products'] = $products;
+
+        if($total_pages <= $item_per_page):
+            $data['show_loads'] = true;
+        else:
+            $data['show_loads'] = false;
+        endif;
+        if(isset($_GET['stype']) && $_GET['stype'] == "ajax"):
+            if(isset($_GET['cls']) && $_GET['cls']):
+                $data['cls'] = 1;
+            else:
+                $data['cls'] = 0;
+            endif;
+            unset($data['header']);
+            $brnd = isset($_GET['brand'])?explode("|", $_GET['brand']):array();
+            $brand = array_merge($data['brand'],$brnd);
+            $data['products'] = $this->create_product_view($products);
+            $data['brands'] = $this->display_brands_view($brand, $brnd);
+            echo json_encode($data);die;
+        endif;
+
+        $data['feedback']=$this->load->view('feedback',$data,TRUE);
+        $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
+
+        $this->load->view('search_products_listing',$data);
+    }
 }

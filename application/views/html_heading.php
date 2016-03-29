@@ -57,6 +57,7 @@
             myJsMain.CaptchaCookeName='<?php echo $this->config->item('CAPTCHA_COOKIE_NAME');?>';     
         //]]>
         manualClick=false;
+            var searchurl = '<?php echo BASE_URL;?>';
         </script>
         <!-- General JS fiies start here
         <script src="<?php //echo SiteJSURL;?>1.11.2_jquery.min.js"></script> -->
@@ -79,4 +80,5 @@
         <script src="<?php echo SiteJSURL;?>common.js"></script>
         <script src="<?php echo SiteJSURL;?>forgot-password-login-registration.js"></script>
         <script src="<?php echo SiteJSURL;?>form.js"></script>
+        <script src="<?php echo SiteJSURL;?>jquery.ui.autocomplete.html.js"></script>
     </head>
