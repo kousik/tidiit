@@ -4224,3 +4224,60 @@ button.checkbox-close {
   height: 128px;
   width: 128px;
 }
+
+/* ------------  */
+/* line 2723, ../sass/custom_new.scss */
+.t-product-carousel-row {
+  margin-left: -5px;
+  margin-right: -5px;
+}
+/* line 2727, ../sass/custom_new.scss */
+.t-product-carousel-row .prodct_box {
+  margin: 0 5px 30px;
+  overflow: hidden;
+}
+/* line 2731, ../sass/custom_new.scss */
+.t-product-carousel-row .prodct_box a h4 {
+  font-size: 13px;
+  letter-spacing: 0.2px;
+  left: -46px;
+  top: 20px;
+}
+
+/* line 2741, ../sass/custom_new.scss */
+.brand_zne .item a {
+  height: 100px;
+}
+/* line 2744, ../sass/custom_new.scss */
+.brand_zne .item a img {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+/* line 2756, ../sass/custom_new.scss */
+.brand_zne .prev {
+  left: -30px;
+}
+/* line 2759, ../sass/custom_new.scss */
+.brand_zne .next {
+  right: -30px;
+}
+
+/* line 2766, ../sass/custom_new.scss */
+.t-login-bottom-action .checkbox,
+.t-login-bottom-action .forgot {
+  margin: 0;
+}
+
+/* line 2771, ../sass/custom_new.scss */
+label.error {
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: .5px;
+}

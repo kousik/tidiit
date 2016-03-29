@@ -135,7 +135,7 @@
                             <form class="contact_form" action="#" method="post" name="tidiit_user_login_form" id="tidiit_user_login_form">
                                 <h1>Login Into Your Account</h1>
 
-                                <div class="form-group has-error">
+                                <div class="form-group">
                                     <div class="input-group col-md-8"> 
                                         <input id="userName" name="userName" type="text" placeholder="user@tidiit.com" class="form-control email" required >
                                         <span class="input-group-addon"><i class="fa fa-user"></i></span>
@@ -143,7 +143,7 @@
                                     <label id="userName-error" class="error" for="userName"></label>
                                 </div>
 
-                                <div class="form-group has-error">
+                                <div class="form-group">
                                     <div class="input-group  col-md-8"> 
                                         <input id="loginPassword" name="loginPassword" type="password" placeholder="password" class="form-control" required >
                                         <span class="input-group-addon"><i class="fa fa-lock"></i></span>
@@ -153,7 +153,7 @@
                                 <input type="hidden" name="webIdLogin" id="webIdLogin" value="">
 
                                 <div class="clear"></div>
-                                <div class="row rem">
+                                <div class="row rem t-login-bottom-action">
                                     <div class="col-sm-5">	
                                         <div class="checkbox">
                                             <label class="checkbox">
@@ -179,7 +179,7 @@
                         <div id="forgot_form" style="display:none;">
                             <form class="contact_form" action="#" method="post" name="tidiit_user_forgot_form" id="tidiit_user_forgot_form">
                                 <h1>Forgot Password</h1>
-                                <div class="form-group has-error">
+                                <div class="form-group">
                                     <div class="input-group col-md-8"> 
                                         <input id="userForgotPasswordEmail" name="userForgotPasswordEmail" type="email" placeholder="user@tidiit.com" class="form-control email" required >
                                         <span class="input-group-addon"><i class="fa fa-user"></i></span>
@@ -202,35 +202,35 @@
                             <form class="contact_form" action="#" method="post" name="tidiit_user_register_form" id="tidiit_user_register_form" novalidate="novalidate">
                                 <h1>Signup for New Account</h1>
                                 <ul>
-                                    <div class="form-group has-error">
+                                    <div class="form-group">
                                         <div class="input-group col-md-8"> 
                                             <input id="firstName" name="firstName" type="text" placeholder="Enter First Name" class="form-control" required >
                                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
                                         </div>
                                         <label id="firstName-error" class="error" for="firstName"></label>
                                     </div>
-                                    <div class="form-group has-error">
+                                    <div class="form-group">
                                         <div class="input-group col-md-8"> 
                                             <input id="lastName" name="lastName" type="text" placeholder="Enter Last Name" class="form-control" required >
                                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
                                         </div>
                                         <label id="lastName-error" class="error" for="lastName"></label>
                                     </div>
-                                    <div class="form-group has-error">
+                                    <div class="form-group">
                                         <div class="input-group col-md-8"> 
                                             <input id="email" name="email" type="email" placeholder="Enter email as username" class="form-control" required >
                                             <span class="input-group-addon"><i class="fa fa-user"></i></span>
                                         </div>
                                         <label id="email-error" class="error" for="email"></label>
                                     </div>
-                                    <div class="form-group has-error">
+                                    <div class="form-group">
                                         <div class="input-group col-md-8"> 
                                             <input id="password" name="password" type="password" placeholder="Enter Password" class="form-control" required >
                                             <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                                            <label id="password-error" class="error" for="password"></label>
                                         </div>
+                                        <label id="password-error" class="error" for="password"></label>
                                     </div>
-                                    <div class="form-group has-error">
+                                    <div class="form-group">
                                         <div class="input-group col-md-8"> 
                                             <input id="confirmPassword" name="confirmPassword" type="password" placeholder="Enter Confirm Password" class="form-control" required >
                                             <span class="input-group-addon"><i class="fa fa-lock"></i></span>
@@ -245,7 +245,7 @@
                                          </li>-->
                                     <input type="hidden" name="webIdRegistration" id="webIdRegistration" value="">
 
-                                    <input type="submit" name="SignIn" id="SignIn" value="Sign In" class="btn btn-default col-md-8"/>	
+                                    <input type="submit" name="SignIn" id="SignIn" value="Sign In" class="btn btn-default col-md-8" />	
                                     <div class="clear"></div>	
 
                                     <div class="clear"></div>	

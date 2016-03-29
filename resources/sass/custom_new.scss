@@ -2717,3 +2717,59 @@ button.checkbox-close {
     height: 128px;
     width: 128px;
 }
+
+/* ------------  */
+
+.t-product-carousel-row {
+    margin-left: -5px;
+    margin-right: -5px;
+
+    .prodct_box {
+        margin: 0 5px 30px;
+        overflow: hidden;
+
+        a h4 {
+            font-size: 13px;
+            letter-spacing: 0.2px;
+            left: -46px;
+            top: 20px;
+        }
+    }
+}
+
+.brand_zne {
+    .item a {
+        height: 100px;
+
+        img {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            width: auto;
+            max-width: 100%;
+            max-height: 100%;
+        }
+    } 
+    .prev {
+        left: -30px;
+    }
+    .next {
+        right: -30px;
+    }
+}
+
+.t-login-bottom-action {
+    .checkbox,
+    .forgot {
+        margin: 0;
+    }
+}
+
+label.error {
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: .5px;
+}
