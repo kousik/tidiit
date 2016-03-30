@@ -111,12 +111,12 @@
     <div class="container">
         <div class="bst_sllng">
             <h2>Best Selling Item</h2>
-            <div class="row">
+            <div class="row t-product-carousel-row">
                 <div id="demo">
                     <div id="owl-demo" class="owl-carousel">
                         <?php foreach($bestSelllingItem AS $k){ //pre($k);die;?>
                         <div class="item">
-                            <div class="prodct_box" <?php if($k->qty<$k->minQty){ echo 'style="margin:0 !important;margin-bottom:30px !important;"';}?>>
+                            <div class="prodct_box">
                                 <?php if($k->qty<$k->minQty):?>
                                 <a href="javascript:void(0);">
                                 <?php else :?>
@@ -158,12 +158,12 @@
 
         <div class="bst_sllng">
             <h2>New Arrivals</h2>
-            <div class="row">
+            <div class="row t-product-carousel-row">
                 <div id="demo">
                     <div id="owl-demo1" class="owl-carousel">
                         <?php foreach($bestSelllingItem AS $k){ //pre($k);die;?>
                         <div class="item">
-                            <div class="prodct_box" <?php if($k->qty<$k->minQty){ echo 'style="margin:0 !important;margin-bottom:30px !important;"';}?>>
+                            <div class="prodct_box">
                                 <?php if($k->qty<$k->minQty):?>
                                 <a href="javascript:void(0);">
                                 <?php else :?>
@@ -204,12 +204,12 @@
 
         <div class="bst_sllng">
             <h2>Featured Products</h2>
-            <div class="row">
+            <div class="row t-product-carousel-row">
                 <div id="demo">
                     <div id="owl-demo2" class="owl-carousel">
                         <?php foreach($bestSelllingItem AS $k){ //pre($k);die;?>
                         <div class="item">
-                            <div class="prodct_box" <?php if($k->qty<$k->minQty){ echo 'style="margin:0 !important;margin-bottom:30px !important;"';}?>>
+                            <div class="prodct_box">
                                 <?php if($k->qty<$k->minQty):?>
                                 <a href="javascript:void(0);">
                                 <?php else :?>
