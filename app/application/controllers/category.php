@@ -11,6 +11,7 @@ class Category extends REST_Controller {
         $this->load->model('Product_model','product');
         $this->load->model('Category_model','category');
         $this->load->model('Order_model','order');
+        $this->load->model('Brand_model','brand');
         $this->load->model('Country');
     }
     /**
@@ -105,20 +106,8 @@ class Category extends REST_Controller {
         success_response_after_post_get($result);
     }
     
-    function sho_search_suggestions_post(){
-        $userRequest=$this->post('userRequest');
-    }
-    
-    function show_option_filter_get(){
-        $cond=[];
-        //$categoryId=$this->post('categoryId');
-        
-        
-    }
-    
-    
-    function show_sugestion_post(){
-        $term=$this->post('textForSearch');
+    function show_sugestion_get(){
+        $term=$this->get('textForSearch');
         //$term = $_GET['term'];
         $a_json_invalid = array(array("id" => "#", "value" => $term, "label" => "Only letters and digits are permitted..."));
         $json_invalid = json_encode($a_json_invalid);
@@ -130,7 +119,7 @@ class Category extends REST_Controller {
             print $json_invalid;
             exit;
         }
-        $this->load->model('Category_model','category');
+        $this->load->model('category','category');
         $a_json = $this->category->get_auto_serch_populet_by_text($term);
         $parts = explode(' ', $term);
         $a_json = $this->apply_highlight($a_json, $parts);
@@ -141,7 +130,112 @@ class Category extends REST_Controller {
         $searchText=$this->post('searchText');
         $searchTextType=$this->post('searchTextType');
         $searchTextTypeId=$this->post('searchTextTypeId');
+        $userId=$this->post('userId');
         
+        if($searchText==""):
+            $this->response(array('error' => 'Invalid search keyword. Please try again with proper text!'), 400); return FALSE;
+        endif;
+
+
+
+        $cond = array();
+        $data['sort'] = 'popular';
+        $data['brand'] = array();
+        $data['range'] = array(0,100000);
+        $data['query'] = array();
+        foreach($_GET as $key => $get):
+            /*if($key == 'sort' && $get):
+                $cond['order_by'] = $get;
+                $data['sort'] = $get;
+            endif;
+            if($key == 'brand' && $get):
+                $brands = explode("|", $get);
+                $cond['brand'] = $brands;
+                $data['brand'] = $brands;
+            endif;
+            if($key == 'range' && $get):
+                $ranges = explode("|", $get);
+                $cond['range'] = $ranges;
+                $data['range'] = array($ranges[0],$ranges[1]);
+            endif;
+            if($key == 'query' && $get):
+                $queries = explode("|", $get);
+                $cond['query'] = $queries;
+                $data['query'] = $queries;
+            endif;*/
+            if($key == 's' && $get):
+                $cond['terms'] = explode("+", $searchText);
+            endif;
+            if($key == 'q' && $get):
+                $cond['qtype'] = $searchTextType;
+            endif;
+            if($key == 'id' && $get):
+                $cond['id'] = $searchTextTypeId;
+            endif;
+        endforeach;
+        $data['brand'] = [];
+        if(isset($cond['qtype']) && $cond['qtype'] == "brand"):
+            if(isset($cond['id']) && $cond['id']):
+                $brandDetails = $this->brand->details($cond['id']);
+                $brands = explode("|", $brandDetails[0]->title);
+                $data['brand'] = $brands;
+            endif;
+        endif;
+
+
+        $item_per_page = 8;
+
+        /*if(isset($_GET['page']) && $_GET['page']):
+            $offset = ($_GET['page'] * $item_per_page);
+        else:
+            $offset = 0;
+        endif;*/
+        $offset = 0;
+        /*if(isset($_GET['cls']) && $_GET['cls']):
+            $offset = 0;
+        else:
+            $offset = $offset;
+        endif;*/
+
+        $products = $this->category->get_search_products($offset, $limit = $item_per_page, $cond);
+        $total_rows = $this->category->get_search_products(0, false, $cond);
+        $tr = (isset($total_rows['products'])?$total_rows['products']:false);
+        $totalrows = (!empty($tr)?count($tr):0);
+        $total_pages = ceil($totalrows/$item_per_page);
+        $data['total_pages'] = $total_pages;
+
+
+
+        $brnds = $this->brand->get_all();
+        $brand = [];
+        foreach($brnds as $bkey => $bdata):
+            $brand[] = $bdata->title;
+        endforeach;
+
+        $products['brands'] = $brand;
+        $data['products'] = $products;
+
+        if($total_pages <= $item_per_page):
+            $data['show_loads'] = true;
+        else:
+            $data['show_loads'] = false;
+        endif;
+        
+        /*if(isset($_GET['stype']) && $_GET['stype'] == "ajax"):
+            if(isset($_GET['cls']) && $_GET['cls']):
+                $data['cls'] = 1;
+            else:
+                $data['cls'] = 0;
+            endif;
+            unset($data['header']);
+            $brnd = isset($_GET['brand'])?explode("|", $_GET['brand']):array();
+            $brand = array_merge($data['brand'],$brnd);
+            $data['products'] = $this->create_product_view($products);
+            $data['brands'] = $this->display_brands_view($brand, $brnd);
+            echo json_encode($data);die;
+        endif;*/
+        
+        success_response_after_post_get($data);
     }
     
 }
