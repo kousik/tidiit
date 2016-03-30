@@ -123,7 +123,9 @@ class Category extends REST_Controller {
         $a_json = $this->category->get_auto_serch_populet_by_text($term);
         $parts = explode(' ', $term);
         $a_json = $this->apply_highlight($a_json, $parts);
-        success_response_after_post_get($a_json);
+        $data['suggestion']=$a_json;
+        //pre($data);die;
+        success_response_after_post_get($data);
     }
     
     /**
