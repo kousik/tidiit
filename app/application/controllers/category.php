@@ -241,9 +241,12 @@ class Category extends REST_Controller {
 
 
         $cond = array();
+        $data['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
         $data['sort'] = 'popular';
         $data['brand'] = array();
-        $data['range'] = array(0,100000);
+        $range=array(0,100000);
+        $data['minimum']=$range[0];
+        $data['maximum']=$range[01];
         $data['query'] = array();
         foreach($_GET as $key => $get):
             /*if($key == 'sort' && $get):
