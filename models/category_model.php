@@ -626,19 +626,25 @@ WHERE c.categoryId =".$categoryId;
 
         $sort = array('featured','isNew','popular','lowestPrice');
         $order_by = 'p.popular';
-        if(isset($cond['order_by']) && $cond['order_by'] && in_array($cond['order_by'], $sort)):
-            $order_by = '  ORDER BY '.$cond['order_by'];
-            unset($cond['order_by']);
-        else:
+        if(array_key_exists('order_by', $cond)){
+            if(isset($cond['order_by']) && $cond['order_by'] && in_array($cond['order_by'], $sort)):
+                $order_by = '  ORDER BY '.$cond['order_by'];
+                unset($cond['order_by']);
+            else:
+                $order_by = '  ORDER BY p.popular';
+            endif;
+        }else{
             $order_by = '  ORDER BY p.popular';
-        endif;
+        }
 
         $order_sort = ' ASC';
-
-        if(isset($cond['order_sort']) && $cond['order_sort']):
-            $order_sort = ' '.$cond['order_sort'];
-            unset($cond['order_sort']);
-        endif;
+        if(array_key_exists('order_sort', $cond)){
+            if(isset($cond['order_sort']) && $cond['order_sort']):
+                $order_sort = ' '.$cond['order_sort'];
+                unset($cond['order_sort']);
+            endif;
+        }
+        
 
         $plimit = '';
         if($offset >= 0 && $limit):
@@ -646,70 +652,83 @@ WHERE c.categoryId =".$categoryId;
         endif;
 
         $where_str = 'p.status = 1 ';
-
-        if(( $cond['qtype'] == "category") && $cond['id'] ):
-            $where_str = $where_str." AND c.categoryId = ".$cond['id']."";
-        endif;
+        if(array_key_exists('qtype', $cond) && array_key_exists('id', $cond)){
+            if(( $cond['qtype'] == "category") && $cond['id'] ):
+                $where_str = $where_str." AND c.categoryId = ".$cond['id']."";
+            endif;
+        }
+        
 
         $bd = false;
         $bdor = 0;
         $bdquery = "";
         $bb = "";
-        if(isset($cond['brand']) && $cond['brand']):
-            $brands = implode('","', $cond['brand']);
-            $bdquery = $bdquery.' AND b.title IN ("'.$brands.'")';
-            $bb = $bb.' b.title IN ("'.$brands.'")';
-            $bd = true;
-        endif;
-
-        if(( $cond['qtype'] == "brand") && $cond['id'] ):
-            $opr = "AND";
-            if($bd):
-                $opr = "OR";
-                $bdquery = " AND ( ".$bb." ";
+        
+        if(array_key_exists('brand', $cond)){
+            if(isset($cond['brand']) && $cond['brand']):
+                $brands = implode('","', $cond['brand']);
+                $bdquery = $bdquery.' AND b.title IN ("'.$brands.'")';
+                $bb = $bb.' b.title IN ("'.$brands.'")';
+                $bd = true;
             endif;
-            $bdquery = $bdquery." ".$opr." b.brandId = ".$cond['id']."";
-            if($bd):
-                $bdquery = $bdquery." ) ";
+        }
+        
+        if(array_key_exists('qtype', $cond) && array_key_exists('id', $cond)){
+            if(( $cond['qtype'] == "brand") && $cond['id'] ):
+                $opr = "AND";
+                if($bd):
+                    $opr = "OR";
+                    $bdquery = " AND ( ".$bb." ";
+                endif;
+                $bdquery = $bdquery." ".$opr." b.brandId = ".$cond['id']."";
+                if($bd):
+                    $bdquery = $bdquery." ) ";
+                endif;
             endif;
-        endif;
+        }
+        
 
         $where_str = $where_str.$bdquery;
+        if(array_key_exists('range', $cond)){
+            if(isset($cond['range']) && $cond['range']):
+                $lowestPrice = $cond['range'][0];
+                $heighestPrice = $cond['range'][1];
+                $where_str = $where_str.' AND p.lowestPrice >= '.$lowestPrice.' AND p.lowestPrice <= '.$heighestPrice;
+            endif;
+        }
+        
+        if(array_key_exists('qtype', $cond) && array_key_exists('id', $cond)){
+            if(( $cond['qtype'] == "product") && $cond['id'] ):
+                $where_str = $where_str." AND p.productId = ".$cond['id']."";
+            endif;
+        }
+        
 
-        if(isset($cond['range']) && $cond['range']):
-            $lowestPrice = $cond['range'][0];
-            $heighestPrice = $cond['range'][1];
-            $where_str = $where_str.' AND p.lowestPrice >= '.$lowestPrice.' AND p.lowestPrice <= '.$heighestPrice;
-        endif;
-        if(( $cond['qtype'] == "product") && $cond['id'] ):
-            $where_str = $where_str." AND p.productId = ".$cond['id']."";
-        endif;
+        if(array_key_exists('range', $cond)){
+            if(isset($cond['terms']) && $cond['terms']):
+                //$where_str = $where_str." ( ";
+                $join_query .= " LEFT JOIN product_option_values AS popvalue ON popvalue.productId = p.productId ";
+                $qdata = [];
+                $parts = $cond['terms'];
+                $p = count($parts);
+                $qstring = "";
+                for($i = 0; $i < $p; $i++):
+                    if($i == 0):
+                        $qstring .= ' AND ( ';
+                    else:
+                        $qstring .= ' OR ';
+                    endif;
+                    $qstring .= ' p.title LIKE "%'.$parts[$i].'%"';
+                    $qstring .= '  OR c.categoryName LIKE "%'.$parts[$i].'%"';
+                    $qstring .= '  OR b.title LIKE "%'.$parts[$i].'%" ';
+                    //$qstring .= ' OR (popvalue.value LIKE "%'.$parts[$i].'%" OR popvalue.value LIKE "%'.$parts[$i].'%") ';
+                endfor;
 
-
-        if(isset($cond['terms']) && $cond['terms']):
-            //$where_str = $where_str." ( ";
-            $join_query .= " LEFT JOIN product_option_values AS popvalue ON popvalue.productId = p.productId ";
-            $qdata = [];
-            $parts = $cond['terms'];
-            $p = count($parts);
-            $qstring = "";
-            for($i = 0; $i < $p; $i++):
-                if($i == 0):
-                    $qstring .= ' AND ( ';
-                else:
-                    $qstring .= ' OR ';
-                endif;
-                $qstring .= ' p.title LIKE "%'.$parts[$i].'%"';
-                $qstring .= '  OR c.categoryName LIKE "%'.$parts[$i].'%"';
-                $qstring .= '  OR b.title LIKE "%'.$parts[$i].'%" ';
-                //$qstring .= ' OR (popvalue.value LIKE "%'.$parts[$i].'%" OR popvalue.value LIKE "%'.$parts[$i].'%") ';
-            endfor;
-
-            $where_str = $where_str.$qstring;
-            $where_str = $where_str." ) ";
-        endif;
-
-
+                $where_str = $where_str.$qstring;
+                $where_str = $where_str." ) ";
+            endif;
+        }
+        
         $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `c`.`categoryName`,
             `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage`
             FROM `product` AS p
