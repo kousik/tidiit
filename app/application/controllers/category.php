@@ -83,8 +83,8 @@ class Category extends REST_Controller {
         
         $result=array();
         $range = array(0,100000);
-        $result['minimum']=$range[0];
-        $result['maximum']=$range[01];
+        $result['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
+        $result['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
         
         $products['brands'] = $total_rows['brands'];
         $result['products'] = $products;
