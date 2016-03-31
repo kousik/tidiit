@@ -21,8 +21,7 @@ class Category extends REST_Controller {
         $categoryId=  $this->post('categoryId');
         $result=array();
         $range = array(0,100000);
-        $result['minimum']=$range[0];
-        $result['maximum']=$range[01];
+        $result['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
         
         $offset=NULL;
         $item_per_page=NULL;
