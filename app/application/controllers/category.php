@@ -22,6 +22,7 @@ class Category extends REST_Controller {
         $result=array();
         $range = array(0,100000);
         $result['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
+        $result['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
         
         $offset=NULL;
         $item_per_page=NULL;
@@ -341,5 +342,6 @@ class Category extends REST_Controller {
         
         success_response_after_post_get($data);
     }
+    
     
 }
