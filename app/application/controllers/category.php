@@ -288,14 +288,14 @@ class Category extends REST_Controller {
         endif;
 
 
-        $item_per_page = 8;
-
+        $offset=NULL;
+        $item_per_page=NULL;
+        
         /*if(isset($_GET['page']) && $_GET['page']):
             $offset = ($_GET['page'] * $item_per_page);
         else:
             $offset = 0;
         endif;*/
-        $offset = 0;
         /*if(isset($_GET['cls']) && $_GET['cls']):
             $offset = 0;
         else:
@@ -343,5 +343,51 @@ class Category extends REST_Controller {
         success_response_after_post_get($data);
     }
     
-    
+ 
+    function get_product_by_brand_post(){
+        $brandId=$this->post('brandId');
+        $userId=$this->post('userId');
+        $UDID=$this->post('UDID');
+        $deviceType=$this->post('deviceType');
+        $deviceToken=$this->post('deviceToken');
+        $latitude=$this->post('latitude');
+        $longitude=$this->post('longitude');
+        
+        $brandDetails = $this->brand->details($brandId);
+        
+        if(!$brandDetails):
+            $this->response(array('error' => 'Invalid location. Please click proper link!'), 400); return FALSE;
+        endif;
+        $brandDetails = $brandDetails[0];
+        
+        $data['branddetails'] = $brandDetails;
+        $cond = array();
+        $cond['brand'] = [$brandDetails->title];
+        $data['sort'] = 'popular';
+        $data['brand'] = array();
+        $data['range'] = array(0,100000);
+        
+        $offset=NULL;
+        $item_per_page=NULL;
+        
+        $products = $this->category->get_brand_products($brandId, $offset, $limit = $item_per_page, $cond);
+        $total_rows = $this->category->get_brand_products($brandId, 0, false, $cond);
+        $tr = (isset($total_rows['products'])?$total_rows['products']:false);
+        $totalrows = (!empty($tr)?count($tr):0);
+        $total_pages = ceil($totalrows/$item_per_page);
+        $data['total_pages'] = $total_pages;
+        //$products['brands'] = $total_rows['brands'];
+
+
+        $brnds = $this->brand->get_all();
+        $brand = [];
+        foreach($brnds as $bkey => $bdata):
+            $brand[] = $bdata->title;
+        endforeach;
+
+        $products['brands'] = $brand;
+        $data['products'] = $products;
+        
+        success_response_after_post_get($data);
+    }
 }
