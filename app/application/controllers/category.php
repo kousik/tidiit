@@ -33,7 +33,11 @@ class Category extends REST_Controller {
         //$totalrows = (!empty($tr)?count($tr):0);
         //$total_pages = ceil($totalrows/$item_per_page);
         //$data['total_pages'] = $total_pages;
-        $products['brands'] = $total_rows['brands'];
+        if(empty($total_rows['brands'])){
+            $products['brands']=NULL;
+        }else{
+            $products['brands'] = $total_rows['brands'];
+        }
         $result['products'] = $products;
         $this->load->model('Option_model','option');
         $currentCat = $this->category->get_details_by_id($categoryId);
