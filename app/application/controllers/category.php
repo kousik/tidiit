@@ -253,8 +253,6 @@ class Category extends REST_Controller {
         $data['sort'] = 'popular';
         $data['brand'] = array();
         $range=array(0,100000);
-        $data['minimum']=$range[0];
-        $data['maximum']=$range[01];
         $data['query'] = array();
         //foreach($_GET as $key => $get):
             /*if($key == 'sort' && $get):
@@ -352,6 +350,7 @@ class Category extends REST_Controller {
             $data['brands'] = $this->display_brands_view($brand, $brnd);
             echo json_encode($data);die;
         endif;*/
+        $data['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
         
         success_response_after_post_get($data);
     }
