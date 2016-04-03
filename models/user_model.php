@@ -902,4 +902,9 @@ class User_model extends CI_Model {
         $this->db->insert('help_request',$dataArray);
         return $this->db->insert_id();
     }
+    
+    function loged_in_user_shipping_country_code($userId){
+        $this->db->select('c.countryCode')->from($this->_shipping_address.' sa')->join($this->_table_country.' c','sa.countryId=c.countryId');
+        return $this->where('sa.userId',$userId)->get()->result();
+    }
 }
