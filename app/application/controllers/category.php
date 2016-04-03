@@ -328,7 +328,6 @@ class Category extends REST_Controller {
         }else{
             $products['brands'] = $brand;
         }
-        $products['brands'] = $brand;
         $data['products'] = $products;
 
         /*if($total_pages <= $item_per_page):
