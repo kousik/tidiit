@@ -90,7 +90,11 @@ class Category extends REST_Controller {
         $result['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
         $result['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
         
-        $products['brands'] = $total_rows['brands'];
+        if(empty($total_rows['brands'])){
+            $products['brands']=NULL;
+        }else{
+            $products['brands'] = $total_rows['brands'];
+        }
         $result['products'] = $products;
         $this->load->model('Option_model','option');
         $currentCat = $this->category->get_details_by_id($categoryId);
@@ -320,17 +324,22 @@ class Category extends REST_Controller {
         foreach($brnds as $bkey => $bdata):
             $brand[] = $bdata->title;
         endforeach;
-
+        
+        if(empty($brand)){
+            $products['brands']=NULL;
+        }else{
+            $products['brands'] = $brand;
+        }
         $products['brands'] = $brand;
         $data['products'] = $products;
 
-        if($total_pages <= $item_per_page):
+        /*if($total_pages <= $item_per_page):
             $data['show_loads'] = true;
         else:
             $data['show_loads'] = false;
         endif;
         
-        /*if(isset($_GET['stype']) && $_GET['stype'] == "ajax"):
+        if(isset($_GET['stype']) && $_GET['stype'] == "ajax"):
             if(isset($_GET['cls']) && $_GET['cls']):
                 $data['cls'] = 1;
             else:
