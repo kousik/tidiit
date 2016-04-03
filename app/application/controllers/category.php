@@ -416,7 +416,7 @@ class Category extends REST_Controller {
         $longitude=$this->post('longitude');
         
         $cond = array();
-        $cond['brand'] = [$brandDetails->title];
+        //$cond['brand'] = [$brandDetails->title];
         $data['sort'] = 'popular';
         $data['range'] = array(0,100000);
         
@@ -449,7 +449,7 @@ class Category extends REST_Controller {
         $longitude=$this->post('longitude');
         
         $cond = array();
-        $cond['brand'] = [$brandDetails->title];
+        //$cond['brand'] = [$brandDetails->title];
         $data['sort'] = 'popular';
         $data['range'] = array(0,100000);
         
@@ -482,7 +482,7 @@ class Category extends REST_Controller {
         $longitude=$this->post('longitude');
         
         $cond = array();
-        $cond['brand'] = [$brandDetails->title];
+        //$cond['brand'] = [$brandDetails->title];
         $data['sort'] = 'popular';
         $data['range'] = array(0,100000);
         
