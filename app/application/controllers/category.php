@@ -477,8 +477,8 @@ class Category extends REST_Controller {
             $brand[] = $bdata->title;
         endforeach;
 
-        $products['brands'] = $brand;
         $data['products'] = $products;
+        $data['brands'] = $brand;
         success_response_after_post_get($data);
     }
 }
