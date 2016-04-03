@@ -367,6 +367,7 @@ class Category extends REST_Controller {
         $data['brand'] = array();
         $data['range'] = array(0,100000);
         
+        
         $offset=NULL;
         $item_per_page=NULL;
         
@@ -385,8 +386,11 @@ class Category extends REST_Controller {
             $brand[] = $bdata->title;
         endforeach;
 
-        $products['brands'] = $brand;
+        $data['brands'] = $brand;
         $data['products'] = $products;
+        $range = array(0,100000);
+        $data['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
+        $data['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
         
         success_response_after_post_get($data);
     }
@@ -403,7 +407,6 @@ class Category extends REST_Controller {
         $cond = array();
         $cond['brand'] = [$brandDetails->title];
         $data['sort'] = 'popular';
-        $data['brand'] = array();
         $data['range'] = array(0,100000);
         
         //$offset=NULL;
@@ -417,8 +420,12 @@ class Category extends REST_Controller {
             $brand[] = $bdata->title;
         endforeach;
 
-        $products['brands'] = $brand;
+        $data['brands'] = $brand;
         $data['products'] = $products;
+        $range = array(0,100000);
+        $data['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
+        $data['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
+        
         success_response_after_post_get($data);
     }
     
@@ -433,7 +440,6 @@ class Category extends REST_Controller {
         $cond = array();
         $cond['brand'] = [$brandDetails->title];
         $data['sort'] = 'popular';
-        $data['brand'] = array();
         $data['range'] = array(0,100000);
         
         //$offset=NULL;
@@ -447,8 +453,12 @@ class Category extends REST_Controller {
             $brand[] = $bdata->title;
         endforeach;
 
-        $products['brands'] = $brand;
+        $data['brands'] = $brand;
         $data['products'] = $products;
+        $range = array(0,100000);
+        $data['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
+        $data['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
+        
         success_response_after_post_get($data);
     }
     
@@ -463,7 +473,6 @@ class Category extends REST_Controller {
         $cond = array();
         $cond['brand'] = [$brandDetails->title];
         $data['sort'] = 'popular';
-        $data['brand'] = array();
         $data['range'] = array(0,100000);
         
         //$offset=NULL;
@@ -479,6 +488,10 @@ class Category extends REST_Controller {
 
         $data['products'] = $products;
         $data['brands'] = $brand;
+        $range = array(0,100000);
+        $data['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
+        $data['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
+        
         success_response_after_post_get($data);
     }
 }
