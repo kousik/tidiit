@@ -390,4 +390,95 @@ class Category extends REST_Controller {
         
         success_response_after_post_get($data);
     }
+    
+    
+    function new_products_list_post(){
+        $userId=$this->post('userId');
+        $UDID=$this->post('UDID');
+        $deviceType=$this->post('deviceType');
+        $deviceToken=$this->post('deviceToken');
+        $latitude=$this->post('latitude');
+        $longitude=$this->post('longitude');
+        
+        $cond = array();
+        $cond['brand'] = [$brandDetails->title];
+        $data['sort'] = 'popular';
+        $data['brand'] = array();
+        $data['range'] = array(0,100000);
+        
+        //$offset=NULL;
+        //$item_per_page=NULL;
+        
+        //$products = $this->category->get_brand_products($brandId, $offset, $limit = $item_per_page, $cond);
+        $products=  $this->product->get_new_product();
+        $brnds = $this->brand->get_all();
+        $brand = [];
+        foreach($brnds as $bkey => $bdata):
+            $brand[] = $bdata->title;
+        endforeach;
+
+        $products['brands'] = $brand;
+        $data['products'] = $products;
+        success_response_after_post_get($data);
+    }
+    
+    function featured_products_list_post(){
+        $userId=$this->post('userId');
+        $UDID=$this->post('UDID');
+        $deviceType=$this->post('deviceType');
+        $deviceToken=$this->post('deviceToken');
+        $latitude=$this->post('latitude');
+        $longitude=$this->post('longitude');
+        
+        $cond = array();
+        $cond['brand'] = [$brandDetails->title];
+        $data['sort'] = 'popular';
+        $data['brand'] = array();
+        $data['range'] = array(0,100000);
+        
+        //$offset=NULL;
+        //$item_per_page=NULL;
+        
+        //$products = $this->category->get_brand_products($brandId, $offset, $limit = $item_per_page, $cond);
+        $products=  $this->product->get_new_product();
+        $brnds = $this->brand->get_all();
+        $brand = [];
+        foreach($brnds as $bkey => $bdata):
+            $brand[] = $bdata->title;
+        endforeach;
+
+        $products['brands'] = $brand;
+        $data['products'] = $products;
+        success_response_after_post_get($data);
+    }
+    
+    function best_selling_products_list_post(){
+        $userId=$this->post('userId');
+        $UDID=$this->post('UDID');
+        $deviceType=$this->post('deviceType');
+        $deviceToken=$this->post('deviceToken');
+        $latitude=$this->post('latitude');
+        $longitude=$this->post('longitude');
+        
+        $cond = array();
+        $cond['brand'] = [$brandDetails->title];
+        $data['sort'] = 'popular';
+        $data['brand'] = array();
+        $data['range'] = array(0,100000);
+        
+        //$offset=NULL;
+        //$item_per_page=NULL;
+        
+        //$products = $this->category->get_brand_products($brandId, $offset, $limit = $item_per_page, $cond);
+        $products=  $this->product->get_new_product();
+        $brnds = $this->brand->get_all();
+        $brand = [];
+        foreach($brnds as $bkey => $bdata):
+            $brand[] = $bdata->title;
+        endforeach;
+
+        $products['brands'] = $brand;
+        $data['products'] = $products;
+        success_response_after_post_get($data);
+    }
 }
