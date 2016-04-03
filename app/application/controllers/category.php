@@ -248,7 +248,7 @@ class Category extends REST_Controller {
         $data['minimum']=$range[0];
         $data['maximum']=$range[01];
         $data['query'] = array();
-        foreach($_GET as $key => $get):
+        //foreach($_GET as $key => $get):
             /*if($key == 'sort' && $get):
                 $cond['order_by'] = $get;
                 $data['sort'] = $get;
@@ -268,16 +268,16 @@ class Category extends REST_Controller {
                 $cond['query'] = $queries;
                 $data['query'] = $queries;
             endif;*/
-            if($key == 's' && $get):
+            if($searchText):
                 $cond['terms'] = explode("+", $searchText);
             endif;
-            if($key == 'q' && $get):
+            if($searchTextType):
                 $cond['qtype'] = $searchTextType;
             endif;
-            if($key == 'id' && $get):
+            if($searchTextTypeId):
                 $cond['id'] = $searchTextTypeId;
             endif;
-        endforeach;
+        //endforeach;
         $data['brand'] = [];
         if(isset($cond['qtype']) && $cond['qtype'] == "brand"):
             if(isset($cond['id']) && $cond['id']):
