@@ -516,7 +516,7 @@ class Category extends REST_Controller {
         $longitude=$this->post('longitude');
         
         $brnds = $this->brand->get_all();
-        $data['brands'] = $brand;
+        $data['brands'] = $brands;
         success_response_after_post_get($data);
     }
 }
