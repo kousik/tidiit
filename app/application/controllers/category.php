@@ -367,7 +367,7 @@ class Category extends REST_Controller {
         $brandDetails = $this->brand->details($brandId);
         
         if(!$brandDetails):
-            $this->response(array('error' => 'Invalid location. Please click proper link!'), 400); return FALSE;
+            $this->response(array('error' => 'Invalid brand id!'), 400); return FALSE;
         endif;
         $brandDetails = $brandDetails[0];
         
@@ -515,7 +515,7 @@ class Category extends REST_Controller {
         $latitude=$this->post('latitude');
         $longitude=$this->post('longitude');
         
-        $brnds = $this->brand->get_all();
+        $brands = $this->brand->get_all();
         $data['brands'] = $brands;
         success_response_after_post_get($data);
     }
