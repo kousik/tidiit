@@ -719,9 +719,11 @@ WHERE c.categoryId =".$categoryId;
                         $qstring .= ' OR ';
                     endif;
                     $qstring .= ' p.title LIKE "%'.$parts[$i].'%"';
-                    $qstring .= '  OR c.categoryName LIKE "%'.$parts[$i].'%"';
-                    $qstring .= '  OR b.title LIKE "%'.$parts[$i].'%" ';
-                    //$qstring .= ' OR (popvalue.value LIKE "%'.$parts[$i].'%" OR popvalue.value LIKE "%'.$parts[$i].'%") ';
+                    if(array_key_exists('qtype', $cond) || array_key_exists('id', $cond)):
+                        $qstring .= '  OR c.categoryName LIKE "%'.$parts[$i].'%"';
+                        $qstring .= '  OR b.title LIKE "%'.$parts[$i].'%" ';
+                        //$qstring .= ' OR (popvalue.value LIKE "%'.$parts[$i].'%" OR popvalue.value LIKE "%'.$parts[$i].'%") ';
+                    endif;
                 endfor;
 
                 $where_str = $where_str.$qstring;

@@ -49,11 +49,11 @@
                     </div>
                  </div>
                   <div  id="div-2" class="body table-responsive">                   
-                    <table id="dataTable" class="table table-bordered table-condensed table-hover table-striped">
+                    <table id="dataTable" class="table table-bordered table-condensed table-hover table-striped order-list">
                       <thead>
                         <tr>
                           <th width="15"></th>
-                          <th width="100">Action</th>
+                          <th width="300">Action</th>
                           <th>Status</th>
                           <th>Order ID</th>
                           <th>Order Type</th>
@@ -70,9 +70,11 @@
                         <tr>
                           <td><input type="checkbox" name="sel_pro"></td>
                           <td>
-                              <a href="javascript:void(0);" class="viewOrderDetails"  title="Cancel" data-orderid="<?php echo $k->orderId;?>">View Details</a> <br />
+                              <a href="javascript:void(0);" class="viewOrderDetails"  title="Cancel" data-orderid="<?php echo $k->orderId;?>">View Details</a> |
+                              <a>Invoice</a> |
+                              <a>Pckg. Slip</a> |
                               <?php if($k->orderType == 'SINGLE' && $k->status < 4 && $k->status!=0):?>
-                              <a href="javascript:void(0);" class="changeOrderStateCancel"  title="Cancel" data-orderid="<?php echo $k->orderId;?>">Cancel</a> <br />
+                              <a href="javascript:void(0);" class="changeOrderStateCancel"  title="Cancel" data-orderid="<?php echo $k->orderId;?>">Cancel</a> |
                               <?php endif;
                               if($k->status>0 && $k->status<4):?>
                               <a href="javascript:void(0);" class="changeOrderState"  title="Delete" data-orderid="<?php echo $k->orderId;?>" data-productstatus="<?php echo $k->status;?>">Update Status</a>
