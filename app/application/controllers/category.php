@@ -386,8 +386,8 @@ class Category extends REST_Controller {
         $total_rows = $this->category->get_brand_products($brandId, 0, false, $cond);
         $tr = (isset($total_rows['products'])?$total_rows['products']:false);
         $totalrows = (!empty($tr)?count($tr):0);
-        $total_pages = ceil($totalrows/$item_per_page);
-        $data['total_pages'] = $total_pages;
+        //$total_pages = ceil($totalrows/$item_per_page);
+        //$data['total_pages'] = $total_pages;
         //$products['brands'] = $total_rows['brands'];
 
 
