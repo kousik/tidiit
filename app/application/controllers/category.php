@@ -505,4 +505,18 @@ class Category extends REST_Controller {
         
         success_response_after_post_get($data);
     }
+    
+    
+    function show_all_brands_post(){
+        $userId=$this->post('userId');
+        $UDID=$this->post('UDID');
+        $deviceType=$this->post('deviceType');
+        $deviceToken=$this->post('deviceToken');
+        $latitude=$this->post('latitude');
+        $longitude=$this->post('longitude');
+        
+        $brnds = $this->brand->get_all();
+        $data['brands'] = $brand;
+        success_response_after_post_get($data);
+    }
 }
