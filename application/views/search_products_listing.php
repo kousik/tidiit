@@ -144,7 +144,7 @@ echo $header; ?>
 
                             <div class="bst_sllng">
                                 <h2 class="js-header-title">Your saerch result!</h2>
-                                <div class="row js-product-area">
+                                <div class="row js-product-area t-product-carousel-row">
                                     <?php if (isset($products['products']) && $products['products']): ?>
                                         <?php foreach ($products['products'] as $pkey => $pro): ?>
                                             <div class="item col-md-3 col-sm-3 col-xs-6">
@@ -156,9 +156,10 @@ echo $header; ?>
                                                             <?php endif; ?>
                                                             <img src="<?= HOME_LISTING . $pro->pImage; ?>" class="img-responsive"/>
                                                             <?php if ($pro->qty < $pro->minQty): ?>
-                                                                <div class="ch-info">
+                                                                <!--<div class="ch-info">
                                                                     <h3><i class="fa fa-thumbs-o-down"></i> &nbsp;Out of Stock</h3>
-                                                                </div>
+                                                                </div>-->
+                                                                <h4>Out Of Stock</h4>
                                                             <?php else : ?>
                                                                 <div class="ch-info">
                                                                     <h3><i class="fa fa-truck"></i> &nbsp;Add to Truck</h3>
