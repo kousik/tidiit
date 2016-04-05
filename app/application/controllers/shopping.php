@@ -183,6 +183,7 @@ class Shopping extends REST_Controller {
         $deviceType=  $this->post('deviceType');
         $longitude = $this->post('longitude');
         $latitude = $this->post('latitude');
+        $orderId = $this->post('orderId');
         
         if($userId=="" || $firstName=="" || $lastName=="" || $countryId=="" || $cityId=="" || $zipId=="" || $localityId =="" || $deviceType =="" || $latitude=="" || $longitude==""){
             $this->response(array('error' => 'Please provide user index,first name,last name,latitude,longitude,device type,country index,city index,locality index,zip index !'), 400); return FALSE;
@@ -200,12 +201,21 @@ class Shopping extends REST_Controller {
         
         $userShippingDetails=  $this->user->get_user_shipping_information($userId,TRUE);
         $allIncompleteOrders= $this->order->get_incomplete_order_by_user($userId);
+        if($orderId==""):
+            foreach($allIncompleteOrders As $k){
+                $orderInfo= unserialize(base64_decode($k->orderInfo));
+                $orderInfo['shipping']=$userShippingDetails[0];
+                $this->order->update(array('orderInfo'=>base64_encode(serialize($orderInfo))),$k->orderId);
+            }
+        else:
+            foreach($allIncompleteOrders As $k){
+                $orderInfo= unserialize(base64_decode($k->orderInfo));
+                $orderInfo['shipping']=$userShippingDetails[0];
+                if($orderId==$k->orderId)
+                    $this->order->update(array('orderInfo'=>base64_encode(serialize($orderInfo))),$k->orderId);
+            }
+        endif;    
         
-        foreach($allIncompleteOrders As $k){
-            $orderInfo= unserialize(base64_decode($k->orderInfo));
-            $orderInfo['shipping']=$userShippingDetails[0];
-            $this->order->update(array('orderInfo'=>base64_encode(serialize($orderInfo))),$k->orderId);
-        }
         
         $result=array();
         $result['message']='Shipping address updated successfully';
