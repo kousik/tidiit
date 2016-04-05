@@ -126,7 +126,7 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
         }
         $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
-        $countryShortName='IN';
+        //$countryShortName='IN';
         if($countryShortName==FALSE){
             $this->response(array('error' => 'Please provide valid latitude and longitude!'), 400); return FALSE;
         }
@@ -295,7 +295,7 @@ class Shopping extends REST_Controller {
                 if($k['orderId']==$orderId){
                     $suggestedCountryShortName=array('IN','KE');
                     if(!in_array($countryShortName, $suggestedCountryShortName)){
-                        $countryShortName=  $this->user->loged_in_user_shipping_country_code($cartDataArr['userId']);
+                        $countryShortName=  $this->user->loged_in_user_shipping_country_code($userId);
                     }
                     $currentLocationTaxDetails=$this->product->get_tax_for_current_location($k['productId'],$countryShortName.'_tax');
                     $taxCol=$countryShortName.'_tax';
@@ -341,7 +341,7 @@ class Shopping extends REST_Controller {
         //$countryShortName='IN';
         $suggestedCountryShortName=array('IN','KE');
         if(!in_array($countryShortName, $suggestedCountryShortName)){
-            $countryShortName=  $this->user->loged_in_user_shipping_country_code($cartDataArr['userId']);
+            $countryShortName=  $this->user->loged_in_user_shipping_country_code($orderDetails[0]->userId);
         }
         $currentLocationTaxDetails=$this->product->get_tax_for_current_location($orderDetails[0]->productId,$countryShortName.'_tax');
         $taxCol=$countryShortName.'_tax';
@@ -619,8 +619,8 @@ class Shopping extends REST_Controller {
 
         //echo $country_name;die;
         $suggestedCountryShortName=array('IN','KE');
-        if(!in_array($countryShortName, $suggestedCountryShortName)){
-            $countryShortName=  $this->user->loged_in_user_shipping_country_code($cartDataArr['userId']);
+        if(!in_array($country_name, $suggestedCountryShortName)){
+            $country_name=  $this->user->loged_in_user_shipping_country_code($userId);
         }
         $taxDetails = $this->product->get_tax_for_current_location($productId, $country_name.'_tax');
         $taxCol = $country_name.'_tax';
@@ -876,7 +876,7 @@ class Shopping extends REST_Controller {
         }
         $suggestedCountryShortName=array('IN','KE');
         if(!in_array($country_name, $suggestedCountryShortName)){
-            $country_name=  $this->user->loged_in_user_shipping_country_code($cartDataArr['userId']);
+            $country_name=  $this->user->loged_in_user_shipping_country_code($userId);
         }
         $taxDetails = $this->product->get_tax_for_current_location($order->productId, $country_name.'_tax');
         $taxCol = $country_name.'_tax';
@@ -1002,7 +1002,7 @@ class Shopping extends REST_Controller {
                 if($k['orderId']==$orderId){
                     $suggestedCountryShortName=array('IN','KE');
                     if(!in_array($countryShortName, $suggestedCountryShortName)){
-                        $countryShortName=  $this->user->loged_in_user_shipping_country_code($cartDataArr['userId']);
+                        $countryShortName=  $this->user->loged_in_user_shipping_country_code($userId);
                     }
                     $currentLocationTaxDetails=$this->product->get_tax_for_current_location($k['productId'],$countryShortName.'_tax');
                     $taxCol=$countryShortName.'_tax';
@@ -1056,7 +1056,7 @@ class Shopping extends REST_Controller {
         //$countryShortName='IN';
         $suggestedCountryShortName=array('IN','KE');
         if(!in_array($countryShortName, $suggestedCountryShortName)){
-            $countryShortName=  $this->user->loged_in_user_shipping_country_code($cartDataArr['userId']);
+            $countryShortName=  $this->user->loged_in_user_shipping_country_code($userId);
         }
         $currentLocationTaxDetails=$this->product->get_tax_for_current_location($orderDetails[0]->productId,$countryShortName.'_tax');
         $taxCol=$countryShortName.'_tax';
