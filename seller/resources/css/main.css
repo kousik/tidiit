@@ -2715,3 +2715,6 @@ body.error .logo h1 {
          url('../fonts/controller_five-webfont.svg#controllerfive') format('svg');
 
 }
+
+.order-list{font-size: 12px !important;}
+.order-list tr th {word-wrap: break-word;}

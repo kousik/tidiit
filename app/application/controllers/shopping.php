@@ -44,6 +44,7 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => 'Please provide valid latitude and longitude!'), 400); return FALSE;
         }
         
+        
         $cartDataArr=array('productId'=>$productId,'userId'=>$userId,'productPriceId'=>$productPriceId,'latitude'=>$latitude,'longitude'=>$longitude,
             'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID);
         $msg=$this->add_to_cart($cartDataArr);
@@ -60,7 +61,10 @@ class Shopping extends REST_Controller {
         
         $countryShortName=  get_counry_code_from_lat_long($cartDataArr['latitude'], $cartDataArr['longitude']);
         //$countryShortName='IN';
-        
+        $suggestedCountryShortName=array('IN','KE');
+        if(!in_array($countryShortName, $suggestedCountryShortName)){
+            $countryShortName=  $this->user->loged_in_user_shipping_country_code($cartDataArr['userId']);
+        }
         $currentLocationTaxDetails=$this->product->get_tax_for_current_location($cartDataArr['productId'],$countryShortName.'_tax');
         $taxCol=$countryShortName.'_tax';
         $taxPercentage=$currentLocationTaxDetails->$taxCol;
@@ -122,7 +126,7 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
         }
         $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
-        $countryShortName='IN';
+        //$countryShortName='IN';
         if($countryShortName==FALSE){
             $this->response(array('error' => 'Please provide valid latitude and longitude!'), 400); return FALSE;
         }
@@ -179,6 +183,7 @@ class Shopping extends REST_Controller {
         $deviceType=  $this->post('deviceType');
         $longitude = $this->post('longitude');
         $latitude = $this->post('latitude');
+        $orderId = $this->post('orderId');
         
         if($userId=="" || $firstName=="" || $lastName=="" || $countryId=="" || $cityId=="" || $zipId=="" || $localityId =="" || $deviceType =="" || $latitude=="" || $longitude==""){
             $this->response(array('error' => 'Please provide user index,first name,last name,latitude,longitude,device type,country index,city index,locality index,zip index !'), 400); return FALSE;
@@ -196,12 +201,21 @@ class Shopping extends REST_Controller {
         
         $userShippingDetails=  $this->user->get_user_shipping_information($userId,TRUE);
         $allIncompleteOrders= $this->order->get_incomplete_order_by_user($userId);
+        if($orderId==""):
+            foreach($allIncompleteOrders As $k){
+                $orderInfo= unserialize(base64_decode($k->orderInfo));
+                $orderInfo['shipping']=$userShippingDetails[0];
+                $this->order->update(array('orderInfo'=>base64_encode(serialize($orderInfo))),$k->orderId);
+            }
+        else:
+            foreach($allIncompleteOrders As $k){
+                $orderInfo= unserialize(base64_decode($k->orderInfo));
+                $orderInfo['shipping']=$userShippingDetails[0];
+                if($orderId==$k->orderId)
+                    $this->order->update(array('orderInfo'=>base64_encode(serialize($orderInfo))),$k->orderId);
+            }
+        endif;    
         
-        foreach($allIncompleteOrders As $k){
-            $orderInfo= unserialize(base64_decode($k->orderInfo));
-            $orderInfo['shipping']=$userShippingDetails[0];
-            $this->order->update(array('orderInfo'=>base64_encode(serialize($orderInfo))),$k->orderId);
-        }
         
         $result=array();
         $result['message']='Shipping address updated successfully';
@@ -289,6 +303,10 @@ class Shopping extends REST_Controller {
             }
             foreach($allItemArr AS $k){
                 if($k['orderId']==$orderId){
+                    $suggestedCountryShortName=array('IN','KE');
+                    if(!in_array($countryShortName, $suggestedCountryShortName)){
+                        $countryShortName=  $this->user->loged_in_user_shipping_country_code($userId);
+                    }
                     $currentLocationTaxDetails=$this->product->get_tax_for_current_location($k['productId'],$countryShortName.'_tax');
                     $taxCol=$countryShortName.'_tax';
                     $taxPercentage=$currentLocationTaxDetails->$taxCol;
@@ -331,6 +349,10 @@ class Shopping extends REST_Controller {
         }
         $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
         //$countryShortName='IN';
+        $suggestedCountryShortName=array('IN','KE');
+        if(!in_array($countryShortName, $suggestedCountryShortName)){
+            $countryShortName=  $this->user->loged_in_user_shipping_country_code($orderDetails[0]->userId);
+        }
         $currentLocationTaxDetails=$this->product->get_tax_for_current_location($orderDetails[0]->productId,$countryShortName.'_tax');
         $taxCol=$countryShortName.'_tax';
         $taxPercentage=$currentLocationTaxDetails->$taxCol;
@@ -606,6 +628,10 @@ class Shopping extends REST_Controller {
         $orderinfo['pimage'] = $productImageArr[0];
 
         //echo $country_name;die;
+        $suggestedCountryShortName=array('IN','KE');
+        if(!in_array($country_name, $suggestedCountryShortName)){
+            $country_name=  $this->user->loged_in_user_shipping_country_code($userId);
+        }
         $taxDetails = $this->product->get_tax_for_current_location($productId, $country_name.'_tax');
         $taxCol = $country_name.'_tax';
         $taxPercentage = $taxDetails->$taxCol;
@@ -858,6 +884,10 @@ class Shopping extends REST_Controller {
         if($country_name==''){
             $this->response(array('error' => 'Please provide valid latitude and longitude for getting country for tax calculation'), 400); return FALSE;
         }
+        $suggestedCountryShortName=array('IN','KE');
+        if(!in_array($country_name, $suggestedCountryShortName)){
+            $country_name=  $this->user->loged_in_user_shipping_country_code($userId);
+        }
         $taxDetails = $this->product->get_tax_for_current_location($order->productId, $country_name.'_tax');
         $taxCol = $country_name.'_tax';
         $taxPercentage = $taxDetails->$taxCol;
@@ -980,6 +1010,10 @@ class Shopping extends REST_Controller {
             }
             foreach($orderDetails AS $k){
                 if($k['orderId']==$orderId){
+                    $suggestedCountryShortName=array('IN','KE');
+                    if(!in_array($countryShortName, $suggestedCountryShortName)){
+                        $countryShortName=  $this->user->loged_in_user_shipping_country_code($userId);
+                    }
                     $currentLocationTaxDetails=$this->product->get_tax_for_current_location($k['productId'],$countryShortName.'_tax');
                     $taxCol=$countryShortName.'_tax';
                     $taxPercentage=$currentLocationTaxDetails->$taxCol;
@@ -1030,6 +1064,10 @@ class Shopping extends REST_Controller {
         
         $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
         //$countryShortName='IN';
+        $suggestedCountryShortName=array('IN','KE');
+        if(!in_array($countryShortName, $suggestedCountryShortName)){
+            $countryShortName=  $this->user->loged_in_user_shipping_country_code($userId);
+        }
         $currentLocationTaxDetails=$this->product->get_tax_for_current_location($orderDetails[0]->productId,$countryShortName.'_tax');
         $taxCol=$countryShortName.'_tax';
         $taxPercentage=$currentLocationTaxDetails->$taxCol;

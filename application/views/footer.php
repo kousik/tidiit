@@ -101,20 +101,21 @@
                 </div>
             </div>
             <div class="fotr_end">
-                <img src="<?php echo SiteImagesURL; ?>fotr_img.png" />
+                <?php /*<img src="<?php echo SiteImagesURL; ?>fotr_img.png" />*/?>
                 <ul class="ftr_sbmnu">
                     <?php 
                     //echo '='.$this->session->userdata('FE_SESSION_USER_LOCATION_VAR').'=';die;
+                    /*
                     if(trim($this->session->userdata('FE_SESSION_USER_LOCATION_VAR'))=='IN'):?>
                     <li><a href="<?php echo BASE_URL.'content/india-wholesale/';?>">India Wholesale</a></li>
                     <li><a href="<?php echo BASE_URL.'content/india-manufacturers';?>">India Manufacturers</a></li>
                     <?php else:?>
                     <li><a href="<?php echo BASE_URL.'content/kenya-wholesale/';?>">Kenya Wholesale</a></li>
                     <li><a href="<?php echo BASE_URL.'content/kenya-manufacturers/';?>">Kenya Manufacturers</a></li>
-                    <?php endif?>
+                    <?php endif */?>
                     <li><a href="http://seller.tidiit.com">Seller home</a></li>
                     <li><a href="<?php echo BASE_URL.'top-search/';?>">Top Searches</a></li>
-                    <li><a href="<?php echo BASE_URL.'reviews/';?>">Reviews</a></li>
+                    <?php /*<li><a href="<?php echo BASE_URL.'reviews/';?>">Reviews</a></li>*/?>
                 </ul>
                 <p>Copyright Notice &copy; <?php echo date('Y');?> Tiditt Inc. Ltd. All rights reserved.</p>
             </div>

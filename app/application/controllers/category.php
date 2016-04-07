@@ -11,6 +11,7 @@ class Category extends REST_Controller {
         $this->load->model('Product_model','product');
         $this->load->model('Category_model','category');
         $this->load->model('Order_model','order');
+        $this->load->model('Brand_model','brand');
         $this->load->model('Country');
     }
     /**
@@ -20,8 +21,8 @@ class Category extends REST_Controller {
         $categoryId=  $this->post('categoryId');
         $result=array();
         $range = array(0,100000);
-        $result['minimum']=$range[0];
-        $result['maximum']=$range[01];
+        $result['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
+        $result['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
         
         $offset=NULL;
         $item_per_page=NULL;
@@ -32,7 +33,11 @@ class Category extends REST_Controller {
         //$totalrows = (!empty($tr)?count($tr):0);
         //$total_pages = ceil($totalrows/$item_per_page);
         //$data['total_pages'] = $total_pages;
-        $products['brands'] = $total_rows['brands'];
+        if(empty($total_rows['brands'])){
+            $products['brands']=NULL;
+        }else{
+            $products['brands'] = $total_rows['brands'];
+        }
         $result['products'] = $products;
         $this->load->model('Option_model','option');
         $currentCat = $this->category->get_details_by_id($categoryId);
@@ -82,10 +87,14 @@ class Category extends REST_Controller {
         
         $result=array();
         $range = array(0,100000);
-        $result['minimum']=$range[0];
-        $result['maximum']=$range[01];
+        $result['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
+        $result['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
         
-        $products['brands'] = $total_rows['brands'];
+        if(empty($total_rows['brands'])){
+            $products['brands']=NULL;
+        }else{
+            $products['brands'] = $total_rows['brands'];
+        }
         $result['products'] = $products;
         $this->load->model('Option_model','option');
         $currentCat = $this->category->get_details_by_id($categoryId);
@@ -105,18 +114,6 @@ class Category extends REST_Controller {
         success_response_after_post_get($result);
     }
     
-    function sho_search_suggestions_post(){
-        $userRequest=$this->post('userRequest');
-    }
-    
-    function show_option_filter_get(){
-        $cond=[];
-        //$categoryId=$this->post('categoryId');
-        
-        
-    }
-    
-    
     function show_sugestion_post(){
         $term=$this->post('textForSearch');
         //$term = $_GET['term'];
@@ -130,18 +127,396 @@ class Category extends REST_Controller {
             print $json_invalid;
             exit;
         }
-        $this->load->model('Category_model','category');
+        $this->load->model('category','category');
         $a_json = $this->category->get_auto_serch_populet_by_text($term);
         $parts = explode(' ', $term);
         $a_json = $this->apply_highlight($a_json, $parts);
-        success_response_after_post_get($a_json);
+        $data['suggestion']=$a_json;
+        //pre($data);die;
+        success_response_after_post_get($data);
+    }
+    
+    /**
+     * Apply highlight to row label
+     *
+     * @param string $a_json json data
+     * @param array $parts strings to search
+     * @return array
+     */
+    function apply_highlight($a_json, $parts) {
+
+        $p = count($parts);
+        $rows = count($a_json);
+
+        for($row = 0; $row < $rows; $row++) {
+
+            $label = $a_json[$row]["label"];
+            $a_label_match = array();
+
+            for($i = 0; $i < $p; $i++) {
+
+                $part_len = mb_strlen($parts[$i]);
+                $a_match_start = $this->mb_stripos_all($label, $parts[$i]);
+
+                foreach($a_match_start as $part_pos) {
+
+                    $overlap = false;
+                    foreach($a_label_match as $pos => $len) {
+                        if($part_pos - $pos >= 0 && $part_pos - $pos < $len) {
+                            $overlap = true;
+                            break;
+                        }
+                    }
+                    if(!$overlap) {
+                        $a_label_match[$part_pos] = $part_len;
+                    }
+
+                }
+
+            }
+
+            if(count($a_label_match) > 0) {
+                ksort($a_label_match);
+
+                $label_highlight = '';
+                $start = 0;
+                $label_len = mb_strlen($label);
+
+                foreach($a_label_match as $pos => $len) {
+                    if($pos - $start > 0) {
+                        $no_highlight = mb_substr($label, $start, $pos - $start);
+                        $label_highlight .= $no_highlight;
+                    }
+                    $highlight = '<span class="hl_results">' . mb_substr($label, $pos, $len) . '</span>';
+                    $label_highlight .= $highlight;
+                    $start = $pos + $len;
+                }
+
+                if($label_len - $start > 0) {
+                    $no_highlight = mb_substr($label, $start);
+                    $label_highlight .= $no_highlight;
+                }
+
+                $a_json[$row]["label"] = $label_highlight;
+            }
+
+        }
+
+        return $a_json;
+
+    }
+    
+    /**
+     * mb_stripos all occurences
+     * Find all occurrences of a needle in a haystack
+     *
+     * @param string $haystack
+     * @param string $needle
+     * @return array or false
+     */
+    function mb_stripos_all($haystack, $needle) {
+
+        $s = 0;
+        $i = 0;
+        $aStrPos = [];
+        while(is_integer($i)) {
+
+            $i = mb_stripos($haystack, $needle, $s);
+
+            if(is_integer($i)) {
+                $aStrPos[] = $i;
+                $s = $i + mb_strlen($needle);
+            }
+        }
+
+        if(isset($aStrPos)) {
+            return $aStrPos;
+        } else {
+            return false;
+        }
     }
     
     function final_search_data_post(){
         $searchText=$this->post('searchText');
         $searchTextType=$this->post('searchTextType');
         $searchTextTypeId=$this->post('searchTextTypeId');
+        $userId=$this->post('userId');
         
+        if($searchText==""):
+            $this->response(array('error' => 'Invalid search keyword. Please try again with proper text!'), 400); return FALSE;
+        endif;
+
+
+
+        $cond = array();
+        $data['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
+        $data['sort'] = 'popular';
+        $data['brand'] = array();
+        $range=array(0,100000);
+        $data['query'] = array();
+        //foreach($_GET as $key => $get):
+            /*if($key == 'sort' && $get):
+                $cond['order_by'] = $get;
+                $data['sort'] = $get;
+            endif;
+            if($key == 'brand' && $get):
+                $brands = explode("|", $get);
+                $cond['brand'] = $brands;
+                $data['brand'] = $brands;
+            endif;
+            if($key == 'range' && $get):
+                $ranges = explode("|", $get);
+                $cond['range'] = $ranges;
+                $data['range'] = array($ranges[0],$ranges[1]);
+            endif;
+            if($key == 'query' && $get):
+                $queries = explode("|", $get);
+                $cond['query'] = $queries;
+                $data['query'] = $queries;
+            endif;*/
+            if($searchText):
+                $cond['terms'] = explode("+", $searchText);
+            endif;
+            if($searchTextType):
+                $cond['qtype'] = $searchTextType;
+            endif;
+            if($searchTextTypeId):
+                $cond['id'] = $searchTextTypeId;
+            endif;
+        //endforeach;
+        $data['brand'] = [];
+        if(isset($cond['qtype']) && $cond['qtype'] == "brand"):
+            if(isset($cond['id']) && $cond['id']):
+                $brandDetails = $this->brand->details($cond['id']);
+                $brands = explode("|", $brandDetails[0]->title);
+                $data['brand'] = $brands;
+            endif;
+        endif;
+
+
+        $offset=NULL;
+        $item_per_page=NULL;
+        
+        /*if(isset($_GET['page']) && $_GET['page']):
+            $offset = ($_GET['page'] * $item_per_page);
+        else:
+            $offset = 0;
+        endif;*/
+        /*if(isset($_GET['cls']) && $_GET['cls']):
+            $offset = 0;
+        else:
+            $offset = $offset;
+        endif;*/
+
+        $products = $this->category->get_search_products($offset, $limit = $item_per_page, $cond);
+        $total_rows = $this->category->get_search_products(0, false, $cond);
+        $tr = (isset($total_rows['products'])?$total_rows['products']:false);
+        $totalrows = (!empty($tr)?count($tr):0);
+        //$total_pages = ceil($totalrows/$item_per_page);
+        //$data['total_pages'] = $total_pages;
+
+
+
+        $brnds = $this->brand->get_all();
+        $brand = [];
+        foreach($brnds as $bkey => $bdata):
+            $brand[] = $bdata->title;
+        endforeach;
+        
+        if(empty($brand)){
+            $products['brands']=NULL;
+        }else{
+            $products['brands'] = $brand;
+        }
+        $data['products'] = $products;
+
+        /*if($total_pages <= $item_per_page):
+            $data['show_loads'] = true;
+        else:
+            $data['show_loads'] = false;
+        endif;
+        
+        if(isset($_GET['stype']) && $_GET['stype'] == "ajax"):
+            if(isset($_GET['cls']) && $_GET['cls']):
+                $data['cls'] = 1;
+            else:
+                $data['cls'] = 0;
+            endif;
+            unset($data['header']);
+            $brnd = isset($_GET['brand'])?explode("|", $_GET['brand']):array();
+            $brand = array_merge($data['brand'],$brnd);
+            $data['products'] = $this->create_product_view($products);
+            $data['brands'] = $this->display_brands_view($brand, $brnd);
+            echo json_encode($data);die;
+        endif;*/
+        $data['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
+        
+        success_response_after_post_get($data);
     }
     
+ 
+    function get_product_by_brand_post(){
+        $brandId=$this->post('brandId');
+        $userId=$this->post('userId');
+        $UDID=$this->post('UDID');
+        $deviceType=$this->post('deviceType');
+        $deviceToken=$this->post('deviceToken');
+        $latitude=$this->post('latitude');
+        $longitude=$this->post('longitude');
+        
+        $brandDetails = $this->brand->details($brandId);
+        
+        if(!$brandDetails):
+            $this->response(array('error' => 'Invalid brand id!'), 400); return FALSE;
+        endif;
+        $brandDetails = $brandDetails[0];
+        
+        $data['branddetails'] = $brandDetails;
+        $cond = array();
+        $cond['brand'] = [$brandDetails->title];
+        $data['sort'] = 'popular';
+        $data['brand'] = array();
+        $data['range'] = array(0,100000);
+        
+        
+        $offset=NULL;
+        $item_per_page=NULL;
+        
+        $products = $this->category->get_brand_products($brandId, $offset, $limit = $item_per_page, $cond);
+        $total_rows = $this->category->get_brand_products($brandId, 0, false, $cond);
+        $tr = (isset($total_rows['products'])?$total_rows['products']:false);
+        $totalrows = (!empty($tr)?count($tr):0);
+        //$total_pages = ceil($totalrows/$item_per_page);
+        //$data['total_pages'] = $total_pages;
+        //$products['brands'] = $total_rows['brands'];
+
+
+        $brnds = $this->brand->get_all();
+        $brand = [];
+        foreach($brnds as $bkey => $bdata):
+            $brand[] = $bdata->title;
+        endforeach;
+
+        $data['brands'] = $brand;
+        $data['products'] = $products;
+        $range = array(0,100000);
+        $data['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
+        $data['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
+        
+        success_response_after_post_get($data);
+    }
+    
+    
+    function new_products_list_post(){
+        $userId=$this->post('userId');
+        $UDID=$this->post('UDID');
+        $deviceType=$this->post('deviceType');
+        $deviceToken=$this->post('deviceToken');
+        $latitude=$this->post('latitude');
+        $longitude=$this->post('longitude');
+        
+        $cond = array();
+        //$cond['brand'] = [$brandDetails->title];
+        $data['sort'] = 'popular';
+        $data['range'] = array(0,100000);
+        
+        //$offset=NULL;
+        //$item_per_page=NULL;
+        
+        //$products = $this->category->get_brand_products($brandId, $offset, $limit = $item_per_page, $cond);
+        $products=  $this->product->get_new_product();
+        $brnds = $this->brand->get_all();
+        $brand = [];
+        foreach($brnds as $bkey => $bdata):
+            $brand[] = $bdata->title;
+        endforeach;
+
+        $data['brands'] = $brand;
+        $data['products'] = $products;
+        $range = array(0,100000);
+        $data['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
+        $data['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
+        
+        success_response_after_post_get($data);
+    }
+    
+    function featured_products_list_post(){
+        $userId=$this->post('userId');
+        $UDID=$this->post('UDID');
+        $deviceType=$this->post('deviceType');
+        $deviceToken=$this->post('deviceToken');
+        $latitude=$this->post('latitude');
+        $longitude=$this->post('longitude');
+        
+        $cond = array();
+        //$cond['brand'] = [$brandDetails->title];
+        $data['sort'] = 'popular';
+        $data['range'] = array(0,100000);
+        
+        //$offset=NULL;
+        //$item_per_page=NULL;
+        
+        //$products = $this->category->get_brand_products($brandId, $offset, $limit = $item_per_page, $cond);
+        $products=  $this->product->get_new_product();
+        $brnds = $this->brand->get_all();
+        $brand = [];
+        foreach($brnds as $bkey => $bdata):
+            $brand[] = $bdata->title;
+        endforeach;
+
+        $data['brands'] = $brand;
+        $data['products'] = $products;
+        $range = array(0,100000);
+        $data['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
+        $data['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
+        
+        success_response_after_post_get($data);
+    }
+    
+    function best_selling_products_list_post(){
+        $userId=$this->post('userId');
+        $UDID=$this->post('UDID');
+        $deviceType=$this->post('deviceType');
+        $deviceToken=$this->post('deviceToken');
+        $latitude=$this->post('latitude');
+        $longitude=$this->post('longitude');
+        
+        $cond = array();
+        //$cond['brand'] = [$brandDetails->title];
+        $data['sort'] = 'popular';
+        $data['range'] = array(0,100000);
+        
+        //$offset=NULL;
+        //$item_per_page=NULL;
+        
+        //$products = $this->category->get_brand_products($brandId, $offset, $limit = $item_per_page, $cond);
+        $products=  $this->product->get_new_product();
+        $brnds = $this->brand->get_all();
+        $brand = [];
+        foreach($brnds as $bkey => $bdata):
+            $brand[] = $bdata->title;
+        endforeach;
+
+        $data['products'] = $products;
+        $data['brands'] = $brand;
+        $range = array(0,100000);
+        $data['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
+        $data['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
+        
+        success_response_after_post_get($data);
+    }
+    
+    
+    function show_all_brands_post(){
+        $userId=$this->post('userId');
+        $UDID=$this->post('UDID');
+        $deviceType=$this->post('deviceType');
+        $deviceToken=$this->post('deviceToken');
+        $latitude=$this->post('latitude');
+        $longitude=$this->post('longitude');
+        
+        $brands = $this->brand->get_all();
+        $data['brands'] = $brands;
+        success_response_after_post_get($data);
+    }
 }
