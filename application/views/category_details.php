@@ -196,7 +196,7 @@
               
               <div class="bst_sllng">
                 <h2><?=$currCat->categoryName?></h2>
-                <div class="row js-product-area t-product-carousel-row">
+                <div class="row js-product-area t-product-carousel-row t-category-praduct-carousel-row">
                     <?php if(isset($products['products']) && $products['products']):?>
                     <?php foreach($products['products'] as $pkey => $pro):?>
                     <div class="item col-md-3 col-sm-3 col-xs-6">

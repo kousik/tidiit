@@ -2773,3 +2773,23 @@ label.error {
     font-size: 13px;
     letter-spacing: .5px;
 }
+
+.t-category-praduct-carousel-row {
+    .item {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+@media (min-width: 767px) and (max-width: 991px) {
+    .right-nav-c {
+        padding-left: 0;
+    }
+}
+
+@media (max-width: 992px) {
+    .padng_fftn {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
