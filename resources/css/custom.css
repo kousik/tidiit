@@ -56,6 +56,9 @@ body{
 
 
 
+.padng_left_none{padding-left:0;}
+
+
 
 .padng_right_none{padding-right:0;}
 
@@ -195,7 +198,7 @@ body{
 
 
 
-.logo img{width:100%;}
+.logo img{max-width:100%;}
 
 
 
@@ -2900,6 +2903,11 @@ ul, ol {
 @media (max-width: 767px) {
 
 	
+
+	.padng_left_none{padding-left:15px;}
+
+
+
 	.padng_right_none{padding-right:15px;}
 
 	
@@ -2990,11 +2998,6 @@ ul, ol {
 
 	.col-xs-6 .prodct_box{border:1px solid #cccccc; min-height: 300px; margin:0 0px 15px;}
 
-}
-
-@media (min-width: 767px) and (max-width: 991px) {
-
-	.padng_left_none{padding-left:0;}
 }
 
 
@@ -3262,6 +3265,11 @@ ul, ol {
 	
 
 	.logo img{width:auto;}
+
+	
+
+	.padng_left_none{padding-left:15px;}
+
 
 
 	.padng_right_none{padding-right:15px;}
