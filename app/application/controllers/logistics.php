@@ -54,7 +54,7 @@ class Logistics extends REST_Controller {
         $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
         //$countryShortName='IN';
         if($countryShortName==FALSE){
-            $this->response(array('error' => 'Please provide valid latitude and longitude!'), 400); return FALSE;
+            //$this->response(array('error' => 'Please provide valid latitude and longitude!'), 400); return FALSE;
         }
         
         //$rs=$this->db->from('user')->where('userName',$userName,'password',  base64_decode($password).'~'.)

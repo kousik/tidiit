@@ -191,33 +191,58 @@ class Appdata extends REST_Controller {
         $deviceType=$this->post('deviceType');
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
+        $aboutMe=$this->post('aboutMe');
+        $userId=$this->post('userId');
         
-        if($firstName=="" || $lastName =="" || $contactNo=="" || $email == "" || $mobile=="" || $rowDOB=="" || $deviceType=="" || $UDID=="" || $deviceToken=="" || $latitude=="" || $longitude==""){
-            $this->response(array('error' => 'Please provide first name,last name,contact number,email,mobile,DOB,device type,UDUD,device token,latitude,longitude'), 400); return FALSE;
-        } 
+        
+        if($firstName==""){
+            $this->response(array('error' => 'Please provide first name.'), 400); return FALSE;
+        }
+        
+        if($lastName==""){
+            $this->response(array('error' => 'Please provide last name.'), 400); return FALSE;
+        }
+        
+        if($contactNo==""){
+            $this->response(array('error' => 'Please provide contact number.'), 400); return FALSE;
+        }
+        
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->response(array('error' => 'Please provide valid email.'), 400); return FALSE;
+        }
+        
+        if($mobile==""){
+            $this->response(array('error' => 'Please provide mobile number.'), 400); return FALSE;
+        }
+        
+        if($deviceType==""){
+            $this->response(array('error' => 'Please provide device type.'), 400); return FALSE;
+        }
+        
+        if($deviceToken==""){
+            $this->response(array('error' => 'Please provide device token.'), 400); return FALSE;
+        }
+        
+        if($UDID==""){
+            $this->response(array('error' => 'Please provide UDID.'), 400); return FALSE;
+        }
+        
+        if($latitude =="" || $longitude==""){
+            $this->response(array('error' => 'Please provide latitude,longitude.'), 400); return FALSE;
+        }
         
         $DOB="00-00-0000";
         
         $dobArr=  explode('-',$rowDOB);
         if(!empty($dobArr)):
-            if(strlen($dobArr[2])==4):
-                $DOB=$dobArr[2].'-'.$dobArr[1].'-'.$dobArr[0];
-            else:
-                $this->response(array('error' => 'Please provide valid year,Year must be 4 character.'), 400); return FALSE;
-            endif;
-        else:
-            $this->response(array('error' => 'Please provide valid date(dd-mm-YYYY).'), 400); return FALSE;
+            if(array_key_exists('2', $dobArr)){
+                if(strlen($dobArr[2])==4):
+                    $DOB=$dobArr[2].'-'.$dobArr[1].'-'.$dobArr[0];
+                else:
+                    $this->response(array('error' => 'Please provide valid year,Year must be 4 character.'), 400); return FALSE;
+                endif;
+            }
         endif;
-        $aboutMe=$this->post('aboutMe');
-        $userId=$this->post('userId');
-        
-        $deviceType=$this->post('deviceType');
-        $UDID=$this->post('UDID');
-        $deviceToken=$this->post('deviceToken');
-        
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $this->response(array('error' => 'Please provide valid email.'), 400); return FALSE;
-        }
         
         $user=$this->user->get_details_by_id($userId);
         if(empty($user)){
@@ -342,8 +367,52 @@ class Appdata extends REST_Controller {
         $deviceToken=  $this->post('deviceToken');
         $UDID=  $this->post('UDID');
         
-        if(trim($productTypeId)=="" || $firstName =="" || $lastName=="" || $userId=="" || $countryId=="" || $cityId=="" || $zipId=="" || $localityId=="" || $phone=="" || $address=="" || $latitude=="" || $longitude=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
-            $this->response(array('error' => 'Please provide prodcut type,first name,last name,user index,city index,zip index, locality index,phone,address,latitude,longitude,device type,divice token,UDID for current user.'), 400); return FALSE;
+        if($firstName==""){
+            $this->response(array('error' => 'Please provide first name.'), 400); return FALSE;
+        }
+        
+        if($lastName==""){
+            $this->response(array('error' => 'Please provide last name.'), 400); return FALSE;
+        }
+        
+        if($countryId==""){
+            $this->response(array('error' => 'Please select country.'), 400); return FALSE;
+        }
+        
+        if($cityId==""){
+            $this->response(array('error' => 'Please select city.'), 400); return FALSE;
+        }
+        
+        if($zipId==""){
+            $this->response(array('error' => 'Please select zip.'), 400); return FALSE;
+        }
+        
+        if($localityId==""){
+            $this->response(array('error' => 'Please select location.'), 400); return FALSE;
+        }
+        
+        if($phone==""){
+            $this->response(array('error' => 'Please provide phone number.'), 400); return FALSE;
+        }
+        
+        if($address==""){
+            $this->response(array('error' => 'Please provide address.'), 400); return FALSE;
+        }
+        
+        if(trim($productTypeId)==""){
+            $this->response(array('error' => 'Please select product type.'), 400); return FALSE;
+        }
+        
+        if($deviceToken==""){
+            $this->response(array('error' => 'Please provide device token.'), 400); return FALSE;
+        }
+        
+        if($UDID==""){
+            $this->response(array('error' => 'Please provide UDID.'), 400); return FALSE;
+        }
+        
+        if($latitude =="" || $longitude==""){
+            $this->response(array('error' => 'Please provide latitude,longitude.'), 400); return FALSE;
         }
         
         $user=$this->user->get_details_by_id($userId);
@@ -418,12 +487,24 @@ class Appdata extends REST_Controller {
         $deviceToken=  $this->post('deviceToken');
         $UDID=  $this->post('UDID');
         
-        if($latitude=="" || $longitude=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
-            $this->response(array('error' => 'Please provide latitude,longitude,devive type,device token,UDID.'), 400); return FALSE;
-        }
-        
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->response(array('error' => 'Please provide valid email.'), 400); return FALSE;
+        }
+        
+        if($deviceType==""){
+            $this->response(array('error' => 'Please provide device type.'), 400); return FALSE;
+        }
+        
+        if($deviceToken==""){
+            $this->response(array('error' => 'Please provide device token.'), 400); return FALSE;
+        }
+        
+        if($UDID==""){
+            $this->response(array('error' => 'Please provide UDID.'), 400); return FALSE;
+        }
+        
+        if($latitude =="" || $longitude==""){
+            $this->response(array('error' => 'Please provide latitude,longitude.'), 400); return FALSE;
         }
         
         $user=$this->user->get_details_by_id($userId);
@@ -464,12 +545,37 @@ class Appdata extends REST_Controller {
         $deviceToken=  $this->post('deviceToken');
         $UDID=  $this->post('UDID');
         
-        if($latitude=="" || $longitude=="" || $deviceType=="" || $deviceToken=="" || $UDID==""){
-            $this->response(array('error' => 'Please provide latitude,longitude,devive type,device token,UDID.'), 400); return FALSE;
+        
+        if($oldPassword==""){
+            $this->response(array('error' => 'Please provide old password.'), 400); return FALSE;
         }
         
-        if($userId =="" && $oldPassword=="" && $newPassword =="" && $newConfirmPassword ==""):
-            $this->response(array('error' => 'Please provide all data.'), 400); return FALSE;
+        if($newPassword==""){
+           $this->response(array('error' => 'Please provide new $password.'), 400); return FALSE;
+        }
+        
+        if($newPassword!=$newConfirmPassword){
+            $this->response(array('error' => 'New password and new confirm password are must same.'), 400); return FALSE;
+        }
+        
+        if($deviceType==""){
+            $this->response(array('error' => 'Please provide device type.'), 400); return FALSE;
+        }
+        
+        if($deviceToken==""){
+            $this->response(array('error' => 'Please provide device token.'), 400); return FALSE;
+        }
+        
+        if($UDID==""){
+            $this->response(array('error' => 'Please provide UDID.'), 400); return FALSE;
+        }
+        
+        if($latitude =="" || $longitude==""){
+            $this->response(array('error' => 'Please provide latitude,longitude.'), 400); return FALSE;
+        }
+        
+        if($userId==""):
+            $this->response(array('error' => 'Please provide valid user data.'), 400); return FALSE;
         else:
             if($newPassword==$newConfirmPassword):
                 $user=$this->user->get_details_by_id($userId);
