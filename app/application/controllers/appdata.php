@@ -88,12 +88,41 @@ class Appdata extends REST_Controller {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->response(array('error' => 'Please provide valid email.'), 400); return FALSE;
         }
+        
+        if($password==""){
+            $this->response(array('error' => 'Please provide password.'), 400); return FALSE;
+        }
+        
+        if($confirmPassword==""){
+            $this->response(array('error' => 'Please provide confirm password.'), 400); return FALSE;
+        }
+        
         if($password!=$confirmPassword){
             $this->response(array('error' => 'Password and confirm password is not matching.'), 400); return FALSE;
         }
         
-        if($password =="" || $confirmPassword =="" || $firstName =="" || $lastName=="" || $deviceType=="" || $deviceToken=="" || $UDID=="" || $latitude =="" || $longitude==""){
-            $this->response(array('error' => 'Please provide password,confirm password,first name,last name,device type,device token,udid,latitude,longitude.'), 400); return FALSE;
+        if($firstName==""){
+            $this->response(array('error' => 'Please provide first name.'), 400); return FALSE;
+        }
+        
+        if($lastName==""){
+            $this->response(array('error' => 'Please provide last name.'), 400); return FALSE;
+        }
+        
+        if($deviceType==""){
+            $this->response(array('error' => 'Please provide device type.'), 400); return FALSE;
+        }
+        
+        if($deviceToken==""){
+            $this->response(array('error' => 'Please provide device token.'), 400); return FALSE;
+        }
+        
+        if($UDID==""){
+            $this->response(array('error' => 'Please provide UDID.'), 400); return FALSE;
+        }
+        
+        if($latitude =="" || $longitude==""){
+            $this->response(array('error' => 'Please provide latitude,longitude.'), 400); return FALSE;
         }
         
         if($this->user->check_username_exists_without_type($email)==TRUE){
