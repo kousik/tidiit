@@ -122,7 +122,7 @@ class Appdata extends REST_Controller {
         }
         
         if($latitude =="" || $longitude==""){
-            $this->response(array('error' => 'Please provide latitude,longitude.'), 400); return FALSE;
+            //$this->response(array('error' => 'Please provide latitude,longitude.'), 400); return FALSE;
         }
         
         if($this->user->check_username_exists_without_type($email)==TRUE){
