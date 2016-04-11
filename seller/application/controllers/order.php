@@ -380,4 +380,12 @@ class Order extends MY_Controller{
             
             return TRUE;
         }
+
+    public function packing_slip($orderNumber)
+    {
+
+        $data['order'] = $this->Order_model->get_single_order_by_id($orderNumber);
+
+        $this->load->view('packing_slip', $data, true);
+    }
 }

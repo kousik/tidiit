@@ -72,7 +72,7 @@
                           <td>
                               <a href="javascript:void(0);" class="viewOrderDetails"  title="Cancel" data-orderid="<?php echo $k->orderId;?>">View Details</a> |
                               <a>Invoice</a> |
-                              <a>Pckg. Slip</a> |
+                              <a href="<?=site_url('order/packing_slip/'.$k->orderId)?>" target="_blank">Pckg. Slip</a> |
                               <?php if($k->orderType == 'SINGLE' && $k->status < 4 && $k->status!=0):?>
                               <a href="javascript:void(0);" class="changeOrderStateCancel"  title="Cancel" data-orderid="<?php echo $k->orderId;?>">Cancel</a> |
                               <?php endif;
