@@ -367,7 +367,7 @@ class Category extends REST_Controller {
         $brandDetails = $this->brand->details($brandId);
         
         if(!$brandDetails):
-            $this->response(array('error' => 'Invalid location. Please click proper link!'), 400); return FALSE;
+            $this->response(array('error' => 'Invalid brand id!'), 400); return FALSE;
         endif;
         $brandDetails = $brandDetails[0];
         
@@ -386,8 +386,8 @@ class Category extends REST_Controller {
         $total_rows = $this->category->get_brand_products($brandId, 0, false, $cond);
         $tr = (isset($total_rows['products'])?$total_rows['products']:false);
         $totalrows = (!empty($tr)?count($tr):0);
-        $total_pages = ceil($totalrows/$item_per_page);
-        $data['total_pages'] = $total_pages;
+        //$total_pages = ceil($totalrows/$item_per_page);
+        //$data['total_pages'] = $total_pages;
         //$products['brands'] = $total_rows['brands'];
 
 
@@ -515,8 +515,8 @@ class Category extends REST_Controller {
         $latitude=$this->post('latitude');
         $longitude=$this->post('longitude');
         
-        $brnds = $this->brand->get_all();
-        $data['brands'] = $brand;
+        $brands = $this->brand->get_all();
+        $data['brands'] = $brands;
         success_response_after_post_get($data);
     }
 }

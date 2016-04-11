@@ -31,7 +31,7 @@
                                         </form>
                                     </div>
                                 </div>
-                                <div class="col-md-5 col-sm-5 padng_left_none">
+                                <div class="col-md-5 col-sm-5 padng_left_none right-nav-c">
                                     <ul class="sub_menu">
                                         <li><a href="<?php echo BASE_URL.'content/buyer-protection/MTc==/';?>">Buyer Protection <i class="fa fa-lock"></i></a></li>
                                         <li><a href="<?php echo BASE_URL.'content/help/MTU=/';?>">Help <i class="fa fa-question-circle"></i></a></li>
