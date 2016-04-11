@@ -303,9 +303,9 @@ class Order_model extends CI_Model {
 
     public function get_state($app=FALSE){
         if($app==FALSE)
-            return $this->db->select('*')->from($this->_state)->where('orderStateId <','8')->order_by('orderStateId')->get()->result();
+            return $this->db->select('*')->from($this->_state)->where('orderStateId <=','8')->order_by('orderStateId')->get()->result();
         else
-            return $this->db->select('*')->from($this->_state)->where('orderStateId <','8')->order_by('orderStateId')->get()->result_array();
+            return $this->db->select('*')->from($this->_state)->where('orderStateId <=','8')->order_by('orderStateId')->get()->result_array();
     }
 
     public function get_state1($app=FALSE){
