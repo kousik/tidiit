@@ -225,7 +225,7 @@ class Order_model extends CI_Model {
         $OrderStatus=$this->input->get_post('HiddenFilterOrderStatus',TRUE);
         $sql='SELECT o.*,u1.email FROM `order` AS o JOIN `product_seller` AS ps ON(o.productId=ps.ProductId) '
                 . ' JOIN `user` AS u ON(u.userId=ps.userId)'
-                . ' JOIN `user` AS u1 ON(u1.userId=o.userId) WHERE o.status !=1 AND u.userId='.$this->session->userdata('FE_SESSION_VAR').' ';//.' AND o.parrentorderId=0 ';
+                . ' JOIN `user` AS u1 ON(u1.userId=o.userId) WHERE o.status > 1 AND u.userId='.$this->session->userdata('FE_SESSION_VAR').' ';//.' AND o.parrentorderId=0 ';
         if($OrderStatus!=""):
             $sql.=" AND o.status=$OrderStatus ";
         endif;
@@ -304,9 +304,9 @@ class Order_model extends CI_Model {
 
     public function get_state($app=FALSE){
         if($app==FALSE)
-            return $this->db->select('*')->from($this->_state)->where('orderStateId <','8')->order_by('orderStateId')->get()->result();
+            return $this->db->select('*')->from($this->_state)->where('orderStateId <=','8')->order_by('orderStateId')->get()->result();
         else
-            return $this->db->select('*')->from($this->_state)->where('orderStateId <','8')->order_by('orderStateId')->get()->result_array();
+            return $this->db->select('*')->from($this->_state)->where('orderStateId <=','8')->order_by('orderStateId')->get()->result_array();
     }
 
     public function get_state1($app=FALSE){
