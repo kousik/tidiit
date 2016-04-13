@@ -49,6 +49,12 @@ function ShowAddAdminBox(){
     $('#EditlastName').val(DataArr[id]['lastName']);
     $('#Editemail').val(DataArr[id]['email']);
     $('#EditcontactNo').val(DataArr[id]['contactNo']);
+    if(DataArr[id]['logisticsId']!=""){
+        jQuery('.logisticTypeUserEdit').show();
+        jQuery('#editlogisticsId').val(DataArr[id]['logisticsId']);
+    }else{
+        jQuery('.logisticTypeUserEdit').hide();
+    }
  }
 
  function CancelEdit(){
@@ -145,6 +151,7 @@ function RetirbePassword(id){
   DataArr[<?php echo $InerArr->userId?>]['status']='<?php echo $InerArr->status?>';
   DataArr[<?php echo $InerArr->userId?>]['email']='<?php echo $InerArr->email?>';
   DataArr[<?php echo $InerArr->userId?>]['contactNo']='<?php echo $InerArr->contactNo?>';
+  DataArr[<?php echo $InerArr->userId?>]['logisticsId']='<?php echo $InerArr->logisticsId?>';
   </script>
   <?php $val++;}
   }else{?>
@@ -167,6 +174,29 @@ function RetirbePassword(id){
   </tr>
   <tr>
     <td align="left" valign="top" height="40px;">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  <tr class="logisticTypeUserEdit" style="display:none;">
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  <tr class="logisticTypeUserEdit" style="display:none;">
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable">Select logistic partner </td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top">
+        <select name="editlogisticsId" id="editlogisticsId" class="required">
+            <option value="">Select</option>
+            <?php foreach($logisticData AS $k){?><option value="<?php echo $k->logisticsId?>"><?php echo $k->title;?></option><?php }?>
+        </select>
+    </td>
+  </tr>
+  <tr class="logisticTypeUserEdit" style="display:none;">
+    <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top">&nbsp;</td>
@@ -258,15 +288,45 @@ function RetirbePassword(id){
     <th width="3%" align="left" valign="top" scope="col" class="PageHeading">&nbsp;</th>
     <th width="66%" align="left" valign="top" scope="col"><span class="PageHeading">User Add Form </span></th>
   </tr>
-  
+  <script type="text/javascript">
+      jQuery(document).ready(
+              function(){
+                  jQuery('#userType').change(function(){
+                      if(jQuery(this).val()=='logistics'){
+                          jQuery('.logisticTypeUser').show();
+                      }else{
+                          jQuery('.logisticTypeUser').hide();
+                      }
+                  });
+              });
+      
+  </script>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top" class="ListHeadingLable">Select User Type </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"><select name="userType" id="userType">
+    <td align="left" valign="top">
+        <select name="userType" id="userType">
             <option value="">Select</option>
             <?php foreach($UserTypeArr AS $k){?><option value="<?php echo $k->userType?>"><?php echo $k->description;?></option><?php }?>
         </select></td>
+  </tr>
+  <tr class="logisticTypeUser" style="display:none;">
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top">&nbsp;</td>
+  </tr>
+  <tr class="logisticTypeUser" style="display:none;">
+    <td align="left" valign="top">&nbsp;</td>
+    <td align="left" valign="top" class="ListHeadingLable">Select logistic partner </td>
+    <td align="left" valign="top"><label><strong>:</strong></label></td>
+    <td align="left" valign="top">
+        <select name="logisticsId" id="logisticsId" class="required">
+            <option value="">Select</option>
+            <?php foreach($logisticData AS $k){?><option value="<?php echo $k->logisticsId?>"><?php echo $k->title;?></option><?php }?>
+        </select>
+    </td>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>

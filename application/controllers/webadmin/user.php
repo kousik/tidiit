@@ -5,19 +5,21 @@ class User extends My_Controller {
 	public function __construct(){
 		parent::__construct();
 		$this->load->model('User_model');
+		$this->load->model('Logistics_model');
                 $this->db->cache_off();
 	}
 	
 	
 	public function viewlist(){
             if($this->_is_admin_loged_in()){
-                    $data=$this->_show_admin_logedin_layout();
-                    $data['DataArr']=$this->User_model->get_all();
-                    $data['UserTypeArr']=  $this->User_model->get_user_type_except_buyer_seller();
-                    $this->load->view('webadmin/user_list',$data);
+                $data=$this->_show_admin_logedin_layout();
+                $data['DataArr']=$this->User_model->get_all();
+                $data['UserTypeArr']=  $this->User_model->get_user_type_except_buyer_seller();
+                $data['logisticData']=  $this->Logistics_model->get_all_active();
+                $this->load->view('webadmin/user_list',$data);
             }else{
-                    $data=$this->_show_admin_login();
-                    $this->load->view('webadmin/login',$data);
+                $data=$this->_show_admin_login();
+                $this->load->view('webadmin/login',$data);
             }
 	}
 	
@@ -30,6 +32,7 @@ class User extends My_Controller {
             $lastName=$this->input->post('lastName',true);
             $contactNo=$this->input->post('contactNo',true);
             $userType=$this->input->post('userType',true);
+            $logisticsId=$this->input->post('logisticsId',true);
             
             $config = array(
                 array('field'   => 'userName','label'   => 'User Name','rules'=> 'trim|required|xss_clean|min_length[10]|max_length[75]|valid_email|callback_username_check'),
@@ -47,15 +50,22 @@ class User extends My_Controller {
             if($this->form_validation->run() == FALSE){
                 $this->session->set_flashdata('Message',validation_errors());
             }else{
-                $DataArr=array('userName'=>trim($userName),'password'=>  base64_encode(trim($password)).'~'.md5('tidiit'),'email'=>$email,
-                'status'=>trim($status),'firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo,'userType'=>$userType);
-                if($this->User_model->add($DataArr)){
-                    $DataArr['password']=$password;
-                    $this->user_creation_notification($DataArr);
-                    $this->session->set_flashdata('Message','User added successfully.');
+                if($userType=='logistics' && $logisticsId==""){
+                    $this->session->set_flashdata('Message',"plese select logistics company");
                 }else{
-                    $this->session->set_flashdata('Message','Unable to user,Please try again.');
+                    $DataArr=array('userName'=>trim($userName),'password'=>  base64_encode(trim($password)).'~'.md5('tidiit'),'email'=>$email,
+                    'status'=>trim($status),'firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo,'userType'=>$userType);
+                    $userId=$this->User_model->add($DataArr);
+                    if($userId!=""){
+                        $DataArr['password']=$password;
+                        $this->User_model->add_logistics_user(array('logisticsId'=>$logisticsId,'userId'=>$userId));
+                        $this->user_creation_notification($DataArr);
+                        $this->session->set_flashdata('Message','User added successfully.');
+                    }else{
+                        $this->session->set_flashdata('Message','Unable to user,Please try again.');
+                    }
                 }
+                
             }
             redirect(base_url().'webadmin/user/viewlist');
 	}
@@ -109,11 +119,15 @@ class User extends My_Controller {
             $firstName=$this->input->post('EditfirstName',true);
             $lastName=$this->input->post('EditlastName',true);
             $contactNo=$this->input->post('EditcontactNo',true);
+            $logisticsId=$this->input->post('editlogisticsId',true);
             if($userId>0){
-                
                 $DataArray=array('email'=>$email,'firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo);
                 $No=$this->User_model->edit($DataArray,$userId);
                 if($No>0){
+                    if($logisticsId!=""){
+                        $this->User_model->delete_logistics_user($userId);
+                        $this->User_model->add_logistics_user(array('logisticsId'=>$logisticsId,'userId'=>$userId));
+                    }
                     $this->session->set_flashdata('Message','Admin user updated successfully.');
                     redirect(base_url().'webadmin/user/viewlist');
                 }

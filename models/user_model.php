@@ -28,7 +28,8 @@ class User_model extends CI_Model {
     }
 
     public function get_all(){
-        return $this->db->from($this->_table)->where('status <','2')->get()->result();
+        return $this->db->select('u.*,lu.logisticsId')->from($this->_table.' u')->join('logistic_user lu','u.userId=lu.userId','left')->where('status <','2')->get()->result();
+        //return $this->db->from($this->_table)->where('status <','2')->get()->result();
     }
 
     public function add($dataArray){
@@ -906,5 +907,15 @@ class User_model extends CI_Model {
     function loged_in_user_shipping_country_code($userId){
         $this->db->select('c.countryCode')->from($this->_shipping_address.' sa')->join($this->_table_country.' c','sa.countryId=c.countryId');
         return $this->where('sa.userId',$userId)->get()->result();
+    }
+    
+    function add_logistics_user($dataArray){
+        $this->db->insert('logistic_user',$dataArray);
+        return $this->db->insert_id();
+    }
+    
+    function delete_logistics_user($userId){
+        $this->db->delete('logistic_user', array('userId' => $userId)); 
+        return TRUE;
     }
 }

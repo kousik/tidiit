@@ -36,4 +36,8 @@ class Logistics_model extends CI_Model{
     function details($logisticsId){
         return $this->db->where('logisticsId',$logisticsId)->get($this->_table)->result_array();                
     }
+    
+    public function get_all_active(){
+        return $this->db->get_where($this->_table,array('status'=>1))->result();
+    }
 }
