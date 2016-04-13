@@ -73,54 +73,147 @@ class Logistics extends REST_Controller {
         $deviceToken=  trim($this->post('deviceToken'));
         $latitude=  trim($this->post('latitude'));
         $longitude=  trim($this->post('longitude'));
-        $rawOrderId=$this->post('orderId');
         
+        $validOrderData=  $this->validate_scan_order_id($rawOrderId);
+        
+        if($validOrderData['type']=='faiil'){
+            $this->response(array('error' =>$validOrderData['message']), 400); return FALSE;
+        }else{
+            $order=$validOrderData['order'];
+            $logisticDetails=  $this->user->get_logistics_details_by_user_id($userId);
+            if(empty($logisticDetails)){
+                $this->response(array('error' =>'Getting invalid logistic user.'), 400); return FALSE;
+            }
+            $orderId=$order->orderId;
+            $responseData=array();
+            $scanUploadDataArr=array(
+                'orderId'=>$orderId,'movementType'=>'upload','UDID'=>$UDID,'deviceType'=>$deviceType,
+                'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId);
+            $responseData=$this->update_order_movement_history($scanUploadDataArr);
+            if($responseData['type']=="fail"){
+                $this->response(array('error' =>$responseData['message']), 400); return FALSE;
+            }else{
+                $formatedAddress=  get_formatted_address_from_lat_long($latitude, $longitude);
+                $movementDataArr=array('order'=>$order,'moveType'=>'upload','formatedAddress'=>$formatedAddress);
+                $this->_send_notification_regarding_movement_of_item($movementDataArr);
+                $result=array();
+                $result['message']="Scandata updated successfully.";//$orderId.'-'.$qrCodeFileName; 
+                success_response_after_post_get($result);
+            }
+        }
+    }
+    
+    function scan_download_post(){
+        $rawOrderId=trim($this->post('orderId'));
+        $userId=trim($this->post('userId'));
+        $UDID=  trim($this->post('UDID'));
+        $deviceType=  trim($this->post('deviceType'));
+        $deviceToken=  trim($this->post('deviceToken'));
+        $latitude=  trim($this->post('latitude'));
+        $longitude=  trim($this->post('longitude'));
+        
+        $validOrderData=  $this->validate_scan_order_id($rawOrderId);
+        
+        if($validOrderData['type']=='faiil'){
+            $this->response(array('error' =>$validOrderData['message']), 400); return FALSE;
+        }else{
+            $order=$validOrderData['order'];
+            $logisticDetails=  $this->user->get_logistics_details_by_user_id($userId);
+            if(empty($logisticDetails)){
+                $this->response(array('error' =>'Getting invalid logistic user.'), 400); return FALSE;
+            }
+            $orderId=$order->orderId;
+            $responseData=array();
+            $scanUploadDataArr=array(
+                'orderId'=>$orderId,'movementType'=>'download','UDID'=>$UDID,'deviceType'=>$deviceType,
+                'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId);
+            $responseData=$this->update_order_movement_history($scanUploadDataArr);
+            if($responseData['type']=="fail"){
+                $this->response(array('error' =>$responseData['message']), 400); return FALSE;
+            }else{
+                $formatedAddress=  get_formatted_address_from_lat_long($latitude, $longitude);
+                $movementDataArr=array('order'=>$order,'moveType'=>'download','formatedAddress'=>$formatedAddress);
+                $this->_send_notification_regarding_movement_of_item($movementDataArr);
+                $result=array();
+                $result['message']="Scandata updated successfully.";//$orderId.'-'.$qrCodeFileName; 
+                success_response_after_post_get($result);
+            }
+        }
+    }
+    
+    function scan_pickup_post(){
+        $rawOrderId=trim($this->post('orderId'));
+        $userId=trim($this->post('userId'));
+        $UDID=  trim($this->post('UDID'));
+        $deviceType=  trim($this->post('deviceType'));
+        $deviceToken=  trim($this->post('deviceToken'));
+        $latitude=  trim($this->post('latitude'));
+        $longitude=  trim($this->post('longitude'));
+        
+        $validOrderData=  $this->validate_scan_order_id($rawOrderId);
+        
+        if($validOrderData['type']=='faiil'){
+            $this->response(array('error' =>$validOrderData['message']), 400); return FALSE;
+        }else{
+            $order=$validOrderData['order'];
+            $logisticDetails=  $this->user->get_logistics_details_by_user_id($userId);
+            if(empty($logisticDetails)){
+                $this->response(array('error' =>'Getting invalid logistic user.'), 400); return FALSE;
+            }
+            $orderId=$order->orderId;
+            $responseData=array();
+            $scanUploadDataArr=array(
+                'orderId'=>$orderId,'movementType'=>'Pickup from seller','UDID'=>$UDID,'deviceType'=>$deviceType,
+                'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId);
+            $responseData=$this->update_order_movement_history($scanUploadDataArr);
+            if($responseData['type']=="fail"){
+                $this->response(array('error' =>$responseData['message']), 400); return FALSE;
+            }else{
+                $formatedAddress=  get_formatted_address_from_lat_long($latitude, $longitude);
+                $movementDataArr=array('order'=>$order,'moveType'=>'clientPickup','formatedAddress'=>$formatedAddress);
+                $this->_send_notification_regarding_movement_of_item($movementDataArr);
+                $result=array();
+                $result['message']="Scandata updated successfully.";//$orderId.'-'.$qrCodeFileName; 
+                success_response_after_post_get($result);
+            }
+        }
+    }
+    
+    function validate_scan_order_id($rawOrderId){
+        $responseData=array('type'=>'success');
         if($rawOrderId==""){
-            $this->response(array('error' =>'Please provide order index get from scanner.'), 400); return FALSE;
+            $responseData['type']="fail";
+            $responseData['message']='Please provide order index get from scanner.';
+            return $responseData;
         }
         
         $orderIdArr=  explode("-", $rawOrderId);
         if(count($orderIdArr)!=3){
-            $this->response(array('error' =>'Please provide valid scan data.'), 400); return FALSE;
+            $responseData['type']="fail";
+            $responseData['message']='Please provide valid scan data.';
+            return $responseData;
         }
         
         $orderId=$orderIdArr[1];
         //$orderDetails=$this->order->details($orderId);
-        $order=$this->Order_model->get_single_order_by_id($orderId);
+        $order=$this->order->get_single_order_by_id($orderId);
         if(empty($order)){
-            $this->response(array('error' =>'Getting invalid order data from scanner.'), 400); return FALSE;
+            $responseData['type']="fail";
+            $responseData['message']='Getting invalid order data from scanner.';
+            return $responseData;
         }
         
         if($order->status!=4){
-            $this->response(array('error' =>'Scanned order is yet not shipped or out for delivery.'), 400); return FALSE;
+            $responseData['type']="fail";
+            $responseData['message']='Scanned order is yet not shipped or out for delivery.';
+            return $responseData;
         }
-        $logisticDetails=  $this->user->get_logistics_details_by_user_id($userId);
-        if(empty($logisticDetails)){
-            $this->response(array('error' =>'Getting invalid logistic user.'), 400); return FALSE;
-        }
-        
-        $responseData=array();
-        $scanUploadDataArr=array(
-            'orderId'=>$rawOrderId,'movementType'=>'upload','UDID'=>$UDID,'deviceType'=>$deviceType,
-            'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId);
-        $responseData=$this->update_order_movement_history($scanUploadDataArr);
-        
-        if($responseData['type']=="fail"){
-            $this->response(array('error' =>$responseData['message']), 400); return FALSE;
-        }else{
-            
-            $movementDataArr=array('order'=>$order,'logisticDetails'=>$logisticDetails,'deliveryStaffName'=>$deliveryStaffName,
-                'deliveryStaffContactNo'=>$deliveryStaffContactNo,'deliveryStaffEmail'=>$deliveryStaffEmail);
-            if($order->orderType=='GROUP'):
-                $this->_send_pre_alert_regarding_out_for_delivery_of_group($movementDataArr);
-            else:
-                $this->_send_pre_alert_regarding_out_for_delivery($movementDataArr);
-            endif;
-        }
+        $responseData=array('type'=>'success','order'=>$order);
+        return $responseData;
     }
     
     function update_order_movement_history($movementDataArr){
-        $rawOrderId=$movementDataArr['orderId'];
+        $orderId=$movementDataArr['orderId'];
         $responseData=array('type'=>'success');        
         $UDID=$movementDataArr['UDID'];
         if($UDID==""){
@@ -162,109 +255,39 @@ class Logistics extends REST_Controller {
         $userId=$movementDataArr['userId'];
         
         $dataArr=array('orderId'=>$orderId,'movementType'=>$movementDataArr['movementType'],'addedDate'=>time(),'latitude'=>$latitude,'longitude'=>$longitude,'formattedAddress'=>$formatedAddress,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'userId'=>$userId);
-        
+        $this->order->add_movement_history($dataArr);
+        return $responseData;
     }
     
-    function _send_notification_regarding_movement_of_item_of_group($outForDeliveryDataArr){
-        $order=$outForDeliveryDataArr['order'];
-        $orderDetails=array();
-        $orderDetails[]=$order;
+    function _send_notification_regarding_movement_of_item($movementDataArr){
+        $order=$movementDataArr['order'];
+        $moveType=$movementDataArr['moveType'];
+        $formatedAddress=$movementDataArr['formatedAddress'];
         $orderInfo=unserialize(base64_decode($order->orderInfo));
-        $logisticDetails=$outForDeliveryDataArr['logisticDetails'];
-        $mail_template_view_data=$this->load_default_resources();
-        $mail_template_view_data['orderInfo']=$orderInfo;
-        $mail_template_view_data['orderId']=$order->orderId;
-        $mail_template_view_data['deliveryCompanyName']=$logisticDetails[0]['title'];
-        $mail_template_view_data['deliveryStaffName']=$outForDeliveryDataArr['deliveryStaffName'];
-        $mail_template_view_data['deliveryStaffContactNo']=$outForDeliveryDataArr['deliveryStaffContactNo'];
-        $mail_template_view_data['deliveryStaffEmail']=$outForDeliveryDataArr['deliveryStaffEmail'];
-        $mail_template_view_data['isPaid']=$order->isPaid;
-        $mail_template_view_data['orderDetails']=$orderDetails;
-        $buyerFullName=$order->buyerFirstName.' '.$order->buyerLastName;
-        $this->_global_tidiit_mail($order->buyerEmail, "Pre-alert to your Tidiit Buying Club order no - TIDIIT-OD-".$order->orderId.' before delivery', $mail_template_view_data,'group_order_out_for_delivery_pre_alert',$buyerFullName);
-        
-        /// mail for group leader
-        $mail_template_view_data['buyerFullName']=$buyerFullName;
-        if($order->parrentOrderID>0):
-            $mail_template_view_data['leaderFullName']=$orderInfo['group']->admin->firstName.' '.$orderInfo['group']->admin->lastName;
-            $this->_global_tidiit_mail($orderInfo['group']->admin->email, "Pre-alert to your Tidiit Buying Club Member order no - TIDIIT-OD-".$order->orderId.' before delivery', $mail_template_view_data,'group_order_out_for_delivery_pre_alert_leader',$buyerFullName);    
-        endif;
-        
-        /// for seller
-        $mail_template_view_data['orderInfoDataArr']=unserialize(base64_decode($order->orderInfo));
-        $sellerFullName=$order->sellerFirstName.' '.$order->sellerFirstName;
-        $mail_template_view_data['sellerFullName']=$sellerFullName;
-        $this->_global_tidiit_mail($order->sellerEmail, "Pre-alert for Tidiit Buying Club order no - TIDIIT-OD-".$order->orderId.' before delivery', $mail_template_view_data,'seller_group_order_out_for_delivery_pre_alert',$sellerFullName);
-        
-        $mail_template_view_data['supportFullName']='Tidiit Inc Support';
-        $mail_template_view_data['sellerFullName']=$order->sellerFirstName.' '.$order->sellerLastName;
-        $this->load->model('Siteconfig_model','siteconfig');
-        //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
-        $supportEmail='judhisahoo@gmail.com';
-        $this->_global_tidiit_mail($supportEmail, "Pre-alert Tidiit Buying Club for Order no - TIDIIT-OD-".$order->orderId.' before delivery ', $mail_template_view_data,'support_group_order_out_for_delivery_pre_alert','Tidiit Inc Support');
-        
         /// sendin SMS to Buyer
-        $smsMsg='Your Tidiit order TIDIIT-OD-'.$order->orderId.' will delivered by '.$outForDeliveryDataArr['outForDeliveryDays'].' days.';
-        if($order->isPaid==0):
-            $smsMsg.="AS you had selected Settlement on Delivery method,please submit the payment,So delivery people will delivery your item.";
-        endif;
+        if($moveType=='clientPickup'){
+            $smsMsg='Your item['.$orderInfo['pdetail']->title.'] for Tidiit order TIDIIT-OD-'.$order->orderId.' has pickup from seller location at '.$formatedAddress.'.';
+        }else{
+            $smsMsg='Your item['.$orderInfo['pdetail']->title.'] for Tidiit order TIDIIT-OD-'.$order->orderId.' has '.$moveType.' to a vehicle for next movement at '.$formatedAddress.'.';
+        }
         $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$order->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
-        'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-OUT-FOR_DELIVERY-PRE-ALERT');
+        'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-'.  strtoupper($moveType).'-MOVEMENT-UPDATE');
         send_sms_notification($sms_data);
         
-        if($order->userId!=$orderInfo["group"]->admin->userId):
-            /// sendin SMS to Leader
-            $smsMsg='Your Buying Club['.$orderInfo['group']->groupTitle.']  member Tidiit order TIDIIT-OD-'.$order->orderId.' will delivered by '.$outForDeliveryDataArr['outForDeliveryDays'].' days.';
-            if($order->isPaid==0):
-                $smsMsg.="$buyerFullName had selected Settlement on Delivery method,please follow with him/her to submit the payment,So delivery people will delivery your item.";
+        if($order->orderType=='GROUP'){
+            if($order->userId!=$orderInfo["group"]->admin->userId):
+                /// sendin SMS to Leader
+                if($moveType=='clientPickup'){
+                    $smsMsg='Your Buying Club['.$orderInfo['group']->groupTitle.']  member Tidiit order TIDIIT-OD-'.$order->orderId.' item has  pickup from seller location at '.$formatedAddress.'.';
+                }else{
+                    $smsMsg='Your Buying Club['.$orderInfo['group']->groupTitle.']  member Tidiit order TIDIIT-OD-'.$order->orderId.' item has '.$moveType.' to a vehicle for next movement at '.$formatedAddress.' .';
+                }
+                $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$orderInfo['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfo["group"]->admin->userId,
+                'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-'.  strtoupper($moveType).'-MOVEMENT-UPDATE');
+                send_sms_notification($sms_data);
             endif;
-            $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$orderInfo['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfo["group"]->admin->userId,
-            'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-OUT-FOR_DELIVERY-PRE-ALERT');
-            send_sms_notification($sms_data);
-        endif;
+        }
         return TRUE;
     }
     
-    function _send_notification_regarding_movement_of_item($outForDeliveryDataArr){
-        $order=$outForDeliveryDataArr['order'];
-        $orderDetails=array();
-        $orderDetails[]=$order;
-        $logisticDetails=$outForDeliveryDataArr['logisticDetails'];
-        $mail_template_view_data=$this->load_default_resources();
-        $mail_template_view_data['orderInfo']=unserialize(base64_decode($order->orderInfo));
-        $mail_template_view_data['orderId']=$order->orderId;
-        $mail_template_view_data['deliveryCompanyName']=$logisticDetails[0]['title'];
-        $mail_template_view_data['deliveryStaffName']=$outForDeliveryDataArr['deliveryStaffName'];
-        $mail_template_view_data['deliveryStaffContactNo']=$outForDeliveryDataArr['deliveryStaffContactNo'];
-        $mail_template_view_data['deliveryStaffEmail']=$outForDeliveryDataArr['deliveryStaffEmail'];
-        $mail_template_view_data['isPaid']=$order->isPaid;
-        $buyerFullName=$order->buyerFirstName.' '.$order->buyerLastName;
-        $this->_global_tidiit_mail($order->buyerEmail, "Pre-alert to your Tidiit order no - TIDIIT-OD-".$order->orderId.' before delivery', $mail_template_view_data,'single_order_out_for_delivery_pre_alert',$buyerFullName);
-        
-        
-        $mail_template_view_data['orderInfoDataArr']=unserialize(base64_decode($order->orderInfo));
-        $mail_template_view_data['orderDetails']=$orderDetails;
-        /// for seller
-        $mail_template_view_data['userFullName']=$order->sellerFirstName.' '.$order->sellerFirstName;
-        $mail_template_view_data['buyerFullName']=$buyerFullName;
-        $this->_global_tidiit_mail($order->sellerEmail, "Pre-alert for order no - TIDIIT-OD-".$order->orderId.' before delivery', $mail_template_view_data,'seller_single_order_out_for_delivery_pre_alert',$order->sellerFirstName.' '.$order->sellerFirstName);
-        
-        
-        $mail_template_view_data['userFullName']='Tidiit Inc Support';
-        $mail_template_view_data['sellerFullName']=$order->sellerFirstName.' '.$order->sellerLastName;
-        $this->load->model('Siteconfig_model','siteconfig');
-        //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
-        $supportEmail='judhisahoo@gmail.com';
-        $this->_global_tidiit_mail($supportEmail, "Pre-alert for Order no - TIDIIT-OD-".$order->orderId.' before delivery ', $mail_template_view_data,'support_single_order_out_for_delivery_pre_alert','Tidiit Inc Support');
-        
-        /// sendin SMS to allmember
-        $smsMsg='Tidiit order TIDIIT-OD-'.$order->orderId.' will delivered by '.$outForDeliveryDataArr['outForDeliveryDays'].' days.';
-        if($order->isPaid==0):
-            $smsMsg.="AS you had selected Settlement on Delivery method,please submit the payment,So delivery people will delivery your item.";
-        endif;
-        $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$order->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
-        'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-OUT-FOR_DELIVERY-PRE-ALERT');
-        send_sms_notification($sms_data);
-        return TRUE;
-    }
 }
