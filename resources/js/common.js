@@ -419,28 +419,29 @@ $(document).ready(function () {
         }
 
     });
-
-    $("#topic_title").autocomplete({
-        source: searchurl+"ajax/ajax_search_autocomplete",
-        minLength: 2,
-        select: function(event, ui) {
-            if(ui.item.id != "#") {
-                var url = ui.item.type + '&id=' + ui.item.id;
-                $(".js-s-q").val(ui.item.type);
-                $(".js-s-id").val(ui.item.id);
-            } else {
-                $(".js-s-q").val('');
-                $(".js-s-id").val('');
+    if (typeof searchurl != 'undefined'){
+    //if(searchurl!='undefined'){
+        $("#topic_title").autocomplete({
+            source: searchurl+"ajax/ajax_search_autocomplete",
+            minLength: 2,
+            select: function(event, ui) {
+                if(ui.item.id != "#") {
+                    var url = ui.item.type + '&id=' + ui.item.id;
+                    $(".js-s-q").val(ui.item.type);
+                    $(".js-s-id").val(ui.item.id);
+                } else {
+                    $(".js-s-q").val('');
+                    $(".js-s-id").val('');
+                }
+            },
+            html: true, // optional (jquery.ui.autocomplete.html.js required)
+            // optional (if other layers overlap autocomplete list)
+            open: function(event, ui) {
+                $(".ui-autocomplete").css("z-index", 1000);
             }
-        },
-
-        html: true, // optional (jquery.ui.autocomplete.html.js required)
-
-        // optional (if other layers overlap autocomplete list)
-        open: function(event, ui) {
-            $(".ui-autocomplete").css("z-index", 1000);
-        }
-    });
+        });
+    }
+    
 
     $( ".js-click-search" ).click(function() {
         $( ".js-site-search" ).submit();
