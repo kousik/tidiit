@@ -19,6 +19,7 @@ class Order_model extends CI_Model {
     private $_netbanking="netbanking_data";
     private $_out_for_delivery="order_out_for_delivery_pre_alert";
     private $_delivered_request="order_delivered_request";
+    private $_movement_history="order_movement_history";
     
     private $_wishlist="wishlist";
     
@@ -570,5 +571,9 @@ class Order_model extends CI_Model {
             return FALSE;
         }
     }
-    
+ 
+    function add_movement_history($dataArr){
+        $this->db->insert($this->_movement_history,$dataArr);
+        return $this->db->insert_id();
+    }
 }
