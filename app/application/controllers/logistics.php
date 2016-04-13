@@ -75,8 +75,6 @@ class Logistics extends REST_Controller {
         $longitude=  trim($this->post('longitude'));
         $rawOrderId=$this->post('orderId');
         
-        
-        
         if($rawOrderId==""){
             $this->response(array('error' =>'Please provide order index get from scanner.'), 400); return FALSE;
         }
@@ -96,17 +94,21 @@ class Logistics extends REST_Controller {
         if($order->status!=4){
             $this->response(array('error' =>'Scanned order is yet not shipped or out for delivery.'), 400); return FALSE;
         }
+        $logisticDetails=  $this->user->get_logistics_details_by_user_id($userId);
+        if(empty($logisticDetails)){
+            $this->response(array('error' =>'Getting invalid logistic user.'), 400); return FALSE;
+        }
         
         $responseData=array();
         $scanUploadDataArr=array(
             'orderId'=>$rawOrderId,'movementType'=>'upload','UDID'=>$UDID,'deviceType'=>$deviceType,
-            'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+            'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId);
         $responseData=$this->update_order_movement_history($scanUploadDataArr);
         
         if($responseData['type']=="fail"){
             $this->response(array('error' =>$responseData['message']), 400); return FALSE;
         }else{
-            $logisticDetails=
+            
             $movementDataArr=array('order'=>$order,'logisticDetails'=>$logisticDetails,'deliveryStaffName'=>$deliveryStaffName,
                 'deliveryStaffContactNo'=>$deliveryStaffContactNo,'deliveryStaffEmail'=>$deliveryStaffEmail);
             if($order->orderType=='GROUP'):
@@ -157,7 +159,9 @@ class Logistics extends REST_Controller {
             $responseData['message']='Please provide valid latitude and longitude.';
             return $responseData;
         }
-        $dataArr=array('orderId'=>$orderId,'movementType'=>$movementDataArr['movementType'],'addedDate'=>time(),'latitude'=>$latitude,'longitude'=>$longitude,'formattedAddress'=>$formatedAddress,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID);
+        $userId=$movementDataArr['userId'];
+        
+        $dataArr=array('orderId'=>$orderId,'movementType'=>$movementDataArr['movementType'],'addedDate'=>time(),'latitude'=>$latitude,'longitude'=>$longitude,'formattedAddress'=>$formatedAddress,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'userId'=>$userId);
         
     }
     

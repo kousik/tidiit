@@ -20,6 +20,8 @@ class User_model extends CI_Model {
     private $_table_zip ="zip";
     private $_table_order = 'order';
     private $_table_sms_history = 'sms_send_history';
+    private $_table_logistics = 'logistics';
+    private $_table_logistic_user = 'logistic_user';
 
 
     public $result=NULL;
@@ -910,12 +912,16 @@ class User_model extends CI_Model {
     }
     
     function add_logistics_user($dataArray){
-        $this->db->insert('logistic_user',$dataArray);
+        $this->db->insert($this->_table_logistic_user,$dataArray);
         return $this->db->insert_id();
     }
     
     function delete_logistics_user($userId){
-        $this->db->delete('logistic_user', array('userId' => $userId)); 
+        $this->db->delete($this->_table_logistic_user, array('userId' => $userId)); 
         return TRUE;
+    }
+    
+    function get_logistics_details_by_user_id($userId){
+        return $this->db->select('l.*')->from($this->_table_logistics.' l')->join($this->_table_logistic_user.' lu','lu.logisticsId=l.logisticsId','left')->where('lu.userId',$userId)->get()->result();
     }
 }
