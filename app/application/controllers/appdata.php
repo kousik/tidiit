@@ -14,6 +14,41 @@ class Appdata extends REST_Controller {
         $this->load->model('Country');
     }
     
+    function send_reg_id_udid_post(){
+        $UDID=trim($this->post('UDID'));
+        $registrationId=trim($this->post('registrationId'));
+        $deviceToken=trim($this->post('deviceToken'));
+        $deviceType=trim($this->post('deviceType'));
+        $latitude=trim($this->post('latitude'));
+        $longitude=trim($this->post('longitude'));
+        if($registrationId==""){
+            $this->response(array('error' => 'registration id should not be blank'), 400);
+        }
+        
+        if($deviceType==""){
+            $this->response(array('error' => 'Please provide device type.'), 400); return FALSE;
+        }
+        
+        if($UDID==""){
+            $this->response(array('error' => 'Please provide UDID.'), 400); return FALSE;
+        }
+        
+        if($latitude =="" || $longitude==""){
+            $this->response(array('error' => 'Please provide latitude,longitude.'), 400); return FALSE;
+        }
+        
+        $dataArray=array("registrationId"=>$registrationId,'deviceType'=>$deviceType,'UDID'=>$UDID,'deviceToken'=>$deviceToken,
+            'latitude'=>$latitude,'longitude'=>$longitude,'addedDate'=>  time());
+        $result=$this->siteconfig->add_app_info($dataArray);
+        pre($dataArray);die;
+        if($result>0){
+            $parram=array('message'=>'App info data address successfully');
+            success_response_after_post_get($parram);
+        }else{
+            $this->response(array('error' => 'Unknown error arises to save app info data.'), 400); return FALSE;
+        }
+    }
+    
     function home_get(){
         $timeStamp=$this->get('timestamp');
         if(!isValidTimeStamp($timeStamp)){
