@@ -957,7 +957,8 @@ class User_model extends CI_Model {
         $this->db->select('sw.*,c.countryName,s.stateName');
         $this->db->from($this->_table_warehouse.' sw')->join($this->_table_country.' c','sw.countryId=c.countryId','left');
         $this->db->join($this->_table_state.' s','sw.stateId=s.stateId','left');
-        return $this->db->where('sw.id',$wid)->get()->result_array();
+        $result = $this->db->where('sw.id',$wid)->get()->result_array();
+        return $result[0];
     }
 
     public function warehouse_delete($wid){

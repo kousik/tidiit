@@ -51,6 +51,7 @@ class Order extends MY_Controller{
             $data['status']= $stateArr;
             $data['DataArr']=$orderDataArr;
             $data["links"] = $this->pagination->create_links();
+            $data['warehouses'] = $this->User_model->get_all_warehouse();
             $this->load->view('order_list',$data);
 	}
         
