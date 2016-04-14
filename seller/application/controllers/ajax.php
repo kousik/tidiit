@@ -330,4 +330,43 @@ class Ajax extends MY_Controller{
         //pre($data);die;
         echo json_encode(array('content'=>$this->load->view('order_status_change_cancel',$data,true)));die;
     }
+
+    function delete_warehouse(){
+        $id=$this->input->post('id',TRUE);
+        $this->User_model->warehouse_delete($id);
+        echo json_encode(array('content'=> true));die;
+    }
+
+    function update_order_seller_info(){
+        $data = [];
+        $error = false;
+        $total = $this->input->post('total',TRUE);
+        $orderId = $this->input->post('orderId',TRUE);
+        $serial = $this->input->post('serial',TRUE);
+        $setWarehouse = $this->input->post('setWarehouse',TRUE);
+        $ct = 0;
+        foreach($serial as $v):
+            if($v):
+                $ct = $ct+1;
+            endif;
+        endforeach;;
+
+        if($ct < $total):
+            $error[] = '<div class="alert alert-danger text-left" role="alert">Please enter all products unique number!</div>';
+        endif;
+        if(!$setWarehouse):
+            $error[] = '<div class="alert alert-danger text-left" role="alert">Please selet your warehose for dispatch products!</div>';
+        endif;
+        if($error):
+            echo json_encode(array('error'=>implode("", $error), 'orderid' => $orderId));die;
+        endif;
+
+        $this->load->model('Order_model');
+
+        $data['productsSerial'] = serialize($serial);
+        $whouse = $this->User_model->get_single_warehouse($setWarehouse);
+        $data['setWarehouse'] = serialize($whouse);
+        $this->Order_model->update($data,$orderId);
+        echo json_encode(array('success'=>true, 'orderid' => $orderId));die;
+    }
 }

@@ -35,6 +35,7 @@
                 <li class="dropdown <?php if($this->uri->segment(1)=="" || $this->uri->segment(1)=='index'){ echo 'active';}?>">
                   <a href="<?php echo BASE_URL;?>" class="dropdown-toggle" data-toggle="dropdown">Dashboard <b class="caret"></b></a> 
                   <ul class="dropdown-menu">
+                      <li> <a href="<?php echo BASE_URL.'index/my_warehouse/';?>">My Warehouse</a>  </li>
                         <li> <a href="<?php echo BASE_URL.'index/edit_profile/';?>">Update Profile</a>  </li>
                         <li> <a href="<?php echo BASE_URL;?>index/edit_finance_info/">Update Finance Info</a>  </li>
                   </ul>
