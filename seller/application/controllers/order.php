@@ -389,4 +389,16 @@ class Order extends MY_Controller{
 
         $this->load->view('packing_slip', $data, true);
     }
+
+    public function order_invoice($orderNumber){
+        $this->load->model('Siteconfig_model');
+        $config =$this->Siteconfig_model->get_all();
+        $cdata = [];
+        foreach($config as $key => $cval):
+            $cdata[$cval->constantName] = $cval->constantValue;
+        endforeach;
+        $data['config']=$cdata;
+        $data['order'] = $this->Order_model->get_single_order_by_id($orderNumber);
+        $this->load->view('order_invoice', $data, true);
+    }
 }
