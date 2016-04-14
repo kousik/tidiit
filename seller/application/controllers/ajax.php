@@ -330,4 +330,10 @@ class Ajax extends MY_Controller{
         //pre($data);die;
         echo json_encode(array('content'=>$this->load->view('order_status_change_cancel',$data,true)));die;
     }
+
+    function delete_warehouse(){
+        $id=$this->input->post('id',TRUE);
+        $this->User_model->warehouse_delete($id);
+        echo json_encode(array('content'=> true));die;
+    }
 }

@@ -1,7 +1,9 @@
 <?php echo $html_heading; //pre($me);die;?>
-<link rel="stylesheet" href="<?php echo SiteCSSURL;?>normalize.css"> 
-<!--<link rel="stylesheet" href="http://necolas.github.io/normalize.css/2.1.3/normalize.css">-->
-<link rel="stylesheet" href="<?php echo SiteCSSURL;?>jquery.idealforms.css">
+<style type="text/css">
+    .error{font-size: 10px; color: red;margin-bottom: 0px;font-weight: normal;}
+</style>
+<!--<link rel="stylesheet" href="http://necolas.github.io/normalize.css/2.1.3/normalize.css">
+<link rel="stylesheet" href="<?php echo SiteCSSURL;?>jquery.idealforms.css">-->
 <body class="  ">
     <div class="bg-dark dk" id="wrap">
         <?php echo $top.$left;?>
@@ -16,7 +18,7 @@
                   <h5><i class="fa fa-pencil"></i> Edit Profile</h5>
                   <span style="padding-left: 150px;color: red;"><?php echo $this->session->flashdata('Message');?></span>
                 </header>
-                <form name="addForm" id="addForm" method="post" action="" autocomplete="off" class="idealforms" style="margin-bottom:40px;" method="POST">
+                <form name="addForm" id="addForm" method="post" action="<?php echo BASE_URL . 'index/update_profile'; ?>" autocomplete="off" class="idealforms" style="margin-bottom:40px;" method="POST">
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover" id="categoryMainTable">                       
                       <tbody>
@@ -117,11 +119,18 @@
 </html>
 <script type="text/javascript">
     jQuery(document).ready(function(){
-        jQuery('#addForm').validate();
+       /* jQuery('#addForm').validate();
         jQuery('#addForm').submit(function(e) {
             //e.preventDefault();
+            alert($(this).valid());
             if ($(this).valid()==true) {
-                
+
+            }
+        });*/
+
+        $("#addForm").validate({
+            submitHandler: function(form) {
+                form.submit();
             }
         });
         //jQuery('#categoryMainTable').on('')

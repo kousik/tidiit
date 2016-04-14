@@ -22,6 +22,7 @@ class User_model extends CI_Model {
     private $_table_sms_history = 'sms_send_history';
     private $_table_logistics = 'logistics';
     private $_table_logistic_user = 'logistic_user';
+    private $_table_warehouse = 'seller_warehouse';
 
 
     public $result=NULL;
@@ -178,8 +179,13 @@ class User_model extends CI_Model {
     }
 
     public function edit_biiling_info($dataArray,$userId){
-            $this->db->where('userId',$userId);
-            $this->db->update($this->_bill_address,$dataArray);
+            if($this->get_billing_address($userId)):
+                $this->db->where('userId',$userId);
+                $this->db->update($this->_bill_address,$dataArray);
+            else:
+                $dataArray['userId'] = $userId;
+                $this->db->insert($this->_bill_address,$dataArray);
+            endif;
             return TRUE;
     }
 
@@ -926,4 +932,38 @@ class User_model extends CI_Model {
         $this->db->join($this->_table_logistic_user.' lu','lu.logisticsId=l.logisticsId','left');
         return $this->db->join($this->_table.' u','lu.userId=u.userId','left')->where('u.userId',$userId)->get()->result();
     }
+
+
+    public function add_warehouse($dataArray){
+        $this->db->insert($this->_table_warehouse,$dataArray);
+        return $this->db->insert_id();
+    }
+
+    public function get_all_warehouse($sellerId = false){
+        $this->db->select('sw.*,c.countryName,s.stateName');
+        $this->db->from($this->_table_warehouse.' sw')->join($this->_table_country.' c','sw.countryId=c.countryId','left');
+        $this->db->join($this->_table_state.' s','sw.stateId=s.stateId','left');
+
+        if(!$sellerId):
+            $rs=$this->db->where('sw.sellerId',$this->session->userdata('FE_SESSION_VAR'))->get()->result();
+            //echo $this->db->last_query();die;
+            return $rs;
+        else:
+            return $this->db->where('sw.sellerId',$sellerId)->get()->result_array();
+        endif;
+    }
+
+    public function get_single_warehouse($wid = false){
+        $this->db->select('sw.*,c.countryName,s.stateName');
+        $this->db->from($this->_table_warehouse.' sw')->join($this->_table_country.' c','sw.countryId=c.countryId','left');
+        $this->db->join($this->_table_state.' s','sw.stateId=s.stateId','left');
+        return $this->db->where('sw.id',$wid)->get()->result_array();
+    }
+
+    public function warehouse_delete($wid){
+        $this->db->where('id',$wid);
+        $this->db->delete($this->_table_warehouse);
+        return TRUE;
+    }
 }
+

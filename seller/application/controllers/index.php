@@ -110,10 +110,28 @@ class Index extends MY_Controller {
         $data = $this->_get_logedin_template();
         $me=$this->session->userdata['FE_SESSION_UDATA'];
         $billAddress=  $this->User_model->get_billing_address();
-        $data['billAddressDataArr'] = $billAddress;
+
+
+        if($billAddress):
+            $data['billAddressDataArr'] = $billAddress;
+        else:
+            $data['billAddressDataArr'][0] = new stdClass;
+            $data['billAddressDataArr'][0]->address = '';
+            $data['billAddressDataArr'][0]->city = '';
+            $data['billAddressDataArr'][0]->countryId = '';
+            $data['billAddressDataArr'][0]->stateId = '';
+            $data['billAddressDataArr'][0]->zip = '';
+        endif;
+
+
         $data['me'] = $me;
         $data['CountryDataArr'] = $this->Country->get_all1();
+        if($billAddress):
         $data['stateDataArr'] = $this->Country->get_state_country1($billAddress[0]->countryId);
+        else:
+            $data['stateDataArr'] = [];
+        endif;
+
         
         $this->load->view('edit_profile',$data);
     }
@@ -154,16 +172,54 @@ class Index extends MY_Controller {
             
             $dataArr=array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$contactNo,'mobile'=>$mobile,'email'=>$email,'fax'=>$fax,'aboutMe'=>$aboutMe);
             $this->User_model->edit($dataArr,$this->session->userdata('FE_SESSION_VAR'));
-            pre($dataArr);die;
+            //pre($dataArr);die;
             $billDataArr=array('countryId'=>$countryId,'stateId'=>$stateId,'city'=>$city,'address'=>$address,'zip'=>$zip,'contactNo'=>$contactNo);
+
             $this->User_model->edit_biiling_info($billDataArr,$this->session->userdata('FE_SESSION_VAR'));
             $this->session->set_flashdata('Message','Profile information updated successfully.');
-            redirect(BASE_URL);
+            redirect(BASE_URL.'index/edit_profile/');
         }
     }
     
     function edit_finance_info(){
         $data = $this->_get_logedin_template();
         $this->load->view('under_construction',$data);
+    }
+
+    function my_warehouse(){
+        $data = $this->_get_logedin_template();
+        $me=$this->session->userdata['FE_SESSION_UDATA'];
+        $data['CountryDataArr'] = $this->Country->get_all1();
+        $data['warehouses'] = $this->User_model->get_all_warehouse();
+        $this->load->view('my_warehouse',$data);
+    }
+
+    function update_warehouse(){
+        $config = array(
+            array('field'   => 'companyName','label'   => 'Company Name','rules'   => 'trim|required|xss_clean|min_length[3]|max_length[60]'),
+            array('field'   => 'taxInvoice','label'   => 'Last Name','rules'   => 'trim|required|xss_clean|min_length[3]|max_length[50]'),
+            array('field'   => 'vatNumber','label'   => 'Email','rules'   => 'trim|required|xss_clean|min_length[3]|max_length[50]'),
+            array('field'   => 'contactNo','label'   => 'Contact No','rules'   => 'trim|required|xss_clean|is_natural|min_length[7]|max_length[12]'),
+            array('field'   => 'mobile','label'   => 'Contact No','rules'   => 'trim|xss_clean|is_natural|min_length[7]|max_length[12]'),
+            array('field'   => 'address1','label'   => 'Address','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'address2','label'   => 'Address','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'city','label'   => 'City','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'stateId','label'   => 'State Name','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'countryId','label'   => 'Country Name','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'zip','label'   => 'Zip','rules'   => 'trim|required|xss_clean|is_natural|min_length[5]|max_length[8]')
+        );
+        //initialise the rules with validatiion helper
+        $this->form_validation->set_rules($config);
+        //checking validation
+        if($this->form_validation->run() == FALSE){
+            //retun to login page with peroper error
+            $this->session->set_flashdata('Message',validation_errors());
+            redirect(BASE_URL.'index/my_warehouse/');
+        }else{
+            $_POST['sellerId'] = $this->session->userdata('FE_SESSION_VAR');
+            $this->User_model->add_warehouse($_POST);
+            $this->session->set_flashdata('Message','Warehouse information added successfully.');
+            redirect(BASE_URL.'index/my_warehouse/');
+        }
     }
 }
