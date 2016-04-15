@@ -392,6 +392,7 @@ class Order extends MY_Controller{
 
     public function order_invoice($orderNumber){
         $this->load->model('Siteconfig_model');
+        $this->load->helper(array('dompdf', 'file'));
         $config =$this->Siteconfig_model->get_all();
         $cdata = [];
         foreach($config as $key => $cval):
@@ -399,6 +400,8 @@ class Order extends MY_Controller{
         endforeach;
         $data['config']=$cdata;
         $data['order'] = $this->Order_model->get_single_order_by_id($orderNumber);
-        $this->load->view('order_invoice', $data, true);
+        //ob_start();
+        $html = $this->load->view('order_invoice', $data, true);
+        pdf_create($html, 'TIDIIT-OD-'.$orderNumber);
     }
 }
