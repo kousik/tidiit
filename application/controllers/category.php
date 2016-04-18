@@ -245,6 +245,42 @@ class Category extends MY_Controller{
         return $out2;
     }
 
+    function display_options_view($options, $query=[]){
+        ob_start();
+        if(isset($options) && $options): //print_r($options);
+            foreach($options as $opkey => $opval):?>
+                <div class="brand_sec">
+                    <div class="sub_hdng">
+                        <h3><?=$opval['name']?></h3>
+                    </div>
+                    <ul id="options" class="rand_list">
+                        <?php
+                        foreach($opval['value'] as $ovkey => $oval):
+                            $listval = $oval;
+                            if($opval['name'] == "Color"):
+                                $colors = explode("||", $oval);
+                                $listval = $colors[0];
+                            endif;
+                            $checked = "";
+                            $qc = $opval['id'].'@'.trim($listval);
+                            if(in_array($qc, $query)):
+                                $checked = " checked";
+                            endif;
+                            ?>
+                            <li style="padding: 5px 5px;float: left;width: 45%;font-size: 12px;">
+                                <input type="checkbox" name="<?=$opval['type']?>" class="optionsort" data-name="<?=$opkey?>" value="<?=$opval['id']?>@<?=trim($listval)?>" <?=$checked?> />
+                                <span style="margin-left: 2px;"><?=$listval?></span>
+                            </li>
+                        <?php endforeach;?>
+                    </ul>
+                </div>
+            <?php endforeach;
+        endif;
+        $out2 = ob_get_contents();
+        ob_end_clean();
+        return $out2;
+    }
+
 
 
     function display_brand_products($bid){
@@ -275,6 +311,7 @@ class Category extends MY_Controller{
         $data['sort'] = 'popular';
         $data['brand'] = array();
         $data['range'] = array(0,100000);
+        $data['query'] = [];
         foreach($_GET as $key => $get):
             if($key == 'sort' && $get):
                 $cond['order_by'] = $get;
@@ -284,6 +321,11 @@ class Category extends MY_Controller{
                 $brands = explode("|", $get);
                 $cond['brand'] = $brands;
                 $data['brand'] = $brands;
+            endif;
+            if($key == 'query' && $get):
+                $queries = explode("|", $get);
+                $cond['query'] = $queries;
+                $data['query'] = $queries;
             endif;
             if($key == 'range' && $get):
                 $ranges = explode("|", $get);
@@ -314,6 +356,9 @@ class Category extends MY_Controller{
         $data['total_pages'] = $total_pages;
         //$products['brands'] = $total_rows['brands'];
 
+        $options = $this->Option_model->get_category_product_option_wedgets(implode(",",$products['options']));
+        $data['options'] = $options;
+        unset($products['options']);
 
         $brnds = $this->Brand_model->get_all();
         $brand = [];
@@ -335,10 +380,11 @@ class Category extends MY_Controller{
             else:
                 $data['cls'] = 0;
             endif;
-            $brnd = isset($_GET['brand'])?explode("|", $_GET['brand']):array();
+            $brnd = (isset($_GET['brand'])&&$_GET['brand'])?explode("|", $_GET['brand']):"";
             $data['header'] = $brnd?implode(", ",$brnd):"All Brands";
             $data['products'] = $this->create_product_view($products);
             $data['brands'] = $this->display_brands_view($brand,$brnd);
+            //$data['optionsdata'] = $this->display_options_view($options, $data['query']);
             echo json_encode($data);die;
         endif;
 

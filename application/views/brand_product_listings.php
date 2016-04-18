@@ -51,6 +51,37 @@ echo $header; ?>
                         </ul>
                     </div>
                     <?php unset($products['brands']);endif; ?>
+                    <div class="js-option-list">
+                      <?php if(isset($options) && $options): //print_r($options);
+                          foreach($options as $opkey => $opval):?>
+                              <div class="brand_sec">
+                                  <div class="sub_hdng">
+                                      <h3><?=$opval['name']?></h3>
+                                  </div>
+                                  <ul id="options" class="rand_list">
+                                      <?php
+                                      foreach($opval['value'] as $ovkey => $oval):
+                                          $listval = $oval;
+                                          if($opval['name'] == "Color"):
+                                              $colors = explode("||", $oval);
+                                              $listval = $colors[0];
+                                          endif;
+                                          $checked = "";
+                                          $qc = $opval['id'].'@'.trim($listval);
+                                          if(in_array($qc, $query)):
+                                              $checked = " checked";
+                                          endif;
+                                          ?>
+                                          <li style="padding: 5px 5px;float: left;width: 45%;font-size: 12px;">
+                                              <input type="checkbox" name="<?=$opval['type']?>" class="optionsort" data-name="<?=$opkey?>" value="<?=$opval['id']?>@<?=trim($listval)?>" <?=$checked?> />
+                                              <span style="margin-left: 2px;"><?=$listval?></span>
+                                          </li>
+                                      <?php endforeach;?>
+                                  </ul>
+                              </div>
+                          <?php endforeach;
+                      endif; ?>
+                    </div>
               </div>
             </div>
         </div>
@@ -123,23 +154,7 @@ echo $header; ?>
 
     <div class="topseller_zne">
         <h2>Shop by brand</h2>
-        <div id="demo">
-            <div id="owl-demo4" class="owl-carousel">
-                <?php foreach ($body_cats as $bdkey => $bcat)://print_r($bcat);?>
-    <div class="item">
-        <div class="prodct_box"><a
-                href="<?php echo BASE_URL . 'products/' . my_seo_freindly_url($bcat->categoryName) . '/?cpid=' . base64_encode($bcat->categoryId * 226201); ?>">
-                <img src="<?php echo SiteImagesURL; ?>prdct_img.png" class="img-responsive"/>
-            </a>
 
-            <p class="text-center"><a
-                    href="<?php echo BASE_URL . 'products/' . my_seo_freindly_url($bcat->categoryName) . '/?cpid=' . base64_encode($bcat->categoryId * 226201); ?>"><?= $bcat->categoryName ?></a>
-            </p>
-        </div>
-    </div>
-<?php endforeach; ?>
-            </div>
-        </div>
     </div>
 
           <!------------  SORT SECTION ---->
@@ -292,7 +307,7 @@ jQuery(document).ready(function () {
             $DisableDrag: false                             //[Optional] Disable drag or not, default value is false
         }
     };
-<?php if (!$is_last): ?>
+<?php //if (!$is_last): ?>
     var jssor_slider1 = new $JssorSlider$("slider1_container", options);
 
     //responsive code begin
@@ -326,7 +341,7 @@ jQuery(document).ready(function () {
     $(window).bind("resize", ScaleSlider);
     $(window).bind("orientationchange", ScaleSlider);
     //responsive code end
-<?php endif; ?>
+<?php //endif; ?>
 });
 </script> 
 <!-- bin/jquery.slider.min.js -->

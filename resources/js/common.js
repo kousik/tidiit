@@ -358,7 +358,8 @@ $(document).ready(function () {
         
         //changeUrlParam ('brand', brand);
         queryString.push('brand', brand);
-        getRefinedPro(1,1);
+        location.reload();
+        //getRefinedPro(1,1);
     });
 
     $( "body" ).delegate( "ul#options input[class='optionsort']", "click", function() {
@@ -378,7 +379,8 @@ $(document).ready(function () {
 
         var name = $(this).attr('data-name');
         queryString.push('query', option);
-        getRefinedPro(1,1);
+        location.reload();
+        //getRefinedPro(1,1);
     });
 
     $("body").delegate("ul#options select[class='optionsort']", "change", function() {
@@ -391,7 +393,8 @@ $(document).ready(function () {
 
 
         queryString.push('querys', option);
-        getRefinedPro(1,1);
+        location.reload();
+        //getRefinedPro(1,1);
     });
 
     
@@ -466,7 +469,11 @@ function getRefinedPro(offPage,cls){
             }
 
             if(data.header){
-                $("h2.js-header-title").text(data.header);
+                $("h2.js-header-title").html(data.header);
+            }
+
+            if(data.optionsdata){
+                $("div.js-option-list").html(data.optionsdata);
             }
             
             if(data.products){ 
