@@ -449,12 +449,13 @@ class Category extends MY_Controller{
                 $cond['id'] = $get;
             endif;
         endforeach;
-        $data['brand'] = [];
+        //$data['brand'] = [];
         if(isset($cond['qtype']) && $cond['qtype'] == "brand"):
             if(isset($cond['id']) && $cond['id']):
                 $brandDetails = $this->Brand_model->details($cond['id']);
                 $brands = explode("|", $brandDetails[0]->title);
-                $data['brand'] = $brands;
+                //$data['brand'] = $brands;
+                $data['brand'] = array_merge($data['brand'],$brands);
             endif;
         endif;
 
@@ -480,7 +481,9 @@ class Category extends MY_Controller{
         $total_pages = ceil($totalrows/$item_per_page);
         $data['total_pages'] = $total_pages;
 
-
+        $options = $this->Option_model->get_category_product_option_wedgets(implode(",",$products['options']));
+        $data['options'] = $options;
+        unset($products['options']);
 
         $brnds = $this->Brand_model->get_all();
         $brand = [];

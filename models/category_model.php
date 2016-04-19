@@ -761,6 +761,27 @@ WHERE c.categoryId =".$categoryId;
                 $where_str = $where_str." ) ";
             endif;
         }
+
+        if(isset($cond['query']) && $cond['query']):
+            $qdata = [];
+            foreach($cond['query'] as $qry):
+                $exq = explode("@", $qry);
+                $qdata[$exq[0]][] = $exq[1];
+            endforeach;
+
+            $q_string = " ";
+            $qn = count($qdata);
+            $i = 0;
+            foreach($qdata as $qkey => $qopval):
+                $opval = implode("','", $qopval);
+                $q_string .= " popvalue.option_id = '".$qkey."' AND value IN ('".$opval."')";
+                $i++;
+                if($i < $qn):
+                    $q_string .= " OR ";
+                endif;
+            endforeach;
+            $where_str = $where_str.' AND ('.$q_string.') ';
+        endif;
         
         $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `c`.`categoryName`,
             `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage`
@@ -772,14 +793,22 @@ WHERE c.categoryId =".$categoryId;
             LEFT JOIN product_image AS pimage ON pimage.productId = p.productId
             {$join_query}
             WHERE {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
-        $rs = $this->db->query($sql)->result();//echo $this->db->last_query();print_r($rs);
+        $rs = $this->db->query($sql)->result();//echo $this->db->last_query();//print_r($rs);
         $products = array();
         $brands = array();
+        $pids = [];
         if($rs):
             foreach($rs as $key => $product):
                 $products['products'][] =  $product;
                 $brands[$product->btitle] = $product->btitle;
+                $pids[] = $product->productId;
             endforeach;
+        endif;
+        $options = $this->get_products_common_options($pids);
+        if($options):
+            $products['options'] = $options;
+        else:
+            $products['options'] = [];
         endif;
         $products['brands'] = $brands;
         return $products;

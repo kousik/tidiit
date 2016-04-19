@@ -51,6 +51,38 @@ echo $header; ?>
                                         </ul>
                                     </div>
                                     <?php unset($products['brands']);endif; ?>
+                                <div class="js-option-list">
+                                    <?php if(isset($options) && $options): //print_r($options);
+                                        foreach($options as $opkey => $opval):?>
+                                            <div class="brand_sec">
+                                                <div class="sub_hdng">
+                                                    <h3><?=$opval['name']?></h3>
+                                                </div>
+                                                <ul id="options" class="rand_list">
+                                                    <?php
+                                                    foreach($opval['value'] as $ovkey => $oval):
+                                                        $listval = $oval;
+                                                        if($opval['name'] == "Color"):
+                                                            $colors = explode("||", $oval);
+                                                            $listval = $colors[0];
+                                                        endif;
+                                                        $checked = "";
+                                                        $qc = $opval['id'].'@'.trim($listval);
+                                                        if(in_array($qc, $query)):
+                                                            $checked = " checked";
+                                                        endif;
+                                                        ?>
+                                                        <li style="padding: 5px 5px;float: left;width: 45%;font-size: 12px;">
+                                                            <input type="checkbox" name="<?=$opval['type']?>" class="optionsort" data-name="<?=$opkey?>" value="<?=$opval['id']?>@<?=trim($listval)?>" <?=$checked?> />
+                                                            <span style="margin-left: 2px;"><?=$listval?></span>
+                                                        </li>
+                                                    <?php endforeach;?>
+                                                </ul>
+                                            </div>
+                                        <?php endforeach;
+                                    endif; ?>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -273,6 +305,39 @@ echo $header; ?>
                     $DisableDrag: false                             //[Optional] Disable drag or not, default value is false
                 }
             };
+
+            var jssor_slider1 = new $JssorSlider$("slider1_container", options);
+
+            //responsive code begin
+            //you can remove responsive code if you don't want the slider scales while window resizes
+            function ScaleSlider() {
+                var parentWidth = jssor_slider1.$Elmt.parentNode.clientWidth;
+                if (parentWidth) {
+                    var sliderWidth = parentWidth;
+                    //console.log(sliderWidth);
+                    if (sliderWidth < 720) {
+                        sliderWidth = sliderWidth - 30;
+                    }
+                    else if (sliderWidth == 750) {
+                        sliderWidth = sliderWidth - 30;
+                    }
+                    else if (sliderWidth > 721) {
+                        sliderWidth = sliderWidth - 15;
+                    }
+
+                    //keep the slider width no more than 810
+                    //sliderWidth = Math.min(sliderWidth, 810);
+
+                    jssor_slider1.$ScaleWidth(sliderWidth);
+                }
+                else
+                    window.setTimeout(ScaleSlider, 30);
+            }
+            ScaleSlider();
+
+            $(window).bind("load", ScaleSlider);
+            $(window).bind("resize", ScaleSlider);
+            $(window).bind("orientationchange", ScaleSlider);
 
         });
     </script>
