@@ -325,7 +325,6 @@ WHERE c.categoryId =".$categoryId;
                     $q_string .= " OR ";
                 endif;
             endforeach;
-
             $where_str = $where_str.' AND ('.$q_string.') ';
         endif;
         
@@ -369,6 +368,7 @@ WHERE c.categoryId =".$categoryId;
     public function get_brand_products($brandId, $offset = null, $limit = null, $cond) {
 
         $group_by = ' GROUP BY p.productId';
+        $join_query = "";
 
         $sort = array('featured','isNew','popular','lowestPrice');
         $order_by = 'p.popular';
@@ -407,6 +407,28 @@ WHERE c.categoryId =".$categoryId;
             $where_str = $where_str.' AND p.lowestPrice >= '.$lowestPrice.' AND p.lowestPrice <= '.$heighestPrice;
         endif;
 
+        if(isset($cond['query']) && $cond['query']):
+            $join_query .= " LEFT JOIN product_option_values AS popvalue ON popvalue.productId = p.productId ";
+            $qdata = [];
+            foreach($cond['query'] as $qry):
+                $exq = explode("@", $qry);
+                $qdata[$exq[0]][] = $exq[1];
+            endforeach;
+
+            $q_string = " ";
+            $qn = count($qdata);
+            $i = 0;
+            foreach($qdata as $qkey => $qopval):
+                $opval = implode("','", $qopval);
+                $q_string .= " popvalue.option_id = '".$qkey."' AND value IN ('".$opval."')";
+                $i++;
+                if($i < $qn):
+                    $q_string .= " OR ";
+                endif;
+            endforeach;
+            $where_str = $where_str.' AND ('.$q_string.') ';
+        endif;
+
         $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `c`.`categoryName`,
             `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage`
             FROM `product` AS p
@@ -415,10 +437,12 @@ WHERE c.categoryId =".$categoryId;
             LEFT JOIN product_category AS pc ON pc.productId = p.productId
             LEFT JOIN category AS c ON c.categoryId = pc.categoryId
             LEFT JOIN product_image AS pimage ON pimage.productId = p.productId
+            {$join_query}
             WHERE {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
         $rs = $this->db->query($sql)->result();//echo $this->db->last_query();print_r($rs);
         $products = array();
         $brands = array();
+        $pids = [];
         if($rs):
             foreach($rs as $key => $product):
                 //$product->tags = $this->get_product_tags($product->productId);
@@ -427,7 +451,14 @@ WHERE c.categoryId =".$categoryId;
                 //$product->curent_category = $this->get_details_by_id($categoryId);
                 $products['products'][] =  $product;
                 $brands[$product->btitle] = $product->btitle;
+                $pids[] = $product->productId;
             endforeach;
+        endif;
+        $options = $this->get_products_common_options($pids);
+        if($options):
+            $products['options'] = $options;
+        else:
+            $products['options'] = [];
         endif;
         $products['brands'] = $brands;
         return $products;
@@ -730,6 +761,27 @@ WHERE c.categoryId =".$categoryId;
                 $where_str = $where_str." ) ";
             endif;
         }
+
+        if(isset($cond['query']) && $cond['query']):
+            $qdata = [];
+            foreach($cond['query'] as $qry):
+                $exq = explode("@", $qry);
+                $qdata[$exq[0]][] = $exq[1];
+            endforeach;
+
+            $q_string = " ";
+            $qn = count($qdata);
+            $i = 0;
+            foreach($qdata as $qkey => $qopval):
+                $opval = implode("','", $qopval);
+                $q_string .= " popvalue.option_id = '".$qkey."' AND value IN ('".$opval."')";
+                $i++;
+                if($i < $qn):
+                    $q_string .= " OR ";
+                endif;
+            endforeach;
+            $where_str = $where_str.' AND ('.$q_string.') ';
+        endif;
         
         $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `c`.`categoryName`,
             `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage`
@@ -741,17 +793,44 @@ WHERE c.categoryId =".$categoryId;
             LEFT JOIN product_image AS pimage ON pimage.productId = p.productId
             {$join_query}
             WHERE {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
-        $rs = $this->db->query($sql)->result();//echo $this->db->last_query();print_r($rs);
+        $rs = $this->db->query($sql)->result();//echo $this->db->last_query();//print_r($rs);
         $products = array();
         $brands = array();
+        $pids = [];
         if($rs):
             foreach($rs as $key => $product):
                 $products['products'][] =  $product;
                 $brands[$product->btitle] = $product->btitle;
+                $pids[] = $product->productId;
             endforeach;
+        endif;
+        $options = $this->get_products_common_options($pids);
+        if($options):
+            $products['options'] = $options;
+        else:
+            $products['options'] = [];
         endif;
         $products['brands'] = $brands;
         return $products;
+    }
+
+    public function get_products_common_options($products = []){
+        $productIds = implode(",",$products);
+        if($products):
+            $sql = "SELECT `po`.id
+                FROM `product_options` AS po
+                LEFT JOIN product_option_values AS pov ON po.id = pov.option_id
+                WHERE pov.productId IN ( {$productIds} ) AND po.type IN ('checkbox', 'dropdown', 'radio') GROUP BY po.id";
+            $rs = $this->db->query($sql)->result_array();//echo $this->db->last_query();print_r($rs);
+
+            $ids = [];
+            foreach($rs as $key => $r):
+                $ids[] = $r['id'];
+            endforeach;
+            return $ids;
+        else:
+            return [];
+        endif;
     }
 
 }

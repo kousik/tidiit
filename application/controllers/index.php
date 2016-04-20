@@ -203,10 +203,55 @@ class Index extends MY_Controller{
         //pre($get_all_active_topic);die;
         $data['helpTopicsArr']=$get_all_active_topic;
         $data['helpDataArr']=$get_help_topics_data;
-        
+        $questions = [];
+        foreach($get_help_topics_data as $hkey => $hdata):
+            $questions[] = $hdata->question;
+        endforeach;
+        $data['questions']=$questions;
         $data['feedback']=$this->load->view('feedback',$data,TRUE);
         $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
         
         $this->load->view('help',$data);
+    }
+
+    function submit_help_query(){
+        $help_subject   = $this->input->post('help_subject');
+        if(!$help_subject):
+            echo "-1<p class='box alert text-left'>Please choose the help topic!</p>";die;
+        endif;
+        $name           = $this->input->post('name');
+        if(!$name):
+            echo "-1<p class='box alert text-left'>Please enter your name!</p>";die;
+        endif;
+        $email          = $this->input->post('email');
+        if(!$email):
+            echo "-1<p class='box alert text-left'>Please enter your email!</p>";die;
+        endif;
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) :
+            echo "-1<p class='box alert text-left'>This ($email) email address is not considered valid.</p>";
+        endif;
+        $phone          = $this->input->post('phone');
+        if(!$phone):
+            echo "-1<p class='box alert text-left'>Please enter your phone number!</p>";die;
+        endif;
+
+        $regex = "/^(\d[\s-]?)?[\(\[\s-]{0,2}?\d{3}[\)\]\s-]{0,2}?\d{3}[\s-]?\d{4}$/i";
+        if(!preg_match( $regex, $phone )):
+            echo "-1<p class='box alert text-left'>Please enter valid phone number!</p>";die;
+        endif;
+        $help_message   = $this->input->post('help_message');
+        if(!$help_message):
+            echo "-1<p class='box alert text-left'>Please enter your your enquiry!</p>";die;
+        endif;
+
+        $maildata           =  $this->load_default_resources();
+        $maildata['name']   = $name;
+        $maildata['email']  = $email;
+        $maildata['phone']  = $phone;
+        $maildata['message']= $help_message;
+        //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
+        $supportEmail='kousik.das.btech@gmail.com';
+        $this->_global_tidiit_mail($supportEmail, $help_subject, $maildata,'help_mail','Tidiit Inc Help Support');
+        echo "<p class='box info text-left'>Your query have been submitted successfully!</p>";die;
     }
 }

@@ -497,10 +497,15 @@ class MY_Controller extends CI_Controller {
             $message=  $this->load->view('email_template/'.$tempplateName,$dataResources,TRUE);
         }
         //echo $message.' === '.$to;die;
-        $this->load->library('email');
+        $config = Array(
+            'mailtype'  => 'html',
+            'charset' => 'utf-8',
+            'wordwrap' => TRUE
+        );
+        $this->load->library('email', $config);
         $this->email->from("no-reply@tidiit.com", 'Tidiit System Administrator');
         if($toName!="")
-            $this->email->to($to,$toName);
+            $this->email->to($to);
         else
             $this->email->to($to);
         

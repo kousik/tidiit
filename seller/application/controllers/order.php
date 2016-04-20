@@ -389,4 +389,19 @@ class Order extends MY_Controller{
 
         $this->load->view('packing_slip', $data, true);
     }
+
+    public function order_invoice($orderNumber){
+        $this->load->model('Siteconfig_model');
+        $this->load->helper(array('dompdf', 'file'));
+        $config =$this->Siteconfig_model->get_all();
+        $cdata = [];
+        foreach($config as $key => $cval):
+            $cdata[$cval->constantName] = $cval->constantValue;
+        endforeach;
+        $data['config']=$cdata;
+        $data['order'] = $this->Order_model->get_single_order_by_id($orderNumber);
+        //ob_start();
+        $html = $this->load->view('order_invoice', $data, true);
+        pdf_create($html, 'TIDIIT-OD-'.$orderNumber);
+    }
 }

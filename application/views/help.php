@@ -171,31 +171,74 @@
                                                               </div>
                                                             </div>
                                                             <?php }?>
-                                                            <p> Are you want more help ?</p>
-                                                            <button class="btn btn-info">Submit your query </button>
                                                           </div>
-                                                        <?php /*<div id="accordion" class="faq-sec">
-                                                            <?php
-                                                            foreach($helpDataArr AS $k){?>
-                                                                <h3><?php echo $k->question;?></h3>
-                                                                <div>
-                                                                  <p><?php echo $k->answer;?></p>
-                                                                </div>
-                                                            <?php }?>
-                                                        </div>*/?>
                                                     </li>              
                                                 </ul>
                                             </div>
                                       </div>
+                                    <p> Are you want more help ?</p>
+                                    <button class="btn btn-info" data-toggle="modal" data-target="#exampleModal">Submit your query </button>
                                 </div>
                             </div>
                       </div>
-                       
     </div>
-
   </div>
+</article>
 
-</article> 
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="<?php echo BASE_URL.'index/submit_help_query/';?>" name="help-form" class="help-form" id="wtil-cms-form" method="post">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Want to get more info ?</h4>
+            </div>
+            <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="recipient-name" class="control-label">Choose your topic:</label>
+                        <div class="js-replace">
+                        <?php if($questions):?>
+                            <select name="help_subject" class="form-control" id="help-subject">
+                                <?php foreach($questions as $q):?>
+                                <option value="<?=$q?>"><?=$q?></option>
+                                <?php endforeach;?>
+                            </select>
+                        <?php else:?>
+                            <input class="form-control" name="help_subject" id="help_subject">
+                        <?php endif;?>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="control-label">Name:</label>
+                        <input class="form-control" name="name" id="help_name">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="control-label">Email:</label>
+                        <input class="form-control" name="email" id="help_email">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="control-label">Phone Number:</label>
+                        <input class="form-control" name="phone" id="help_phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="control-label">Type your query here:</label>
+                        <textarea class="form-control" name="help_message" id="message-text"></textarea>
+                    </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <input type="submit" class="btn btn-primary" name="wtil-post-submit" value="Send us now!">
+                <div class="et-ajax-loader-global cms-module-loader pull-left"><span>Processing...</span></div>
+                <div class="cms-ajax-feedback"></div>
+                <p class="text-info pull-left">Our customer care executive with you for 24X7 . Happy visiting! </p>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
 <?php echo $footer;?>
 <script type="text/javascript">
     jQuery(document).ready(function(){
@@ -219,7 +262,17 @@
                 dataType:'json',
                 success:function(data){
                     jQuery('.helpTopicsContainer').html(data.content);
+                    var subject = '<input class="form-control" name="help_subject" id="help_subject">';
+                    if(data.qts && data.qts.length > 0){
+                        var subject = '<select name="help_subject" class="form-control" id="help-subject">';
+                        for (i = 0; i < data.qts.length; i++) {
+                            subject += "<option value='"+data.qts[i] + "'>"+data.qts[i] + "</option>";
+                        }
+                        subject += "</select>";
+                    }
+                    jQuery('div.js-replace').html(subject);
                     myJsMain.commonFunction.hidePleaseWait();
+
                 }
             });
         });

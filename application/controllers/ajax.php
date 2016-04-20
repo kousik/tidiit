@@ -1517,7 +1517,11 @@ class Ajax extends MY_Controller{
          $data['helpDataArr']=$get_help_topics_data;
          $data['help_topics_details']=$help_topics_details;
          $retData=$this->load->view('help_topics_details_ajax',$data,TRUE);
-         echo json_encode(array('content'=>$retData));die;
+         $questions = [];
+         foreach($get_help_topics_data as $hkey => $hdata):
+             $questions[] = $hdata->question;
+         endforeach;
+         echo json_encode(array('content'=>$retData, 'qts' => $questions));die;
      }
 
     function ajax_search_autocomplete(){
