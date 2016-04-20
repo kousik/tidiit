@@ -189,7 +189,7 @@ class Order_model extends CI_Model {
 
     public function update_status($Status,$orderId){
             $this->db->where('orderId',$orderId);
-            $this->db->update($this->_table,array('Status'=>1));
+            $this->db->update($this->_table,array('status'=>$Status));
             return TRUE;
     }
 

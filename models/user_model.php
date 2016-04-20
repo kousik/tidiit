@@ -930,7 +930,7 @@ class User_model extends CI_Model {
     function get_logistics_details_by_user_id($userId){
         $this->db->select('l.*,u.firstName,u.lastName,u.email,u.contactNo')->from($this->_table_logistics.' l');
         $this->db->join($this->_table_logistic_user.' lu','lu.logisticsId=l.logisticsId','left');
-        return $this->db->join($this->_table.' u','lu.userId=u.userId','left')->where('u.userId',$userId)->get()->result();
+        return $this->db->join($this->_table.' u','lu.userId=u.userId','left')->where('u.userId',$userId)->get()->result_array();
     }
 
 
