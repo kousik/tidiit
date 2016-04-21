@@ -965,7 +965,7 @@ class Product extends MY_Controller{
                                 @unlink($this->config->item('ResourcesPath').'product/original/'.$k);
                             }
                             $errors = $this->upload->display_errors();
-                            pre($errors);die;
+                            //pre($errors);die;
                             $this->session->set_flashdata('Message',$errors);
                             redirect(base_url().'product/add_product/'.$categoryId);
                         }
@@ -1015,11 +1015,11 @@ class Product extends MY_Controller{
             $this->Product_model->add_product_price($newPriceArr);
             //echo 'price added done.<br>';
 
-
             $this->Product_model->add_product_category(array('productId'=>$productId,'categoryId'=>$categoryId));
 
             //echo 'product category done.<br>';
             $this->Product_model->add_product_owner(array('productId'=>$productId,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+            $this->User_model->add_tidiit_commission(array('productId'=>$productId,'sellerId'=>$this->session->userdata('FE_SESSION_VAR'),'categoryId'=>$categoryId));
             $this->Product_model->add_brand(array('productId'=>$productId,'brandId'=>$brandId));
 
             //Add product option values
@@ -1028,7 +1028,6 @@ class Product extends MY_Controller{
             $this->session->set_flashdata('Message','Product added successfully.');
             redirect(base_url().'product/viewlist');
         }
-
     }
 
     /**
@@ -1227,6 +1226,18 @@ class Product extends MY_Controller{
                 redirect(base_url().'product/viewlist');
             endif;
         endif;
+    }
+    
+    function insert_old_add_tidiit_commission(){
+        $rs=  $this->db->get("product")->result();
+        foreach($rs as $k=> $v){
+            $rs1=$this->db->get_where('tidiit_commission',array('productId'=>$v->productId))->result();
+            if(count($rs1)==0){
+                $sql="SELECT pc.categoryId,ps.userId FROM product_category AS pc JOIN product_seller AS ps ON(pc.productId=ps.productId) WHERE pc.productId=$v->productId";
+                $rs2=$this->db->query($sql)->result();
+                $this->User_model->add_tidiit_commission(array('productId'=>$v->productId,'sellerId'=>$rs2[0]->userId,'categoryId'=>$rs[0]->categoryId));
+            }
+        }
     }
 }
 ?>

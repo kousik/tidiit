@@ -23,6 +23,7 @@ class User_model extends CI_Model {
     private $_table_logistics = 'logistics';
     private $_table_logistic_user = 'logistic_user';
     private $_table_warehouse = 'seller_warehouse';
+    private $_table_tidiit_commission = 'tidiit_commission';
 
 
     public $result=NULL;
@@ -965,6 +966,11 @@ class User_model extends CI_Model {
         $this->db->where('id',$wid);
         $this->db->delete($this->_table_warehouse);
         return TRUE;
+    }
+    
+    function add_tidiit_commission($dataArray){
+        $this->db->insert($this->_table_tidiit_commission,$dataArray);
+        return $this->db->insert_id();
     }
 }
 
