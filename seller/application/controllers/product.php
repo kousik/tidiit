@@ -856,7 +856,6 @@ class Product extends MY_Controller{
         return $retView;
     }
 
-
     /**
      *
      */
@@ -1239,5 +1238,6 @@ class Product extends MY_Controller{
             }
         }
     }
+    
+    
 }
-?>

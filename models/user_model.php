@@ -972,5 +972,17 @@ class User_model extends CI_Model {
         $this->db->insert($this->_table_tidiit_commission,$dataArray);
         return $this->db->insert_id();
     }
+    
+    public function get_tidiit_commission_list(){
+        $this->db->select('u.email,u.userId,p.title,p.productId,c.categoryName,tc.commissionPercentage,tc.commissionId')->from('tidiit_commission tc');
+        $this->db->join('product p','tc.productId=p.productId')->join($this->_table.' u','tc.sellerId=u.userId');
+        return $this->db->join('category c','tc.categoryId=c.categoryId')->get()->result();
+    }
+    
+    function edit_tidiit_commission($dataArray,$commissionId){
+        $this->db->where('commissionId',$commissionId);
+        $this->db->update($this->_table_tidiit_commission,$dataArray);        
+        return TRUE;		
+    }
 }
 
