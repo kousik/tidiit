@@ -31,9 +31,10 @@ class Tidiit_commission extends MY_Controller{
                 $bulkQty=$v->qty;
                 $weight=$productDetails[0]->weight;
                 $shippingPrice=$this->calculate_shiiping_price($bulkQty,$weight);
+                $shippingCharges=round($bulkQty*$weight)*$shippingPrice;
                 $tidiitCommissions=$v->price*$tidiitCommissionsPer/100;
-                $fPrice=$v->price+($bulkQty*$shippingPrice)+$tidiitCommissions;
-                $dataArray=array('price'=>$fPrice,'shippingCharges'=>($bulkQty*$shippingPrice),'tidiitCommissions'=>$tidiitCommissions);
+                $fPrice=$v->price+$shippingCharges+$tidiitCommissions;
+                $dataArray=array('price'=>$fPrice,'shippingCharges'=>$shippingCharges,'tidiitCommissions'=>$tidiitCommissions);
                 $this->db->where('productPriceId',$v->productPriceId);
                 $this->db->update('product_price',$dataArray);        
             }

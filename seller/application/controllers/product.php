@@ -1125,9 +1125,11 @@ class Product extends MY_Controller{
                     }
                     if($this->is_tidiit_commission_updated($productId)==TRUE){
                         $shippingPrice=$this->calculate_shiiping_price($bulkQty,$weight);
-                        $tidiitCommissions=  $this->get_tidiit_commission($productId);
-                        $fPrice=$price+($bulkQty*$shippingPrice)+$tidiitCommissions;
-                        $priceArr[]=array('qty'=>$bulkQty,'price'=>$fPrice,'shippingCharges'=>($bulkQty*$shippingPrice),'tidiitCommissions'=>$tidiitCommissions);
+                        $shippingCharges=round($bulkQty*$weight)*$shippingPrice;
+                        $tidiitCommissionsPer=  $this->get_tidiit_commission($productId);
+                        $tidiitCommissions=$price*$tidiitCommissionsPer/100;
+                        $fPrice=$price+$shippingCharges+$tidiitCommissions;
+                        $priceArr[]=array('qty'=>$bulkQty,'price'=>$fPrice,'shippingCharges'=>$shippingCharges,'tidiitCommissions'=>$tidiitCommissions);
                     }else{
                         $priceArr[]=array('qty'=>$bulkQty,'price'=>$price);
                     }
@@ -1249,7 +1251,8 @@ class Product extends MY_Controller{
     }
     
     function calculate_shiiping_price($bulkQty,$weight){
-        $sql="SELECT `charges` FROM `logistic_weight_based_charges` WHERE ($bulkQty*$weight) BETWEEN `min` AND `max` LIMIT 1";
+        $weightF=round($bulkQty*$weight);
+        $sql="SELECT `charges` FROM `logistic_weight_based_charges` WHERE $weightF BETWEEN `min` AND `max` LIMIT 1";
         $shippingchargesArr=$this->db->query($sql)->result();
         return $shippingchargesArr[0]->charges;
     }
