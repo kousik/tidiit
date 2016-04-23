@@ -984,5 +984,9 @@ class User_model extends CI_Model {
         $this->db->update($this->_table_tidiit_commission,$dataArray);        
         return TRUE;		
     }
+    
+    function get_tidiit_details($commissionId){
+        return $this->db->get_where($this->_table_tidiit_commission,array('commissionId'=>$commissionId))->result();
+    }
 }
 

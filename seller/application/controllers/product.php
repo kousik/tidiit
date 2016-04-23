@@ -328,7 +328,6 @@ class Product extends MY_Controller{
         $this->load->view('edit_mobile',$data);
     }
     
-
     public function edit_mobile_submit(){
         //pre($_POST);die;
         $retDataArr=$this->default_data_validate();
@@ -914,6 +913,10 @@ class Product extends MY_Controller{
                         $this->session->set_flashdata('Message','Please fill the price and relted quanity');
                         redirect(BASE_URL.'product/add_product/'.$categoryId);
                     }
+                    //$shippingPrice=$this->calculate_shiiping_price($bulkQty,$weight);
+                    //$tidiitCommissions=  $this->get_tidiit_commission($productId);
+                    //$fPrice=$price+($bulkQty*$shippingPrice)+$tidiitCommissions;
+                    //$priceArr[]=array('qty'=>$bulkQty,'price'=>$fPrice,'shippingCharges'=>($bulkQty*$shippingPrice),'tidiitCommissions'=>$tidiitCommissions);
                     $priceArr[]=array('qty'=>$bulkQty,'price'=>$price);
                 }
                 usort($priceArr, 'sortingProductPriceArr');
@@ -1071,7 +1074,6 @@ class Product extends MY_Controller{
 
     public function update_common_product(){
         //pre($_POST);die;
-
         $productId = $this->input->post('productId',TRUE);
         $enc_pro_id = $productId*999999;
         $retDataArr=$this->default_data_validate();
@@ -1116,13 +1118,20 @@ class Product extends MY_Controller{
                 for($i=1;$i<$total_price_row_added;$i++){
                     $bulkQty=$this->input->post('bulkQty_'.$i,TRUE);
                     $price=$this->input->post('price_'.$i,TRUE);
-
                     if($bulkQty=="" || $price==""){
                         //echo '$bulkQty= '.$bulkQty.'  === $price '.$price;die;
                         $this->session->set_flashdata('Message','Please fill the price and relted quanity');
                         redirect(BASE_URL.'product/edit_product/'.$enc_pro_id);
                     }
-                    $priceArr[]=array('qty'=>$bulkQty,'price'=>$price);
+                    if($this->is_tidiit_commission_updated($productId)==TRUE){
+                        $shippingPrice=$this->calculate_shiiping_price($bulkQty,$weight);
+                        $tidiitCommissions=  $this->get_tidiit_commission($productId);
+                        $fPrice=$price+($bulkQty*$shippingPrice)+$tidiitCommissions;
+                        $priceArr[]=array('qty'=>$bulkQty,'price'=>$fPrice,'shippingCharges'=>($bulkQty*$shippingPrice),'tidiitCommissions'=>$tidiitCommissions);
+                    }else{
+                        $priceArr[]=array('qty'=>$bulkQty,'price'=>$price);
+                    }
+                    
                 }
                 usort($priceArr, 'sortingProductPriceArr');
                 $newPriceArr=array();
@@ -1239,5 +1248,22 @@ class Product extends MY_Controller{
         }
     }
     
+    function calculate_shiiping_price($bulkQty,$weight){
+        $sql="SELECT `charges` FROM `logistic_weight_based_charges` WHERE ($bulkQty*$weight) BETWEEN `min` AND `max` LIMIT 1";
+        $shippingchargesArr=$this->db->query($sql)->result();
+        return $shippingchargesArr[0]->charges;
+    }
     
+    function get_tidiit_commission($productId){
+        $rs=$this->db->get_where('tidiit_comission',array('productId'=>$productId))->result(); return $rs[0]->commissionPercentage;
+    }
+    
+    function is_tidiit_commission_updated($productId){
+        $rs=$this->db->get_where('tidiit_comission',array('productId'=>$productId))->result(); 
+        if(count($rs)>0){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
 }

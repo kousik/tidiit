@@ -432,10 +432,10 @@ $priceRangeSettingsDataArr = $priceRangeSettingsArr[$productPageType];
                                                     <div class="col-sm-8">
                                                         <select class="form-control" id="weightClass"
                                                                 name="weightClass">
-                                                            <option value="1">Kilogram</option>
-                                                            <option selected value="2">Gram</option>
+                                                            <option selected value="1">Kilogram</option>
+                                                            <!--<option  value="2">Gram</option>
                                                             <option value="3">Pound</option>
-                                                            <option value="3">Quintal</option>
+                                                            <option value="3">Quintal</option> -->
                                                         </select>
                                                         <span class="error"></span>
                                                     </div>
