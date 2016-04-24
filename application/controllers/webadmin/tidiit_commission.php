@@ -27,6 +27,7 @@ class Tidiit_commission extends MY_Controller{
             $productPriceDetails=$this->db->get_where('product_price',array('productId'=>$productId))->result();
             $productDetails=$this->db->get_where('product',array('productId'=>$productId))->result();
             $tidiitCommissionsPer=  $this->get_tidiit_commission($productId);
+            $lowestPricceUpdate=0;
             foreach ($productPriceDetails As $k => $v){
                 $bulkQty=$v->qty;
                 $weight=$productDetails[0]->weight;
@@ -36,8 +37,15 @@ class Tidiit_commission extends MY_Controller{
                 $fPrice=$v->price+$shippingCharges+$tidiitCommissions;
                 $dataArray=array('price'=>$fPrice,'shippingCharges'=>$shippingCharges,'tidiitCommissions'=>$tidiitCommissions);
                 $this->db->where('productPriceId',$v->productPriceId);
-                $this->db->update('product_price',$dataArray);        
+                $this->db->update('product_price',$dataArray);
+                if($lowestPricceUpdate==0){
+                    $this->db->where('productId',$productId);
+                    $this->db->update('product',array('lowestPrice'=>$fPrice));
+                    $lowestPricceUpdate=1;
+                }
             }
+            $this->db->where('productId',$productId);
+            $this->db->update('product',array('heighestPrice'=>$fPrice));
             $this->session->set_flashdata('Message','Tidiit commission updated successfully.');
         }else{
             $this->session->set_flashdata('Message','Please enter the commission percentage.');
@@ -64,6 +72,19 @@ class Tidiit_commission extends MY_Controller{
             return TRUE;
         }else{
             return FALSE;
+        }
+    }
+    
+    function recursive_uptdate_product_price(){
+        $rs=$this->db->get('product')->result();
+        foreach ($rs as $k=>$v){
+            $productId=$v->productId;
+            $rsTemp=  $this->db->get_where('product_price',array('productId'=>$productId))->result();
+            $this->db->where('productId',$productId);
+            $this->db->update('product',array('lowestPrice'=>$rsTemp[0]->price));
+            $last=count($rsTemp)-1;
+            $this->db->where('productId',$productId);
+            $this->db->update('product',array('heighestPrice'=>$rsTemp[$last]->price));
         }
     }
 }
