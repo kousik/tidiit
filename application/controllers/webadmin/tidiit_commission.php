@@ -81,17 +81,17 @@ class Tidiit_commission extends MY_Controller{
             $productId=$v->productId;
             $rsTemp=  $this->db->get_where('product_price',array('productId'=>$productId))->result();
             $priceOne=$rsTemp[0]->price;
+            $last=count($rsTemp)-1;
             $priceTwo=$rsTemp[$last]->price;
             if($priceOne>$priceTwo){
                 $this->db->where('productId',$productId);
                 $this->db->update('product',array('lowestPrice'=>$priceTwo));
-                $last=count($rsTemp)-1;
+                
                 $this->db->where('productId',$productId);
                 $this->db->update('product',array('heighestPrice'=>$priceOne));
             }else{
                 $this->db->where('productId',$productId);
                 $this->db->update('product',array('lowestPrice'=>$priceOne));
-                $last=count($rsTemp)-1;
                 $this->db->where('productId',$productId);
                 $this->db->update('product',array('heighestPrice'=>$priceTwo));
             }
