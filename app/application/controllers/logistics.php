@@ -141,26 +141,31 @@ class Logistics extends REST_Controller {
         if($validOrderData['type']=='faiil'){
             $this->response(array('error' =>$validOrderData['message']), 400); return FALSE;
         }else{
-            $order=$validOrderData['order'];
-            $logisticDetails=  $this->user->get_logistics_details_by_user_id($userId);
-            if(empty($logisticDetails)){
-                $this->response(array('error' =>'Getting invalid logistic user.'), 400); return FALSE;
-            }
-            $orderId=$order->orderId;
-            $responseData=array();
-            $scanUploadDataArr=array(
-                'orderId'=>$orderId,'movementType'=>'Pickup from seller','UDID'=>$UDID,'deviceType'=>$deviceType,
-                'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId);
-            $responseData=$this->update_order_movement_history($scanUploadDataArr);
-            if($responseData['type']=="fail"){
-                $this->response(array('error' =>$responseData['message']), 400); return FALSE;
+            if(array_key_exists('order', $validOrderData)){
+                $order=$validOrderData['order'];
+                $logisticDetails=  $this->user->get_logistics_details_by_user_id($userId);
+                if(empty($logisticDetails)){
+                    $this->response(array('error' =>'Getting invalid logistic user.'), 400); return FALSE;
+                }
+                $orderId=$order->orderId;
+
+                $responseData=array();
+                $scanUploadDataArr=array(
+                    'orderId'=>$orderId,'movementType'=>'Pickup from seller','UDID'=>$UDID,'deviceType'=>$deviceType,
+                    'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId);
+                $responseData=$this->update_order_movement_history($scanUploadDataArr);
+                if($responseData['type']=="fail"){
+                    $this->response(array('error' =>$responseData['message']), 400); return FALSE;
+                }else{
+                    $formatedAddress=  get_formatted_address_from_lat_long($latitude, $longitude);
+                    $movementDataArr=array('order'=>$order,'moveType'=>'clientPickup','formatedAddress'=>$formatedAddress);
+                    $this->_send_notification_regarding_movement_of_item($movementDataArr);
+                    $result=array();
+                    $result['message']="Scandata updated successfully.";//$orderId.'-'.$qrCodeFileName; 
+                    success_response_after_post_get($result);
+                }
             }else{
-                $formatedAddress=  get_formatted_address_from_lat_long($latitude, $longitude);
-                $movementDataArr=array('order'=>$order,'moveType'=>'clientPickup','formatedAddress'=>$formatedAddress);
-                $this->_send_notification_regarding_movement_of_item($movementDataArr);
-                $result=array();
-                $result['message']="Scandata updated successfully.";//$orderId.'-'.$qrCodeFileName; 
-                success_response_after_post_get($result);
+                
             }
         }
     }
@@ -360,6 +365,7 @@ class Logistics extends REST_Controller {
         $orderId=$orderIdArr[1];
         //$orderDetails=$this->order->details($orderId);
         $order=$this->order->get_single_order_by_id($orderId);
+        pre($order);die;
         if(empty($order)){
             $responseData['type']="fail";
             $responseData['message']='Getting invalid order data from scanner.';
