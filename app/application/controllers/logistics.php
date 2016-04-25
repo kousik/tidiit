@@ -138,7 +138,7 @@ class Logistics extends REST_Controller {
         
         $validOrderData=  $this->validate_scan_order_id($rawOrderId);
         
-        if($validOrderData['type']=='faiil'){
+        if($validOrderData['type']=='fail'){
             $this->response(array('error' =>$validOrderData['message']), 400); return FALSE;
         }else{
             pre($validOrderData);die;
