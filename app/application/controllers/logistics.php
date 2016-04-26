@@ -192,7 +192,8 @@ class Logistics extends REST_Controller {
         if(count($rawOrderIdArr)!=3){
             $this->response(array('error' =>"Getting nvalid scandata found."), 400); return FALSE;
         }
-        $order=$this->order->get_single_order_by_id($rawOrderIdArr[1]);
+        $orderId=$rawOrderIdArr[1];
+        $order=$this->order->get_single_order_by_id($orderId);
         if(empty($order)){
             $this->response(array('error' =>"Getting invalid order index"), 400); return FALSE;
         }
