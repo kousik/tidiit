@@ -174,7 +174,7 @@ class Logistics extends REST_Controller {
     function pre_alert_out_for_delivery_post(){
         //$outForDeliveryType="preAlert";
         $outForDeliveryType=  trim($this->post('outForDeliveryType'));
-        $orderId=  trim($this->post('orderId'));
+        $rawOrderId=  trim($this->post('orderId'));
         $userId=  trim($this->post('userId'));
         $UDID=  trim($this->post('UDID'));
         $deviceToken=  trim($this->post('deviceToken'));
@@ -188,8 +188,11 @@ class Logistics extends REST_Controller {
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
-        
-        $order=$this->order->get_single_order_by_id($orderId);
+        $rawOrderIdArr=  explode('-', $rawOrderId);
+        if(count($rawOrderIdArr)!=3){
+            $this->response(array('error' =>"Getting nvalid scandata found."), 400); return FALSE;
+        }
+        $order=$this->order->get_single_order_by_id($rawOrderIdArr[1]);
         if(empty($order)){
             $this->response(array('error' =>"Getting invalid order index"), 400); return FALSE;
         }
