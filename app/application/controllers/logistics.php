@@ -80,7 +80,7 @@ class Logistics extends REST_Controller {
                 $this->response(array('error' =>$responseData['message']), 400); return FALSE;
             }else{
                 $formatedAddress=  get_formatted_address_from_lat_long($latitude, $longitude);
-                $movementDataArr=array('order'=>$order,'moveType'=>'upload','formatedAddress'=>$formatedAddress);
+                $movementDataArr=array('order'=>$order,'movementType'=>'upload','formatedAddress'=>$formatedAddress);
                 $this->_send_notification_regarding_movement_of_item($movementDataArr);
                 $result=array();
                 $result['message']="Scandata updated successfully.";//$orderId.'-'.$qrCodeFileName; 
@@ -118,7 +118,7 @@ class Logistics extends REST_Controller {
                 $this->response(array('error' =>$responseData['message']), 400); return FALSE;
             }else{
                 $formatedAddress=  get_formatted_address_from_lat_long($latitude, $longitude);
-                $movementDataArr=array('order'=>$order,'moveType'=>'download','formatedAddress'=>$formatedAddress);
+                $movementDataArr=array('order'=>$order,'movementType'=>'download','formatedAddress'=>$formatedAddress);
                 $this->_send_notification_regarding_movement_of_item($movementDataArr);
                 $result=array();
                 $result['message']="Scandata updated successfully.";//$orderId.'-'.$qrCodeFileName; 
@@ -159,7 +159,7 @@ class Logistics extends REST_Controller {
                     $this->response(array('error' =>$responseData['message']), 400); return FALSE;
                 }else{
                     $formatedAddress=  get_formatted_address_from_lat_long($latitude, $longitude);
-                    $movementDataArr=array('order'=>$order,'moveType'=>'clientPickup','formatedAddress'=>$formatedAddress);
+                    $movementDataArr=array('order'=>$order,'movementType'=>'clientPickup','formatedAddress'=>$formatedAddress);
                     $this->_send_notification_regarding_movement_of_item($movementDataArr);
                     $result=array();
                     $result['message']="Scandata updated successfully.";//$orderId.'-'.$qrCodeFileName; 
