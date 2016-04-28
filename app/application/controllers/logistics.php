@@ -141,7 +141,7 @@ class Logistics extends REST_Controller {
         if($validOrderData['type']=='fail'){
             $this->response(array('error' =>$validOrderData['message']), 400); return FALSE;
         }else{
-            pre($validOrderData);die;
+            //pre($validOrderData);die;
             if(array_key_exists('order', $validOrderData)){
                 $order=$validOrderData['order'];
                 $logisticDetails=  $this->user->get_logistics_details_by_user_id($userId);
