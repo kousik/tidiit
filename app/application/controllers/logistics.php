@@ -152,7 +152,7 @@ class Logistics extends REST_Controller {
 
                 $responseData=array();
                 $scanUploadDataArr=array(
-                    'orderId'=>$orderId,'movementType'=>'Pickup from seller','UDID'=>$UDID,'deviceType'=>$deviceType,
+                    'orderId'=>$orderId,'movementType'=>'pickup','UDID'=>$UDID,'deviceType'=>$deviceType,
                     'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId);
                 $responseData=$this->update_order_movement_history($scanUploadDataArr);
                 if($responseData['type']=="fail"){
@@ -407,7 +407,7 @@ class Logistics extends REST_Controller {
             return $responseData;
         }
         $userId=$movementDataArr['userId'];
-        @mail('judhisahoo@gmail.com',' colomn movementType column testing',$movementDataArr['movementType']);
+        //@mail('judhisahoo@gmail.com',' colomn movementType column testing',$movementDataArr['movementType']);
         $dataArr=array('orderId'=>$orderId,'movementType'=>$movementDataArr['movementType'],'addedDate'=>time(),'latitude'=>$movementDataArr['latitude'],'longitude'=>$movementDataArr['longitude'],'formattedAddress'=>$formatedAddress,'deviceType'=>$movementDataArr['deviceType'],'deviceToken'=>$movementDataArr['deviceToken'],'UDID'=>$movementDataArr['UDID'],'userId'=>$userId);
         $this->order->add_movement_history($dataArr);
         return $responseData;
@@ -426,6 +426,7 @@ class Logistics extends REST_Controller {
         }
         $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$order->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
         'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-'.  strtoupper($moveType).'-MOVEMENT-UPDATE');
+        @mail('judhisahoo@gmail.com','send_notification_regarding_movement_of_item',$smsMsg.' ==receiverMobileNumber== '.$order->buyerMobileNo);
         send_sms_notification($sms_data);
         
         if($order->orderType=='GROUP'){
