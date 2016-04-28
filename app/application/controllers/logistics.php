@@ -407,7 +407,7 @@ class Logistics extends REST_Controller {
             return $responseData;
         }
         $userId=$movementDataArr['userId'];
-        
+        @mail('judhisahoo@tidiit.com',' colomn movementType column testing',$movementDataArr['movementType']);
         $dataArr=array('orderId'=>$orderId,'movementType'=>$movementDataArr['movementType'],'addedDate'=>time(),'latitude'=>$movementDataArr['latitude'],'longitude'=>$movementDataArr['longitude'],'formattedAddress'=>$formatedAddress,'deviceType'=>$movementDataArr['deviceType'],'deviceToken'=>$movementDataArr['deviceToken'],'UDID'=>$movementDataArr['UDID'],'userId'=>$userId);
         $this->order->add_movement_history($dataArr);
         return $responseData;
