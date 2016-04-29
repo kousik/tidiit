@@ -283,6 +283,10 @@ class Shopping extends REST_Controller {
             if(empty($orderDetails)){
                 $this->response(array('error' => 'Invalid order index provided.'), 400); return FALSE;
             }
+            
+            if($orderDetails[0]->orderType!="SINGLE"){
+                $this->response(array('error' => 'Invalid order type provided.'), 400); return FALSE;
+            }
             //pre($orderDetails);die;
             $ctotal=0;
             foreach($allItemArr AS $k){ //pre($k);die;
@@ -295,6 +299,9 @@ class Shopping extends REST_Controller {
             elseif($coupon->type == 'fix'):
                 $data['couponAmount'] = $coupon->amount;
             endif;
+            if($data['couponAmount']=="0.00"){
+                $this->response(array('error' => 'Unknown error arise to applied the coupon code.'), 400); return FALSE;
+            }
             $tax=0;
             $grandTotal=0;
             $couponAmount=0;
