@@ -503,6 +503,47 @@ class User_model extends CI_Model {
     }
     
     
+    function get_my_created_groups_apps($userId,$df = false){
+        $this->db->order_by('groupId','desc');
+        
+        $datas = $this->db->from($this->_group)->where('groupAdminId =',$userId)->get()->result_array();
+        if($datas):
+            $groups = array();
+            foreach($datas as $key => $grp):
+                $users = explode(",", $grp['groupUsers']);
+                $udata = array();
+                if($users):                        
+                    foreach($users as $ukey => $usrId):
+                        if($usrId):
+                            $udatas = $this->get_details_by_id($usrId,TRUE);
+                            $udata[] = $udatas[0];
+                        endif;
+                    endforeach;
+                endif;
+                $grp['users'] = $udata;
+
+                $getgpadmin = $this->get_details_by_id($userId,true);
+
+                $grp['admin'] = $getgpadmin[0];
+                $grp['hide'] = null;
+                $groups[] = $grp;
+            endforeach;
+
+            //$in_groups = $this->get_my_on_groups_apps($userId);
+            //if($in_groups && !$df):
+            //    $result = array_merge($groups, $in_groups);
+            //else:
+                $result = $groups;
+            //endif;
+            
+            return $result;
+    
+        else:
+            return array();
+        endif;
+    }
+    
+    
     /**
      * 
      * @return boolean

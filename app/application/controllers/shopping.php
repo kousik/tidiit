@@ -779,7 +779,7 @@ class Shopping extends REST_Controller {
         if(empty($user)){
             $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
         }
-        $myGroupDataArr=$this->user->get_my_groups_apps($userId);
+        $myGroupDataArr=$this->user->get_my_created_groups_apps($userId);
         $my_groups = $myGroupDataArr;
         $result['myGroups']=$my_groups;
         $result['ajaxType']="yes";
