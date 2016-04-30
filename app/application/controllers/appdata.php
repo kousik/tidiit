@@ -1260,7 +1260,7 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
         }
         
-        if($this->user->is_valid_admin_for_group($groupId,$userId)){
+        if($this->user->is_valid_admin_for_group($groupId,$userId)==FALSE){
             $this->response(array('error' => 'You are not leader of the selected buuying club,So not allow for delete the selected buying club.'), 400); return FALSE;
         }        
         
