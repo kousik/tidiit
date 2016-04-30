@@ -25,9 +25,17 @@ class Shopping extends REST_Controller {
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
         //pre($_POST);die;
-        if($userId=="" || $productId =="" || $productPriceId == "" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken==""){
-            $this->response(array('error' => 'Please provide user index,product index,product price index,latitude,longitude,device id,device token !'), 400); return FALSE;
+        if($userId=="" || $productId =="" || $productPriceId == ""){
+            $this->response(array('error' => 'Please provide user index,product index,product price index!'), 400); return FALSE;
         }
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }
+        
         $rs=$this->user->get_details_by_id($userId);
         if(empty($rs)){
             $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
@@ -157,6 +165,13 @@ class Shopping extends REST_Controller {
         $UDID=  $this->post('UDID');
         $deviceToken=  $this->post('deviceToken');
         
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }
+        
         if($userId=="" || $orderId ==""){
             $this->response(array('error' => 'Please provide user index,order index !'), 400); return FALSE;
         }
@@ -251,8 +266,12 @@ class Shopping extends REST_Controller {
         
         $UDID=  $this->post('UDID');
         $deviceToken=  $this->post('deviceToken');
-        if($deviceType=="" || $UDID == "" || $deviceToken == ""){
-            $this->response(array('error' => 'Invalid device type,UDID,device Token provide!'), 400); return FALSE;
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
         $coupon = $this->coupon->is_coupon_code_exists($promocode);
         if(!$coupon):
@@ -926,6 +945,7 @@ class Shopping extends REST_Controller {
         $order = $this->order->get_single_order_by_id($orderId);
         $groupDetails = $this->user->get_group_by_id($order->groupId,TRUE);
         $orderInfo=unserialize(base64_decode($order->orderInfo));
+        pre($orderInfo);die;
         $order = json_decode(json_encode($order), true);
         $order['productTitle']=$orderInfo['pdetail']->title;
         $order['qty']=$orderInfo['priceinfo']->qty;
@@ -957,8 +977,15 @@ class Shopping extends REST_Controller {
         $UDID=  $this->post('UDID');
         $deviceToken=  $this->post('deviceToken');
         
-        if($userId=="" || $orderId=="" || $UDID=="" || $deviceToken=="" || $deviceType=="" || $latitude=="" || $longitude=="" || $promocode==""){
-            $this->response(array('error' => 'Please provide user index,order index,UDID,device token,device type,latitude,longitude,coupon Code!'), 400); return FALSE;
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }
+        
+        if($userId=="" || $orderId=="" || $promocode==""){
+            $this->response(array('error' => 'Please provide user index,order index,coupon Code!'), 400); return FALSE;
         }
         $coupon = $this->coupon->is_coupon_code_exists($promocode);
         $orderDetails=$this->order->details($orderId,TRUE);
@@ -2442,5 +2469,39 @@ class Shopping extends REST_Controller {
             $availQty = $this->order->get_available_order_quantity($orderId);
         endif;
         return $availQty;
+    }
+    
+    function check_default_data($dataArr){
+        $validateArr=array('type'=>'success');
+        if($dataArr['UDID']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide UDID.';
+            return $validateArr;
+        }
+        
+        if($dataArr['deviceToken']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide deviceToken.';
+            return $validateArr;
+        }
+        
+        if($dataArr['deviceType']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide deviceType.';
+            return $validateArr;
+        }
+        
+        if($dataArr['latitude']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide latitude.';
+            return $validateArr;
+        }
+        
+        if($dataArr['longitude']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide longitude.';
+            return $validateArr;
+        }
+        return $validateArr;
     }
 }
