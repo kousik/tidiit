@@ -1832,8 +1832,15 @@ class Appdata extends REST_Controller {
         success_response_after_post_get($result);
     }
     
-    function get_total_item_in_cart(){
-        
+    function get_total_item_in_cart_get(){
+        $userId=$this->get('userId');
+        if($userId!=""){
+            $result['total_cart_item']=$this->user->get_total_cart_item($userId);
+        }else{
+            $result['total_cart_item']=0;
+        }
+        header('Content-type: application/json');
+        echo json_encode($result);
     }
 }
     
