@@ -945,7 +945,7 @@ class Shopping extends REST_Controller {
         $order = $this->order->get_single_order_by_id($orderId);
         $groupDetails = $this->user->get_group_by_id($order->groupId,TRUE);
         $orderInfo=unserialize(base64_decode($order->orderInfo));
-        pre($orderInfo);die;
+        //pre($orderInfo);die;
         $order = json_decode(json_encode($order), true);
         $order['productTitle']=$orderInfo['pdetail']->title;
         $order['qty']=$orderInfo['priceinfo']->qty;
