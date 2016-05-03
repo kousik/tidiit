@@ -1885,8 +1885,8 @@ class Appdata extends REST_Controller {
             return $validateArr;
         }
         
-        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
-        die($countryShortName);
+        $countryShortName=  get_counry_code_from_lat_long($dataArr['latitude'], $dataArr['longitude']);
+        //die($countryShortName);
         if($countryShortName==FALSE){
             $validateArr['type']='fail';
             $validateArr['message']='Please provide valid latitude and longitude';
