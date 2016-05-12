@@ -29,7 +29,7 @@
                         <div>
                             <h4>Business Address</h4>
                             <div>
-                                <b>Tidiit Internet Ltd</b><br>
+                                <b>Tidiit Internet Pvt Ltd</b><br>
                                 2nd Fllor Prestige Omega No. 104 EPIP Zone<br>
                                 Bangalore 560066
                             </div>
