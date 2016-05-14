@@ -347,12 +347,12 @@ class Ajax extends MY_Controller{
         $msg=trim($this->input->post('msg'));
         
         if($regId=="" || $msg==""){
-            pre($_POST);
+            //pre($_POST);
             echo 'not';die;
         }else{
             if($this->send($regId, $msg)==TRUE){
                 $dataArr=array('messsage'=>$msg,'registrationNo'=>$regId,'deviceType'=>'android','sendTime'=>date('Y-m-d H:i:s'),'userId'=>21);
-                pre($dataArr);
+                //pre($dataArr);
                 $this->db->insert('push_notification_message',$dataArr);
                 echo 'ok';die;
             }else{
