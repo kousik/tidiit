@@ -21,26 +21,36 @@ class Appdata extends REST_Controller {
         $deviceType=trim($this->post('deviceType'));
         $latitude=trim($this->post('latitude'));
         $longitude=trim($this->post('longitude'));
+        $userId=trim($this->post('userId'));
+        
+        if($userId==""){
+            $this->response(array('error' => 'user index should not be blank'), 400);
+        }
+        
         if($registrationId==""){
             $this->response(array('error' => 'registration id should not be blank'), 400);
         }
-        
-        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
-        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
-        
-        if($isValideDefaultData['type']=='fail'){
-            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
-        }
-        
-        $dataArray=array("registrationId"=>$registrationId,'deviceType'=>$deviceType,'UDID'=>$UDID,'deviceToken'=>$deviceToken,
-            'latitude'=>$latitude,'longitude'=>$longitude,'addedDate'=>  time());
-        $result=$this->siteconfig->add_app_info($dataArray);
-        pre($dataArray);die;
-        if($result>0){
-            $parram=array('message'=>'App info data address successfully');
-            success_response_after_post_get($parram);
+
+        if($this->user->check_user_phone_register($userId,$registrationId)==FALSE){
+            $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+            $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+
+            if($isValideDefaultData['type']=='fail'){
+                $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+            }
+
+            $dataArray=array("registrationId"=>$registrationId,'deviceType'=>$deviceType,'UDID'=>$UDID,'deviceToken'=>$deviceToken,
+                'latitude'=>$latitude,'longitude'=>$longitude,'addedDate'=>date('Y-m-d H:i:s'),'userId'=>$userId);
+            $result=$this->siteconfig->add_app_info($dataArray);
+            //pre($dataArray);die;
+            if($result>0){
+                $parram=array('message'=>'App info data address successfully');
+                success_response_after_post_get($parram);
+            }else{
+                $this->response(array('error' => 'Unknown error arises to save app info data.'), 400); return FALSE;
+            }
         }else{
-            $this->response(array('error' => 'Unknown error arises to save app info data.'), 400); return FALSE;
+            $this->response(array('error' => 'selected user and selected phone is already registered.'), 400); return FALSE;
         }
     }
     
