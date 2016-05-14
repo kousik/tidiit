@@ -341,5 +341,74 @@ class Ajax extends MY_Controller{
         $html.='</select>';
         echo json_encode(array('content'=>$html));die;
     }
+    
+    function submit_android_push_notification(){
+        $regId=trim($this->input->post('regId'));
+        $msg=trim($this->input->post('msg'));
+        
+        if($regId=="" || $msg==""){
+            pre($_POST);
+            echo 'not';die;
+        }else{
+            if($this->send($regId, $msg)==TRUE){
+                $dataArr=array('messsage'=>$msg,'registrationNo'=>$regId,'deviceType'=>'android','sendTime'=>date('Y-m-d H:i:s'),'userId'=>21);
+                pre($dataArr);
+                $this->db->insert('push_notification_message',$dataArr);
+                echo 'ok';die;
+            }else{
+                echo 'notok';die;
+            }
+        }
+    }
+    
+    public function send($to, $message) {
+        //$ret=TRUE;
+        $ret=FALSE;
+        $fields = array(
+            'to' => $to,
+            'data' => $message,
+        );
+        $ret=$this->sendPushNotification($fields);
+        return $ret;
+    }
+    
+    private function sendPushNotification($fields) {
+        return TRUE;
+        $this->load->config('product');
+        $GOOGLE_API_KEY=$this->config->item('GoogleGSMKEY');
+        // Set POST variables
+        $url = 'https://gcm-http.googleapis.com/gcm/send';
+ 
+        $headers = array(
+            'Authorization: key=' .$GOOGLE_API_KEY ,
+            'Content-Type: application/json'
+        );
+        // Open connection
+        $ch = curl_init();
+ 
+        // Set the url, number of POST vars, POST data
+        curl_setopt($ch, CURLOPT_URL, $url);
+ 
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+ 
+        // Disabling SSL Certificate support temporarly
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+ 
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+ 
+        // Execute post
+        $result = curl_exec($ch);
+        if ($result === FALSE) {
+            die('Curl failed: ' . curl_error($ch));
+        }
+ 
+        // Close connection
+        curl_close($ch);
+ 
+        return $result;
+    }
+ 
 }
 

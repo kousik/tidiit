@@ -19,6 +19,11 @@ class Index extends MY_Controller {
             $data=$this->_show_admin_logedin_layout();
             $this->load->view('webadmin/site_data_config_link',$data);
 	}
+        
+        function view_push_notification_test(){
+            $data=$this->_show_admin_logedin_layout();
+            $this->load->view('webadmin/push_notification_test',$data);
+	}
 	
 	function admin_home(){
             $this->_show_admin_home();

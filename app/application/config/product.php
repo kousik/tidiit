@@ -20,3 +20,5 @@ $config['internalMemory']=array(1=>'2 GB',2=>'4 GB','3'=>'8 GB','4'=>'16 GB','5'
 $config['expandableMemory']=array(1=>'16 GB','2'=>'32 GB','3'=>'64 GB');
 $config['expandableMemory']=array(1=>'16 GB','2'=>'32 GB','3'=>'64 GB');
 $config['warrantyDuration']=array(1=>'6 Months','2'=>'12 Months','3'=>'18 Months','4'=>'24 Months');
+
+$config['GoogleGSMKEY']='AIzaSyCsEb0G4GsqFtkepH55dS2T8-vGNo4P33k';
