@@ -24,6 +24,7 @@ class User_model extends CI_Model {
     private $_table_logistic_user = 'logistic_user';
     private $_table_warehouse = 'seller_warehouse';
     private $_table_tidiit_commission = 'tidiit_commission';
+    private $_table_app_info = 'app_info';
 
 
     public $result=NULL;
@@ -1028,6 +1029,15 @@ class User_model extends CI_Model {
     
     function get_tidiit_details($commissionId){
         return $this->db->get_where($this->_table_tidiit_commission,array('commissionId'=>$commissionId))->result();
+    }
+    
+    function check_user_phone_register($userId,$registrationId){
+        $rs=$this->db->from($this->_table_app_info)->where('userId',$userId)->where('registrationId',$registrationId)->get()->result();
+        if(count($rs)>0){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
     }
 }
 
