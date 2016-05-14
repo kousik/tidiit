@@ -373,7 +373,7 @@ class Ajax extends MY_Controller{
     }
     
     private function sendPushNotification($fields) {
-        return TRUE;
+        //return TRUE;
         $this->load->config('product');
         $GOOGLE_API_KEY=$this->config->item('GoogleGSMKEY');
         // Set POST variables
