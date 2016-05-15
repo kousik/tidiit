@@ -21,4 +21,5 @@ $config['expandableMemory']=array(1=>'16 GB','2'=>'32 GB','3'=>'64 GB');
 $config['expandableMemory']=array(1=>'16 GB','2'=>'32 GB','3'=>'64 GB');
 $config['warrantyDuration']=array(1=>'6 Months','2'=>'12 Months','3'=>'18 Months','4'=>'24 Months');
 
-$config['GoogleGSMKEY']='AIzaSyCsEb0G4GsqFtkepH55dS2T8-vGNo4P33k';
+//$config['GoogleGSMKEY']='AIzaSyCsEb0G4GsqFtkepH55dS2T8-vGNo4P33k';
+$config['GoogleGSMKEY']='AIzaSyAP2qCD3uvwHhHS5lv-lVxVpibkoreyi7o';
