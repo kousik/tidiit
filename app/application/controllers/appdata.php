@@ -30,7 +30,7 @@ class Appdata extends REST_Controller {
         if($registrationId==""){
             $this->response(array('error' => 'registration id should not be blank'), 400);
         }
-
+        @mail('judhisahoo@gmail.com','user id '.$userId.' for google registration subject ','user id '.$userId.' for google registration body');
         if($this->user->check_user_phone_register($userId,$registrationId)==FALSE){
             $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
             $isValideDefaultData=  $this->check_default_data($defaultDataArr);
@@ -41,15 +41,20 @@ class Appdata extends REST_Controller {
 
             $dataArray=array("registrationId"=>$registrationId,'deviceType'=>$deviceType,'UDID'=>$UDID,'deviceToken'=>$deviceToken,
                 'latitude'=>$latitude,'longitude'=>$longitude,'addedDate'=>date('Y-m-d H:i:s'),'userId'=>$userId);
+            @mail('judhisahoo@gmail.com','user id '.$userId.' sending to db ','user id '.$userId.' is for sending to db');
             $result=$this->siteconfig->add_app_info($dataArray);
+            
             //pre($dataArray);die;
             if($result>0){
+                @mail('judhisahoo@gmail.com','user id '.$userId.' save in db ','user id '.$userId.' is saved in db');
                 $parram=array('message'=>'App info data address successfully');
                 success_response_after_post_get($parram);
             }else{
+                @mail('judhisahoo@gmail.com','user id '.$userId.' save in not db ','user id '.$userId.' is saved in not db');
                 $this->response(array('error' => 'Unknown error arises to save app info data.'), 400); return FALSE;
             }
         }else{
+            @mail('judhisahoo@gmail.com','user id '.$userId.' and registration id '.$registrationId.' already installed ','user id '.$userId.' and registration id '.$registrationId.' already installed body');
             $this->response(array('error' => 'selected user and selected phone is already registered.'), 400); return FALSE;
         }
     }

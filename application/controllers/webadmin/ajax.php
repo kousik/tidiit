@@ -365,8 +365,8 @@ class Ajax extends MY_Controller{
         //$ret=TRUE;
         $ret=FALSE;
         $fields = array(
-            'to' => $to,
-            'data' => $message,
+            'registration_ids' => array($to),
+            'data' => array("message" =>$message),
         );
         $ret=$this->sendPushNotification($fields);
         return $ret;
