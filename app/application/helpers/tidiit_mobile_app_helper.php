@@ -315,7 +315,23 @@ if ( ! function_exists('send_sms_notification')):
             $smsAddHistoryDataArr=array();
             $smsConfig=array('sms_text'=>$data['nMessage'],'receive_phone_number'=>$data['receiverMobileNumber']);
             $smsResult=$CI->tidiitsms->send_sms($smsConfig);
-
+            
+            if(!array_key_exists('senderId', $data)){
+                $data['senderId']="";
+            }
+            
+            if(!array_key_exists('receiverId', $data)){
+                $data['receiverId']="";
+            }
+            
+            if(!array_key_exists('senderMobileNumber', $data)){
+                $data['senderMobileNumber']="";
+            }
+            
+            if(!array_key_exists('nType', $data)){
+                $data['nType']="";
+            }
+            
             $smsAddHistoryDataArr=array('senderUserId'=>$data['senderId'],'receiverUserId'=>$data['receiverId'],
                 'senderPhoneNumber'=>$data['senderMobileNumber'],'receiverPhoneNumber'=>$data['receiverMobileNumber'],
                 'IP'=>  $CI->input->ip_address(),'sms'=>$data['nMessage'],'sendActionType'=>$data['nType'],
