@@ -47,6 +47,8 @@ class Appdata extends REST_Controller {
             $result=$this->siteconfig->add_app_info($dataArray);
             
             //pre($dataArray);die;
+            
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964','nMessage'=>  base64_encode($result)));
             if($result>0){
                 //@mail('judhisahoo@gmail.com','inserted success fully $userId == $$registrationId',$userId .' == '.$$registrationId);
                 send_sms_notification(array('receiverMobileNumber'=>'9556644964','nMessage'=>'inserted '.$userId .' == '.$registrationId));
