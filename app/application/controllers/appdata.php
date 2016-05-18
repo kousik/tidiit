@@ -32,7 +32,7 @@ class Appdata extends REST_Controller {
         }
         
         //@mail('judhisahoo@gmail.com','$userId == $$registrationId',$userId .' == '.$$registrationId);
-        send_sms_notification(array('receiverMobileNumber'=>'9556644964','nMessage'=>$userId .' == '.$$registrationId));
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964','nMessage'=>$userId .' == '.$registrationId));
         if($this->user->check_user_phone_register($userId,$registrationId)==FALSE){
             $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
             $isValideDefaultData=  $this->check_default_data($defaultDataArr);
@@ -41,7 +41,7 @@ class Appdata extends REST_Controller {
                 $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
             }
             //@mail('judhisahoo@gmail.com','comming for insert $userId == $$registrationId',$userId .' == '.$$registrationId);
-            send_sms_notification(array('receiverMobileNumber'=>'9556644964','nMessage'=>'coming for insert '.$userId .' == '.$$registrationId));
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964','nMessage'=>'coming for insert '.$userId .' == '.$registrationId));
             $dataArray=array("registrationId"=>$registrationId,'deviceType'=>$deviceType,'UDID'=>$UDID,'deviceToken'=>$deviceToken,
                 'latitude'=>$latitude,'longitude'=>$longitude,'addedDate'=>date('Y-m-d H:i:s'),'userId'=>$userId);
             $result=$this->siteconfig->add_app_info($dataArray);
@@ -49,7 +49,7 @@ class Appdata extends REST_Controller {
             //pre($dataArray);die;
             if($result>0){
                 //@mail('judhisahoo@gmail.com','inserted success fully $userId == $$registrationId',$userId .' == '.$$registrationId);
-                send_sms_notification(array('receiverMobileNumber'=>'9556644964','nMessage'=>'inserted '.$userId .' == '.$$registrationId));
+                send_sms_notification(array('receiverMobileNumber'=>'9556644964','nMessage'=>'inserted '.$userId .' == '.$registrationId));
                 $parram=array('message'=>'App info data address successfully');
                 success_response_after_post_get($parram);
             }else{
