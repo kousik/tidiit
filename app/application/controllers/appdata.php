@@ -1232,6 +1232,22 @@ class Appdata extends REST_Controller {
                 global_tidiit_mail($recv_email, "Buying Club Order Re-Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_re_start');
 
                 $this->user->notification_add($data);
+                
+                $receiverDetails=$this->user->get_details_by_id($usr->userId);
+                $notify['senderId'] = $adminId;
+                $notify['receiverId'] = $usr->userId;
+                $notify['nType'] = "BUYING-CLUB-ORDER";
+                $notify['receiverMobileNumber'] = $receiverDetails[0]->mobile;
+                $notify['senderMobileNumber'] = $adminDataArr[0]->mobile;
+                $notify['nTitle'] = 'Buying Club Re-order';
+                $notify['adminName'] = $adminDataArr[0]->firstName.' '.$adminDataArr[0]->lastName;
+                $notify['adminEmail'] = $adminDataArr[0]->email;
+                $notify['adminContactNo'] = $adminDataArr[0]->contactNo;
+                $notify['appSource'] = $deviceType;
+                $notify['orderId'] = $orderId;
+                $notify['nMessage'] = 'Buying Club Re-order [TIDIIT-OD'.$order->orderId.'] running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';;;
+                 
+               $this->send_notification($notify);
             endforeach;
             
             success_response_after_post_get(array('message'=>'Selected group data updated successfully.'));
@@ -1677,6 +1693,9 @@ class Appdata extends REST_Controller {
                 endif;
                 $data['createDate'] = date('Y-m-d H:i:s');
                 break;
+            case '':
+                
+                
         }
         
         $data['isRead'] = 0;
@@ -1708,6 +1727,9 @@ class Appdata extends REST_Controller {
             $smsData['nType']=$data['nType'];
             
             send_sms_notification($smsData);
+            if(array_key_exists('receiverId', $smsData)){
+                send_push_notification($smsData);
+            }
         endif;
         
         if($data['isEmail']):
@@ -1720,6 +1742,8 @@ class Appdata extends REST_Controller {
         unset($data['adminContactNo']);
         unset($data['receiverMobileNumber']);
         unset($data['senderMobileNumber']);
+        if(array_key_exists('orderId', $data))
+            unset($data['orderId']);
         $this->user->notification_add($data);
     }
     

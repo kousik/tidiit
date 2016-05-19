@@ -1039,5 +1039,19 @@ class User_model extends CI_Model {
             return FALSE;
         }
     }
+    
+    function get_reg_id_by_user_id($userId){
+        $rs=$this->db->from($this->_table_app_info)->where('userId',$userId)->get()->result();
+        if(count($rs)==0){
+            return FALSE;
+        }else{
+            return $rs;
+        }
+    }
+    
+    function save_push_notification_history($dataArr){
+        $this->db->insert_batch('push_notification_message',$dataArr);
+        return $this->db->insert_id();
+    }
 }
 
