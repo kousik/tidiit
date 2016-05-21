@@ -428,9 +428,9 @@ if( !function_exists('send_push_notification')){
                 if($data['nType']=="BUYING-CLUB-ADD" || $data['nType']=="BUYING-CLUB-MODIFY" || $data['nType']=="BUYING-CLUB-MODIFY-NEW" || $data['nType']=="BUYING-CLUB-MODIFY-DELETE"){
                     //$apiData['notificationType']=$data['nType'];
                 }else if($data['nType']=="BUYING-CLUB-ORDER-DECLINE"){
-                    $apiData['orderId']=$data['orderId'];
+                    $apiData['notificationId']=$data['notificationId'];
                 }else if($data['nType']=="BUYING-CLUB-ORDER"){
-                    $apiData['orderId']=$data['orderId'];
+                    $apiData['notificationId']=$data['notificationId'];
                 }
                 $apiData['tagStr']=$data['nType'];
             }else{

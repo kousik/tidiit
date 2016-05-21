@@ -581,4 +581,13 @@ class Order_model extends CI_Model {
         $this->db->insert($this->_razorpay,$dataArr);
         return $this->db->insert_id();
     }
+    
+    function get_razorpay_info(){
+        $rs=$this->db->from('system_constants')->where('constantName','PAYMENT_GATEWAY_STATE')->get()->result();
+        return $this->db->from('payment_gateway_config')->where('gatewayName','razorpay')->where('type',$rs[0]->constantValue)->get()->result();
+    }
+    
+    function get_rajorpay_id_by_rajorpay_pament_id($razorpayPaymentId){
+        return $this->db->from($this->_razorpay)->where('razorpayPaymentId',$razorpayPaymentId)->get()->result();
+    }
 }

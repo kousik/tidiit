@@ -1207,13 +1207,13 @@ class Shopping extends REST_Controller {
             $mail_template_view_data['group_order_start']=$mail_template_data;
             global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
             //pre($data);die;
-            $this->user->notification_add($data);
+            $notificationId=$this->user->notification_add($data);
             
             $push_not_data['receiverId'] = $usr->userId;
             $push_not_data['nType'] = "BUYING-CLUB-ORDER";
             $push_not_data['nTitle'] = 'New Buying Club Order Invitation';
             $push_not_data['appSource'] = $deviceType;
-            $push_not_data['orderId'] = $orderId;
+            $push_not_data['notificationId'] = $notificationId;
             $push_not_data['nMessage'] = 'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'];
             send_push_notification($push_not_data);
 
@@ -1674,7 +1674,7 @@ class Shopping extends REST_Controller {
                     $mail_template_view_data['group_order_decline']=$mail_template_data;
                     global_tidiit_mail($recv_email, "Buying Club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline',$usr->firstName.' '.$usr->lastName);
                     
-                    $this->user->notification_add($data);
+                    $notificationId=$this->user->notification_add($data);
                     
                     $push_not_data['receiverId'] = $group->admin->userId;
                     $push_not_data['nType'] = "BUYING-CLUB-ORDER-DECLINE";
@@ -1683,7 +1683,6 @@ class Shopping extends REST_Controller {
                     //$push_not_data['orderId'] = $orderId;
                     $push_not_data['nMessage'] = 'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'];
                     send_normal_push_notification($push_not_data);
-                    
                 endif;
             endforeach;
             $data['receiverId'] = $group->admin->userId;
@@ -1715,7 +1714,7 @@ class Shopping extends REST_Controller {
             $mail_template_view_data=load_default_resources();
             $mail_template_view_data['group_order_decline']=$mail_template_data;
             global_tidiit_mail($recv_email, "Buying Club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline_admin',$group->admin->firstName.' '.$group->admin->lastName);
-            $this->user->notification_add($data);
+            $notificationId=$this->user->notification_add($data);
             
             $declient_data=array();
             $declient_data['acceptDeclineState'] =2;
@@ -1733,7 +1732,7 @@ class Shopping extends REST_Controller {
             $push_not_data['nType'] = "BUYING-CLUB-ORDER-DECLINE";
             $push_not_data['nTitle'] = 'New Buying Club Order Invitation';
             $push_not_data['appSource'] = $deviceType;
-            $push_not_data['orderId'] = $orderId;
+            $push_not_data['notificationId'] = $notificationId;
             $push_not_data['nMessage'] = 'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'];
             send_push_notification($push_not_data);
         endif;
@@ -1849,7 +1848,7 @@ class Shopping extends REST_Controller {
             $mail_template_view_data=load_default_resources();
             $mail_template_view_data['group_order_decline']=$mail_template_data;
             global_tidiit_mail($recv_email, "Buying Club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline_admin',$group->admin->firstName.' '.$group->admin->lastName);
-            $this->user->notification_add($data);
+            $notificationId=$this->user->notification_add($data);
             
             $declient_data=array();
             $declient_data['acceptDeclineState'] =2;
@@ -1860,7 +1859,7 @@ class Shopping extends REST_Controller {
             $push_not_data['nType'] = "BUYING-CLUB-ORDER-DECLINE";
             $push_not_data['nTitle'] = 'New Buying Club Order Invitation';
             $push_not_data['appSource'] = $deviceType;
-            $push_not_data['orderId'] = $orderId;
+            $push_not_data['notificationId'] = $notificationId;
             $push_not_data['nMessage'] = 'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'];
 
             /// sendin SMS to Leader

@@ -296,6 +296,13 @@ endif;?>
                                                 </span>
                                                 <label for="grp">mPesa</label>
                                             </div><!-- /input-group -->
+                                            
+                                            <!--<div class="input-group order-labl form-group">
+                                                <span class="input-group-addon">
+                                                  <input type="radio" name="paymentOption" value="razorpay">
+                                                </span>
+                                                <label for="sin">Razorpay</label>
+                                            </div><!-- /input-group -->
 
                                             <div class="input-group order-labl form-group">
                                                 <span class="input-group-addon">
@@ -303,7 +310,7 @@ endif;?>
                                                 </span>
                                                 <label for="sin">Settlement on Delivery</label>
                                             </div><!-- /input-group -->
-                                              <input type="hidden" name="orderId" value="<?=$order->orderId?>"/>
+                                            <input type="hidden" name="orderId" value="<?=$order->orderId?>"/>
                                         </form>
                                     </div>
 
