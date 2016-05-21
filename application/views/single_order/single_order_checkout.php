@@ -306,7 +306,14 @@ echo $html_heading; echo $header;
                                                     <input type="radio" name="paymentOption" value="mpesa">
                                                 </span>
                                                 <label for="grp">mPesa</label>
-                                              </div><!-- /input-group -->
+                                            </div><!-- /input-group -->
+                                            
+                                            <div class="input-group form-group order-labl">
+                                                <span class="input-group-addon">
+                                                    <input type="radio" name="paymentOption" value="rajorpay">
+                                                </span>
+                                                <label for="grp">Razorpay</label>
+                                            </div><!-- /input-group -->
 
                                               <div class="input-group order-labl form-group">
                                                 <span class="input-group-addon">
@@ -314,6 +321,7 @@ echo $html_heading; echo $header;
                                                 </span>
                                                 <label for="sin">Settlement on Delivery</label>
                                               </div><!-- /input-group -->
+                                              
                                         </form>
                                     </div>
                                     <div class="cart-container-table">

@@ -23,7 +23,7 @@ class Shopping extends MY_Controller{
      * 
      */
     function process_my_group_orders(){
-        
+        $this->session->unset_userdata('razorpayPaymentId');
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $user = $this->_get_current_user_details();
@@ -1273,7 +1273,11 @@ class Shopping extends MY_Controller{
         if(!empty($allOrderArray)):
             if($paymentType=='sod'):
                 redirect(BASE_URL.'shopping/success/');
-            else:
+            elseif($paymentType=='rajorpay'):
+                $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$allOrderInfoArray,'final_return'=>'no');
+                $_SESSION['PaymentData'] = $paymentDataArr;
+                $this->_rajorpay_process($allOrderArray);
+            else :
                 $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$allOrderInfoArray,'final_return'=>'no');
                 $_SESSION['PaymentData'] = $paymentDataArr;
                 $this->_mpesa_process($allOrderArray);
@@ -1478,6 +1482,30 @@ class Shopping extends MY_Controller{
         $this->load->view('payment/mpesa',$data);
     }
     
+    function _rajorpay_process($orderIdArr){
+        //echo implode('^', $orderIdArr);
+        $SEODataArr=array();
+        $data = $this->_get_logedin_template($SEODataArr);
+        $data['userMenuActive']=1;
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
+        $data['orderIds']=implode('^', $orderIdArr);
+        $this->load->view('payment/rajorpay',$data);
+    }
+    
+    function razorpay_return(){
+        $orderIds=trim($this->input->post('orderIds'));
+        $razorpayPaymentId=trim($this->input->post('razorpay_payment_id'));
+        //pre($_POST);
+        if($orderIds!="" && $razorpayPaymentId!=""){
+            $this->session->set_userdata('razorpayPaymentId',$razorpayPaymentId);
+            $dataArr=array('userId'=>$this->session->userdata('FE_SESSION_VAR'),'orderIds'=>$orderIds,'razorpayPaymentId'=>$razorpayPaymentId,'IP'=>$this->input->ip_address);
+            $this->Order_model->add_rajorpay_return_data($dataArr);
+            
+        }else{
+            $this->session->set_flashdata("message","Some error happen, please try again later!");
+            redirect(BASE_URL.'shopping/my-cart');
+        }
+    }
     
     function mpesa_return(){
         $custom=$this->input->post('custom');
@@ -1671,7 +1699,9 @@ class Shopping extends MY_Controller{
             $user = $this->_get_current_user_details(); 
             $recv_email = $user->email;
             
-            $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+            if($k==0){
+                $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+            }
             $this->Order_model->add_payment(array('orderId'=>$v,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'group'));
             
             $mail_template_view_data=$this->load_default_resources();

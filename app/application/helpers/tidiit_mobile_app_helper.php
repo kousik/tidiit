@@ -426,17 +426,16 @@ if( !function_exists('send_push_notification')){
                 }
                 $fields=array('registration_ids'=>$regIdArr);
                 if($data['nType']=="BUYING-CLUB-ADD" || $data['nType']=="BUYING-CLUB-MODIFY" || $data['nType']=="BUYING-CLUB-MODIFY-NEW" || $data['nType']=="BUYING-CLUB-MODIFY-DELETE"){
-                    $apiData['notificationType']=$data['nType'];
-                    $apiData['tagStr']=$data['nType'];
+                    //$apiData['notificationType']=$data['nType'];
                 }else if($data['nType']=="BUYING-CLUB-ORDER-DECLINE"){
                     $apiData['orderId']=$data['orderId'];
                 }else if($data['nType']=="BUYING-CLUB-ORDER"){
                     $apiData['orderId']=$data['orderId'];
                 }
+                $apiData['tagStr']=$data['nType'];
             }else{
                 return FALSE;
             }
-            
         }
     }
 }

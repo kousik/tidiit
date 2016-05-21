@@ -42,7 +42,7 @@
     <td align="left" valign="top">&nbsp;</td>
     <td align="left" valign="top" class="ListHeadingLable">Registration Id </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
-    <td align="left" valign="top"><input name="regId" type="text" id="regId"  class="required" maxlength="50"/></td>
+    <td align="left" valign="top"><input name="regId" type="text" id="regId"  class="required" maxlength="500"/></td>
   </tr>
   <tr>
     <td align="left" valign="top">&nbsp;</td>
