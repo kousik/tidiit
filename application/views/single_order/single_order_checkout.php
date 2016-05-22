@@ -310,7 +310,7 @@ echo $html_heading; echo $header;
                                             
                                             <div class="input-group form-group order-labl">
                                                 <span class="input-group-addon">
-                                                    <input type="radio" name="paymentOption" value="rajorpay">
+                                                    <input type="radio" name="paymentOption" value="razorpay">
                                                 </span>
                                                 <label for="grp">Razorpay</label>
                                             </div><!-- /input-group -->
