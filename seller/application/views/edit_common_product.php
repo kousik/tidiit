@@ -402,6 +402,48 @@ $priceRangeSettingsDataArr=$priceRangeSettingsArr[$productPageType];
                       </div>
                     </div>
                     </div>
+
+              <div class="form-group field">
+                  <div class="row">
+                      <div class="col-sm-4">
+                          <label for="input-status"
+                                 class=" control-label main">Is New ?</label>
+                      </div>
+                      <div class="col-sm-8">
+                          <label>
+                          <input type="checkbox" name="isNew" value="1" <?php if(1==$detail->isNew){?>checked<?php }?>>
+                          </label>
+                      </div>
+                  </div>
+              </div>
+              <div class="form-group field">
+                  <div class="row">
+                      <div class="col-sm-4">
+                          <label for="input-status"
+                                 class=" control-label main">Is Popular Product ?</label>
+                      </div>
+                      <div class="col-sm-8">
+                          <div class="checkbox">
+                              <label>
+                            <input type="checkbox" name="popular" value="1" <?php if(1==$detail->popular){?>checked<?php }?>>
+                                  </label>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="form-group field">
+                  <div class="row">
+                      <div class="col-sm-4">
+                          <label for="input-status"
+                                 class=" control-label main">Is Featured Product ?</label>
+                      </div>
+                      <div class="col-sm-8">
+                          <label>
+                          <input type="checkbox" name="featured" value="1" <?php if(1==$detail->featured){?>checked<?php }?>>
+                          </label>
+                      </div>
+                  </div>
+              </div>
                     
                     
             <div class="field buttons">

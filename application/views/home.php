@@ -161,7 +161,7 @@
             <div class="row t-product-carousel-row">
                 <div id="demo">
                     <div id="owl-demo1" class="owl-carousel">
-                        <?php foreach($bestSelllingItem AS $k){ //pre($k);die;?>
+                        <?php foreach($newArrivals AS $k){ //pre($k);die;?>
                         <div class="item">
                             <div class="prodct_box">
                                 <?php if($k->qty<$k->minQty):?>

@@ -891,6 +891,8 @@ class Product extends MY_Controller{
             $price=$this->input->post('price',TRUE);
             $total_price_row_added=$this->input->post('total_price_row_added',TRUE);
 
+
+
             $status=$this->input->post('status',TRUE);
             $this->form_validation->set_rules($config);
 
@@ -936,6 +938,10 @@ class Product extends MY_Controller{
                     $dataArr['CategoryID2']=$ParrentDataArr[0]->firstParentcategoryId;
                     $dataArr['CategoryID3']=$categoryId;
                 }
+
+                $dataArr['isNew'] = $this->input->post('isNew')?$this->input->post('isNew',TRUE):0;
+                $dataArr['popular'] = $this->input->post('popular')?$this->input->post('popular',TRUE):0;
+                $dataArr['featured'] = $this->input->post('featured')?$this->input->post('featured',TRUE):0;
 
                 $dataArr['isOptionsAdded'] = 1;
                 if(!empty($mobileConnectivity)){$dataArr['mobileConnectivity']=implode(',', $mobileConnectivity);}
@@ -1159,6 +1165,11 @@ class Product extends MY_Controller{
                     $dataArr['CategoryID2']=$ParrentDataArr[0]->firstParentcategoryId;
                     $dataArr['CategoryID3']=$categoryId;
                 }
+
+                $dataArr['isNew'] = $this->input->post('isNew')?$this->input->post('isNew',TRUE):0;
+                $dataArr['popular'] = $this->input->post('popular')?$this->input->post('popular',TRUE):0;
+                $dataArr['featured'] = $this->input->post('featured')?$this->input->post('featured',TRUE):0;
+
                 if(!empty($mobileConnectivity)){$dataArr['mobileConnectivity']=implode(',', $mobileConnectivity);}
                 $tag=$retDataArr['data']['tag'];
                 unset($retDataArr['data']['tag']);
