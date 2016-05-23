@@ -80,7 +80,7 @@ $autoload['helper'] = array('url', 'file','form','html','cookie','ckeditor','sho
 |
 */
 
-$autoload['config'] = array();
+$autoload['config'] = array('payment');
 
 
 /*

@@ -2,8 +2,6 @@
 class Order_model extends CI_Model {
     public $_table='order';
     public $_billing='order_details';
-    public $_paypal='paypal_data';
-    public $_ccavenue='ccavenue_data';
     public $_cart='cart';
     public $_payment='payment';
     private $_state='order_state';
@@ -17,6 +15,7 @@ class Order_model extends CI_Model {
     private $_sod="settlement_on_delivery";
     private $_mpesa="mpesa";
     private $_netbanking="netbanking_data";
+    private $_razorpay="razorpay";
     private $_out_for_delivery="order_out_for_delivery_pre_alert";
     private $_delivered_request="order_delivered_request";
     private $_movement_history="order_movement_history";
@@ -575,5 +574,20 @@ class Order_model extends CI_Model {
     function add_movement_history($dataArr){
         $this->db->insert($this->_movement_history,$dataArr);
         return $this->db->insert_id();
+    }
+    
+    
+    function add_rajorpay_return_data($dataArr){
+        $this->db->insert($this->_razorpay,$dataArr);
+        return $this->db->insert_id();
+    }
+    
+    function get_razorpay_info(){
+        $rs=$this->db->from('system_constants')->where('constantName','PAYMENT_GATEWAY_STATE')->get()->result();
+        return $this->db->from('payment_gateway_config')->where('gatewayName','razorpay')->where('type',$rs[0]->constantValue)->get()->result();
+    }
+    
+    function get_rajorpay_id_by_rajorpay_pament_id($razorpayPaymentId){
+        return $this->db->from($this->_razorpay)->where('razorpayPaymentId',$razorpayPaymentId)->get()->result();
     }
 }

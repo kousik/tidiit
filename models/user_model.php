@@ -24,6 +24,7 @@ class User_model extends CI_Model {
     private $_table_logistic_user = 'logistic_user';
     private $_table_warehouse = 'seller_warehouse';
     private $_table_tidiit_commission = 'tidiit_commission';
+    private $_table_app_info = 'app_info';
 
 
     public $result=NULL;
@@ -497,6 +498,47 @@ class User_model extends CI_Model {
             endif;
             
             return $result;
+        else:
+            return array();
+        endif;
+    }
+    
+    
+    function get_my_created_groups_apps($userId,$df = false){
+        $this->db->order_by('groupId','desc');
+        
+        $datas = $this->db->from($this->_group)->where('groupAdminId =',$userId)->get()->result_array();
+        if($datas):
+            $groups = array();
+            foreach($datas as $key => $grp):
+                $users = explode(",", $grp['groupUsers']);
+                $udata = array();
+                if($users):                        
+                    foreach($users as $ukey => $usrId):
+                        if($usrId):
+                            $udatas = $this->get_details_by_id($usrId,TRUE);
+                            $udata[] = $udatas[0];
+                        endif;
+                    endforeach;
+                endif;
+                $grp['users'] = $udata;
+
+                $getgpadmin = $this->get_details_by_id($userId,true);
+
+                $grp['admin'] = $getgpadmin[0];
+                $grp['hide'] = null;
+                $groups[] = $grp;
+            endforeach;
+
+            //$in_groups = $this->get_my_on_groups_apps($userId);
+            //if($in_groups && !$df):
+            //    $result = array_merge($groups, $in_groups);
+            //else:
+                $result = $groups;
+            //endif;
+            
+            return $result;
+    
         else:
             return array();
         endif;
@@ -987,6 +1029,29 @@ class User_model extends CI_Model {
     
     function get_tidiit_details($commissionId){
         return $this->db->get_where($this->_table_tidiit_commission,array('commissionId'=>$commissionId))->result();
+    }
+    
+    function check_user_phone_register($userId,$registrationId){
+        $rs=$this->db->from($this->_table_app_info)->where('userId',$userId)->where('registrationId',$registrationId)->get()->result();
+        if(count($rs)>0){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
+    
+    function get_reg_id_by_user_id($userId){
+        $rs=$this->db->from($this->_table_app_info)->where('userId',$userId)->get()->result();
+        if(count($rs)==0){
+            return FALSE;
+        }else{
+            return $rs;
+        }
+    }
+    
+    function save_push_notification_history($dataArr){
+        $this->db->insert_batch('push_notification_message',$dataArr);
+        return $this->db->insert_id();
     }
 }
 

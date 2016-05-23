@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+use Razorpay\Api\Api;
+
 class Shopping extends MY_Controller{
     
     public function __construct(){
@@ -23,7 +25,7 @@ class Shopping extends MY_Controller{
      * 
      */
     function process_my_group_orders(){
-        
+        $this->session->unset_userdata('razorpayPaymentId');
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
         $user = $this->_get_current_user_details();
@@ -255,7 +257,6 @@ class Shopping extends MY_Controller{
         $orderId = $this->input->post('orderId',TRUE);
         $cartId = $orderId;
         $paymentOption = $this->input->post('paymentOption',TRUE);
-        
         $pevorder = $this->Order_model->get_single_order_by_id($orderId);
         $a = $this->_get_available_order_quantity($orderId);
         
@@ -282,7 +283,6 @@ class Shopping extends MY_Controller{
             
             //Notification
             $order = $this->Order_model->get_single_order_by_id($orderId);
-            
             $orderinfo = array();
             $pro = $this->Product_model->details($order->productId);
             $orderinfo['pdetail'] = $pro[0];
@@ -419,6 +419,7 @@ class Shopping extends MY_Controller{
                 endif;
             else:
                 $paymentDataArr = array('orders'=>$orderId,'orderType'=>'group','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$pevorder,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>$cartId,'final_return'=>'no');      
+                //pre($paymentDataArr);die;
                 $_SESSION['PaymentData'] = $paymentDataArr;     
             endif;
             
@@ -431,8 +432,11 @@ class Shopping extends MY_Controller{
                 $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'group'));
                 //$this->_remove_cart($cartId);
                 redirect(BASE_URL.'shopping/success/');
-            else:
-                $this->_mpesa_process($orderId);
+            elseif($paymentOption=='razorpay'):
+                //pre($_SESSION);die;
+                $this->_rajorpay_process(array($orderId));
+            else:    
+                $this->_mpesa_process(array($orderId));
             endif;
         else:
             $this->session->set_flashdata("message","Some error happen, please try again later!");
@@ -1273,7 +1277,11 @@ class Shopping extends MY_Controller{
         if(!empty($allOrderArray)):
             if($paymentType=='sod'):
                 redirect(BASE_URL.'shopping/success/');
-            else:
+            elseif($paymentType=='rajorpay'):
+                $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$allOrderInfoArray,'final_return'=>'no');
+                $_SESSION['PaymentData'] = $paymentDataArr;
+                $this->_rajorpay_process($allOrderArray);
+            else :
                 $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$allOrderInfoArray,'final_return'=>'no');
                 $_SESSION['PaymentData'] = $paymentDataArr;
                 $this->_mpesa_process($allOrderArray);
@@ -1478,6 +1486,87 @@ class Shopping extends MY_Controller{
         $this->load->view('payment/mpesa',$data);
     }
     
+    function _rajorpay_process($orderIdArr){
+        //echo implode('^', $orderIdArr);
+        $SEODataArr=array();
+        $data = $this->_get_logedin_template($SEODataArr);
+        
+        $paymentDataArr=$_SESSION['PaymentData'];
+        $this->session->set_userdata('CIPaymentData', base64_encode(serialize($paymentDataArr)));
+        $data['paymentGatewayAmount']=$paymentDataArr['paymentGatewayAmount'];
+        $me = $this->_get_current_user_details();
+        $razorpayInfo=$this->Order_model->get_razorpay_info();
+        $data['keyId']=$razorpayInfo[0]->userName;
+        $data['checkOutURL']=$razorpayInfo[0]->endPoint;
+        $data['userData']=$me;
+        $data['userMenuActive']=1;
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
+        $data['orderIds']=implode('^', $orderIdArr);
+        //pre($_SESSION);die;
+        $this->load->view('payment/razorpay',$data);
+    }
+    
+    function razorpay_return(){
+        $orderIds=trim($this->input->post('orderIds'));
+        $razorpayPaymentId=trim($this->input->post('razorpay_payment_id'));
+        
+        $CIPaymentData=$this->session->userdata('CIPaymentData');
+        /*pre($_SESSION);
+        echo '=============================================================================================================';
+        pre($CIPaymentData);
+        die;
+        
+        $PaymentDataArr = $_SESSION['PaymentData'];
+        pre($PaymentDataArr);die;
+        $productPriceArr=$this->Order_model->get_product_price_details_by_orderid($PaymentDataArr['orders']);
+        pre($productPriceArr);
+        die;*/
+        //pre($_POST);
+        if($orderIds!="" && $razorpayPaymentId!=""){
+            $this->session->set_userdata('razorpayPaymentId',$razorpayPaymentId);
+            $dataArr=array('userId'=>$this->session->userdata('FE_SESSION_VAR'),'orderIds'=>$orderIds,'razorpayPaymentId'=>$razorpayPaymentId,'IP'=>$this->input->ip_address);
+            $this->Order_model->add_rajorpay_return_data($dataArr);
+            $razorpayInfo=$this->Order_model->get_razorpay_info();
+            $api_key=$razorpayInfo[0]->userName;
+            $api_secret=$razorpayInfo[0]->password;
+
+            //include_once src/Api.php;
+            $api = new Api($api_key, $api_secret);
+            $payment = $api->payment->fetch($razorpayPaymentId);
+            $Amount=$payment->amount;
+            $captureData=$api->payment->fetch($razorpayPaymentId)->capture(array('amount'=>$Amount));
+            //pre($captureData);die;
+            if($captureData->captured==1){
+                $PaymentDataArr = $_SESSION['PaymentData'];
+                $orderType = $PaymentDataArr['orderType'];
+                if($orderType=='group'):
+                    $orderDataArr = $PaymentDataArr;
+                    if($PaymentDataArr['final_return']=='no'):
+                        $productPriceArr=$this->Order_model->get_product_price_details_by_orderid($PaymentDataArr['orders']);
+                        $this->Product_model->update_product_quantity($productPriceArr[0]['productId'],$productPriceArr[0]['qty']);
+                        $this->process_mpesa_success_group_order($orderDataArr);
+                    else:
+                        $this->process_mpesa_success_group_order_final($orderDataArr);
+                    endif;
+                else:
+                    if($PaymentDataArr['final_return']=='no'):
+                        foreach($PaymentDataArr['orders'] As $k=> $v){
+                            $productPriceArr=$this->Order_model->get_product_price_details_by_orderid($v);
+                            $this->Product_model->update_product_quantity($productPriceArr[0]['productId'],$productPriceArr[0]['qty']);
+                        }
+                        $this->process_mpesa_success_single_order(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo']));
+                    else:
+                        $this->process_mpesa_success_single_order_final(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo'],'logisticsData'=>$PaymentDataArr['logisticsData']));
+                    endif;
+                endif;
+            }else{
+                
+            }
+        }else{
+            $this->session->set_flashdata("message","Some error happen, please try again later!");
+            redirect(BASE_URL.'shopping/my-cart');
+        }
+    }
     
     function mpesa_return(){
         $custom=$this->input->post('custom');
@@ -1511,49 +1600,88 @@ class Shopping extends MY_Controller{
     }
     
     function process_mpesa_success_group_order($PaymentDataArr){        
-            $orderId = $PaymentDataArr['orders'];
-            $pevorder = $PaymentDataArr['pevorder'];
-            $prod_price_info = $PaymentDataArr['prod_price_info'];
-            
-            $order_update=array();
-            if($prod_price_info->qty == $PaymentDataArr['aProductQty']):
-                $order_update['status'] = 2;
-                $order_update['isPaid'] = 1;
-                $this->Product_model->update_product_quantity($prod_price_info->productId,$prod_price_info->qty);
-            else:
-                $order_update['status'] = 1;
+        $orderId = $PaymentDataArr['orders'];
+        $pevorder = $PaymentDataArr['pevorder'];
+        $prod_price_info = $PaymentDataArr['prod_price_info'];
+
+        $order_update=array();
+        if($prod_price_info->qty == $PaymentDataArr['aProductQty']):
+            $order_update['status'] = 2;
+            $order_update['isPaid'] = 1;
+            $this->Product_model->update_product_quantity($prod_price_info->productId,$prod_price_info->qty);
+        else:
+            $order_update['status'] = 1;
+        endif;
+
+        $update = $this->Order_model->update($order_update,$orderId);
+
+        if($update):
+            $this->Order_model->order_group_status_update($orderId, $order_update['status'],$pevorder->parrentOrderID);
+
+            //Notification
+            $order = $PaymentDataArr['order'];
+            $orderinfo = $PaymentDataArr['orderInfo'];
+
+            if($order->groupId):
+                $orderinfo['group'] = $PaymentDataArr['group'];
             endif;
-            
-            $update = $this->Order_model->update($order_update,$orderId);
-            
-            if($update):
-                $this->Order_model->order_group_status_update($orderId, $order_update['status'],$pevorder->parrentOrderID);
-                
-                //Notification
-                $order = $PaymentDataArr['order'];
-                $orderinfo = $PaymentDataArr['orderInfo'];
-                
-                if($order->groupId):
-                    $orderinfo['group'] = $PaymentDataArr['group'];
-                endif;
-                $group=$PaymentDataArr['group'];
-                $info['orderInfo'] = base64_encode(serialize($orderinfo));
-                $this->Order_model->update($info, $orderId);
-                if($order->parrentOrderID == 0):
-                    foreach($group->users as $key => $usr):
+            $group=$PaymentDataArr['group'];
+            $info['orderInfo'] = base64_encode(serialize($orderinfo));
+            $this->Order_model->update($info, $orderId);
+            if($order->parrentOrderID == 0):
+                foreach($group->users as $key => $usr):
+                    $mail_template_data=array();
+                    $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                    $data['receiverId'] = $usr->userId;
+                    $data['nType'] = 'BUYING-CLUB-ORDER';
+
+                    $data['nTitle'] = 'New Buying Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
+                    $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club order product.<br>";
+                    $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
+                    $data['nMessage'] .= "Want to process the order ? <br>";
+                    $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
+                    $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                    $data['orderId'] =$orderId;
+                    $data['productId'] =$orderinfo['priceinfo']->productId;
+                    $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
+
+                    $data['isRead'] = 0;
+                    $data['status'] = 1;
+                    $data['createDate'] = date('Y-m-d H:i:s');
+
+                    //Send Email message
+                    $recv_email = $usr->email;
+                    $sender_email = $group->admin->email;
+
+                    $mail_template_view_data=$this->load_default_resources();
+                    $mail_template_view_data['group_order_start']=$mail_template_data;
+                    $this->_global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
+                    $this->User_model->notification_add($data);
+                    /// sendin SMS to allmember
+                    $sms_data=array('nMessage'=>'You have invited to Buying Club['.$group->title.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.BASE_URL,
+                        'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$usr->userId,
+                        'senderMobileNumber'=>$group->admin->mobile,'nType'=>'CREATE-'.$data['nType']);
+                    send_sms_notification($sms_data);
+                endforeach;
+            else:
+                $me = $this->_get_current_user_details();
+                $mail_template_data=array();
+                foreach($group->users as $key => $usr):
+                    if($me->userId != $usr->userId):
                         $mail_template_data=array();
                         $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
                         $data['receiverId'] = $usr->userId;
                         $data['nType'] = 'BUYING-CLUB-ORDER';
 
-                        $data['nTitle'] = 'New Buying Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
-                        $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
-                        $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club order product.<br>";
-                        $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
-                        $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
-                        $data['nMessage'] .= "Want to process the order ? <br>";
-                        $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
-                        $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
+                        $data['nTitle'] = 'Buying Club order continue by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+                        $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$usr->firstName.' '.$usr->lastName;
+                        $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club.<br>";
+                        $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
+                        $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
+                        $data['nMessage'] .= "";
                         $data['nMessage'] .= "Thanks <br> Tidiit Team.";
                         $data['orderId'] =$orderId;
                         $data['productId'] =$orderinfo['priceinfo']->productId;
@@ -1565,92 +1693,197 @@ class Shopping extends MY_Controller{
 
                         //Send Email message
                         $recv_email = $usr->email;
-                        $sender_email = $group->admin->email;
+                        $sender_email = $me->email;
 
                         $mail_template_view_data=$this->load_default_resources();
-                        $mail_template_view_data['group_order_start']=$mail_template_data;
-                        $this->_global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
+                        $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
+                        $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                         $this->User_model->notification_add($data);
+
                         /// sendin SMS to allmember
-                        $sms_data=array('nMessage'=>'You have invited to Buying Club['.$group->title.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.BASE_URL,
-                            'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$usr->userId,
-                            'senderMobileNumber'=>$group->admin->mobile,'nType'=>'CREATE-'.$data['nType']);
+                        $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
+                        'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
+                        'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
                         send_sms_notification($sms_data);
-                    endforeach;
-                else:
-                    $me = $this->_get_current_user_details();
+                    endif;
+                endforeach;
+                $data['receiverId'] = $group->admin->userId;
+                //Send Email message
+                $recv_email = $group->admin->email;
+                $sender_email = $me->email;
+                $mail_template_view_data=$this->load_default_resources();
+                if(empty($mail_template_data)){
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$me->firstName.' '.$me->lastName;
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
+                }
+                $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
+                $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+                $this->User_model->notification_add($data);
+                /// sendin SMS to allmember
+                $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of your Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
+                'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
+                'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
+                send_sms_notification($sms_data);
+            endif;
+
+            if($order_update['status']==2):
+                $this->_sent_order_complete_mail($order);
+            endif;
+
+            $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+            $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'group'));
+            $this->_remove_cart($PaymentDataArr['cartId']);
+            unset($_SESSION['PaymentData']);
+            redirect(BASE_URL.'shopping/success/');
+        else:
+            $this->session->set_flashdata("message","Some error happen, please try again later!");
+            redirect(BASE_URL.'shopping/my-cart');
+        endif;
+    }
+    
+    function process_razorpay_success_group_order($PaymentDataArr){
+        $orderId = $PaymentDataArr['orders'];
+        $pevorder = $PaymentDataArr['pevorder'];
+        $prod_price_info = $PaymentDataArr['prod_price_info'];
+
+        $order_update=array();
+        if($prod_price_info->qty == $PaymentDataArr['aProductQty']):
+            $order_update['status'] = 2;
+            $order_update['isPaid'] = 1;
+            $this->Product_model->update_product_quantity($prod_price_info->productId,$prod_price_info->qty);
+        else:
+            $order_update['status'] = 1;
+        endif;
+
+        $update = $this->Order_model->update($order_update,$orderId);
+
+        if($update):
+            $this->Order_model->order_group_status_update($orderId, $order_update['status'],$pevorder->parrentOrderID);
+
+            //Notification
+            $order = $PaymentDataArr['order'];
+            $orderinfo = $PaymentDataArr['orderInfo'];
+
+            if($order->groupId):
+                $orderinfo['group'] = $PaymentDataArr['group'];
+            endif;
+            $group=$PaymentDataArr['group'];
+            $info['orderInfo'] = base64_encode(serialize($orderinfo));
+            $this->Order_model->update($info, $orderId);
+            if($order->parrentOrderID == 0):
+                foreach($group->users as $key => $usr):
                     $mail_template_data=array();
-                    foreach($group->users as $key => $usr):
-                        if($me->userId != $usr->userId):
-                            $mail_template_data=array();
-                            $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
-                            $data['receiverId'] = $usr->userId;
-                            $data['nType'] = 'BUYING-CLUB-ORDER';
+                    $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                    $data['receiverId'] = $usr->userId;
+                    $data['nType'] = 'BUYING-CLUB-ORDER';
 
-                            $data['nTitle'] = 'Buying Club order continue by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
-                            $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$usr->firstName.' '.$usr->lastName;
-                            $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club.<br>";
-                            $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
-                            $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
-                            $data['nMessage'] .= "";
-                            $data['nMessage'] .= "Thanks <br> Tidiit Team.";
-                            $data['orderId'] =$orderId;
-                            $data['productId'] =$orderinfo['priceinfo']->productId;
-                            $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
+                    $data['nTitle'] = 'New Buying Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
+                    $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club order product.<br>";
+                    $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
+                    $data['nMessage'] .= "Want to process the order ? <br>";
+                    $data['nMessage'] .= "<a href='".BASE_URL."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".BASE_URL."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
+                    $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                    $data['orderId'] =$orderId;
+                    $data['productId'] =$orderinfo['priceinfo']->productId;
+                    $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
 
-                            $data['isRead'] = 0;
-                            $data['status'] = 1;
-                            $data['createDate'] = date('Y-m-d H:i:s');
+                    $data['isRead'] = 0;
+                    $data['status'] = 1;
+                    $data['createDate'] = date('Y-m-d H:i:s');
 
-                            //Send Email message
-                            $recv_email = $usr->email;
-                            $sender_email = $me->email;
-
-                            $mail_template_view_data=$this->load_default_resources();
-                            $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
-                            $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
-                            $this->User_model->notification_add($data);
-                            
-                            /// sendin SMS to allmember
-                            $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
-                            'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
-                            'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
-                            send_sms_notification($sms_data);
-                        endif;
-                    endforeach;
-                    $data['receiverId'] = $group->admin->userId;
                     //Send Email message
-                    $recv_email = $group->admin->email;
-                    $sender_email = $me->email;
+                    $recv_email = $usr->email;
+                    $sender_email = $group->admin->email;
+
                     $mail_template_view_data=$this->load_default_resources();
-                    if(empty($mail_template_data)){
-                        $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$me->firstName.' '.$me->lastName;
-                        $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
-                        $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
-                    }
-                    $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
-                    $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+                    $mail_template_view_data['group_order_start']=$mail_template_data;
+                    $this->_global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
                     $this->User_model->notification_add($data);
                     /// sendin SMS to allmember
-                    $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of your Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
-                    'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
-                    'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
+                    $sms_data=array('nMessage'=>'You have invited to Buying Club['.$group->title.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.BASE_URL,
+                        'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$usr->userId,
+                        'senderMobileNumber'=>$group->admin->mobile,'nType'=>'CREATE-'.$data['nType']);
                     send_sms_notification($sms_data);
-                endif;
-                
-                if($order_update['status']==2):
-                    $this->_sent_order_complete_mail($order);
-                endif;
-
-                $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
-                $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'group'));
-                $this->_remove_cart($PaymentDataArr['cartId']);
-                unset($_SESSION['PaymentData']);
-                redirect(BASE_URL.'shopping/success/');
+                endforeach;
             else:
-                $this->session->set_flashdata("message","Some error happen, please try again later!");
-                redirect(BASE_URL.'shopping/my-cart');
+                $me = $this->_get_current_user_details();
+                $mail_template_data=array();
+                foreach($group->users as $key => $usr):
+                    if($me->userId != $usr->userId):
+                        $mail_template_data=array();
+                        $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                        $data['receiverId'] = $usr->userId;
+                        $data['nType'] = 'BUYING-CLUB-ORDER';
+
+                        $data['nTitle'] = 'Buying Club order continue by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+                        $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$usr->firstName.' '.$usr->lastName;
+                        $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club.<br>";
+                        $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
+                        $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
+                        $data['nMessage'] .= "";
+                        $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                        $data['orderId'] =$orderId;
+                        $data['productId'] =$orderinfo['priceinfo']->productId;
+                        $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
+
+                        $data['isRead'] = 0;
+                        $data['status'] = 1;
+                        $data['createDate'] = date('Y-m-d H:i:s');
+
+                        //Send Email message
+                        $recv_email = $usr->email;
+                        $sender_email = $me->email;
+
+                        $mail_template_view_data=$this->load_default_resources();
+                        $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
+                        $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+                        $this->User_model->notification_add($data);
+
+                        /// sendin SMS to allmember
+                        $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
+                        'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
+                        'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
+                        send_sms_notification($sms_data);
+                    endif;
+                endforeach;
+                $data['receiverId'] = $group->admin->userId;
+                //Send Email message
+                $recv_email = $group->admin->email;
+                $sender_email = $me->email;
+                $mail_template_view_data=$this->load_default_resources();
+                if(empty($mail_template_data)){
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$me->firstName.' '.$me->lastName;
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
+                }
+                $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
+                $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+                $this->User_model->notification_add($data);
+                /// sendin SMS to allmember
+                $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of your Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
+                'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
+                'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
+                send_sms_notification($sms_data);
             endif;
+
+            if($order_update['status']==2):
+                $this->_sent_order_complete_mail($order);
+            endif;
+
+            $rajorpayDataArr=$this->Order_model->get_rajorpay_id_by_rajorpay_pament_id($this->session->userdata('razorpayPaymentId'));
+            $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId,'orderType'=>'group'));
+            $this->_remove_cart($PaymentDataArr['cartId']);
+            $this->session->unset_userdata('razorpayPaymentId');
+            unset($_SESSION['PaymentData']);
+            redirect(BASE_URL.'shopping/success/');
+        else:
+            $this->session->set_flashdata("message","Some error happen, please try again later!");
+            redirect(BASE_URL.'shopping/my-cart');
+        endif;
     }
     
     function process_mpesa_success_single_order($PaymentDataArr){
@@ -1671,7 +1904,9 @@ class Shopping extends MY_Controller{
             $user = $this->_get_current_user_details(); 
             $recv_email = $user->email;
             
-            $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+            if($k==0){
+                $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+            }
             $this->Order_model->add_payment(array('orderId'=>$v,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'group'));
             
             $mail_template_view_data=$this->load_default_resources();
@@ -1679,6 +1914,36 @@ class Shopping extends MY_Controller{
             $this->_global_tidiit_mail($recv_email, "Your Tidiit order no - TIDIIT-OD-".$v.' has placed successfully', $mail_template_view_data,'single_order_success');
             $this->_sent_single_order_complete_mail($v);    
         endforeach;
+        unset($_SESSION['PaymentData']);
+        redirect(BASE_URL.'shopping/success/');
+    }
+    
+    function process_razorpay_success_single_order($PaymentDataArr){
+        $rajorpayDataArr=$this->Order_model->get_rajorpay_id_by_rajorpay_pament_id($this->session->userdata('razorpayPaymentId'));
+        foreach ($PaymentDataArr['orders'] AS $k => $v):
+            $order_update=array();
+            $order_update['status'] = 2;
+            $order_update['isPaid'] = 1;
+            $this->Order_model->update($order_update,$v);
+            
+            $order=$PaymentDataArr['orderInfo'][$v]['order'];
+            $orderinfo=$PaymentDataArr['orderInfo'][$v]['orderInfo'];
+            $this->Product_model->update_product_quantity($order['productId'],$order['productQty']);
+            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
+            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$v;
+            $this->_remove_cart($PaymentDataArr['orderInfo'][$v]['cartId']);
+            
+            //Send Email message
+            $user = $this->_get_current_user_details(); 
+            $recv_email = $user->email;
+            $this->Order_model->add_payment(array('orderId'=>$v,'paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId,'orderType'=>'group'));
+            
+            $mail_template_view_data=$this->load_default_resources();
+            $mail_template_view_data['single_order_success']=$mail_template_data;
+            $this->_global_tidiit_mail($recv_email, "Your Tidiit order no - TIDIIT-OD-".$v.' has placed successfully', $mail_template_view_data,'single_order_success');
+            $this->_sent_single_order_complete_mail($v);    
+        endforeach;
+        $this->session->unset_userdata('razorpayPaymentId');
         unset($_SESSION['PaymentData']);
         redirect(BASE_URL.'shopping/success/');
     }
@@ -1824,7 +2089,7 @@ class Shopping extends MY_Controller{
                 $paymentDataArr = array('orders'=>$orderId,'orderType'=>'group','paymentGatewayAmount'=>$order->orderAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$order,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>'','final_return'=>'yes','logisticsData'=>$logisticsData);      
             endif;
             $_SESSION['PaymentData'] = $paymentDataArr;
-            $this->_mpesa_process($orderId);
+            $this->_mpesa_process(array($orderId));
         endif;
     }
     
@@ -1978,6 +2243,156 @@ class Shopping extends MY_Controller{
         redirect(BASE_URL.'my-orders/');
     }
     
+    function process_razorpay_success_group_order_final($PaymentDataArr){        
+        $orderId = $PaymentDataArr['orders'];
+        $pevorder = $PaymentDataArr['pevorder'];
+        $prod_price_info = $PaymentDataArr['prod_price_info'];
+
+        $order_update=array();
+        $order_update['isPaid'] = 1;
+
+        $update = $this->Order_model->update($order_update,$orderId);
+
+        //Notification
+        $order = $PaymentDataArr['order'];
+        $orderinfo = $PaymentDataArr['orderInfo'];
+
+        if($order->groupId):
+            $orderinfo['group'] = $PaymentDataArr['group'];
+        endif;
+        $group=$PaymentDataArr['group'];
+        $user = $this->_get_current_user_details(); 
+        $recv_email = $user->email;
+        $recv_name=$user->firstName.' '.$user->lastName;
+        $tidiitStr='TIDIIT-OD-';
+        $logisticsData=$PaymentDataArr['logisticsData'];
+        
+        if($order->parrentOrderID == 0):
+            foreach($group->users as $key => $usr):
+                $mail_template_data=array();
+                $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                $data['receiverId'] = $usr->userId;
+                $data['nType'] = 'BUYING-CLUB-ORDER';
+
+                $data['nTitle'] = '<b>'.$user->firstName.' '.$user->lastName.'</b>  completed payment before delivery';
+                $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$user->firstName.' '.$user->lastName;
+                $data['nMessage'] = "Hi, ".$group->admin->firstName.' '.$group->admin->lastName."<br> completed his payment for buy the Buying Club order product.<br>";
+                $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
+                $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERAMT']=$order->orderAmount;;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERQTY']=$order->productQty;
+                $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                $data['orderId'] =$orderId;
+                $data['productId'] =$orderinfo['priceinfo']->productId;
+                $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
+
+                $data['isRead'] = 0;
+                $data['status'] = 1;
+                $data['createDate'] = date('Y-m-d H:i:s');
+
+                //Send Email message
+                $recv_email = $usr->email;
+                $sender_email = $group->admin->email;
+
+                $mail_template_view_data=$this->load_default_resources();
+                $mail_template_view_data['group_order_start']=$mail_template_data;
+                $this->_global_tidiit_mail($recv_email, 'Payment has submited before delivery for Buying Club Order', $mail_template_view_data,'group_order_sod_final_payment');
+                $this->User_model->notification_add($data);   
+            endforeach;
+        else:
+            $me = $this->_get_current_user_details();
+            $mail_template_data=array();
+            foreach($group->users as $key => $usr):
+                $mail_template_data=array();
+                $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                $data['receiverId'] = $usr->userId;
+                $data['nType'] = 'BUYING-CLUB-ORDER';
+
+                $data['nTitle'] = '<b>'.$recv_name.'</b> completed payment before delivery for  Buying Club order';
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$me->firstName.' '.$me->lastName;
+                $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club.<br>";
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
+                $data['nMessage'] .= "";
+                $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                $data['orderId'] =$orderId;
+                $data['productId'] =$orderinfo['priceinfo']->productId;
+                $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
+
+                $data['isRead'] = 0;
+                $data['status'] = 1;
+                $data['createDate'] = date('Y-m-d H:i:s');
+
+                //Send Email message
+                $recv_email = $usr->email;
+                $sender_email = $me->email;
+
+                $mail_template_view_data=$this->load_default_resources();
+                $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
+                $this->_global_tidiit_mail($recv_email,"Payment submited for Tidiit Buying Club order  before delivery", $mail_template_view_data,'group_order_group_member_sod_final_payment');
+                if($me->userId != $usr->userId):
+                    $this->User_model->notification_add($data);
+                endif;
+            endforeach;
+            $data['receiverId'] = $group->admin->userId;
+            
+            //Send Email message
+            $recv_email = $group->admin->email;
+            $leaderName=$group->admin->firstName.' '.$group->admin->lastName;
+            $sender_email = $me->email;
+            $mail_template_view_data=$this->load_default_resources();
+            if(empty($mail_template_data)){
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$me->firstName.' '.$me->lastName;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
+            }
+            $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
+            $this->_global_tidiit_mail($recv_email,"Payment has submited for Tidiit Buying Club order before delivery", $mail_template_view_data,'group_order_group_member_sod_final_payment',$leaderName);
+            $this->User_model->notification_add($data);
+        endif;
+        
+        if(!empty($logisticsData) && array_key_exists('deliveryStaffContactNo', $logisticsData)):
+            $logisticMobileNo=$logisticsData['deliveryStaffContactNo'];
+            if($logisticMobileNo!=""):
+                $sms=$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.'-'.$orderId.' please process the delivery.';
+                /// sendin SMS to allmember
+                $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$logisticMobileNo,'senderId'=>'','receiverId'=>'',
+                'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
+                send_sms_notification($sms_data);
+            endif;
+        endif;
+        
+        /// SMS to payer
+        $sms='Thanks for the payment.We have received for Tidiit Buying Club['.$group->groupTitle.'] order '.$tidiitStr.'-'.$orderId.'.';
+        $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
+        'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
+        send_sms_notification($sms_data);
+        
+        if($user->userId!=$group->admin->userId){
+            /// SMS to group admin
+            $sms='Your Tidiit Buying Club['.$group->groupTitle.'] member['.$user->firstName.' '.$user->lastName.'] has completed payment for order '.$tidiitStr.'-'.$orderId.'.';
+            $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$group->admin->mobile,'senderId'=>'','receiverId'=>$group->admin->userId,
+            'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LEADER');
+            send_sms_notification($sms_data);
+        }
+        
+        $rajorpayDataArr=$this->Order_model->get_rajorpay_id_by_rajorpay_pament_id($this->session->userdata('razorpayPaymentId'));
+        $this->Order_model->edit_payment(array('paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId),$orderId);
+        $logisticMobileNo=$PaymentDataArr['logisticsData']['deliveryStaffContactNo'];
+        $sms="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].'. '.$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.'-'.$orderId.' please process the delivery.';
+
+        /// here send mail to logistic partner
+        $mailBody="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'-'.$orderId.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
+        $this->_global_tidiit_mail($PaymentDataArr['logisticsData']['deliveryStaffEmail'],'Tidiit payment completed for Order '.$tidiitStr.'-'.$orderId,$mailBody,'',$recv_name);
+        
+        $this->_sent_order_complete_mail_sod_final_payment1($this->Order_model->get_single_order_by_id($orderId));
+        $this->session->unset_userdata('razorpayPaymentId');
+        unset($_SESSION['PaymentData']);
+        $this->session->set_flashdata('message','Thanks for the payment before order is Out for delivery');
+        redirect(BASE_URL.'my-orders/');
+    }
+    
     function process_mpesa_success_single_order_final($PaymentDataArr){
         $orderId=0;
         $tidiitStrChr='TIDIIT-OD';
@@ -2000,6 +2415,61 @@ class Shopping extends MY_Controller{
             
             $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
             $this->Order_model->edit_payment(array('paymentType'=>'mPesa','mPesaId'=>$mPesaId),$v);
+            
+            $mail_template_view_data=$this->load_default_resources();
+            $mail_template_view_data['single_order_success']=$mail_template_data;
+            $this->_global_tidiit_mail($recv_email, "Payment has completed for your Tidiit order TIDIIT-OD-".$v, $mail_template_view_data,'single_order_success_sod_final_payment',$recv_name);
+            $this->_sent_single_order_complete_mail_sod_final_payment($v);
+        endforeach;
+        /// here to preocess SMS to logistics partner
+        $logisticsData=$PaymentDataArr['logisticsData'];
+        if(!empty($logisticsData) && array_key_exists('deliveryStaffContactNo', $logisticsData)):
+            $logisticMobileNo=$logisticsData['deliveryStaffContactNo'];
+            if($logisticMobileNo!=""):
+                $sms=$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.' please process the delivery.';
+                /// sendin SMS to allmember
+                $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$logisticMobileNo,'senderId'=>'','receiverId'=>'',
+                'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
+                send_sms_notification($sms_data);
+            endif;
+        endif;
+        
+        /// SMS to payer
+        $sms='Thanks for the payment.We have received for Tidiit order '.$tidiitStr.'.';
+        $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
+        'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
+        send_sms_notification($sms_data);
+        
+        /// here send mail to logistic partner
+        $mailBody="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
+        $this->_global_tidiit_mail($PaymentDataArr['logisticsData']['deliveryStaffEmail'],'Tidiit payment submited  for Order '.$tidiitStr,$mailBody,'',$recv_name);
+        unset($_SESSION['PaymentData']);
+        $this->session->set_flashdata('message','Thanks for the payment before order is Out for delivery');
+        redirect(BASE_URL.'my-orders/');
+    }
+    
+    function process_razorpay_success_single_order_final($PaymentDataArr){
+        $orderId=0;
+        $tidiitStrChr='TIDIIT-OD';
+        $tidiitStr='';
+        //Send Email message
+        $user = $this->_get_current_user_details(); 
+        $recv_email = $user->email;
+        $recv_name=$user->firstName.' '.$user->lastName;
+        foreach ($PaymentDataArr['orders'] AS $k => $v):
+            $orderId=$v;
+            $tidiitStr.=$tidiitStrChr.'-'.$v.',';
+            $order_update=array();
+            $order_update['isPaid'] = 1;
+            $this->Order_model->update($order_update,$v);
+            
+            $order=$PaymentDataArr['orderInfo'][$v]['order'];
+            $orderinfo=$PaymentDataArr['orderInfo'][$v]['orderInfo'];
+            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
+            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$v;
+            
+            $rajorpayDataArr=$this->Order_model->get_rajorpay_id_by_rajorpay_pament_id($this->session->userdata('razorpayPaymentId'));
+            $this->Order_model->edit_payment(array('paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId),$v);
             
             $mail_template_view_data=$this->load_default_resources();
             $mail_template_view_data['single_order_success']=$mail_template_data;

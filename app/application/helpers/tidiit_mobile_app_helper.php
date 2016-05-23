@@ -315,12 +315,29 @@ if ( ! function_exists('send_sms_notification')):
             $smsAddHistoryDataArr=array();
             $smsConfig=array('sms_text'=>$data['nMessage'],'receive_phone_number'=>$data['receiverMobileNumber']);
             $smsResult=$CI->tidiitsms->send_sms($smsConfig);
-
+            send_normal_push_notification($data);   
+            
+            if(!array_key_exists('senderId', $data)){
+                $data['senderId']="";
+            }
+            
+            if(!array_key_exists('receiverId', $data)){
+                $data['receiverId']="";
+            }
+            
+            if(!array_key_exists('senderMobileNumber', $data)){
+                $data['senderMobileNumber']="";
+            }
+            
+            if(!array_key_exists('nType', $data)){
+                $data['nType']="";
+            }
+            
             $smsAddHistoryDataArr=array('senderUserId'=>$data['senderId'],'receiverUserId'=>$data['receiverId'],
                 'senderPhoneNumber'=>$data['senderMobileNumber'],'receiverPhoneNumber'=>$data['receiverMobileNumber'],
                 'IP'=>  $CI->input->ip_address(),'sms'=>$data['nMessage'],'sendActionType'=>$data['nType'],
                 'smsGatewaySenderId'=>$CI->siteconfig->get_value_by_name('SMS_GATEWAY_SENDERID'),'smsGatewayReturnData'=>$smsResult);
-                $CI->user->add_sms_history($smsAddHistoryDataArr);
+                $CI->user->add_sms_history($smsAddHistoryDataArr); 
         }
     }
   }  
@@ -377,3 +394,126 @@ if ( ! function_exists('get_formatted_address_from_lat_long')):
         //return $jsondata["results"][0]["formatted_address"];
     }
 endif;
+
+if( !function_exists('send_push_notification')){
+    function send_push_notification($data){
+        $CI=& get_instance();
+        $CI->load->model('User_model','user');
+        $CI->load->model('Siteconfig_model','siteconfig');
+        //$CI->load->library('tidiitsms');
+        /*
+        $notify['senderId'] = ;
+        $notify['receiverId'] = ;
+        $notify['nType'] = ;
+        $notify['nTitle'] = ;
+        $notify['nMessage'] = ;
+         */
+         
+
+        //die('rrr');
+        if(!array_key_exists('receiverId', $data)){
+            return FALSE;
+        }elseif($data['receiverId']==""){
+            return FALSE;
+        }else{
+            $regIds=$this->user->get_reg_id_by_user_id($data['receiverId']);
+            if($regIds!=FALSE){
+                //'data' =>
+                $apiData=array('message'=>$data['nMessage'],'userId'=>$data['receiverId']);
+                $regIdArr=array();
+                foreach($regIds AS $k){
+                    $regIdArr[]=$k->registrationId;
+                }
+                $fields=array('registration_ids'=>$regIdArr);
+                if($data['nType']=="BUYING-CLUB-ADD" || $data['nType']=="BUYING-CLUB-MODIFY" || $data['nType']=="BUYING-CLUB-MODIFY-NEW" || $data['nType']=="BUYING-CLUB-MODIFY-DELETE"){
+                    //$apiData['notificationType']=$data['nType'];
+                }else if($data['nType']=="BUYING-CLUB-ORDER-DECLINE"){
+                    $apiData['notificationId']=$data['notificationId'];
+                }else if($data['nType']=="BUYING-CLUB-ORDER"){
+                    $apiData['notificationId']=$data['notificationId'];
+                }
+                $apiData['tagStr']=$data['nType'];
+            }else{
+                return FALSE;
+            }
+        }
+    }
+}
+
+
+if(!function_exists('send_normal_push_notification')){
+    function send_normal_push_notification($data){
+        $CI=& get_instance();
+        $CI->load->model('User_model','user');
+        $CI->load->model('Siteconfig_model','siteconfig');
+        //$CI->load->library('tidiitsms');
+        /*
+        $notify['senderId'] = ;
+        $notify['receiverId'] = ;
+        $notify['nType'] = ;
+        $notify['nTitle'] = ;
+        $notify['nMessage'] = ;
+         */
+         
+        //die('rrr');
+        if(!array_key_exists('receiverId', $data)){
+            return FALSE;
+        }elseif($data['receiverId']==""){
+            return FALSE;
+        }else{
+            $regIds=$CI->user->get_reg_id_by_user_id($data['receiverId']);
+            if($regIds!=FALSE){
+                $regIdArr=array();
+                foreach($regIds AS $k){
+                    $regIdArr[]=$k->registrationId;
+                }
+                $fields=array('registration_ids'=>$regIdArr,'data' =>array('message'=>$data['nMessage']));
+                if(send_gsm_message($fields)==TRUE){
+                    foreach($regIds as $k){
+                        $dataArr[]=array('messsage'=>$data['nMessage'],'registrationNo'=>$k->registrationId,'deviceType'=>'android','sendTime'=>date('Y-m-d H:i:s'),'userId'=>$data['receiverId']);
+                    }
+                    $CI->user->save_push_notification_history($dataArr);
+                }
+            }else{
+                return FALSE;
+            }
+        }
+    }
+}
+
+if( !function_exists('send_gsm_message')){
+    function send_gsm_message($fields){
+        $CI=& get_instance();
+        $CI->load->config('product');
+        $GOOGLE_API_KEY=$CI->config->item('GoogleGSMKEY');
+        $url = 'https://android.googleapis.com/gcm/send';
+
+        $headers = array(
+            'Authorization: key=' .$GOOGLE_API_KEY ,
+            'Content-Type: application/json'
+        );
+        // Open connection
+        $ch = curl_init();
+
+        // Set the url, number of POST vars, POST data
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        // Disabling SSL Certificate support temporarly
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+
+        // Execute post
+        $result = curl_exec($ch);
+        // Close connection
+        curl_close($ch);
+        if ($result === FALSE) {
+            //die('Curl failed: ' . curl_error($ch));
+            return FALSE;
+        }else{
+            return TRUE;
+        }
+    }
+}

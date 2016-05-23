@@ -139,7 +139,11 @@ class Index extends MY_Controller{
         }else{
             $data=$this->_get_tobe_login_template($SEODataArr);
         }
-        $this->load->view('under_construction',$data);
+        $data['feedback']=$this->load->view('feedback',$data,TRUE);
+        $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
+        
+        //$this->load->view('under_construction',$data);
+        $this->load->view('contacts',$data);
     }
     
     function seller_faq(){

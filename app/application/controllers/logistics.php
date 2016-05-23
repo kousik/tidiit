@@ -138,29 +138,35 @@ class Logistics extends REST_Controller {
         
         $validOrderData=  $this->validate_scan_order_id($rawOrderId);
         
-        if($validOrderData['type']=='faiil'){
+        if($validOrderData['type']=='fail'){
             $this->response(array('error' =>$validOrderData['message']), 400); return FALSE;
         }else{
-            $order=$validOrderData['order'];
-            $logisticDetails=  $this->user->get_logistics_details_by_user_id($userId);
-            if(empty($logisticDetails)){
-                $this->response(array('error' =>'Getting invalid logistic user.'), 400); return FALSE;
-            }
-            $orderId=$order->orderId;
-            $responseData=array();
-            $scanUploadDataArr=array(
-                'orderId'=>$orderId,'movementType'=>'Pickup from seller','UDID'=>$UDID,'deviceType'=>$deviceType,
-                'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId);
-            $responseData=$this->update_order_movement_history($scanUploadDataArr);
-            if($responseData['type']=="fail"){
-                $this->response(array('error' =>$responseData['message']), 400); return FALSE;
+            //pre($validOrderData);die;
+            if(array_key_exists('order', $validOrderData)){
+                $order=$validOrderData['order'];
+                $logisticDetails=  $this->user->get_logistics_details_by_user_id($userId);
+                if(empty($logisticDetails)){
+                    $this->response(array('error' =>'Getting invalid logistic user.'), 400); return FALSE;
+                }
+                $orderId=$order->orderId;
+
+                $responseData=array();
+                $scanUploadDataArr=array(
+                    'orderId'=>$orderId,'movementType'=>'pickup','UDID'=>$UDID,'deviceType'=>$deviceType,
+                    'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId);
+                $responseData=$this->update_order_movement_history($scanUploadDataArr);
+                if($responseData['type']=="fail"){
+                    $this->response(array('error' =>$responseData['message']), 400); return FALSE;
+                }else{
+                    $formatedAddress=  get_formatted_address_from_lat_long($latitude, $longitude);
+                    $movementDataArr=array('order'=>$order,'moveType'=>'clientPickup','formatedAddress'=>$formatedAddress);
+                    $this->_send_notification_regarding_movement_of_item($movementDataArr);
+                    $result=array();
+                    $result['message']="Scandata updated successfully.";//$orderId.'-'.$qrCodeFileName; 
+                    success_response_after_post_get($result);
+                }
             }else{
-                $formatedAddress=  get_formatted_address_from_lat_long($latitude, $longitude);
-                $movementDataArr=array('order'=>$order,'moveType'=>'clientPickup','formatedAddress'=>$formatedAddress);
-                $this->_send_notification_regarding_movement_of_item($movementDataArr);
-                $result=array();
-                $result['message']="Scandata updated successfully.";//$orderId.'-'.$qrCodeFileName; 
-                success_response_after_post_get($result);
+                
             }
         }
     }
@@ -168,7 +174,7 @@ class Logistics extends REST_Controller {
     function pre_alert_out_for_delivery_post(){
         //$outForDeliveryType="preAlert";
         $outForDeliveryType=  trim($this->post('outForDeliveryType'));
-        $orderId=  trim($this->post('orderId'));
+        $rawOrderId=  trim($this->post('orderId'));
         $userId=  trim($this->post('userId'));
         $UDID=  trim($this->post('UDID'));
         $deviceToken=  trim($this->post('deviceToken'));
@@ -182,7 +188,11 @@ class Logistics extends REST_Controller {
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
-        
+        $rawOrderIdArr=  explode('-', $rawOrderId);
+        if(count($rawOrderIdArr)!=3){
+            $this->response(array('error' =>"Getting nvalid scandata found."), 400); return FALSE;
+        }
+        $orderId=$rawOrderIdArr[1];
         $order=$this->order->get_single_order_by_id($orderId);
         if(empty($order)){
             $this->response(array('error' =>"Getting invalid order index"), 400); return FALSE;
@@ -360,6 +370,7 @@ class Logistics extends REST_Controller {
         $orderId=$orderIdArr[1];
         //$orderDetails=$this->order->details($orderId);
         $order=$this->order->get_single_order_by_id($orderId);
+        //pre($order);die;
         if(empty($order)){
             $responseData['type']="fail";
             $responseData['message']='Getting invalid order data from scanner.';
@@ -396,7 +407,7 @@ class Logistics extends REST_Controller {
             return $responseData;
         }
         $userId=$movementDataArr['userId'];
-        
+        //@mail('judhisahoo@gmail.com',' colomn movementType column testing',$movementDataArr['movementType']);
         $dataArr=array('orderId'=>$orderId,'movementType'=>$movementDataArr['movementType'],'addedDate'=>time(),'latitude'=>$movementDataArr['latitude'],'longitude'=>$movementDataArr['longitude'],'formattedAddress'=>$formatedAddress,'deviceType'=>$movementDataArr['deviceType'],'deviceToken'=>$movementDataArr['deviceToken'],'UDID'=>$movementDataArr['UDID'],'userId'=>$userId);
         $this->order->add_movement_history($dataArr);
         return $responseData;
@@ -415,6 +426,7 @@ class Logistics extends REST_Controller {
         }
         $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$order->buyerMobileNo,'senderId'=>'','receiverId'=>$order->userId,
         'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-'.  strtoupper($moveType).'-MOVEMENT-UPDATE');
+        @mail('judhisahoo@gmail.com','send_notification_regarding_movement_of_item',$smsMsg.' ==receiverMobileNumber== '.$order->buyerMobileNo);
         send_sms_notification($sms_data);
         
         if($order->orderType=='GROUP'){

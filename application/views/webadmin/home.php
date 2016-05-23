@@ -171,6 +171,11 @@
             <tr height="20" bgcolor="#DFDFDF">
               <td  style="padding-left:10px;">
                   <img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>
+                  &nbsp;<a href="<?php echo base_url().'webadmin/index/view_push_notification_test';?>">Push Notification Test</a> </td>
+            </tr>
+            <tr height="20" bgcolor="#DFDFDF">
+              <td  style="padding-left:10px;">
+                  <img src="<?=$SiteImagesURL?>webadmin/arrow.gif" border="0" align="absmiddle"/>
                   &nbsp;<a href="<?php echo base_url().'webadmin/index/viewsitedata/';?>">Other Site Data</a> </td>
             </tr>
 		</table>

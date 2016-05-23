@@ -25,9 +25,17 @@ class Shopping extends REST_Controller {
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
         //pre($_POST);die;
-        if($userId=="" || $productId =="" || $productPriceId == "" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken==""){
-            $this->response(array('error' => 'Please provide user index,product index,product price index,latitude,longitude,device id,device token !'), 400); return FALSE;
+        if($userId=="" || $productId =="" || $productPriceId == ""){
+            $this->response(array('error' => 'Please provide user index,product index,product price index!'), 400); return FALSE;
         }
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }
+        
         $rs=$this->user->get_details_by_id($userId);
         if(empty($rs)){
             $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
@@ -157,6 +165,13 @@ class Shopping extends REST_Controller {
         $UDID=  $this->post('UDID');
         $deviceToken=  $this->post('deviceToken');
         
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }
+        
         if($userId=="" || $orderId ==""){
             $this->response(array('error' => 'Please provide user index,order index !'), 400); return FALSE;
         }
@@ -251,8 +266,12 @@ class Shopping extends REST_Controller {
         
         $UDID=  $this->post('UDID');
         $deviceToken=  $this->post('deviceToken');
-        if($deviceType=="" || $UDID == "" || $deviceToken == ""){
-            $this->response(array('error' => 'Invalid device type,UDID,device Token provide!'), 400); return FALSE;
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
         $coupon = $this->coupon->is_coupon_code_exists($promocode);
         if(!$coupon):
@@ -283,6 +302,10 @@ class Shopping extends REST_Controller {
             if(empty($orderDetails)){
                 $this->response(array('error' => 'Invalid order index provided.'), 400); return FALSE;
             }
+            
+            if($orderDetails[0]->orderType!="SINGLE"){
+                $this->response(array('error' => 'Invalid order type provided.'), 400); return FALSE;
+            }
             //pre($orderDetails);die;
             $ctotal=0;
             foreach($allItemArr AS $k){ //pre($k);die;
@@ -295,6 +318,9 @@ class Shopping extends REST_Controller {
             elseif($coupon->type == 'fix'):
                 $data['couponAmount'] = $coupon->amount;
             endif;
+            if($data['couponAmount']=="0.00"){
+                $this->response(array('error' => 'Unknown error arise to applied the coupon code.'), 400); return FALSE;
+            }
             $tax=0;
             $grandTotal=0;
             $couponAmount=0;
@@ -779,7 +805,7 @@ class Shopping extends REST_Controller {
         if(empty($user)){
             $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
         }
-        $myGroupDataArr=$this->user->get_my_groups_apps($userId);
+        $myGroupDataArr=$this->user->get_my_created_groups_apps($userId);
         $my_groups = $myGroupDataArr;
         $result['myGroups']=$my_groups;
         $result['ajaxType']="yes";
@@ -919,6 +945,7 @@ class Shopping extends REST_Controller {
         $order = $this->order->get_single_order_by_id($orderId);
         $groupDetails = $this->user->get_group_by_id($order->groupId,TRUE);
         $orderInfo=unserialize(base64_decode($order->orderInfo));
+        //pre($orderInfo);die;
         $order = json_decode(json_encode($order), true);
         $order['productTitle']=$orderInfo['pdetail']->title;
         $order['qty']=$orderInfo['priceinfo']->qty;
@@ -950,8 +977,15 @@ class Shopping extends REST_Controller {
         $UDID=  $this->post('UDID');
         $deviceToken=  $this->post('deviceToken');
         
-        if($userId=="" || $orderId=="" || $UDID=="" || $deviceToken=="" || $deviceType=="" || $latitude=="" || $longitude=="" || $promocode==""){
-            $this->response(array('error' => 'Please provide user index,order index,UDID,device token,device type,latitude,longitude,coupon Code!'), 400); return FALSE;
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }
+        
+        if($userId=="" || $orderId=="" || $promocode==""){
+            $this->response(array('error' => 'Please provide user index,order index,coupon Code!'), 400); return FALSE;
         }
         $coupon = $this->coupon->is_coupon_code_exists($promocode);
         $orderDetails=$this->order->details($orderId,TRUE);
@@ -1173,7 +1207,15 @@ class Shopping extends REST_Controller {
             $mail_template_view_data['group_order_start']=$mail_template_data;
             global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
             //pre($data);die;
-            $this->user->notification_add($data);
+            $notificationId=$this->user->notification_add($data);
+            
+            $push_not_data['receiverId'] = $usr->userId;
+            $push_not_data['nType'] = "BUYING-CLUB-ORDER";
+            $push_not_data['nTitle'] = 'New Buying Club Order Invitation';
+            $push_not_data['appSource'] = $deviceType;
+            $push_not_data['notificationId'] = $notificationId;
+            $push_not_data['nMessage'] = 'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'];
+            send_push_notification($push_not_data);
 
             /// sendin SMS to allmember
             $sms_data=array('nMessage'=>'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'],
@@ -1278,6 +1320,14 @@ class Shopping extends REST_Controller {
             global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
             //pre($data);die;
             $this->user->notification_add($data);
+            
+            $push_not_data['receiverId'] = $usr->userId;
+            $push_not_data['nType'] = "BUYING-CLUB-ORDER";
+            $push_not_data['nTitle'] = 'New Buying Club Order Invitation';
+            $push_not_data['appSource'] = $deviceType;
+            $push_not_data['orderId'] = $orderId;
+            $push_not_data['nMessage'] = 'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'];
+            send_push_notification($push_not_data);
 
             /// sendin SMS to allmember
             $sms_data=array('nMessage'=>'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'],
@@ -1624,7 +1674,15 @@ class Shopping extends REST_Controller {
                     $mail_template_view_data['group_order_decline']=$mail_template_data;
                     global_tidiit_mail($recv_email, "Buying Club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline',$usr->firstName.' '.$usr->lastName);
                     
-                    $this->user->notification_add($data);
+                    $notificationId=$this->user->notification_add($data);
+                    
+                    $push_not_data['receiverId'] = $group->admin->userId;
+                    $push_not_data['nType'] = "BUYING-CLUB-ORDER-DECLINE";
+                    $push_not_data['nTitle'] = 'New Buying Club Order Invitation';
+                    $push_not_data['appSource'] = $deviceType;
+                    //$push_not_data['orderId'] = $orderId;
+                    $push_not_data['nMessage'] = 'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'];
+                    send_normal_push_notification($push_not_data);
                 endif;
             endforeach;
             $data['receiverId'] = $group->admin->userId;
@@ -1656,7 +1714,7 @@ class Shopping extends REST_Controller {
             $mail_template_view_data=load_default_resources();
             $mail_template_view_data['group_order_decline']=$mail_template_data;
             global_tidiit_mail($recv_email, "Buying Club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline_admin',$group->admin->firstName.' '.$group->admin->lastName);
-            $this->user->notification_add($data);
+            $notificationId=$this->user->notification_add($data);
             
             $declient_data=array();
             $declient_data['acceptDeclineState'] =2;
@@ -1669,6 +1727,14 @@ class Shopping extends REST_Controller {
             $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$orderInfo['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfo["group"]->admin->userId,
             'senderMobileNumber'=>'','nType'=>$data['nType']);
             send_sms_notification($sms_data);
+            
+            $push_not_data['receiverId'] = $group->admin->userId;
+            $push_not_data['nType'] = "BUYING-CLUB-ORDER-DECLINE";
+            $push_not_data['nTitle'] = 'New Buying Club Order Invitation';
+            $push_not_data['appSource'] = $deviceType;
+            $push_not_data['notificationId'] = $notificationId;
+            $push_not_data['nMessage'] = 'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'];
+            send_push_notification($push_not_data);
         endif;
         $result= array();
         $result['message']='Sorry for Buying Club order cancelation!';
@@ -1782,14 +1848,20 @@ class Shopping extends REST_Controller {
             $mail_template_view_data=load_default_resources();
             $mail_template_view_data['group_order_decline']=$mail_template_data;
             global_tidiit_mail($recv_email, "Buying Club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline_admin',$group->admin->firstName.' '.$group->admin->lastName);
-            $this->user->notification_add($data);
+            $notificationId=$this->user->notification_add($data);
             
             $declient_data=array();
             $declient_data['acceptDeclineState'] =2;
             $this->user->notification_edit($declient_data,$notificationId);
             
             $this->order->update(array('reOrder'=>1,'cancelOrderUserId'=>$userId),$orderId);
-            
+            $push_not_data['receiverId'] = $group->admin->userId;
+            $push_not_data['nType'] = "BUYING-CLUB-ORDER-DECLINE";
+            $push_not_data['nTitle'] = 'New Buying Club Order Invitation';
+            $push_not_data['appSource'] = $deviceType;
+            $push_not_data['notificationId'] = $notificationId;
+            $push_not_data['nMessage'] = 'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'];
+
             /// sendin SMS to Leader
             $smsMsg='Buying Club['.$group->groupTitle.']  member['.$usr->firstName.' '.$usr->lastName.'] has decline the invitation Tidiit order TIDIIT-OD-'.$order->orderId.'.';
             $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$orderInfo['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfo["group"]->admin->userId,
@@ -2435,5 +2507,39 @@ class Shopping extends REST_Controller {
             $availQty = $this->order->get_available_order_quantity($orderId);
         endif;
         return $availQty;
+    }
+    
+    function check_default_data($dataArr){
+        $validateArr=array('type'=>'success');
+        if($dataArr['UDID']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide UDID.';
+            return $validateArr;
+        }
+        
+        if($dataArr['deviceToken']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide deviceToken.';
+            return $validateArr;
+        }
+        
+        if($dataArr['deviceType']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide deviceType.';
+            return $validateArr;
+        }
+        
+        if($dataArr['latitude']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide latitude.';
+            return $validateArr;
+        }
+        
+        if($dataArr['longitude']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide longitude.';
+            return $validateArr;
+        }
+        return $validateArr;
     }
 }
