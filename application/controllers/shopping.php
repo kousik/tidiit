@@ -3,7 +3,7 @@
 use Razorpay\Api\Api;
 
 class Shopping extends MY_Controller{
-    
+
     public function __construct(){
         parent::__construct();
         session_start();
@@ -19,10 +19,10 @@ class Shopping extends MY_Controller{
         $this->load->library('session');
         $this->load->library('tidiitrcode');
     }
-       
-    
+
+
     /**
-     * 
+     *
      */
     function process_my_group_orders(){
         $this->session->unset_userdata('razorpayPaymentId');
@@ -37,8 +37,8 @@ class Shopping extends MY_Controller{
         endif;
         $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
         $is_cart_update = false;
-        if($cart): 
-            foreach ($cart as $item):            
+        if($cart):
+            foreach ($cart as $item):
                 if(($item->productId == $productId) && ( $item->orderType== "GROUP")):
                     $data['orderId'] = $item->orderId;
                     $is_cart_update = true;
@@ -63,7 +63,7 @@ class Shopping extends MY_Controller{
         $orderAmount = $orderAmountBeforeTax+$cTax;
         //$orderDataArr=array('taxAmount'=>$cTax,'discountAmount'=>$data['couponAmount'],'orderAmount'=>$orderAmount);
 
-        
+
         //Order first step
         $order_data = array();
         $order_data['orderType'] = 'GROUP';
@@ -132,9 +132,9 @@ class Shopping extends MY_Controller{
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('group_order/group_order',$data);
     }
-    
+
     /**
-     * 
+     *
      * @param type $orderId
      */
     function process_my_group_orders_by_id($orderId){
@@ -158,7 +158,7 @@ class Shopping extends MY_Controller{
         $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
         $a = $this->_get_available_order_quantity($data['orderId']);
         $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
-        
+
         //=============================================//
         if($data['order']->groupId):
             $data['group'] = $this->User_model->get_group_by_id($data['order']->groupId);
@@ -180,9 +180,9 @@ class Shopping extends MY_Controller{
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('group_order/group_order',$data);
     }
-    
+
     /**
-     * 
+     *
      */
     function ajax_update_group_order(){
         $orderId = $this->input->post('orderId',TRUE);
@@ -212,27 +212,27 @@ class Shopping extends MY_Controller{
         ob_start();
         echo BASE_URL.'shopping/checkout/'.base64_encode($orderId*226201);
         $result['contents'] = ob_get_contents();
-	ob_end_clean();
-	echo json_encode( $result );
-	die;
+        ob_end_clean();
+        echo json_encode( $result );
+        die;
     }
-    
+
     /**
-     * 
+     *
      */
     function ajax_order_set_promo(){
         $orderId = $this->input->post('orderId',TRUE);
         $promocode = $this->input->post('promocode',TRUE);
-        
+
         $coupon = $this->Coupon_model->is_coupon_code_exists($promocode);
         if(!$coupon):
             $result['error'] = "Invalid promo code!";
             echo json_encode( $result );
             die;
         endif;
-        
+
         $ordercoupon = $this->Coupon_model->is_coupon_code_used_or_not($coupon, $orderId);
-        
+
         if(!$ordercoupon):
             $result['error'] = "Promo code already used!";
             echo json_encode( $result );
@@ -249,9 +249,9 @@ class Shopping extends MY_Controller{
             die;
         endif;
     }
-    
+
     /**
-     * 
+     *
      */
     function ajax_process_group_payment(){
         $orderId = $this->input->post('orderId',TRUE);
@@ -259,28 +259,28 @@ class Shopping extends MY_Controller{
         $paymentOption = $this->input->post('paymentOption',TRUE);
         $pevorder = $this->Order_model->get_single_order_by_id($orderId);
         $a = $this->_get_available_order_quantity($orderId);
-        
+
         $prod_price_info = $this->Product_model->get_products_price_details_by_id($pevorder->productPriceId);
-        
+
         if($prod_price_info->qty == $a[0]->productQty):
             if($paymentOption=='sod'):
                 $order_update['status'] = 2;
             else:
                 $order_update['status'] = 8;
-            endif;    
+            endif;
         else:
             if($paymentOption=='sod'):
-                $order_update['status'] = 1;   
+                $order_update['status'] = 1;
             else:
                 $order_update['status'] = 8;
             endif;
         endif;
         $order_update['orderDate'] = date('Y-m-d H:i:s');
-        
+
         $update = $this->Order_model->update($order_update,$orderId);
         if($update):
             $this->Order_model->order_group_status_update($orderId, $order_update['status'],$pevorder->parrentOrderID);
-            
+
             //Notification
             $order = $this->Order_model->get_single_order_by_id($orderId);
             $orderinfo = array();
@@ -288,19 +288,19 @@ class Shopping extends MY_Controller{
             $orderinfo['pdetail'] = $pro[0];
             $orderinfo['priceinfo'] = $this->Product_model->get_products_price_details_by_id($order->productPriceId);
             $productImageArr =$this->Product_model->get_products_images($order->productId);
-            $orderinfo['pimage'] = $productImageArr[0];            
-            
+            $orderinfo['pimage'] = $productImageArr[0];
+
             $userShippingDataDetails = $this->User_model->get_user_shipping_information();
             $orderinfo['shipping'] = $userShippingDataDetails[0];
             //$userBillingDataDetails=$this->User_model->get_billing_address();
             //$orderinfo['billing'] = $userBillingDataDetails[0];
-            
+
             $group = $this->User_model->get_group_by_id($order->groupId);
-            
+
             if($order->groupId):
                 $orderinfo['group'] = $group;
             endif;
-            
+
             $info['orderInfo'] = base64_encode(serialize($orderinfo));
             $this->Order_model->update($info, $orderId);
             $allOrderArray=array();
@@ -327,7 +327,7 @@ class Shopping extends MY_Controller{
                         $data['orderId'] =$orderId;
                         $data['productId'] =$orderinfo['priceinfo']->productId;
                         $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
-                        
+
 
                         $data['isRead'] = 0;
                         $data['status'] = 1;
@@ -342,13 +342,13 @@ class Shopping extends MY_Controller{
                         $this->_global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
                         //pre($data);die;
                         $this->User_model->notification_add($data);
-                        
+
                         /// sendin SMS to allmember
                         $sms_data=array('nMessage'=>'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.BASE_URL,
                             'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$usr->userId,
                             'senderMobileNumber'=>$group->admin->mobile,'nType'=>'CREATE-'.$data['nType']);
                         send_sms_notification($sms_data);
-                        
+
                     endforeach;
                 else:
                     $mail_template_data=array();
@@ -379,11 +379,11 @@ class Shopping extends MY_Controller{
                             $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
                             $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                             $this->User_model->notification_add($data);
-                            
+
                             /// sendin SMS to allmember
                             $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
-                            'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
-                            'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
+                                'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
+                                'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
                             send_sms_notification($sms_data);
                         endif;
                     endforeach;
@@ -397,7 +397,7 @@ class Shopping extends MY_Controller{
                     $data['isRead'] = 0;
                     $data['status'] = 1;
                     $data['createDate'] = date('Y-m-d H:i:s');
-                    
+
                     //Send Email message
                     $recv_email = $group->admin->email;
                     $sender_email = $me->email;
@@ -409,24 +409,24 @@ class Shopping extends MY_Controller{
                     }
                     $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
                     $this->_global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
-                    
+
                     $this->User_model->notification_add($data);
-                    
+
                     $sms_data=array('nMessage'=>$me->firstName.' '.$me->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of your Buying Club['.$group->groupTitle.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
-                            'receiverMobileNumber'=>$group->admin->mobile,'senderId'=>'','receiverId'=>$data['receiverId'],
-                            'senderMobileNumber'=>$me->mobile,'nType'=>"BUYING-CLUB-ORDER-INVITED-MEMBER-COMPLETE");
-                            send_sms_notification($sms_data);
+                        'receiverMobileNumber'=>$group->admin->mobile,'senderId'=>'','receiverId'=>$data['receiverId'],
+                        'senderMobileNumber'=>$me->mobile,'nType'=>"BUYING-CLUB-ORDER-INVITED-MEMBER-COMPLETE");
+                    send_sms_notification($sms_data);
                 endif;
             else:
-                $paymentDataArr = array('orders'=>$orderId,'orderType'=>'group','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$pevorder,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>$cartId,'final_return'=>'no');      
+                $paymentDataArr = array('orders'=>$orderId,'orderType'=>'group','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$pevorder,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>$cartId,'final_return'=>'no');
                 //pre($paymentDataArr);die;
-                $_SESSION['PaymentData'] = $paymentDataArr;     
+                $_SESSION['PaymentData'] = $paymentDataArr;
             endif;
-            
+
             if($order_update['status'] == 2):
                 $this->_sent_order_complete_mail($order);
             endif;
-            
+
             if($paymentOption=='sod'):
                 $settlementOnDeliveryId=$this->Order_model->add_sod(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
                 $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'group'));
@@ -435,7 +435,7 @@ class Shopping extends MY_Controller{
             elseif($paymentOption=='razorpay'):
                 //pre($_SESSION);die;
                 $this->_rajorpay_process(array($orderId));
-            else:    
+            else:
                 $this->_mpesa_process(array($orderId));
             endif;
         else:
@@ -443,9 +443,9 @@ class Shopping extends MY_Controller{
             redirect(BASE_URL.'shopping/my-cart');
         endif;
     }
-    
+
     /**
-     * 
+     *
      */
     function oredr_process_success(){
         $SEODataArr=array();
@@ -454,9 +454,9 @@ class Shopping extends MY_Controller{
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('group_order/group_order_success',$data);
     }
-    
+
     /**
-     * 
+     *
      */
     function oredr_default_message(){
         $SEODataArr=array();
@@ -467,17 +467,17 @@ class Shopping extends MY_Controller{
     }
 
     /**
-     * 
+     *
      * @param type $orderId
      */
     function process_checkout($orderId){
-        
+
         if(!$orderId):
             redirect(BASE_URL.'404_override');
         endif;
         $orderId = base64_decode($orderId);
         $orderId = $orderId/226201;
-        
+
         $SEODataArr=array();
         $data = $this->_get_logedin_template($SEODataArr);
         $order = $this->Order_model->get_single_order_by_id($orderId);
@@ -490,11 +490,11 @@ class Shopping extends MY_Controller{
                 redirect(BASE_URL.'shopping/mod-group-order/'.base64_encode($orderId*226201));
             else:
                 redirect(BASE_URL.'shopping/mod-pt-group-order/'.base64_encode($orderId*226201));
-            endif;            
+            endif;
         elseif($order->orderType == "SINGLE" && $order->productQty == 0):
             $this->session->set_flashdata('error', 'Please set your quantity!');
         endif;
-        
+
         $userShippingDataDetails=$this->User_model->get_user_shipping_information();
         if(empty($userShippingDataDetails)){
             $userShippingDataDetails[0]=new stdClass();
@@ -520,10 +520,10 @@ class Shopping extends MY_Controller{
         }
         $data['countryDataArr']=$this->Country->get_all1();
         $data['userShippingDataDetails']=$userShippingDataDetails[0];
-        
-        
+
+
         $data['order'] = $order;
-        
+
         $product = $this->Product_model->details($order->productId);
         $data['product'] = $product[0];
 
@@ -531,7 +531,7 @@ class Shopping extends MY_Controller{
         $data['coupon'] = $coupon;
         $this->load->view('group_order/checkout',$data);
     }
-    
+
     function _get_available_order_quantity($orderId){
         $pevorder = $this->Order_model->get_single_order_by_id($orderId);
         if($pevorder->parrentOrderID):
@@ -541,10 +541,10 @@ class Shopping extends MY_Controller{
         endif;
         return $availQty;
     }
-        
+
     //AJAX = Function
     /**
-     * 
+     *
      */
     function remove_group_cart(){
         $user=  $this->_get_current_user_details();
@@ -553,15 +553,15 @@ class Shopping extends MY_Controller{
         $data=array();
         $data['status'] = 0;
         ob_start();
-            echo true;
-            $result['contents'] = ob_get_contents();
+        echo true;
+        $result['contents'] = ob_get_contents();
         ob_end_clean();
         echo json_encode( $result );
         die;
     }
-    
+
     function _add_to_cart($data) {
-        
+
         // Set array for send data.
         $insert_data = array(
             'id' => 0,
@@ -569,14 +569,14 @@ class Shopping extends MY_Controller{
             'price' => 0,
             'qty' => 0
         );
-        
+
         $datas = array_merge($insert_data, $data);
-        
+
         // This function add items into cart.
         $this->cart->insert($datas);
     }
-    
-    
+
+
     function _update_cart($cart_info){
 
         // Recieve post values,calcute them and update
@@ -596,14 +596,14 @@ class Shopping extends MY_Controller{
             $this->cart->update($data);
         }
     }
-    
+
     function _update_single_cart($cart_info){
 
         // Recieve post values,calcute them and update
         $this->cart->update($cart_info);
     }
-    
-    
+
+
     function _remove_cart($rowid) {
         // Check rowid value.
         if ($rowid==="all"){
@@ -619,21 +619,21 @@ class Shopping extends MY_Controller{
             $this->cart->update($data);
         }
     }
-    
+
     function process_group_parent_order($orderId, $reorder = false){
         if(!$orderId):
             redirect(BASE_URL.'404_override');
         endif;
         $orderId = base64_decode($orderId);
         $orderId = $orderId/226201;
-        
-                
+
+
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
-        $user = $this->_get_current_user_details(); 
-        
+        $user = $this->_get_current_user_details();
+
         $data['order'] = $this->Order_model->get_single_order_by_id($orderId);
-        
+
         $productId = $data['order']->productId;
         $productPriceId = $data['order']->productPriceId;
         if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
@@ -642,16 +642,16 @@ class Shopping extends MY_Controller{
         $product = $this->Product_model->details($productId);
         $product = $product[0];
         $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
-        
-        
+
+
         $a = $this->_get_available_order_quantity($orderId);
         $availQty = $prod_price_info->qty - $a[0]->productQty;
-        
+
         if($prod_price_info->qty == $availQty):
             $this->session->set_flashdata('error', 'This Buying Club order process already done. There is no available quantity for you. Please contact your Buying Club Leader!');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
-        
+
         if(!$this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$data['order']->groupId)):
             $this->session->set_flashdata('error', 'You can not process this order because you are not member of this Buying Club.');
             redirect(BASE_URL.'shopping/ord-message');
@@ -667,7 +667,7 @@ class Shopping extends MY_Controller{
         $order_data['groupId'] = $data['order']->groupId;
         $order_data['productQty'] = 0;
         $order_data['userId'] = $this->session->userdata('FE_SESSION_VAR');
-        
+
         $exists_order=false;
         //$exists_order = $this->Order_model->is_parent_group_order_available($data['order']->orderId, $user->userId);
 
@@ -681,7 +681,7 @@ class Shopping extends MY_Controller{
             if($exists_order && $exists_order->status == 0):
                 $this->Order_model->update($order_data,$exists_order->orderId);
                 $parentOrderId = $exists_order->orderId;
-            else:    
+            else:
                 //$parentOrderId = $this->Order_model->add($order_data);
                 $qrCodeFileName=time().'-'.rand(1, 50).'.png';
                 $order_data['qrCodeImageFile']=$qrCodeFileName;
@@ -703,7 +703,7 @@ class Shopping extends MY_Controller{
                 $params=array();
                 $params['data']=$qrCodeOrderId;
                 $params['savename']=$this->config->item('ResourcesPath').'qr_code/'.$qrCodeFileName;
-                $this->tidiitrcode->generate($params);        
+                $this->tidiitrcode->generate($params);
             elseif($exists_order && $exists_order->status == 0):
                 $this->Order_model->update($order_data,$exists_order->orderId);
                 $parentOrderId = $exists_order->orderId;
@@ -711,13 +711,13 @@ class Shopping extends MY_Controller{
                 $this->session->set_flashdata('error', 'This Buying Club order process already done. Please try to process for new order!');
                 redirect(BASE_URL.'shopping/ord-message');
             endif;
-        
+
         endif;
         redirect(BASE_URL.'shopping/mod-pt-group-order/'.base64_encode($parentOrderId*226201));
     }
-    
+
     /**
-     * 
+     *
      * @param type $orderId
      */
     function process_my_parent_group_orders_by_id($orderId){
@@ -726,13 +726,13 @@ class Shopping extends MY_Controller{
         endif;
         $orderId = base64_decode($orderId);
         $orderId = $orderId/226201;
-        
+
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
-        $user = $this->_get_current_user_details(); 
-        
+        $user = $this->_get_current_user_details();
+
         $data['order'] = $this->Order_model->get_single_order_by_id($orderId);
-        
+
         $productId = $data['order']->productId;
         $productPriceId = $data['order']->productPriceId;
         if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
@@ -742,7 +742,7 @@ class Shopping extends MY_Controller{
             $this->session->set_flashdata('error', 'You can not process this order because you are not member of this Buying Club.');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
-        
+
         $product = $this->Product_model->details($productId);
         $product = $product[0];
         $prod_price_info = $this->Product_model->get_products_price_details_by_id($productPriceId);
@@ -756,7 +756,7 @@ class Shopping extends MY_Controller{
                 endif;
             endforeach;
         endif;
-        
+
         //Order first step
         $order_data = array();
         $order_data['orderType'] = 'GROUP';
@@ -785,7 +785,7 @@ class Shopping extends MY_Controller{
             $params['savename']=$this->config->item('ResourcesPath').'qr_code/'.$qrCodeFileName;
             $this->tidiitrcode->generate($params);
         endif;
-        
+
         //$data['orderId'] = 0;
         $order_data['orderId'] = $data['orderId'];
         $order_data['productPriceId'] = $productPriceId;
@@ -804,12 +804,12 @@ class Shopping extends MY_Controller{
                 $this->Order_model->update($order_update,$data['orderId']);
             endif;
         endif;
-        
+
         //==============================================//
 
         $a = $this->_get_available_order_quantity($data['order']->parrentOrderID);
         $data['availQty'] = $prod_price_info->qty - $a[0]->productQty;
-        
+
         //=============================================//
         if($data['order']->groupId):
             $data['group'] = $this->User_model->get_group_by_id($data['order']->groupId);
@@ -818,28 +818,28 @@ class Shopping extends MY_Controller{
             $data['group'] = false;
             $data['groupId'] = 0;
         endif;
-        
+
         $data['dftQty'] = $prod_price_info->qty - $a[0]->productQty;
         $data['totalQty'] = $prod_price_info->qty;
         $data['priceInfo'] = $prod_price_info;
-        $data['userMenuActive']=7;        
+        $data['userMenuActive']=7;
         $data['user']=$user;
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('group_order/group_order_parent',$data);
     }
-    
-    
+
+
     function order_group_decline_process($orderId){
         if(!$orderId):
             redirect(BASE_URL.'404_override');
         endif;
         $orderId = base64_decode($orderId);
-        $orderId = $orderId/226201;        
-        
-        $user = $this->_get_current_user_details(); 
-        
+        $orderId = $orderId/226201;
+
+        $user = $this->_get_current_user_details();
+
         $order = $this->Order_model->get_single_order_by_id($orderId);
-        
+
         $group = $this->User_model->get_group_by_id($order->groupId);
         $prod_price_info = $this->Product_model->get_products_price_details_by_id($order->productPriceId);
         $a = $this->_get_available_order_quantity($orderId);
@@ -850,13 +850,13 @@ class Shopping extends MY_Controller{
             $this->session->set_flashdata('msg', 'Order already completed by other members of this Buying Club.');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
-        
+
         if(!$this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$order->groupId)):
             $this->session->set_flashdata('error', 'You can not process this order because you are not member of this Buying Club.');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
-        
-        
+
+
         if($order->parrentOrderID == 0):
             $me = $this->_get_current_user_details();
             foreach($group->users as $key => $usr):
@@ -882,12 +882,12 @@ class Shopping extends MY_Controller{
                     $mail_template_view_data=$this->load_default_resources();
                     $mail_template_view_data['group_order_decline']=$mail_template_data;
                     $this->_global_tidiit_mail($recv_email, "Buying Club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline',$usr->firstName.' '.$usr->lastName);
-                    
+
                     $this->User_model->notification_add($data);
                 endif;
             endforeach;
             $data['receiverId'] = $group->admin->userId;
-            
+
             unset($data['nMessage']);
             $mail_template_data=array();
             $mail_template_data=array();
@@ -910,41 +910,41 @@ class Shopping extends MY_Controller{
             $mail_template_view_data['group_order_decline']=$mail_template_data;
             $this->_global_tidiit_mail($recv_email, "Buying Club order decline at Tidiit Inc Ltd", $mail_template_view_data,'group_order_decline_admin',$group->admin->firstName.' '.$group->admin->lastName);
             $this->User_model->notification_add($data);
-            
+
             /// sendin SMS to Leader
             $smsMsg='Buying Club['.$group->groupTitle.']  member['.$usr->firstName.' '.$usr->lastName.'] has decline the invitation Tidiit order TIDIIT-OD-'.$order->orderId.'.';
             $sms_data=array('nMessage'=>$smsMsg,'receiverMobileNumber'=>$orderInfo['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfo["group"]->admin->userId,
-            'senderMobileNumber'=>'','nType'=>$data['nType']);
+                'senderMobileNumber'=>'','nType'=>$data['nType']);
             send_sms_notification($sms_data);
         endif;
-        
+
         $this->session->set_flashdata('msg', 'Sorry for Buying Club order cancelation!');
         redirect(BASE_URL.'shopping/ord-message');
-        
+
     }
-    
+
     function order_group_re_order_process($orderId){
         if(!$orderId):
             redirect(BASE_URL.'404_override');
         endif;
         $orderId = base64_decode($orderId);
         $orderId = $orderId/226201;
-        
-                
+
+
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
-        $user = $this->_get_current_user_details(); 
-        
+        $user = $this->_get_current_user_details();
+
         $order = $this->Order_model->get_single_order_by_id($orderId);
         if(!$order):
             redirect(BASE_URL.'404_override');
         endif;
-        
+
         if(!$this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$order->groupId)):
             $this->session->set_flashdata('error', 'You can not process this order because you are not member of this Buying Club.');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
-        
+
         $group = $this->User_model->get_group_by_id($order->groupId);
         $data['order']= $order;
         $data['group']= $group;
@@ -952,9 +952,9 @@ class Shopping extends MY_Controller{
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('group_order/re_order_process',$data);
     }
-    
+
     /**
-     * 
+     *
      * @param type $orderId
      * @param type $status
      */
@@ -964,34 +964,34 @@ class Shopping extends MY_Controller{
         endif;
         $orderId = base64_decode($orderId);
         $orderId = $orderId/226201;
-        
+
         $status = base64_decode($status);
         $order = $this->Order_model->get_single_order_by_id($orderId);
-        
+
         if(!$order && $status != '100'):
             redirect(BASE_URL.'404_override');
         endif;
-        
+
         if(!$this->User_model->user_exists_on_group($this->session->userdata('FE_SESSION_VAR'),$order->groupId)):
             $this->session->set_flashdata('error', 'You can not process this order because you are not member of this Buying Club.');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
-        
-        $this->process_group_parent_order(base64_encode($orderId*226201), true);        
+
+        $this->process_group_parent_order(base64_encode($orderId*226201), true);
     }
-    
+
     function process_my_single_orders(){
         //print_r($_POST);
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
-        $user = $this->_get_current_user_details(); 
+        $user = $this->_get_current_user_details();
         $productId = $this->input->post('productId');
         $productPriceId = $this->input->post('productPriceId');
-        
+
         if((isset($productId) && !$productId) && (isset($productPriceId) && !$productPriceId)):
             redirect(BASE_URL.'404_override');
         endif;
-        
+
         //$cartDataArr=array('productId'=>$productId,'userId'=>$user->userId,'productPriceId'=>$productPriceId);
         $product = $this->Product_model->details($productId);
         $product = $product[0];
@@ -1002,7 +1002,7 @@ class Shopping extends MY_Controller{
         $taxCol=$countryShortName.'_tax';
         $taxPercentage=$currentLocationTaxDetails->$taxCol;
         $tax=$prod_price_info->price*$taxPercentage/100;
-        
+
         $order_data = array();
         $order_data['orderType'] = 'SINGLE';
         $order_data['productId'] = $productId;
@@ -1015,17 +1015,17 @@ class Shopping extends MY_Controller{
         $order_data['taxAmount'] = $tax;
         $order_data['orderAmount'] = $prod_price_info->price+$tax;
         $order_data['orderDevicetype'] = 1;
-        
+
         $orderinfo = array();
         $orderinfo['pdetail'] = $product;
         $orderinfo['priceinfo']=$prod_price_info;
         $productImageArr =$this->Product_model->get_products_images($productId);
-        $orderinfo['pimage'] = $productImageArr[0];            
+        $orderinfo['pimage'] = $productImageArr[0];
         $userShippingDataDetails = $this->User_model->get_user_shipping_information($user->userId,TRUE);
         $orderinfo['shipping'] = $userShippingDataDetails[0];
         //pre($order_data);die;
         $order_data['orderInfo'] = base64_encode(serialize($orderinfo));
-        
+
         $qrCodeFileName=time().'-'.rand(1, 50).'.png';
         $order_data['qrCodeImageFile']=$qrCodeFileName;
         $order_data['IP']=  $this->input->ip_address();
@@ -1037,20 +1037,20 @@ class Shopping extends MY_Controller{
         $this->tidiitrcode->generate($params);
         $this->session->set_userdata('TotalItemInCart',$this->User_model->get_total_cart_item($user->userId));
         //return $orderId.'-'.$qrCodeFileName;        
-        
+
         //redirect(BASE_URL.'product/details/'.base64_encode($productId));
         redirect(BASE_URL.'shopping/my-cart');
     }
-    
+
     function single_order_check_out(){
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
-        $user = $this->_get_current_user_details(); 
+        $user = $this->_get_current_user_details();
         $allItemArr=$this->Order_model->get_all_cart_item($user->userId,'single');
         if(count($allItemArr) < 1):
             redirect(BASE_URL);
         endif;
-        
+
         foreach($allItemArr AS $k){
             $orderInfo=  unserialize(base64_decode($k['orderInfo']));
             $k['productTitle']=$orderInfo['pdetail']->title;
@@ -1084,49 +1084,49 @@ class Shopping extends MY_Controller{
         }
         $data['countryDataArr']=$this->Country->get_all1();
         $data['userShippingDataDetails']=$userShippingDataDetails[0];
-        
-        $data['userMenuActive']=7; 
+
+        $data['userMenuActive']=7;
         $data['user']=$user;
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('single_order/single_order_checkout',$data);
     }
-    
+
     /**
-     * 
+     *
      */
     function remove_single_cart_processing(){
         $user=  $this->_get_current_user_details();
         $cartId = $this->input->post('cartId',TRUE);
         $this->Order_model->remove_order_from_cart($cartId,$user->userId);
-        
+
         $result['contents'] = true;
-	echo json_encode( $result );
-	die;
+        echo json_encode( $result );
+        die;
     }
-    
+
     /**
-     * 
+     *
      */
     function ajax_single_order_set_promo(){
         $promocode = $this->input->post('promocode',TRUE);
         $orderId = $this->input->post('orderId',TRUE);
-        
+
         $coupon = $this->Coupon_model->is_coupon_code_exists($promocode);
         if(!$coupon):
             $result['error'] = "Invalid promo code or promo code has expaired!";
             echo json_encode( $result );
             die;
         endif;
-        
+
         $ordercoupon = $this->Coupon_model->is_coupon_code_valid_for_single($coupon);
-        
+
         if($ordercoupon):
             $result['error'] = "Promo code has expired.";
             echo json_encode( $result );
             die;
         else:
             $data = array();
-            $user = $this->_get_current_user_details(); 
+            $user = $this->_get_current_user_details();
             //$ctotal = $this->cart->total();
             $allItemArr=$this->Order_model->get_all_cart_item($user->userId,'single');
             $orderIdArr=array();
@@ -1151,7 +1151,7 @@ class Shopping extends MY_Controller{
             elseif($coupon->type == 'fix'):
                 $data['couponAmount'] = $coupon->amount;
             endif;
-            
+
             $tax=0;
             $grandTotal=0;
             $couponAmount=0;
@@ -1173,62 +1173,66 @@ class Shopping extends MY_Controller{
                     $orderAmount=$k['orderAmount'];
                     $couponAmount +=$k['discountAmount'];
                 }
-                
+
                 $tax +=$cTax;
                 $grandTotal +=$orderAmount;
             }
-            
+
             $data['tax'] = number_format(round($tax,0,PHP_ROUND_HALF_UP),2);
             //$grandTotal=round($ctotal - $data['couponAmount']+round($tax,0,PHP_ROUND_HALF_UP),0,PHP_ROUND_HALF_UP);
             $data['grandTotal'] = number_format(round($grandTotal,0,PHP_ROUND_HALF_UP),2);
-            
+
             $result['msg'] = "Promo code has been applied successfully!";
             $data['couponAmount'] = number_format(round($couponAmount,0,PHP_ROUND_HALF_UP),2);
             $result['content'] = $data;
             echo json_encode( $result );
             die;
         endif;
-	
+
     }
-    
+
     /**
-     * 
+     *
      */
     function ajax_process_single_payment(){
-        $paymentType=$this->input->post('paymentOption');
-        if($paymentType==""){
+        pre($_POST);
+        $paymentType = $this->input->post('paymentoption');
+        if($paymentType == ""){
+            die($paymentType.' kkk');
             $this->session->set_flashdata("message","Invalid payment option selected!");
             redirect(BASE_URL.'shopping/my-cart');
         }
-        $user = $this->_get_current_user_details(); 
-        
+        $user = $this->_get_current_user_details();
+
         //$cart = $this->cart->contents();
         $allItemArr=$this->Order_model->get_all_cart_item($user->userId,'single');
+
         if(empty($allItemArr)){
+            die('empty item');
             $this->session->set_flashdata("message","There is not item in truck for payment.");
             redirect(BASE_URL.'shopping/my-cart');
         }
         $order = array();
         $orderid = array();
-        
+
         $totalsingleitem  = count($allItemArr);
-        //foreach ($allItemArr as $k):            
-            //if($citem['options']['orderType'] == 'SINGLE'):
-                //$totalsingleitem = $totalsingleitem + 1;                    
-            //endif;
+        //foreach ($allItemArr as $k):
+        //if($citem['options']['orderType'] == 'SINGLE'):
+        //$totalsingleitem = $totalsingleitem + 1;
+        //endif;
         //endforeach;
-        
+
         $countryShortName=$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');
         $paymentGatewayAmount=0;
         $allOrderArray=array();
         $allOrderInfoArray=array();
-        foreach ($allItemArr as $kOrder):  
+        foreach ($allItemArr as $kOrder):
             $order=array();
             $paymentGatewayAmount+=$kOrder['orderAmount'];
             if($paymentType=='sod')
-                $order['status'] = 2; 
+                $order['status'] = 2;
             else
-                $order['status'] = 8; 
+                $order['status'] = 8;
 
             $orderinfo = array();
             $mail_template_data = array();
@@ -1243,7 +1247,7 @@ class Shopping extends MY_Controller{
             $userShippingDataDetails = $this->User_model->get_user_shipping_information();
             $orderinfo['shipping'] = $userShippingDataDetails[0];
             //$userBillingDataDetails=$this->User_model->get_billing_address();
-            //$orderinfo['billing'] = $userBillingDataDetails[0];                
+            //$orderinfo['billing'] = $userBillingDataDetails[0];
             $order['orderInfo'] = base64_encode(serialize($orderinfo));
             //$orderId = $this->Order_model->add($order);
             $this->Order_model->update($order,$kOrder['orderId']);
@@ -1251,7 +1255,7 @@ class Shopping extends MY_Controller{
             $allOrderArray[]=$kOrder['orderId'];
 
             $orderid['orderId'] = $kOrder['orderId'];
-            
+
             if($paymentType=='sod'):
                 $this->Product_model->update_product_quantity($kOrder['productId'],$kOrder['productQty']);
                 $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
@@ -1273,11 +1277,11 @@ class Shopping extends MY_Controller{
                 endif;
             endif;
         endforeach;
-        //die('checking');
+
         if(!empty($allOrderArray)):
             if($paymentType=='sod'):
                 redirect(BASE_URL.'shopping/success/');
-            elseif($paymentType=='rajorpay'):
+            elseif($paymentType=='razorpay'):
                 $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$allOrderInfoArray,'final_return'=>'no');
                 $_SESSION['PaymentData'] = $paymentDataArr;
                 $this->_rajorpay_process($allOrderArray);
@@ -1285,19 +1289,20 @@ class Shopping extends MY_Controller{
                 $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$allOrderInfoArray,'final_return'=>'no');
                 $_SESSION['PaymentData'] = $paymentDataArr;
                 $this->_mpesa_process($allOrderArray);
-            endif;            
+            endif;
         else:
+            die("Some error happen, please try again later!");
             $this->session->set_flashdata("message","Some error happen, please try again later!");
             redirect(BASE_URL.'shopping/my-cart');
         endif;
     }
-    
-    
+
+
     function show_my_cart(){
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
-        $user = $this->_get_current_user_details();         
-        
+        $user = $this->_get_current_user_details();
+
         $allItemArr=$this->Order_model->get_all_cart_item($user->userId);
         $newAllItemArr=array();
         foreach($allItemArr AS $k){
@@ -1314,29 +1319,29 @@ class Shopping extends MY_Controller{
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('my/my_carts',$data);
     }
-    
+
     function view_order_details($orderId){
         if(!$orderId):
             redirect(BASE_URL.'404_override');
         endif;
         $orderId = base64_decode($orderId);
         $orderId = $orderId/226201;
-        
-                
+
+
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
-        $user = $this->_get_current_user_details(); 
-        
+        $user = $this->_get_current_user_details();
+
         $order = $this->Order_model->get_single_order_by_id($orderId);
         if(!$order):
             redirect(BASE_URL.'404_override');
         endif;
-        
+
         if($order->userId != $this->session->userdata('FE_SESSION_VAR')):
             $this->session->set_flashdata('error', 'You can not view this order because you are not enough permission.');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
-        
+
         if($order->groupId):
             $group = $this->User_model->get_group_by_id($order->groupId);
             $data['group']= $group;
@@ -1355,9 +1360,9 @@ class Shopping extends MY_Controller{
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('my/my_order_details',$data);
     }
-    
+
     /*
-     * 
+     *
      * send mail to Buying Club member and leader after success payment by all member as well leader
      */
     function _sent_order_complete_mail($order){
@@ -1376,18 +1381,18 @@ class Shopping extends MY_Controller{
             $adminMailData['userFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
             //pre($adminMailData);die;
             $this->_global_tidiit_mail($orderInfoDataArr['group']->admin->email, "Your  Buying Club order - TIDIIT-OD-".$order->parrentOrderID.' has placed successfully.', $adminMailData,'group_order_success',$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName);
-            
+
             $sms_data=array('nMessage'=>'Your Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] order TIDIIT-OD-'.$orderDetails[0]->orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.BASE_URL,
-            'receiverMobileNumber'=>$orderInfoDataArr['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfoDataArr['group']->admin->userId,
-            'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-PLACED');
+                'receiverMobileNumber'=>$orderInfoDataArr['group']->admin->mobile,'senderId'=>'','receiverId'=>$orderInfoDataArr['group']->admin->userId,
+                'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-PLACED');
             send_sms_notification($sms_data);
-            
-            
+
+
             /// for seller
             $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
             $adminMailData['buyerFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
             $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Buying Club order no - TIDIIT-OD-".$order->parrentOrderID.' has placed from Tidiit Inc Ltd', $adminMailData,'seller_group_order_success',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
-            
+
             /// for support
             $adminMailData['userFullName']='Tidiit Inc Support';
             $adminMailData['sellerFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
@@ -1422,18 +1427,18 @@ class Shopping extends MY_Controller{
                 //echo '<br>$order id '.$k->orderId.'<br>';
                 $adminMailData['userFullName']=$userFullName;
                 $this->_global_tidiit_mail($email, "Your Buying Club Tidiit order TIDIIT-OD-".$k->orderId.' has placed successfully', $adminMailData,'group_order_success',$userFullName);
-                
+
                 $sms_data=array('nMessage'=>'Your Tidiit Buying Club['.$orderInfoDataArr['group']->groupTitle.'] order TIDIIT-OD-'.$k->orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.BASE_URL,
-                'receiverMobileNumber'=>$mobileNumber,'senderId'=>'','receiverId'=>$orderDetails[0]->userId,
-                'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-PLACED');
+                    'receiverMobileNumber'=>$mobileNumber,'senderId'=>'','receiverId'=>$orderDetails[0]->userId,
+                    'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-PLACED');
                 send_sms_notification($sms_data);
-                
+
                 //echo '<br>$order id '.$k->orderId.'<br>';
                 /// for seller
                 $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
                 $adminMailData['buyerFullName']=$userFullName;
                 $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Buying Club order no - TIDIIT-OD-".$k->orderId.' has placed from Tidiit Inc Ltd', $adminMailData,'seller_group_order_success',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
-                
+
                 //echo '<br>$order id '.$k->orderId.'<br>';
                 /// for support
                 $adminMailData['userFullName']='Tidiit Inc Support';
@@ -1447,7 +1452,7 @@ class Shopping extends MY_Controller{
         }
         return TRUE;
     }
-    
+
     function _sent_single_order_complete_mail($orderId){
         $orderDetails=  $this->Order_model->details($orderId);
         //pre($orderDetails);die;
@@ -1471,12 +1476,12 @@ class Shopping extends MY_Controller{
         $this->_global_tidiit_mail($supportEmail, "Order no - TIDIIT-OD-".$orderId.' has placed by '.$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName, $adminMailData,'support_single_order_success','Tidiit Inc Support');
         //die;
         $sms_data=array('nMessage'=>'Your Tidiit order TIDIIT-OD-'.$orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.BASE_URL,
-        'receiverMobileNumber'=>$orderDetails[0]->buyerMobileNo,'senderId'=>'','receiverId'=>$orderDetails[0]->userId,
-        'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CONFIRM');
+            'receiverMobileNumber'=>$orderDetails[0]->buyerMobileNo,'senderId'=>'','receiverId'=>$orderDetails[0]->userId,
+            'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CONFIRM');
         send_sms_notification($sms_data);
         return TRUE;
     }
-    
+
     function _mpesa_process($orderIdArr){
         $SEODataArr=array();
         $data = $this->_get_logedin_template($SEODataArr);
@@ -1485,12 +1490,13 @@ class Shopping extends MY_Controller{
         $data['orderId']=$orderIdArr[0];
         $this->load->view('payment/mpesa',$data);
     }
-    
+
     function _rajorpay_process($orderIdArr){
+
         //echo implode('^', $orderIdArr);
         $SEODataArr=array();
         $data = $this->_get_logedin_template($SEODataArr);
-        
+
         $paymentDataArr=$_SESSION['PaymentData'];
         $this->session->set_userdata('CIPaymentData', base64_encode(serialize($paymentDataArr)));
         $data['paymentGatewayAmount']=$paymentDataArr['paymentGatewayAmount'];
@@ -1505,11 +1511,11 @@ class Shopping extends MY_Controller{
         //pre($_SESSION);die;
         $this->load->view('payment/razorpay',$data);
     }
-    
+
     function razorpay_return(){
         $orderIds=trim($this->input->post('orderIds'));
         $razorpayPaymentId=trim($this->input->post('razorpay_payment_id'));
-        
+
         $CIPaymentData=$this->session->userdata('CIPaymentData');
         /*pre($_SESSION);
         echo '=============================================================================================================';
@@ -1560,14 +1566,14 @@ class Shopping extends MY_Controller{
                     endif;
                 endif;
             }else{
-                
+
             }
         }else{
             $this->session->set_flashdata("message","Some error happen, please try again later!");
             redirect(BASE_URL.'shopping/my-cart');
         }
     }
-    
+
     function mpesa_return(){
         $custom=$this->input->post('custom');
         $returnAction=  $this->input->post('returnAction');
@@ -1598,8 +1604,8 @@ class Shopping extends MY_Controller{
             // fail
         endif;
     }
-    
-    function process_mpesa_success_group_order($PaymentDataArr){        
+
+    function process_mpesa_success_group_order($PaymentDataArr){
         $orderId = $PaymentDataArr['orders'];
         $pevorder = $PaymentDataArr['pevorder'];
         $prod_price_info = $PaymentDataArr['prod_price_info'];
@@ -1702,8 +1708,8 @@ class Shopping extends MY_Controller{
 
                         /// sendin SMS to allmember
                         $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
-                        'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
-                        'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
+                            'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
+                            'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
                         send_sms_notification($sms_data);
                     endif;
                 endforeach;
@@ -1722,8 +1728,8 @@ class Shopping extends MY_Controller{
                 $this->User_model->notification_add($data);
                 /// sendin SMS to allmember
                 $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of your Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
-                'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
-                'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
+                    'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
+                    'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
                 send_sms_notification($sms_data);
             endif;
 
@@ -1741,7 +1747,7 @@ class Shopping extends MY_Controller{
             redirect(BASE_URL.'shopping/my-cart');
         endif;
     }
-    
+
     function process_razorpay_success_group_order($PaymentDataArr){
         $orderId = $PaymentDataArr['orders'];
         $pevorder = $PaymentDataArr['pevorder'];
@@ -1845,8 +1851,8 @@ class Shopping extends MY_Controller{
 
                         /// sendin SMS to allmember
                         $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
-                        'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
-                        'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
+                            'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
+                            'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
                         send_sms_notification($sms_data);
                     endif;
                 endforeach;
@@ -1865,8 +1871,8 @@ class Shopping extends MY_Controller{
                 $this->User_model->notification_add($data);
                 /// sendin SMS to allmember
                 $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of your Buying Club['.$group->title.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.BASE_URL,
-                'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
-                'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
+                    'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
+                    'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
                 send_sms_notification($sms_data);
             endif;
 
@@ -1885,39 +1891,39 @@ class Shopping extends MY_Controller{
             redirect(BASE_URL.'shopping/my-cart');
         endif;
     }
-    
+
     function process_mpesa_success_single_order($PaymentDataArr){
         foreach ($PaymentDataArr['orders'] AS $k => $v):
             $order_update=array();
             $order_update['status'] = 2;
             $order_update['isPaid'] = 1;
             $this->Order_model->update($order_update,$v);
-            
+
             $order=$PaymentDataArr['orderInfo'][$v]['order'];
             $orderinfo=$PaymentDataArr['orderInfo'][$v]['orderInfo'];
             $this->Product_model->update_product_quantity($order['productId'],$order['productQty']);
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$v;
             $this->_remove_cart($PaymentDataArr['orderInfo'][$v]['cartId']);
-            
+
             //Send Email message
-            $user = $this->_get_current_user_details(); 
+            $user = $this->_get_current_user_details();
             $recv_email = $user->email;
-            
+
             if($k==0){
                 $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
             }
             $this->Order_model->add_payment(array('orderId'=>$v,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'group'));
-            
+
             $mail_template_view_data=$this->load_default_resources();
             $mail_template_view_data['single_order_success']=$mail_template_data;
             $this->_global_tidiit_mail($recv_email, "Your Tidiit order no - TIDIIT-OD-".$v.' has placed successfully', $mail_template_view_data,'single_order_success');
-            $this->_sent_single_order_complete_mail($v);    
+            $this->_sent_single_order_complete_mail($v);
         endforeach;
         unset($_SESSION['PaymentData']);
         redirect(BASE_URL.'shopping/success/');
     }
-    
+
     function process_razorpay_success_single_order($PaymentDataArr){
         $rajorpayDataArr=$this->Order_model->get_rajorpay_id_by_rajorpay_pament_id($this->session->userdata('razorpayPaymentId'));
         foreach ($PaymentDataArr['orders'] AS $k => $v):
@@ -1925,56 +1931,56 @@ class Shopping extends MY_Controller{
             $order_update['status'] = 2;
             $order_update['isPaid'] = 1;
             $this->Order_model->update($order_update,$v);
-            
+
             $order=$PaymentDataArr['orderInfo'][$v]['order'];
             $orderinfo=$PaymentDataArr['orderInfo'][$v]['orderInfo'];
             $this->Product_model->update_product_quantity($order['productId'],$order['productQty']);
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$v;
             $this->_remove_cart($PaymentDataArr['orderInfo'][$v]['cartId']);
-            
+
             //Send Email message
-            $user = $this->_get_current_user_details(); 
+            $user = $this->_get_current_user_details();
             $recv_email = $user->email;
             $this->Order_model->add_payment(array('orderId'=>$v,'paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId,'orderType'=>'group'));
-            
+
             $mail_template_view_data=$this->load_default_resources();
             $mail_template_view_data['single_order_success']=$mail_template_data;
             $this->_global_tidiit_mail($recv_email, "Your Tidiit order no - TIDIIT-OD-".$v.' has placed successfully', $mail_template_view_data,'single_order_success');
-            $this->_sent_single_order_complete_mail($v);    
+            $this->_sent_single_order_complete_mail($v);
         endforeach;
         $this->session->unset_userdata('razorpayPaymentId');
         unset($_SESSION['PaymentData']);
         redirect(BASE_URL.'shopping/success/');
     }
-    
+
     function order_cancel_process_view($orderId){
         if(!$orderId):
             redirect(BASE_URL.'404_override');
         endif;
         $orderId = base64_decode($orderId);
         $orderId = $orderId/226201;
-        
+
         $SEODataArr=array();
         $data=$this->_get_logedin_template($SEODataArr);
-        $user = $this->_get_current_user_details(); 
-        
+        $user = $this->_get_current_user_details();
+
         $order = $this->Order_model->get_single_order_by_id($orderId);
         if(!$order):
-            $this->session->set_flashdata('error', 'Invalid url!');            
+            $this->session->set_flashdata('error', 'Invalid url!');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
         $data['order'] = $order;
         if($order->status == 7):
-            $this->session->set_flashdata('error', 'You ahave already canceled the order.');            
+            $this->session->set_flashdata('error', 'You ahave already canceled the order.');
             redirect(BASE_URL.'shopping/ord-message');
         endif;
         $data['user']=$user;
         $data['userMenuActive']= '';
-        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);        
+        $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('single_order/cancel_order',$data);
     }
-    
+
     function order_cancel_processing(){
         $orderId    = $this->input->post('orderId');
         $reason     = $this->input->post('reason');
@@ -1987,12 +1993,12 @@ class Shopping extends MY_Controller{
             echo '-1<p class="box alert">Invalid form submission! Please try after sometime.</p>';
             die;
         endif;
-        
+
         if(!$reason):
             echo '-1<p class="box alert">Please select a reason!</p>';
             die;
         endif;
-        
+
         if($reason == "Other Reasons" && !$comments):
             echo '-1<p class="box alert">Please write your other reason in comment box!</p>';
             die;
@@ -2010,17 +2016,17 @@ class Shopping extends MY_Controller{
         }
         $sms_data_msg.='More details about this notifiaction,Check '.BASE_URL;
         $sms_data=array('nMessage'=>$sms_data_msg,'receiverMobileNumber'=>$me->mobile,'senderId'=>'','receiverId'=>$me->userId,
-        'senderMobileNumber'=>'','nType'=>"SINGLE-ORDER-CANCEL-BUYER");
+            'senderMobileNumber'=>'','nType'=>"SINGLE-ORDER-CANCEL-BUYER");
         send_sms_notification($sms_data);
-        die;        
+        die;
     }
-    
+
     function single_order_cancel_mail($order,$reason,$comments=""){
         $orderId=$order->orderId;
         $this->load->model('Order_model');
         $orderDetails=array();
-        $orderDetails[]=$order;  
-        
+        $orderDetails[]=$order;
+
         //pre($orderDetails);die;
         $adminMailData=  $this->load_default_resources();
         $adminMailData['orderDetails']=$orderDetails;
@@ -2034,10 +2040,10 @@ class Shopping extends MY_Controller{
         $adminMailData['sellerFullName']=$sellerFullName;
         $buyerFullName=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
         $adminMailData['buyerFullName']=$buyerFullName;
-        
+
         // for buyer
         $this->_global_tidiit_mail($orderDetails[0]->buyerEmail,'Your Tidiit order TIDIIT-OD-'.$order->orderId.' has canceled successfully',$adminMailData,'single_order_canceled',$buyerFullName);
-                
+
         /// for seller
         $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Tidiit order TIDIIT-OD-".$order->orderId.' has canceled by '.$buyerFullName, $adminMailData,'seller_single_order_canceled',$sellerFullName);
 
@@ -2049,7 +2055,7 @@ class Shopping extends MY_Controller{
         $this->_global_tidiit_mail($supportEmail, "Tidiit Order TIDIIT-OD-".$order->orderId.' has canceled by '.$buyerFullName, $adminMailData,'support_single_order_canceled','Tidiit Inc Support');
         return TRUE;
     }
-    
+
     function complete_payment(){
         $config = array(
             //array('field'   => 'deliveryStaffEmail','label'   => 'Delivery Staff Email','rules'=> 'trim|required|xss_clean|valid_email'),
@@ -2057,9 +2063,9 @@ class Shopping extends MY_Controller{
             //array('field'   => 'deliveryStaffName','label'   => 'Delivery Staff Name','rules'   => 'trim|required|xss_clean'),
             array('field'   => 'paymentOption','label'   => 'Select Payment Method','rules'   => 'trim|required|xss_clean|'),
             array('field'   => 'orderId','label'   => 'Order Index','rules'   => 'trim|required|xss_clean|')
-         );
+        );
         //initialise the rules with validatiion helper
-        $this->form_validation->set_rules($config); 
+        $this->form_validation->set_rules($config);
         //checking validation
         if($this->form_validation->run() == FALSE):
             echo json_encode(array('result'=>'bad','msg'=>str_replace('</p>','',str_replace('<p>','',validation_errors()))));die;
@@ -2069,7 +2075,7 @@ class Shopping extends MY_Controller{
             $deliveryStaffContactNo=trim($this->input->post('deliveryStaffContactNo',TRUE));
             $deliveryStaffName=trim($this->input->post('deliveryStaffName',TRUE));
             $paymentOption=trim($this->input->post('paymentOption',TRUE));
-            
+
             $order=$this->Order_model->get_single_order_by_id($orderId);
             $prod_price_info = $this->Product_model->get_products_price_details_by_id($order->productPriceId);
             $group = $this->User_model->get_group_by_id($order->groupId);
@@ -2085,15 +2091,15 @@ class Shopping extends MY_Controller{
                 $allOrderInfoArray[$orderId]['cartId']='';
                 $allOrderArray[]=$orderId;
                 $paymentDataArr=array('orders'=>$allOrderArray,'orderType'=>'single','paymentGatewayAmount'=>$order->orderAmount,'orderInfo'=>$allOrderInfoArray,'final_return'=>'yes','logisticsData'=>$logisticsData);
-            else:    
-                $paymentDataArr = array('orders'=>$orderId,'orderType'=>'group','paymentGatewayAmount'=>$order->orderAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$order,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>'','final_return'=>'yes','logisticsData'=>$logisticsData);      
+            else:
+                $paymentDataArr = array('orders'=>$orderId,'orderType'=>'group','paymentGatewayAmount'=>$order->orderAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$order,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>'','final_return'=>'yes','logisticsData'=>$logisticsData);
             endif;
             $_SESSION['PaymentData'] = $paymentDataArr;
             $this->_mpesa_process(array($orderId));
         endif;
     }
-    
-    function process_mpesa_success_group_order_final($PaymentDataArr){        
+
+    function process_mpesa_success_group_order_final($PaymentDataArr){
         $orderId = $PaymentDataArr['orders'];
         $pevorder = $PaymentDataArr['pevorder'];
         $prod_price_info = $PaymentDataArr['prod_price_info'];
@@ -2111,12 +2117,12 @@ class Shopping extends MY_Controller{
             $orderinfo['group'] = $PaymentDataArr['group'];
         endif;
         $group=$PaymentDataArr['group'];
-        $user = $this->_get_current_user_details(); 
+        $user = $this->_get_current_user_details();
         $recv_email = $user->email;
         $recv_name=$user->firstName.' '.$user->lastName;
         $tidiitStr='TIDIIT-OD-';
         $logisticsData=$PaymentDataArr['logisticsData'];
-        
+
         if($order->parrentOrderID == 0):
             foreach($group->users as $key => $usr):
                 $mail_template_data=array();
@@ -2148,7 +2154,7 @@ class Shopping extends MY_Controller{
                 $mail_template_view_data=$this->load_default_resources();
                 $mail_template_view_data['group_order_start']=$mail_template_data;
                 $this->_global_tidiit_mail($recv_email, 'Payment has submited before delivery for Buying Club Order', $mail_template_view_data,'group_order_sod_final_payment');
-                $this->User_model->notification_add($data);   
+                $this->User_model->notification_add($data);
             endforeach;
         else:
             $me = $this->_get_current_user_details();
@@ -2186,7 +2192,7 @@ class Shopping extends MY_Controller{
                 endif;
             endforeach;
             $data['receiverId'] = $group->admin->userId;
-            
+
             //Send Email message
             $recv_email = $group->admin->email;
             $leaderName=$group->admin->firstName.' '.$group->admin->lastName;
@@ -2201,32 +2207,32 @@ class Shopping extends MY_Controller{
             $this->_global_tidiit_mail($recv_email,"Payment has submited for Tidiit Buying Club order before delivery", $mail_template_view_data,'group_order_group_member_sod_final_payment',$leaderName);
             $this->User_model->notification_add($data);
         endif;
-        
+
         if(!empty($logisticsData) && array_key_exists('deliveryStaffContactNo', $logisticsData)):
             $logisticMobileNo=$logisticsData['deliveryStaffContactNo'];
             if($logisticMobileNo!=""):
                 $sms=$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.'-'.$orderId.' please process the delivery.';
                 /// sendin SMS to allmember
                 $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$logisticMobileNo,'senderId'=>'','receiverId'=>'',
-                'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
+                    'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
                 send_sms_notification($sms_data);
             endif;
         endif;
-        
+
         /// SMS to payer
         $sms='Thanks for the payment.We have received for Tidiit Buying Club['.$group->groupTitle.'] order '.$tidiitStr.'-'.$orderId.'.';
         $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
-        'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
+            'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
         send_sms_notification($sms_data);
-        
+
         if($user->userId!=$group->admin->userId){
             /// SMS to group admin
             $sms='Your Tidiit Buying Club['.$group->groupTitle.'] member['.$user->firstName.' '.$user->lastName.'] has completed payment for order '.$tidiitStr.'-'.$orderId.'.';
             $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$group->admin->mobile,'senderId'=>'','receiverId'=>$group->admin->userId,
-            'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LEADER');
+                'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LEADER');
             send_sms_notification($sms_data);
         }
-        
+
         $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
         $this->Order_model->edit_payment(array('paymentType'=>'mPesa','mPesaId'=>$mPesaId),$orderId);
         $logisticMobileNo=$PaymentDataArr['logisticsData']['deliveryStaffContactNo'];
@@ -2235,15 +2241,15 @@ class Shopping extends MY_Controller{
         /// here send mail to logistic partner
         $mailBody="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'-'.$orderId.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
         $this->_global_tidiit_mail($PaymentDataArr['logisticsData']['deliveryStaffEmail'],'Tidiit payment completed for Order '.$tidiitStr.'-'.$orderId,$mailBody,'',$recv_name);
-        
+
         $this->_sent_order_complete_mail_sod_final_payment1($this->Order_model->get_single_order_by_id($orderId));
-        
+
         unset($_SESSION['PaymentData']);
         $this->session->set_flashdata('message','Thanks for the payment before order is Out for delivery');
         redirect(BASE_URL.'my-orders/');
     }
-    
-    function process_razorpay_success_group_order_final($PaymentDataArr){        
+
+    function process_razorpay_success_group_order_final($PaymentDataArr){
         $orderId = $PaymentDataArr['orders'];
         $pevorder = $PaymentDataArr['pevorder'];
         $prod_price_info = $PaymentDataArr['prod_price_info'];
@@ -2261,12 +2267,12 @@ class Shopping extends MY_Controller{
             $orderinfo['group'] = $PaymentDataArr['group'];
         endif;
         $group=$PaymentDataArr['group'];
-        $user = $this->_get_current_user_details(); 
+        $user = $this->_get_current_user_details();
         $recv_email = $user->email;
         $recv_name=$user->firstName.' '.$user->lastName;
         $tidiitStr='TIDIIT-OD-';
         $logisticsData=$PaymentDataArr['logisticsData'];
-        
+
         if($order->parrentOrderID == 0):
             foreach($group->users as $key => $usr):
                 $mail_template_data=array();
@@ -2298,7 +2304,7 @@ class Shopping extends MY_Controller{
                 $mail_template_view_data=$this->load_default_resources();
                 $mail_template_view_data['group_order_start']=$mail_template_data;
                 $this->_global_tidiit_mail($recv_email, 'Payment has submited before delivery for Buying Club Order', $mail_template_view_data,'group_order_sod_final_payment');
-                $this->User_model->notification_add($data);   
+                $this->User_model->notification_add($data);
             endforeach;
         else:
             $me = $this->_get_current_user_details();
@@ -2336,7 +2342,7 @@ class Shopping extends MY_Controller{
                 endif;
             endforeach;
             $data['receiverId'] = $group->admin->userId;
-            
+
             //Send Email message
             $recv_email = $group->admin->email;
             $leaderName=$group->admin->firstName.' '.$group->admin->lastName;
@@ -2351,32 +2357,32 @@ class Shopping extends MY_Controller{
             $this->_global_tidiit_mail($recv_email,"Payment has submited for Tidiit Buying Club order before delivery", $mail_template_view_data,'group_order_group_member_sod_final_payment',$leaderName);
             $this->User_model->notification_add($data);
         endif;
-        
+
         if(!empty($logisticsData) && array_key_exists('deliveryStaffContactNo', $logisticsData)):
             $logisticMobileNo=$logisticsData['deliveryStaffContactNo'];
             if($logisticMobileNo!=""):
                 $sms=$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.'-'.$orderId.' please process the delivery.';
                 /// sendin SMS to allmember
                 $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$logisticMobileNo,'senderId'=>'','receiverId'=>'',
-                'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
+                    'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
                 send_sms_notification($sms_data);
             endif;
         endif;
-        
+
         /// SMS to payer
         $sms='Thanks for the payment.We have received for Tidiit Buying Club['.$group->groupTitle.'] order '.$tidiitStr.'-'.$orderId.'.';
         $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
-        'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
+            'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
         send_sms_notification($sms_data);
-        
+
         if($user->userId!=$group->admin->userId){
             /// SMS to group admin
             $sms='Your Tidiit Buying Club['.$group->groupTitle.'] member['.$user->firstName.' '.$user->lastName.'] has completed payment for order '.$tidiitStr.'-'.$orderId.'.';
             $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$group->admin->mobile,'senderId'=>'','receiverId'=>$group->admin->userId,
-            'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LEADER');
+                'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LEADER');
             send_sms_notification($sms_data);
         }
-        
+
         $rajorpayDataArr=$this->Order_model->get_rajorpay_id_by_rajorpay_pament_id($this->session->userdata('razorpayPaymentId'));
         $this->Order_model->edit_payment(array('paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId),$orderId);
         $logisticMobileNo=$PaymentDataArr['logisticsData']['deliveryStaffContactNo'];
@@ -2385,20 +2391,20 @@ class Shopping extends MY_Controller{
         /// here send mail to logistic partner
         $mailBody="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'-'.$orderId.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
         $this->_global_tidiit_mail($PaymentDataArr['logisticsData']['deliveryStaffEmail'],'Tidiit payment completed for Order '.$tidiitStr.'-'.$orderId,$mailBody,'',$recv_name);
-        
+
         $this->_sent_order_complete_mail_sod_final_payment1($this->Order_model->get_single_order_by_id($orderId));
         $this->session->unset_userdata('razorpayPaymentId');
         unset($_SESSION['PaymentData']);
         $this->session->set_flashdata('message','Thanks for the payment before order is Out for delivery');
         redirect(BASE_URL.'my-orders/');
     }
-    
+
     function process_mpesa_success_single_order_final($PaymentDataArr){
         $orderId=0;
         $tidiitStrChr='TIDIIT-OD';
         $tidiitStr='';
         //Send Email message
-        $user = $this->_get_current_user_details(); 
+        $user = $this->_get_current_user_details();
         $recv_email = $user->email;
         $recv_name=$user->firstName.' '.$user->lastName;
         foreach ($PaymentDataArr['orders'] AS $k => $v):
@@ -2407,15 +2413,15 @@ class Shopping extends MY_Controller{
             $order_update=array();
             $order_update['isPaid'] = 1;
             $this->Order_model->update($order_update,$v);
-            
+
             $order=$PaymentDataArr['orderInfo'][$v]['order'];
             $orderinfo=$PaymentDataArr['orderInfo'][$v]['orderInfo'];
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$v;
-            
+
             $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
             $this->Order_model->edit_payment(array('paymentType'=>'mPesa','mPesaId'=>$mPesaId),$v);
-            
+
             $mail_template_view_data=$this->load_default_resources();
             $mail_template_view_data['single_order_success']=$mail_template_data;
             $this->_global_tidiit_mail($recv_email, "Payment has completed for your Tidiit order TIDIIT-OD-".$v, $mail_template_view_data,'single_order_success_sod_final_payment',$recv_name);
@@ -2429,17 +2435,17 @@ class Shopping extends MY_Controller{
                 $sms=$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.' please process the delivery.';
                 /// sendin SMS to allmember
                 $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$logisticMobileNo,'senderId'=>'','receiverId'=>'',
-                'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
+                    'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
                 send_sms_notification($sms_data);
             endif;
         endif;
-        
+
         /// SMS to payer
         $sms='Thanks for the payment.We have received for Tidiit order '.$tidiitStr.'.';
         $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
-        'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
+            'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
         send_sms_notification($sms_data);
-        
+
         /// here send mail to logistic partner
         $mailBody="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
         $this->_global_tidiit_mail($PaymentDataArr['logisticsData']['deliveryStaffEmail'],'Tidiit payment submited  for Order '.$tidiitStr,$mailBody,'',$recv_name);
@@ -2447,13 +2453,13 @@ class Shopping extends MY_Controller{
         $this->session->set_flashdata('message','Thanks for the payment before order is Out for delivery');
         redirect(BASE_URL.'my-orders/');
     }
-    
+
     function process_razorpay_success_single_order_final($PaymentDataArr){
         $orderId=0;
         $tidiitStrChr='TIDIIT-OD';
         $tidiitStr='';
         //Send Email message
-        $user = $this->_get_current_user_details(); 
+        $user = $this->_get_current_user_details();
         $recv_email = $user->email;
         $recv_name=$user->firstName.' '.$user->lastName;
         foreach ($PaymentDataArr['orders'] AS $k => $v):
@@ -2462,15 +2468,15 @@ class Shopping extends MY_Controller{
             $order_update=array();
             $order_update['isPaid'] = 1;
             $this->Order_model->update($order_update,$v);
-            
+
             $order=$PaymentDataArr['orderInfo'][$v]['order'];
             $orderinfo=$PaymentDataArr['orderInfo'][$v]['orderInfo'];
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$v;
-            
+
             $rajorpayDataArr=$this->Order_model->get_rajorpay_id_by_rajorpay_pament_id($this->session->userdata('razorpayPaymentId'));
             $this->Order_model->edit_payment(array('paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId),$v);
-            
+
             $mail_template_view_data=$this->load_default_resources();
             $mail_template_view_data['single_order_success']=$mail_template_data;
             $this->_global_tidiit_mail($recv_email, "Payment has completed for your Tidiit order TIDIIT-OD-".$v, $mail_template_view_data,'single_order_success_sod_final_payment',$recv_name);
@@ -2484,17 +2490,17 @@ class Shopping extends MY_Controller{
                 $sms=$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.' please process the delivery.';
                 /// sendin SMS to allmember
                 $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$logisticMobileNo,'senderId'=>'','receiverId'=>'',
-                'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
+                    'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
                 send_sms_notification($sms_data);
             endif;
         endif;
-        
+
         /// SMS to payer
         $sms='Thanks for the payment.We have received for Tidiit order '.$tidiitStr.'.';
         $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
-        'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
+            'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
         send_sms_notification($sms_data);
-        
+
         /// here send mail to logistic partner
         $mailBody="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
         $this->_global_tidiit_mail($PaymentDataArr['logisticsData']['deliveryStaffEmail'],'Tidiit payment submited  for Order '.$tidiitStr,$mailBody,'',$recv_name);
@@ -2502,7 +2508,7 @@ class Shopping extends MY_Controller{
         $this->session->set_flashdata('message','Thanks for the payment before order is Out for delivery');
         redirect(BASE_URL.'my-orders/');
     }
-    
+
     function _sent_single_order_complete_mail_sod_final_payment($orderId){
         $orderDetails=  $this->Order_model->details($orderId);
         //pre($orderDetails);die;
@@ -2526,10 +2532,10 @@ class Shopping extends MY_Controller{
         $supportEmail='judhisahoo@gmail.com';
         $this->_global_tidiit_mail($supportEmail, "Payment has submited for Tidiit Order TIDIIT-OD-".$orderId.' before delivery', $adminMailData,'support_single_order_success_sod_final_payment','Tidiit Inc Support');
         //die;
-        
+
         return TRUE;
     }
-    
+
     function _sent_order_complete_mail_sod_final_payment1($order){
         $sessionUserData=  $this->_get_current_user_details();
         $currentUserFullName=$sessionUserData->firstName.' '.$sessionUserData->lastName;
@@ -2552,7 +2558,7 @@ class Shopping extends MY_Controller{
         $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
         $adminMailData['buyerFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
         $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Payment submited for the Buying Club order TIDIIT-OD-".$order->orderId.' before delivery.', $adminMailData,'seller_group_order_success_sod_final_payment',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
-        
+
         /// for support
         $adminMailData['userFullName']='Tidiit Inc Support';
         $adminMailData['sellerFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
@@ -2562,7 +2568,7 @@ class Shopping extends MY_Controller{
         $supportEmail='judhisahoo@gmail.com';
         $this->_global_tidiit_mail($supportEmail, "Payment has submited for Tidiit Buying Club order TIDIIT-OD-".$order->orderId.' before delivery.', $adminMailData,'support_group_order_success_sod_final_payment','Tidiit Inc Support');
     }
-    
+
     function _sent_order_complete_mail_sod_final_payment($order){
         //return TRUE;
         $sessionUserData=  $this->_get_current_user_details();
@@ -2581,12 +2587,12 @@ class Shopping extends MY_Controller{
             $adminMailData['userFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
             //pre($adminMailData);die;
             //$this->_global_tidiit_mail($orderInfoDataArr['group']->admin->email, "$currentUserFullName  has completed payment in your Buying Club order - TIDIIT-OD-".$order->orderId.' before delivery.', $adminMailData,'group_order_success_sod_final_payment',$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName);
-            
+
             /// for seller
             $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
             $adminMailData['buyerFullName']=$orderInfoDataArr['group']->admin->firstName.' '.$orderInfoDataArr['group']->admin->lastName;
             $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Payment has submited for the Buying Club order TIDIIT-OD-".$order->parrentOrderID.' before delivery.', $adminMailData,'seller_group_order_success',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
-            
+
             /// for support
             $adminMailData['userFullName']='Tidiit Inc Support';
             $adminMailData['sellerFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
@@ -2618,13 +2624,13 @@ class Shopping extends MY_Controller{
                 //echo '<br>$order id '.$k->orderId.'<br>';
                 $adminMailData['userFullName']=$userFullName;
                 $this->_global_tidiit_mail($email, "Payment has completed for your Tidiit Buying Club order TIDIIT-OD-".$k->orderId.' before delivery.', $adminMailData,'group_order_success_sod_final_payment',$userFullName);
-                
+
                 //echo '<br>$order id '.$k->orderId.'<br>';
                 /// for seller
                 $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
                 $adminMailData['buyerFullName']=$userFullName;
                 $this->_global_tidiit_mail($orderDetails[0]->sellerEmail, "Payment has completed for Tidiit Buying Club order TIDIIT-OD-".$k->orderId.' before delivery.', $adminMailData,'seller_group_order_success_sod_final_payment',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
-                
+
                 //echo '<br>$order id '.$k->orderId.'<br>';
                 /// for support
                 $adminMailData['userFullName']='Tidiit Inc Support';
@@ -2638,10 +2644,10 @@ class Shopping extends MY_Controller{
         }else{
             die('comming else part');
         }
-            
+
         return TRUE;
     }
-    
+
     function check_old_order_type(){
         $orderType=  $this->input->post('orderType',TRUE);
         $user=  $this->_get_current_user_details();
@@ -2670,7 +2676,7 @@ class Shopping extends MY_Controller{
             }*/
         }
     }
-    
+
     function ajax_single_order_remove_promo(){
         $orderId=$this->input->post('orderId',TRUE);
         $orderDetails=$this->Order_model->details($orderId);
@@ -2680,13 +2686,13 @@ class Shopping extends MY_Controller{
         $taxCol=$countryShortName.'_tax';
         $taxPercentage=$currentLocationTaxDetails->$taxCol;
         $tax=$orderDetails[0]->subTotalAmount*$taxPercentage/100;
-        
+
         $orderDataArr=array();
         $orderDataArr['taxAmount'] = $tax;
         $orderDataArr['orderAmount'] = $orderDetails[0]->subTotalAmount+$tax;
         $orderDataArr['discountAmount'] ='';
         $this->Order_model->update($orderDataArr,$orderId);
-        
+
         $this->Coupon_model->remove_order($orderId);
         $result['msg'] = "ok";
         echo json_encode( $result );

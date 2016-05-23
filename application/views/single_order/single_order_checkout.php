@@ -299,7 +299,7 @@ echo $html_heading; echo $header;
                                     <div class="clearfix"></div>
 
                                     <h3 class="log-title">Select Payment Option</h3>
-                                    <form name="single_order_payment_option" id="single_order_payment_option" method="post" action="<?php echo BASE_URL.'shopping/ajax_process_single_payment';?>" enctype="multipart/form-data">
+                                    <form name="single_order_payment_option_pr" id="single_order_payment_option_pr" method="post" action="<?php echo BASE_URL.'shopping/ajax_process_single_payment';?>">
                                         <div class="small-font-text form-group">
 
                                             <div class="input-group form-group order-labl">
@@ -524,12 +524,12 @@ echo $html_heading; echo $header;
             jQuery.post( myJsMain.baseURL+'shopping/ajax_process_single_payment/', {
                 cartId: cartId
             },
-            function(data){ 
+            function(data){
                 myJsMain.commonFunction.hidePleaseWait();
-                if(data.url){                    
+                if(data.url){
                     window.location.href = data.url;
                 }
-                
+
                 if(data.error){
                     $('div.js-payment-message').html(data.error);
                     $('div.js-payment-message').fadeIn(300,function() { setTimeout( '$("div.js-payment-message").fadeOut(300)', 15000 ); });
