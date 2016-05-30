@@ -547,7 +547,7 @@ class Order_model extends CI_Model {
     }
 
     function tidiit_get_user_orders($userId, $status = 0){
-        $this->db->where('userId',$userId)->where('status',$status);
+        $this->db->where('userId',$userId)->where_in('status',array(0,8));
         return $this->db->from($this->_table)->get()->result();
     }
 

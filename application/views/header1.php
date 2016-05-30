@@ -80,7 +80,7 @@
                                             <span><i class="fa fa-truck"></i></span>
                                         </div>
                                         <div class="content">
-                                            <h3><span>`</span>0.00 - 0 item</h3>
+                                            <h3 class="js-cart-auto-update"><span>`</span>0.00 - 0 item</h3>
                                             <p>YOUR TRUCK</p>
                                         </div>
                                     </div>
