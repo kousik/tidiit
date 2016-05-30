@@ -297,7 +297,7 @@ endif;?>
                                                 <label for="grp">mPesa</label>
                                             </div><!-- /input-group -->
                                             
-                                            <!--<div class="input-group order-labl form-group">
+                                            <div class="input-group order-labl form-group">
                                                 <span class="input-group-addon">
                                                   <input type="radio" name="paymentOption" value="razorpay">
                                                 </span>

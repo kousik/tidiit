@@ -299,34 +299,39 @@ echo $html_heading; echo $header;
                                     <div class="clearfix"></div>
 
                                     <h3 class="log-title">Select Payment Option</h3>
-                                    <div class="small-font-text form-group">
-                                        <form name="single_order_payment_option" id="single_order_payment_option" method="post" action="<?php echo BASE_URL.'shopping/ajax_process_single_payment/';?>">
+                                    <form name="single_order_payment_option_pr" id="single_order_payment_option_pr" method="post" action="<?php echo BASE_URL.'shopping/ajax_process_single_payment_start';?>">
+                                        <div class="small-font-text form-group">
                                             <div class="input-group form-group order-labl">
                                                 <span class="input-group-addon">
-                                                    <input type="radio" name="paymentOption" value="mpesa">
+                                                    <input type="radio" name="paymentoption" value="payment_razorpay">
                                                 </span>
-                                                <label for="grp">mPesa</label>
+                                                <label for="payment_razorpay">razorpay</label>
                                             </div><!-- /input-group -->
-                                            
                                             <div class="input-group form-group order-labl">
                                                 <span class="input-group-addon">
-                                                    <input type="radio" name="paymentOption" value="razorpay">
+                                                    <input type="radio" name="paymentoption" value="ebs">
                                                 </span>
-                                                <label for="grp">Razorpay</label>
+                                                <label for="ebs">EBS</label>
                                             </div><!-- /input-group -->
 
-                                              <div class="input-group order-labl form-group">
+                                            <div class="input-group form-group order-labl">
                                                 <span class="input-group-addon">
-                                                  <input type="radio" name="paymentOption" value="sod" checked>
+                                                    <input type="radio" name="paymentoption" value="mpesa">
                                                 </span>
-                                                <label for="sin">Settlement on Delivery</label>
-                                              </div><!-- /input-group -->
-                                              
-                                        </form>
-                                    </div>
-                                    <div class="cart-container-table">
-                                        <a href="javascript://" class="btn btn-info btn-block js-order-payment">Pay Now <i class="fa fa-angle-right"></i></a>
-                                    </div>
+                                                <label for="mpesa">mPesa</label>
+                                            </div><!-- /input-group -->
+
+                                            <div class="input-group order-labl form-group">
+                                                <span class="input-group-addon">
+                                                  <input type="radio" name="paymentoption" value="sod" checked>
+                                                </span>
+                                                <label for="sod">Settlement on Delivery</label>
+                                            </div><!-- /input-group -->
+                                        </div>
+                                        <div class="cart-container-table">
+                                            <button type="submit" class="btn btn-info btn-block">Pay Now <i class="fa fa-angle-right"></i></button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -524,12 +529,12 @@ echo $html_heading; echo $header;
             jQuery.post( myJsMain.baseURL+'shopping/ajax_process_single_payment/', {
                 cartId: cartId
             },
-            function(data){ 
+            function(data){
                 myJsMain.commonFunction.hidePleaseWait();
-                if(data.url){                    
+                if(data.url){
                     window.location.href = data.url;
                 }
-                
+
                 if(data.error){
                     $('div.js-payment-message').html(data.error);
                     $('div.js-payment-message').fadeIn(300,function() { setTimeout( '$("div.js-payment-message").fadeOut(300)', 15000 ); });
