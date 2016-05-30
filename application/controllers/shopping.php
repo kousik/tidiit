@@ -300,7 +300,7 @@ class Shopping extends MY_Controller{
             if($order->groupId):
                 $orderinfo['group'] = $group;
             endif;
-            
+
             $info['orderInfo'] = base64_encode(serialize($orderinfo));
             $this->Order_model->update($info, $orderId);
             $allOrderArray=array();
@@ -426,13 +426,13 @@ class Shopping extends MY_Controller{
             if($order_update['status'] == 2):
                 $this->_sent_order_complete_mail($order);
             endif;
-            
+
             if($paymentOption=='sod'):
                 $settlementOnDeliveryId=$this->Order_model->add_sod(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
                 $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'group'));
                 //$this->_remove_cart($cartId);
                 redirect(BASE_URL.'shopping/success/');
-            elseif($paymentOption=='razorpay'):
+            elseif($paymentOption=='payment_razorpay'):
                 //pre($_SESSION);die;
                 $this->_razorpay_process(array($orderId));
             elseif($paymentOption=='mpesa'):
@@ -1524,16 +1524,12 @@ class Shopping extends MY_Controller{
         /*$sms_data=array('nMessage'=>'comming to ajax_process_single_payment_start FUN at '.time().' at line number 1524',
                 'receiverMobileNumber'=>'9556644964','senderId'=>'','receiverId'=>100,
                 'senderMobileNumber'=>'','nType'=>'TESTING');*/
-        $me = $this->_get_current_user_details();
-        $orderIds=implode('^', $orderIdArr);
-        $userId=$me->userId;
-        
         $SEODataArr=array();
         $data = $this->_get_logedin_template($SEODataArr);
 
         $paymentDataArr=$_SESSION['PaymentData'];
         $data['paymentGatewayAmount']=$paymentDataArr['paymentGatewayAmount'];
-        
+        $me = $this->_get_current_user_details();
         /*$sms_data=array('nMessage'=>'comming to ajax_process_single_payment_start FUN at '.time().' at line number 1533',
                 'receiverMobileNumber'=>'9556644964','senderId'=>'','receiverId'=>100,
                 'senderMobileNumber'=>'','nType'=>'TESTING');*/
@@ -1546,8 +1542,7 @@ class Shopping extends MY_Controller{
         $data['userData']=$me;
         $data['userMenuActive']=1;
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
-        $data['orderIds']=$orderIds;
-        
+        $data['orderIds']=implode('^', $orderIdArr);
         /*$sms_data=array('nMessage'=>'comming to ajax_process_single_payment_start FUN at '.time().' at line number 1546',
                 'receiverMobileNumber'=>'9556644964','senderId'=>'','receiverId'=>100,
                 'senderMobileNumber'=>'','nType'=>'TESTING');*/
@@ -1559,13 +1554,17 @@ class Shopping extends MY_Controller{
         $orderIds=trim($this->input->post('orderIds'));
         $razorpayPaymentId=trim($this->input->post('razorpay_payment_id'));
 
-        pre($_SESSION);die;
+        $CIPaymentData=$this->session->userdata('CIPaymentData');
+        /*pre($_SESSION);
+        echo '=============================================================================================================';
+        pre($CIPaymentData);
+        die;
         
-        /*$PaymentDataArr = $_SESSION['PaymentData'];
-        pre($PaymentDataArr); //die;
+        $PaymentDataArr = $_SESSION['PaymentData'];
+        pre($PaymentDataArr);die;
         $productPriceArr=$this->Order_model->get_product_price_details_by_orderid($PaymentDataArr['orders']);
         pre($productPriceArr);
-        ie;*/
+        die;*/
         //pre($_POST);
         if($orderIds!="" && $razorpayPaymentId!=""){
             $this->session->set_userdata('razorpayPaymentId',$razorpayPaymentId);
@@ -1585,11 +1584,7 @@ class Shopping extends MY_Controller{
                 $PaymentDataArr = $_SESSION['PaymentData'];
                 $orderType = $PaymentDataArr['orderType'];
                 if($orderType=='group'):
-                    if($PaymentDataArr['orders']!=""){
-                        $orderDataArr = $PaymentDataArr;
-                    }else{
-                        
-                    }
+                    $orderDataArr = $PaymentDataArr;
                     if($PaymentDataArr['final_return']=='no'):
                         $productPriceArr=$this->Order_model->get_product_price_details_by_orderid($PaymentDataArr['orders']);
                         $this->Product_model->update_product_quantity($productPriceArr[0]['productId'],$productPriceArr[0]['qty']);

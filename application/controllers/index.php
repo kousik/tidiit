@@ -41,9 +41,9 @@ class Index extends MY_Controller{
         
         $noOfItem=  $this->Siteconfig_model->get_value_by_name('HOME_PAGE_NEW_ARRIVAL_ITEM_NO');
         $newArrivalsData=  $this->Product_model->get_recent($noOfItem);
-        $data['bestSelllingItem']=$newArrivalsData;
+        $data['bestSelllingItem']=$this->Product_model->get_best_selling($noOfItem);
         $data['newArrivals']=$newArrivalsData;
-        $data['featuredProducts']=$newArrivalsData;
+        $data['featuredProducts'] = $this->Product_model->get_featured_products($noOfItem);
         $data['brandZoneArr']=$this->Brand_model->get_all();
         $data['sellerDataArr']=$this->Faq_model->get_all('seller');
         $data['buyerDataArr']=$this->Faq_model->get_all('buyer');

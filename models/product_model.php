@@ -558,7 +558,31 @@ class Product_model extends CI_Model {
                 . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
                 . " JOIN product_category AS pc ON(pc.productId=p.productId)  "
                 . " JOIN category AS c ON(pc.categoryId=c.categoryId)  "
-                . " WHERE p.status=1 AND c.status=1 GROUP BY pi.productId ORDER BY p.productId DESC,p.updateTime DESC LIMIT 0,$noOfItem";
+                . " WHERE p.status=1 AND p.isNew = 1 AND c.status=1 GROUP BY pi.productId ORDER BY p.productId DESC,p.updateTime DESC LIMIT 0,$noOfItem";
+        if($app==TRUE)
+            return $this->db->query($sql)->result_array();
+        else
+            return $this->db->query($sql)->result();
+    }
+
+    public function get_best_selling($noOfItem=12,$app=false){
+        $sql="SELECT p.productId,p.title,p.lowestPrice,p.heighestPrice,p.qty,p.minQty,pi.image,c.categoryName "
+            . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
+            . " JOIN product_category AS pc ON(pc.productId=p.productId)  "
+            . " JOIN category AS c ON(pc.categoryId=c.categoryId)  "
+            . " WHERE p.status=1 AND p.popular = 1 AND c.status=1 GROUP BY pi.productId ORDER BY p.productId DESC,p.updateTime DESC LIMIT 0,$noOfItem";
+        if($app==TRUE)
+            return $this->db->query($sql)->result_array();
+        else
+            return $this->db->query($sql)->result();
+    }
+
+    public function get_featured_products($noOfItem=12,$app=false){
+        $sql="SELECT p.productId,p.title,p.lowestPrice,p.heighestPrice,p.qty,p.minQty,pi.image,c.categoryName "
+            . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
+            . " JOIN product_category AS pc ON(pc.productId=p.productId)  "
+            . " JOIN category AS c ON(pc.categoryId=c.categoryId)  "
+            . " WHERE p.status=1 AND p.featured = 1 AND c.status=1 GROUP BY pi.productId ORDER BY p.productId DESC,p.updateTime DESC LIMIT 0,$noOfItem";
         if($app==TRUE)
             return $this->db->query($sql)->result_array();
         else

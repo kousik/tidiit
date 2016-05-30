@@ -457,6 +457,45 @@ $priceRangeSettingsDataArr = $priceRangeSettingsArr[$productPageType];
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="form-group field">
+                                                <div class="row">
+                                                    <div class="col-sm-4">
+                                                        <label for="input-status"
+                                                               class=" control-label main">Is New ?</label>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <label>
+                                                        <input type="checkbox" name="isNew" value="1">
+                                                            </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group field">
+                                                <div class="row">
+                                                    <div class="col-sm-4">
+                                                        <label for="input-status"
+                                                               class=" control-label main">Is Popular Product ?</label>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <label>
+                                                        <input type="checkbox" name="popular" value="1">
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group field">
+                                                <div class="row">
+                                                    <div class="col-sm-4">
+                                                        <label for="input-status"
+                                                               class=" control-label main">Is Featured Product ?</label>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <label>
+                                                        <input type="checkbox" name="featured" value="1">
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                             <div class="field buttons">
                                                 <label class="main">&nbsp;</label>
