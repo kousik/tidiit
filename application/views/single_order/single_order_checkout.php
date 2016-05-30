@@ -301,26 +301,28 @@ echo $html_heading; echo $header;
                                     <h3 class="log-title">Select Payment Option</h3>
                                     <form name="single_order_payment_option_pr" id="single_order_payment_option_pr" method="post" action="<?php echo BASE_URL.'shopping/ajax_process_single_payment_start';?>">
                                         <div class="small-font-text form-group">
+                                            <?php foreach($paymentGatewayData AS $k):?> 
+                                            
                                             <div class="input-group form-group order-labl">
                                                 <span class="input-group-addon">
-                                                    <input type="radio" name="paymentoption" value="payment_razorpay">
+                                                    <input type="radio" name="paymentoption" value="<?php echo $k->gatewayCode;?>">
                                                 </span>
-                                                <label for="payment_razorpay">razorpay</label>
+                                                <label for="<?php echo $k->gatewayCode;?>"><?php echo $k->gatewayTitle;?></label>
                                             </div><!-- /input-group -->
-                                            <div class="input-group form-group order-labl">
+                                            <!--<div class="input-group form-group order-labl">
                                                 <span class="input-group-addon">
                                                     <input type="radio" name="paymentoption" value="ebs">
                                                 </span>
                                                 <label for="ebs">EBS</label>
                                             </div><!-- /input-group -->
 
-                                            <div class="input-group form-group order-labl">
+                                            <!--<div class="input-group form-group order-labl">
                                                 <span class="input-group-addon">
                                                     <input type="radio" name="paymentoption" value="mpesa">
                                                 </span>
                                                 <label for="mpesa">mPesa</label>
                                             </div><!-- /input-group -->
-
+                                            <?php endforeach;?>
                                             <div class="input-group order-labl form-group">
                                                 <span class="input-group-addon">
                                                   <input type="radio" name="paymentoption" value="sod" checked>

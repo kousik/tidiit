@@ -21,6 +21,7 @@ class Order_model extends CI_Model {
     private $_movement_history="order_movement_history";
     
     private $_wishlist="wishlist";
+    private $_payment_gateway="payment_gateway";
     
 
 
@@ -584,10 +585,15 @@ class Order_model extends CI_Model {
     
     function get_razorpay_info(){
         $rs=$this->db->from('system_constants')->where('constantName','PAYMENT_GATEWAY_STATE')->get()->result();
-        return $this->db->from('payment_gateway_config')->where('gatewayName','razorpay')->where('type',$rs[0]->constantValue)->get()->result();
+        return $this->db->select('pgc.*')->from('payment_gateway pg')->join('payment_gateway_config pgc','pg.gatewayId=pgc.gatewayId')->where('pg.gatewayId',1)->where('pgc.type',$rs[0]->constantValue)->get()->result();
+        //return $this->db->from()->where('gatewayName','razorpay')->where('type',$rs[0]->constantValue)->get()->result();
     }
     
     function get_rajorpay_id_by_rajorpay_pament_id($razorpayPaymentId){
         return $this->db->from($this->_razorpay)->where('razorpayPaymentId',$razorpayPaymentId)->get()->result();
+    }
+    
+    function get_all_gateway(){
+        return $this->db->from($this->_payment_gateway)->where('countryCode',  $this->session->userdata('FE_SESSION_USER_LOCATION_VAR'))->where('status',1)->get()->result();
     }
 }

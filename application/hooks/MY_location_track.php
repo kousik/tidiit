@@ -34,7 +34,7 @@ class MY_location_track
                 $cIP='117.214.82.169';
             }
             
-            $params = getopt('l:i:');
+            /*$params = getopt('l:i:');
             if (!isset($params['l'])) $params['l'] = 'puDQd5MDgVxy';
             //if (!isset($params['i'])) $params['i'] = '24.24.24.24';
             if (!isset($params['i'])) $params['i'] = $cIP; //'122.177.246.210';
@@ -98,7 +98,18 @@ class MY_location_track
             //$this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR',trim($cLocationvar));
             
             //$this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR',$insights['country_code']);
-            $this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR','IN');
+            $url = 'http://ip-api.com/json';
+            $json = json_decode(@file_get_contents($url));
+            if(!$json){
+                $this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR','IN');
+            }else{
+                if($json->status="success"){
+                //echo $json->countryCode;die;
+                    $this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR',$json->countryCode);
+                }else{
+                    $this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR','IN');
+                }
+            }
         }
     }
 

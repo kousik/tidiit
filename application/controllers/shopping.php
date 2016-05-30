@@ -1082,12 +1082,14 @@ class Shopping extends MY_Controller{
         if($userShippingDataDetails[0]->localityId!=""){
             $data['localityDataArr']=  $this->Country->get_all_locality($userShippingDataDetails[0]->zipId);
         }
+        
         $data['countryDataArr']=$this->Country->get_all1();
         $data['userShippingDataDetails']=$userShippingDataDetails[0];
 
         $data['userMenuActive']=7;
         $data['user']=$user;
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
+        $data['paymentGatewayData']=$this->Order_model->get_all_gateway();
         $this->load->view('single_order/single_order_checkout',$data);
     }
 
@@ -1336,6 +1338,7 @@ class Shopping extends MY_Controller{
         $newAllItemArr=array();
         foreach($allItemArr AS $k){
             $orderInfo=  unserialize(base64_decode($k['orderInfo']));
+            //pre($orderInfo);
             $k['productTitle']=$orderInfo['pdetail']->title;
             $k['qty']=$orderInfo['priceinfo']->qty;
             $k['pimage']=$orderInfo['pimage']->image;
@@ -1534,6 +1537,7 @@ class Shopping extends MY_Controller{
                 'receiverMobileNumber'=>'9556644964','senderId'=>'','receiverId'=>100,
                 'senderMobileNumber'=>'','nType'=>'TESTING');*/
         $razorpayInfo=$this->Order_model->get_razorpay_info();
+        
         /*$sms_data=array('nMessage'=>'comming to ajax_process_single_payment_start FUN at '.time().' at line number 1537',
                 'receiverMobileNumber'=>'9556644964','senderId'=>'','receiverId'=>100,
                 'senderMobileNumber'=>'','nType'=>'TESTING');*/
