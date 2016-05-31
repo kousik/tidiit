@@ -301,7 +301,7 @@ class Shopping extends MY_Controller{
             if($order->groupId):
                 $orderinfo['group'] = $group;
             endif;
-
+            
             $info['orderInfo'] = base64_encode(serialize($orderinfo));
             $this->Order_model->update($info, $orderId);
             $allOrderArray=array();
@@ -421,20 +421,21 @@ class Shopping extends MY_Controller{
             else:
                 $paymentDataArr = array('orders'=>$orderId,'orderType'=>'group','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$pevorder,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>$cartId,'final_return'=>'no');
                 //pre($paymentDataArr);die;
-                $_SESSION['PaymentData'] = $paymentDataArr;
+                $_SESSION['TempPaymentData'] = $paymentDataArr;
+                //pre($_SESSION);
+                //die;
             endif;
-
+            
             if($order_update['status'] == 2):
                 $this->_sent_order_complete_mail($order);
             endif;
-
+            //echo '$paymentOption : '.$paymentOption;die;
             if($paymentOption=='sod'):
                 $settlementOnDeliveryId=$this->Order_model->add_sod(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
                 $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'group'));
                 //$this->_remove_cart($cartId);
                 redirect(BASE_URL.'shopping/success/');
             elseif($paymentOption=='razorpay'):
-                //pre($_SESSION);//die;
                 $this->_razorpay_process(array($orderId));
             elseif($paymentOption=='mpesa'):
                 $this->_mpesa_process(array($orderId));
@@ -1530,8 +1531,13 @@ class Shopping extends MY_Controller{
                 'senderMobileNumber'=>'','nType'=>'TESTING');*/
         $SEODataArr=array();
         $data = $this->_get_logedin_template($SEODataArr);
-
-        $paymentDataArr=$_SESSION['PaymentData'];
+        if(array_key_exists('TempPaymentData', $_SESSION)):
+            $paymentDataArr=$_SESSION['TempPaymentData'];
+            $_SESSION['PaymentData']=$paymentDataArr;
+        else:
+            $paymentDataArr=$_SESSION['PaymentData'];
+        endif;
+        
         $data['paymentGatewayAmount']=$paymentDataArr['paymentGatewayAmount'];
         $me = $this->_get_current_user_details();
         /*$sms_data=array('nMessage'=>'comming to ajax_process_single_payment_start FUN at '.time().' at line number 1533',
@@ -1558,17 +1564,10 @@ class Shopping extends MY_Controller{
     function razorpay_return(){
         $orderIds=trim($this->input->post('orderIds'));
         $razorpayPaymentId=trim($this->input->post('razorpay_payment_id'));
-        //pre($_SESSION);die;
-        /*echo '=============================================================================================================';
-        pre($CIPaymentData);
-        die;*/
-        
         $PaymentDataArr = $_SESSION['PaymentData'];
         //pre($PaymentDataArr);die;
         $productPriceArr=$this->Order_model->get_product_price_details_by_orderid($PaymentDataArr['orders']);
-        /*pre($productPriceArr);
-        die;*/
-        //pre($_POST);
+
         if($orderIds!="" && $razorpayPaymentId!=""){
             $this->session->set_userdata('razorpayPaymentId',$razorpayPaymentId);
             $dataArr=array('userId'=>$this->session->userdata('FE_SESSION_VAR'),'orderIds'=>$orderIds,'razorpayPaymentId'=>$razorpayPaymentId,'IP'=>$this->input->ip_address);
