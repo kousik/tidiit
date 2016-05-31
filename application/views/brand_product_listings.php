@@ -210,7 +210,7 @@ $currencySymbol=($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=="IN")
                         <li><i class="fa fa-star"></i></li>
                         <li><i class="fa fa-star-o"></i></li>
                     </ul>-->
-                    <p><?php echo $currencySymbol.' '.$pro->lowestPrice . ' - ' . $pro->heighestPrice; ?></p>
+                    <p><?php echo $currencySymbol.' '.$pro->lowestPrice . ' - ' .$currencySymbol.' '. $pro->heighestPrice; ?></p>
 
                     <p>
                         <?php if ($pro->qty < $pro->minQty): ?>

@@ -226,7 +226,7 @@
                                 <li><i class="fa fa-star"></i></li>
                                 <li><i class="fa fa-star-o"></i></li>
                             </ul> -->
-                            <p><?php echo $currencySymbol.' '.$pro->lowestPrice.' - '.$pro->heighestPrice;?></p>
+                            <p><?php echo $currencySymbol.' '.$pro->lowestPrice.' - '.$currencySymbol.' '.$pro->heighestPrice;?></p>
                             <p>
                                 <?php if($pro->qty < $pro->minQty):?>
                                     <a href="javascript://">View Details &nbsp;<i class="fa fa-caret-right"></i></a>

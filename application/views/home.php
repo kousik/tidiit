@@ -139,7 +139,7 @@
                                     <li><i class="fa fa-star-o"></i></li>
                                     <li><i class="fa fa-star-o"></i></li>
                                 </ul> -->
-                                <p><?php echo $currencySymbol.' '.$k->lowestPrice.' - '.$k->heighestPrice;?></p>
+                                <p><?php echo $currencySymbol.' '.$k->lowestPrice.' - '.$currencySymbol.' '.$k->heighestPrice;?></p>
                                 <?php /*<p><a href="<?php echo BASE_URL.str_replace('+','-',urlencode(my_seo_freindly_url($k->title))).'+'. base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p> */?>
                                 <p>
                                     <?php if($k->qty<$k->minQty):?>
@@ -186,7 +186,7 @@
                                     <li><i class="fa fa-star"></i></li>
                                     <li><i class="fa fa-star-o"></i></li>
                                 </ul>-->
-                                <p><?php echo $currencySymbol.' '.$k->lowestPrice.' - '.$k->heighestPrice;?></p>
+                                <p><?php echo $currencySymbol.' '.$k->lowestPrice.' - '.$currencySymbol.' '.$k->heighestPrice;?></p>
                                 <p>
                                     <?php if($k->qty<$k->minQty):?>
                                     <a href="javascript:void(0);">View Details &nbsp;<i class="fa fa-caret-right"></i></a>
@@ -232,7 +232,7 @@
                                     <li><i class="fa fa-star"></i></li>
                                     <li><i class="fa fa-star-o"></i></li>
                                 </ul>-->
-                                <p><?php echo $currencySymbol.' '.$k->lowestPrice.' - '.$k->heighestPrice;?></p>
+                                <p><?php echo $currencySymbol.' '.$k->lowestPrice.' - '.$currencySymbol.' '.$k->heighestPrice;?></p>
                                 <p>
                                     <?php if($k->qty<$k->minQty):?>
                                     <a href="javascript:void(0);">View Details &nbsp;<i class="fa fa-caret-right"></i></a>
