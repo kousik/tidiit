@@ -1566,7 +1566,7 @@ class Shopping extends MY_Controller{
         $razorpayPaymentId=trim($this->input->post('razorpay_payment_id'));
 
         //$CIPaymentData=$this->session->userdata('CIPaymentData');
-        pre($_POST);
+        /*pre($_POST);
         pre($_SESSION);
         session_destroy();
         /*echo '=============================================================================================================';
@@ -1577,7 +1577,7 @@ class Shopping extends MY_Controller{
         pre($PaymentDataArr);die;
         $productPriceArr=$this->Order_model->get_product_price_details_by_orderid($PaymentDataArr['orders']);
         pre($productPriceArr);*/
-        die;
+        //die;
         
         if($orderIds!="" && $razorpayPaymentId!=""){
             $this->session->set_userdata('razorpayPaymentId',$razorpayPaymentId);
