@@ -18,6 +18,7 @@ class Shopping extends MY_Controller{
         $this->load->model('Country');
         $this->load->library('session');
         $this->load->library('tidiitrcode');
+        $this->load->helper('cookie');
     }
 
 
@@ -256,7 +257,7 @@ class Shopping extends MY_Controller{
     function ajax_process_group_payment(){
         $orderId = $this->input->post('orderId',TRUE);
         $cartId = $orderId;
-        $paymentOption = $this->input->post('paymentOption',TRUE);
+        $paymentOption = $this->input->post('paymentoption',TRUE);
         $pevorder = $this->Order_model->get_single_order_by_id($orderId);
         $a = $this->_get_available_order_quantity($orderId);
 
@@ -432,8 +433,8 @@ class Shopping extends MY_Controller{
                 $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'settlementOnDelivery','settlementOnDeliveryId'=>$settlementOnDeliveryId,'orderType'=>'group'));
                 //$this->_remove_cart($cartId);
                 redirect(BASE_URL.'shopping/success/');
-            elseif($paymentOption=='payment_razorpay'):
-                //pre($_SESSION);die;
+            elseif($paymentOption=='razorpay'):
+                //pre($_SESSION);//die;
                 $this->_razorpay_process(array($orderId));
             elseif($paymentOption=='mpesa'):
                 $this->_mpesa_process(array($orderId));
@@ -1550,24 +1551,22 @@ class Shopping extends MY_Controller{
         /*$sms_data=array('nMessage'=>'comming to ajax_process_single_payment_start FUN at '.time().' at line number 1546',
                 'receiverMobileNumber'=>'9556644964','senderId'=>'','receiverId'=>100,
                 'senderMobileNumber'=>'','nType'=>'TESTING');*/
-        //pre($_SESSION);die;
+        pre($_SESSION);//die;
         $this->load->view('payment/razorpay',$data);
     }
 
     function razorpay_return(){
         $orderIds=trim($this->input->post('orderIds'));
         $razorpayPaymentId=trim($this->input->post('razorpay_payment_id'));
-
-        $CIPaymentData=$this->session->userdata('CIPaymentData');
-        /*pre($_SESSION);
-        echo '=============================================================================================================';
+        //pre($_SESSION);die;
+        /*echo '=============================================================================================================';
         pre($CIPaymentData);
-        die;
+        die;*/
         
         $PaymentDataArr = $_SESSION['PaymentData'];
-        pre($PaymentDataArr);die;
+        //pre($PaymentDataArr);die;
         $productPriceArr=$this->Order_model->get_product_price_details_by_orderid($PaymentDataArr['orders']);
-        pre($productPriceArr);
+        /*pre($productPriceArr);
         die;*/
         //pre($_POST);
         if($orderIds!="" && $razorpayPaymentId!=""){
