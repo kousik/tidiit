@@ -531,6 +531,7 @@ class Shopping extends MY_Controller{
 
         $coupon = $this->Order_model->get_order_coupon($orderId);
         $data['coupon'] = $coupon;
+        $data['paymentGatewayData']=$this->Order_model->get_all_gateway();
         $this->load->view('group_order/checkout',$data);
     }
 
