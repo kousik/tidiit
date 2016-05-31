@@ -256,7 +256,7 @@ class Shopping extends MY_Controller{
     function ajax_process_group_payment(){
         $orderId = $this->input->post('orderId',TRUE);
         $cartId = $orderId;
-        $paymentOption = $this->input->post('paymentOption',TRUE);
+        $paymentOption = $this->input->post('paymentoption',TRUE);
         
         if($paymentOption==""){
             $this->session->set_flashdata("message","Invalid payment option selected!");
