@@ -8,9 +8,10 @@ class Category_model extends CI_Model {
 	private $_table_tag = 'product_tag';
         private $_product_seller = 'product_seller';
         private $_user = 'user';
-        
+        private $_currentUserCountryCode="";
+                
 	function __construct() {
-		
+		$this->_currentUserCountryCode=$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');
 	}
 	
 	public function get_all($parrentId){
@@ -331,13 +332,15 @@ WHERE c.categoryId =".$categoryId;
         $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `c`.`categoryName`, 
             `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage` 
             FROM `product` AS p
+            JOIN product_seller AS ps ON(p.productId=ps.productId) JOIN user AS u ON(ps.userId=u.userId)
+            JOIN billing_address AS ba ON(u.userId=ba.userId) JOIN country AS co ON(ba.countryId=co.countryId)
             LEFT JOIN product_brand AS pb ON p.productId = pb.productId
             LEFT JOIN brand AS b ON pb.brandId = b.brandId
             LEFT JOIN product_category AS pc ON pc.productId = p.productId
             LEFT JOIN category AS c ON c.categoryId = pc.categoryId
             LEFT JOIN product_image AS pimage ON pimage.productId = p.productId
             {$join_query}
-            WHERE {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
+            WHERE co.countryCode='".$this->_currentUserCountryCode."' AND {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
         $rs = $this->db->query($sql)->result();//echo $this->db->last_query();print_r($rs);
         $products = array();
         $brands = array();
@@ -428,17 +431,20 @@ WHERE c.categoryId =".$categoryId;
             endforeach;
             $where_str = $where_str.' AND ('.$q_string.') ';
         endif;
-
+        
+        
         $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `c`.`categoryName`,
             `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage`
             FROM `product` AS p
+            JOIN product_seller AS ps ON(p.productId=ps.productId) JOIN user AS u ON(ps.userId=u.userId)
+            JOIN billing_address AS ba ON(u.userId=ba.userId) JOIN country AS co ON(ba.countryId=co.countryId)
             LEFT JOIN product_brand AS pb ON p.productId = pb.productId
             LEFT JOIN brand AS b ON pb.brandId = b.brandId
             LEFT JOIN product_category AS pc ON pc.productId = p.productId
             LEFT JOIN category AS c ON c.categoryId = pc.categoryId
             LEFT JOIN product_image AS pimage ON pimage.productId = p.productId
             {$join_query}
-            WHERE {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
+            WHERE co.countryCode='".$this->_currentUserCountryCode."' AND {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
         $rs = $this->db->query($sql)->result();//echo $this->db->last_query();print_r($rs);
         $products = array();
         $brands = array();
@@ -606,13 +612,15 @@ WHERE c.categoryId =".$categoryId;
         $join_query .= " LEFT JOIN product_tag AS ptag ON ptag.productId = p.productId ";
         $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `b`.`brandId` AS `bid`, `c`.`categoryName`, `c`.`categoryId` AS `cid`, `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage`
             FROM `product` AS p
+            JOIN product_seller AS ps ON(p.productId=ps.productId) JOIN user AS u ON(ps.userId=u.userId)
+            JOIN billing_address AS ba ON(u.userId=ba.userId) JOIN country AS co ON(ba.countryId=co.countryId)
             LEFT JOIN product_brand AS pb ON p.productId = pb.productId
             LEFT JOIN brand AS b ON pb.brandId = b.brandId
             LEFT JOIN product_category AS pc ON pc.productId = p.productId
             LEFT JOIN category AS c ON c.categoryId = pc.categoryId
             LEFT JOIN product_image AS pimage ON pimage.productId = p.productId
             {$join_query}
-            WHERE {$where_str} {$group_by} {$order_by} {$order_sort} ";
+            WHERE co.countryCode='".$this->_currentUserCountryCode."' AND {$where_str} {$group_by} {$order_by} {$order_sort} ";
         $rs = $this->db->query($sql)->result(); //echo $this->db->last_query();print_r($rs);
 
         if($rs):
@@ -786,13 +794,15 @@ WHERE c.categoryId =".$categoryId;
         $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `c`.`categoryName`,
             `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage`
             FROM `product` AS p
+            JOIN product_seller AS ps ON(p.productId=ps.productId) JOIN user AS u ON(ps.userId=u.userId)
+            JOIN billing_address AS ba ON(u.userId=ba.userId) JOIN country AS co ON(ba.countryId=co.countryId)
             LEFT JOIN product_brand AS pb ON p.productId = pb.productId
             LEFT JOIN brand AS b ON pb.brandId = b.brandId
             LEFT JOIN product_category AS pc ON pc.productId = p.productId
             LEFT JOIN category AS c ON c.categoryId = pc.categoryId
             LEFT JOIN product_image AS pimage ON pimage.productId = p.productId
             {$join_query}
-            WHERE {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
+            WHERE co.countryCode='".$this->_currentUserCountryCode."' AND {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
         $rs = $this->db->query($sql)->result();//echo $this->db->last_query();//print_r($rs);
         $products = array();
         $brands = array();
