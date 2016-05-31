@@ -288,6 +288,7 @@ endif;?>
                                     <div class="clearfix"></div>
 
                                     <h3 class="log-title">Select Payment Option</h3>
+                                    <form name="group_order_payment_option" id="group_order_payment_option" method="post" action="<?php echo BASE_URL.'shopping/ajax-process-group-payment';?>">
                                     <div class="small-font-text form-group">
                                         <form name="group_order_payment_option" id="group_order_payment_option" method="post" action="<?php echo BASE_URL.'shopping/ajax_process_group_payment/';?>">
                                             <?php foreach($paymentGatewayData AS $k):?> 
@@ -300,27 +301,27 @@ endif;?>
                                             
                                             <!--<div class="input-group order-labl form-group">
                                                 <span class="input-group-addon">
-                                                  <input type="radio" name="paymentOption" value="razorpay">
+                                                  <input type="radio" name="paymentoption" value="razorpay">
                                                 </span>
                                                 <label for="sin">Razorpay</label>
                                             </div><!-- /input-group -->
                                             <?php endforeach;?>
                                             <div class="input-group order-labl form-group">
                                                 <span class="input-group-addon">
-                                                  <input type="radio" name="paymentOption" value="sod" checked>
+                                                  <input type="radio" name="paymentoption" value="sod" checked>
                                                 </span>
                                                 <label for="sin">Settlement on Delivery</label>
                                             </div><!-- /input-group -->
                                             <input type="hidden" name="orderId" value="<?=$order->orderId?>"/>
-                                        </form>
+
                                     </div>
 
 
                                     <div class="cart-container-table">
-                                        <a href="javascript://" class="btn btn-info btn-block js-order-payment" data-orderid="<?=$order->orderId?>" data-cartid="<?=$order->orderId?>">Pay Now <i class="fa fa-angle-right"></i></a>
+                                        <button type="submit" class="btn btn-info btn-block">Pay Now <i class="fa fa-angle-right"></i></button>
                                     </div>
 
-
+                                    </form>
 
                                 </div>
                             </div>
