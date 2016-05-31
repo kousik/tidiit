@@ -258,6 +258,11 @@ class Shopping extends MY_Controller{
         $cartId = $orderId;
         $paymentOption = $this->input->post('paymentOption',TRUE);
         
+        if($paymentOption==""){
+            $this->session->set_flashdata("message","Invalid payment option selected!");
+            redirect(BASE_URL.'shopping/my-cart');
+        }
+        
         $pevorder = $this->Order_model->get_single_order_by_id($orderId);
         $a = $this->_get_available_order_quantity($orderId);
 
