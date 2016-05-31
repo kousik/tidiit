@@ -290,20 +290,21 @@ endif;?>
                                     <h3 class="log-title">Select Payment Option</h3>
                                     <div class="small-font-text form-group">
                                         <form name="group_order_payment_option" id="group_order_payment_option" method="post" action="<?php echo BASE_URL.'shopping/ajax_process_group_payment/';?>">
+                                            <?php foreach($paymentGatewayData AS $k):?> 
                                             <div class="input-group form-group order-labl">
                                                 <span class="input-group-addon">
-                                                    <input type="radio" name="paymentOption" value="mpesa">
+                                                    <input type="radio" name="paymentoption" value="<?php echo $k->gatewayCode;?>">
                                                 </span>
-                                                <label for="grp">mPesa</label>
+                                                <label for="<?php echo $k->gatewayCode;?>"><?php echo $k->gatewayTitle;?></label>
                                             </div><!-- /input-group -->
                                             
-                                            <div class="input-group order-labl form-group">
+                                            <!--<div class="input-group order-labl form-group">
                                                 <span class="input-group-addon">
                                                   <input type="radio" name="paymentOption" value="razorpay">
                                                 </span>
                                                 <label for="sin">Razorpay</label>
                                             </div><!-- /input-group -->
-
+                                            <?php endforeach;?>
                                             <div class="input-group order-labl form-group">
                                                 <span class="input-group-addon">
                                                   <input type="radio" name="paymentOption" value="sod" checked>
