@@ -1,4 +1,4 @@
-<?php echo $html_heading; echo $header;?>
+<?php echo $html_heading; echo $header; $currencySymbol=($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=="IN") ? '<i class="fa fa-rupee"></i>' :'KSh';?>
         <div class="categrs_bannr">
             <div class="row">
                 <div class="col-md-3 padng_right_none">
@@ -132,14 +132,14 @@
                                     <?php endif;?>
                                 </a>
                                 <p><?php echo $k->title;?></p>
-                                <ul class="star">
+                                <!--<ul class="star">
                                     <li><i class="fa fa-star"></i></li>
                                     <li><i class="fa fa-star"></i></li>
                                     <li><i class="fa fa-star-o"></i></li>
                                     <li><i class="fa fa-star-o"></i></li>
                                     <li><i class="fa fa-star-o"></i></li>
-                                </ul>
-                                <p><?php echo $k->lowestPrice.' - '.$k->heighestPrice;?></p>
+                                </ul> -->
+                                <p><?php echo $currencySymbol.' '.$k->lowestPrice.' - '.$k->heighestPrice;?></p>
                                 <?php /*<p><a href="<?php echo BASE_URL.str_replace('+','-',urlencode(my_seo_freindly_url($k->title))).'+'. base64_encode($k->productId);?>">View Details &nbsp;<i class="fa fa-caret-right"></i></a></p> */?>
                                 <p>
                                     <?php if($k->qty<$k->minQty):?>
@@ -179,14 +179,14 @@
                                     <?php endif;?>
                                 </a>
                                 <p><?php echo $k->title;?></p>
-                                <ul class="star">
+                                <!--<ul class="star">
                                     <li><i class="fa fa-star"></i></li>
                                     <li><i class="fa fa-star"></i></li>
                                     <li><i class="fa fa-star"></i></li>
                                     <li><i class="fa fa-star"></i></li>
                                     <li><i class="fa fa-star-o"></i></li>
-                                </ul>
-                                <p><?php echo $k->lowestPrice.' - '.$k->heighestPrice;?></p>
+                                </ul>-->
+                                <p><?php echo $currencySymbol.' '.$k->lowestPrice.' - '.$k->heighestPrice;?></p>
                                 <p>
                                     <?php if($k->qty<$k->minQty):?>
                                     <a href="javascript:void(0);">View Details &nbsp;<i class="fa fa-caret-right"></i></a>
@@ -225,14 +225,14 @@
                                     <?php endif;?>
                                 </a>
                                 <p><?php echo $k->title;?></p>
-                                <ul class="star">
+                                <!--<ul class="star">
                                     <li><i class="fa fa-star"></i></li>
                                     <li><i class="fa fa-star"></i></li>
                                     <li><i class="fa fa-star"></i></li>
                                     <li><i class="fa fa-star"></i></li>
                                     <li><i class="fa fa-star-o"></i></li>
-                                </ul>
-                                <p><?php echo $k->lowestPrice.' - '.$k->heighestPrice;?></p>
+                                </ul>-->
+                                <p><?php echo $currencySymbol.' '.$k->lowestPrice.' - '.$k->heighestPrice;?></p>
                                 <p>
                                     <?php if($k->qty<$k->minQty):?>
                                     <a href="javascript:void(0);">View Details &nbsp;<i class="fa fa-caret-right"></i></a>

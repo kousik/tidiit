@@ -2,6 +2,7 @@
 $CI =& get_instance();
 $CI->load->model('Product_model');
 $CI->load->model('Order_model');
+$currencySymbol=($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=="IN") ? '<i class="fa fa-rupee"></i>' :'KSh';
 ?>
 </div>
 </header>
@@ -51,7 +52,7 @@ $CI->load->model('Order_model');
                                                     <td>
                                                         <a href="<?php echo BASE_URL.'product/details/'.base64_encode($order->productId);?>" class="" target="_blank"><img src="<?=PRODUCT_DEAILS_SMALL.$pimage?>" alt="..." class="img-thumbnail img-responsive"/></a>
                                                         <p class="text-center"><a href="<?php echo BASE_URL.'product/details/'.base64_encode($order->productId);?>" class="" target="_blank"><?=$ptitle;?></a></p></td>
-                                                    <td><b><i class="fa fa-rupee"></i> <?=$order->orderAmount;?></b></td>
+                                                    <td><b><?php echo $currencySymbol;?> <?=$order->orderAmount;?></b></td>
                                                     <td><i class="fa fa-clock-o"></i><?=date('F j, Y, g:i a' , strtotime($order->orderDate));?></td>
                                                     <td><span class="label label-info"><?php echo ($order->orderType=='GROUP') ? 'Buying Club' :'Single';?> - <?=$status[$order->status];?></span></td>
                                                     <td align="right">

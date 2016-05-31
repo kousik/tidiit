@@ -3,6 +3,7 @@ $CI =& get_instance();
 $CI->load->model('Product_model');
 $CI->load->model('Order_model');
 $orderinfo = unserialize(base64_decode($order->orderInfo));
+$currencySymbol=($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=="IN") ? '<i class="fa fa-rupee"></i>' :'KSh';
 ?>
 <script src="<?php echo SiteJSURL;?>user-all-my-js.js" type="text/javascript"></script>
 </div>
@@ -51,7 +52,7 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));
                                                     <tr>
                                                         <td>Order #TIDIIT-OD-<?=$order->orderId?></td>
                                                         <td><?=$order->orderType=='GROUP'?'Buying Club':'Self'?></td>
-                                                        <td><i class="fa fa-rupee"></i><?=$order->subTotalAmount?></td>
+                                                        <td><?php echo $currencySymbol;?><?=$order->subTotalAmount?></td>
                                                         <td><?php echo ($order->paymentType=='settlementOnDelivery')?'Settlement On Delivery':'Paid';?></td>
                                                         <td><?php echo ($order->paymentType=='settlementOnDelivery')?'<span style="color: #009900;">No</span>':'<span style="color: #009900;">Yes</span>';?></td>
                                                         <td><span class="label label-info"><?=$status[$order->status];?></span> (<?=$order->orderDate;?>)</td>
@@ -126,39 +127,39 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));
                                                           <a class="btn btn-info btn-xs pull-left no-print" data-oid="<?=base64_encode($order->orderId*226201);?>"><i class="fa fa-thumbs-up"></i> Review Product</a></td>
                                                             <td><?=isset($orderinfo['pdetail']->model)?$orderinfo['pdetail']->model:''?></td>
                                                             <td><?=isset($orderinfo['pdetail']->brandTitle)?$orderinfo['pdetail']->brandTitle:''?></td>
-                                                            <td><i class="fa fa-rupee"></i><?=isset($order->orderAmount)?$order->orderAmount/$order->productQty:'0.00'?></td>
+                                                            <td><?php echo $currencySymbol;?><?=isset($order->orderAmount)?$order->orderAmount/$order->productQty:'0.00'?></td>
                                                             <td><?=isset($order->productQty)?$order->productQty:'0'?></td>
-                                                            <td><i class="fa fa-rupee"></i><?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></td>
+                                                            <td><?php echo $currencySymbol;?><?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></td>
                                                         </tr>
                                                         <tr> 
                                                             <td colspan="5"></td>
                                                             <td>Order Sub Total</td>
-                                                            <td><i class="fa fa-rupee"></i><?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></td>
+                                                            <td><?php echo $currencySymbol;?><?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></td>
                                                         </tr>
                                                         <tr> 
                                                             <td colspan="5"></td>
                                                             <td>Order Discount</td>
-                                                            <td><i class="fa fa-rupee"></i><?=isset($order->discountAmount)?$order->discountAmount:''?></td>
+                                                            <td><?php echo $currencySymbol;?><?=isset($order->discountAmount)?$order->discountAmount:''?></td>
                                                         </tr>
                                                         <tr> 
                                                             <td colspan="5"></td>
                                                             <td>Shipping ()</td>
-                                                            <td><i class="fa fa-rupee"></i><?=isset($order->shippingamount)?$order->shippingamount:'0.00'?></td>
+                                                            <td><?php echo $currencySymbol;?><?=isset($order->shippingamount)?$order->shippingamount:'0.00'?></td>
                                                         </tr>
                                                         <tr> 
                                                             <td colspan="5"></td>
                                                             <td>Tax</td>
-                                                            <td><i class="fa fa-rupee"></i><?=isset($order->taxAmount)?$order->taxAmount:'0.00'?></td>
+                                                            <td><?php echo $currencySymbol;?><?=isset($order->taxAmount)?$order->taxAmount:'0.00'?></td>
                                                         </tr>
                                                         <tr> 
                                                             <td colspan="5"></td>
                                                             <td>Order Total</td>
-                                                            <td><i class="fa fa-rupee"></i><?=isset($order->orderAmount)?$order->orderAmount:''?></td>
+                                                            <td><?php echo $currencySymbol;?><?=isset($order->orderAmount)?$order->orderAmount:''?></td>
                                                         </tr>
                                                         <tr> 
                                                             <td colspan="5"></td>
                                                             <td>Paid</td>
-                                                            <td><i class="fa fa-rupee"></i><?=isset($order->orderAmount)?$order->orderAmount:''?></td>
+                                                            <td><?php echo $currencySymbol;?><?=isset($order->orderAmount)?$order->orderAmount:''?></td>
                                                         </tr>
                                                     </table>  
                                                     

@@ -7,7 +7,8 @@
  */
 
 echo $html_heading; echo $header;
-$orderinfo = unserialize(base64_decode($order->orderInfo));?>
+$orderinfo = unserialize(base64_decode($order->orderInfo));
+$currencySymbol=($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=="IN") ? '<i class="fa fa-rupee"></i>' :'KSh';?>
 <script src="<?php echo SiteJSURL;?>user-all-my-js.js" type="text/javascript"></script>
 </div>
 </header>
@@ -50,7 +51,7 @@ $orderinfo = unserialize(base64_decode($order->orderInfo));?>
                                                                 <div class="col-md-10">
                                                                     <h3><a href="<?php echo BASE_URL.'product/details/'.base64_encode($order->productId);?>" class="" target="_blank"><?=isset($orderinfo['pdetail']->title)?$orderinfo['pdetail']->title:''?></a></h3>
                                                                     <h5>Qty: <small><?=isset($order->productQty)?$order->productQty:'0'?></small></h5>
-                                                                    <h5>Subtotal: <small><i class="fa fa-rupee"></i> <?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></small></h5>
+                                                                    <h5>Subtotal: <small><?php echo $currencySymbol;?> <?=isset($order->subTotalAmount)?$order->subTotalAmount:''?></small></h5>
                                                                 </div>
                                                             </div>
                                                         </div>

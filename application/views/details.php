@@ -1,4 +1,4 @@
-<?php echo $html_heading; echo $header;
+<?php echo $html_heading; echo $header; $currencySymbol=($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=="IN") ? '<i class="fa fa-rupee"></i>' :'KSh';
 //$productPageTypeArr=$this->config->item('productPageTypeArr');
 $mobileBoxContents=$this->config->item('mobileBoxContents');
 $mobileColor=$this->config->item('mobileColor');
@@ -255,7 +255,7 @@ jQuery(document).ready(function(){
             <div class="row pdp-e-i-MRP  ">            	
                 <div class="col-xs-3  pdp-e-i-MRP-l"><input type="radio" name="selectPackege" value="<?php echo $k->productPriceId;?>" > Packege of <?php echo $k->qty;?> </div>
                 <!--<div class="col-xs-3  pdp-e-i-MRP-r reset-padding"><span class="rsDiv">Rs</span>&nbsp;<s><span>12,290</span></s> [<span class="pdp-e-i-MRP-r-dis">27</span>% OFF]</div> -->
-                <div class="col-xs-3  pdp-e-i-PAY-r reset-padding"><span>Rs&nbsp;<span itemprop="price" class="payBlkBig"><?php echo $k->price;?></span></span></div>            
+                <div class="col-xs-3  pdp-e-i-PAY-r reset-padding"><span><?php echo $currencySymbol;?>&nbsp;<span itemprop="price" class="payBlkBig"><?php echo $k->price;?></span></span></div>            
             </div>
              <?php }?>
             
@@ -267,7 +267,7 @@ jQuery(document).ready(function(){
               </div>
             </div>
           </div>
-          <div class="col-md-1 product_right reset-padding">
+          <?php /*<div class="col-md-1 product_right reset-padding">
             <h4>Trending<br />
               Now</h4>
               
@@ -315,7 +315,7 @@ jQuery(document).ready(function(){
               </marquee>
               
           </div>
-          <!-- New --> 
+          <!-- New --> */?>
         </div>
       </div>
     </div>

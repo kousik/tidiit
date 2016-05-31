@@ -1,3 +1,4 @@
+<?php $currencySymbol=($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=="IN") ? '<i class="fa fa-rupee"></i>' :'KSh'; ?>
 <div class="modal fade shoppingcart-popup" id="shoppingcart" tabindex="-1" role="dialog"
      aria-labelledby="myLargeModalLabel">
     <div class="modal-dialog modal-lg">
@@ -69,13 +70,12 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td data-th="Price"><i class="fa fa-rupee"></i> <?php echo $k['subTotalAmount'] / $k['qty'];?></td>
+                                    <td data-th="Price"><?php echo $currencySymbol;?> <?php echo $k['subTotalAmount'] / $k['qty'];?></td>
 
                                     <td data-th="Quantity">
                                         <?=$k['qty'] ?>
                                     </td>
-                                    <td data-th="Subtotal" class="text-right"><i
-                                            class="fa fa-rupee"></i> <?= number_format($k['subTotalAmount']) ?></td>
+                                    <td data-th="Subtotal" class="text-right"><?php echo $currencySymbol;?> <?= number_format($k['subTotalAmount']) ?></td>
                                     <td class="actions" data-th="" align="right">
                                         <button class="btn btn-danger btn-sm js-single-cart-remove"
                                                 data-cartid="<?= $k['orderId'] ?>"><i class="fa fa-trash-o"></i>
@@ -92,22 +92,19 @@
                         <tfoot>
                         <tr>
                             <td colspan="3" class="hidden-xs"></td>
-                            <td class="hidden-xs text-right"><strong>Sub Total <i
-                                        class="fa fa-rupee"></i> <?= number_format($subtotal) ?>.00</strong></td>
+                            <td class="hidden-xs text-right"><strong>Sub Total <?php echo $currencySymbol;?> <?= number_format($subtotal) ?>.00</strong></td>
                             <td class="hidden-xs">&nbsp;</td>
                         </tr>
                         <tr>
                             <td colspan="3" class="hidden-xs"></td>
-                            <td class="hidden-xs text-right"><strong>Tax <i
-                                        class="fa fa-rupee"></i> <?= number_format($tax) ?>.00</strong></td>
+                            <td class="hidden-xs text-right"><strong>Tax <?php echo $currencySymbol;?> <?= number_format($tax) ?>.00</strong></td>
                             <td class="hidden-xs">&nbsp;</td>
                         </tr>
                         <tr>
                             <td><a href="<?= BASE_URL; ?>" class="btn btn-warning"><i class="fa fa-angle-left"></i>
                                     Continue Shopping</a></td>
                             <td colspan="2" class="hidden-xs"></td>
-                            <td class="hidden-xs text-right"><strong>Total <i
-                                        class="fa fa-rupee"></i> <?= number_format($subtotal + $tax) ?>.00</strong></td>
+                            <td class="hidden-xs text-right"><strong>Total <?php echo $currencySymbol;?> <?= number_format($subtotal + $tax) ?>.00</strong></td>
                             <td>
                                 <?php if ($subtotal > 1): ?><a href="<?= BASE_URL; ?>shopping/single-checkout/"
                                                                class="btn btn-success btn-block">Checkout <i
@@ -150,14 +147,12 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td data-th="Price"><i
-                                            class="fa fa-rupee"></i> <?= $k['subTotalAmount'] / $k['qty'] ?></td>
+                                    <td data-th="Price"><?php echo $currencySymbol;?> <?= $k['subTotalAmount'] / $k['qty'] ?></td>
 
                                     <td data-th="Quantity">
                                         <?= $k['qty'] ?>
                                     </td>
-                                    <td data-th="Subtotal" class="text-center"><i
-                                            class="fa fa-rupee"></i> <?= number_format($k['subTotalAmount']) ?></td>
+                                    <td data-th="Subtotal" class="text-center"><?php echo $currencySymbol;?> <?= number_format($k['subTotalAmount']) ?></td>
                                     <td class="actions" data-th="" align="right">
                                         <button class="btn btn-danger btn-sm js-group-cart-remove"
                                                 data-cartid="<?= $k['orderId'] ?>" data-orderid="<?= $k['orderId'] ?>">
@@ -176,16 +171,14 @@
                         <tfoot>
                         <tr>
                             <td colspan="3" class="hidden-xs"></td>
-                            <td class="hidden-xs text-right"><strong>Tax <i
-                                        class="fa fa-rupee"></i> <?= number_format($tax) ?>.00</strong></td>
+                            <td class="hidden-xs text-right"><strong>Tax <?php echo $currencySymbol;?> <?= number_format($tax) ?>.00</strong></td>
                             <td class="hidden-xs">&nbsp;</td>
                         </tr>
                         <tr>
                             <td><a href="<?= BASE_URL; ?>" class="btn btn-warning"><i class="fa fa-angle-left"></i>
                                     Continue Shopping</a></td>
                             <td colspan="2" class="hidden-xs"></td>
-                            <td class="text-right"><strong>Total <i
-                                        class="fa fa-rupee"></i> <?= number_format($subtotal + $tax) ?>
+                            <td class="text-right"><strong>Total <?php echo $currencySymbol;?> <?= number_format($subtotal + $tax) ?>
                                     .00</strong></td>
                             <td class="hidden-xs">&nbsp;</td>
                         </tr>

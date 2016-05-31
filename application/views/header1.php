@@ -1,3 +1,4 @@
+<?php $currencySymbol=($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=="IN") ? '<i class="fa fa-rupee"></i>' :'KSh';?>
 <script type="text/javascript">
     $(document).ready(function(){
         var webId=myJsMain.commonFunction.js_dynamic_text(8);
@@ -80,7 +81,7 @@
                                             <span><i class="fa fa-truck"></i></span>
                                         </div>
                                         <div class="content">
-                                            <h3 class="js-cart-auto-update"><span>`</span>0.00 - 0 item</h3>
+                                            <h3 class="js-cart-auto-update"><?php echo $currencySymbol;?>0.00 - 0 item</h3>
                                             <p>YOUR TRUCK</p>
                                         </div>
                                     </div>

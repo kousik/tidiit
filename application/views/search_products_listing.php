@@ -1,5 +1,5 @@
 <?php echo $html_heading;
-echo $header; ?>
+echo $header; $currencySymbol=($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=="IN") ? '<i class="fa fa-rupee"></i>' :'KSh';?>
     </div>
     <!-- bin/jquery.slider.min.css -->
     <link rel="stylesheet" href="<?php echo SiteCSSURL; ?>jquery.slider.min.css" type="text/css">
@@ -200,14 +200,14 @@ echo $header; ?>
                                                         </a>
 
                                                         <p><?= $pro->title; ?></p>
-                                                        <ul class="star">
+                                                        <!--<ul class="star">
                                                             <li><i class="fa fa-star"></i></li>
                                                             <li><i class="fa fa-star"></i></li>
                                                             <li><i class="fa fa-star"></i></li>
                                                             <li><i class="fa fa-star"></i></li>
                                                             <li><i class="fa fa-star-o"></i></li>
-                                                        </ul>
-                                                        <p><?= $pro->lowestPrice . ' - ' . $pro->heighestPrice; ?></p>
+                                                        </ul>-->
+                                                        <p><?php echo $currencySymbol.' '.$pro->lowestPrice . ' - ' . $pro->heighestPrice; ?></p>
 
                                                         <p>
                                                             <?php if ($pro->qty < $pro->minQty): ?>

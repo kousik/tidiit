@@ -12,6 +12,7 @@ echo $html_heading; echo $header;
 //$cart = $this->cart->contents();
 //pre($cart);
 //echo key($cart);die;
+$currencySymbol=($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=="IN") ? '<i class="fa fa-rupee"></i>' :'KSh';
 ?>
 <script src="<?php echo SiteJSURL;?>user-all-my-js.js" type="text/javascript"></script>
 </div>
@@ -238,10 +239,10 @@ echo $html_heading; echo $header;
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td data-th="Price"><i class="fa fa-rupee"></i> <?= $k['subTotalAmount']/$k['qty'] ?></td>
+                                                        <td data-th="Price"><?php echo $currencySymbol;?> <?= $k['subTotalAmount']/$k['qty'] ?></td>
 
                                                         <td data-th="Quantity"><?= $k['qty'] ?></td>
-                                                        <td data-th="Subtotal" class="text-center"><i class="fa fa-rupee"></i> <?= number_format($k['subTotalAmount']) ?>.00</td>
+                                                        <td data-th="Subtotal" class="text-center"><?php echo $currencySymbol;?> <?= number_format($k['subTotalAmount']) ?>.00</td>
                                                         <td class="actions" data-th="" align="right">
 
                                                             <button class="btn btn-danger btn-sm js-single-cart-remove" data-cartid="<?=$k['orderId']?>"><i class="fa fa-trash-o"></i></button>								
@@ -269,7 +270,7 @@ echo $html_heading; echo $header;
                                             <tfoot>
                                                 <tr class="js-show-disc" <?php if($disc==""):?>style="display: none;"<?php endif;?>>
                                                     <td colspan="3"  class="text-right"><strong>Discount :  -</strong></td>
-                                                    <td class="text-right  js-show-disc-amt"><strong><i class="fa fa-rupee"></i> 
+                                                    <td class="text-right  js-show-disc-amt"><strong><?php echo $currencySymbol;?> 
                                                         <?php 
                                                         echo  number_format(round($disc,0,PHP_ROUND_HALF_UP),2);
                                                         ?>
@@ -278,12 +279,12 @@ echo $html_heading; echo $header;
                                                 </tr>
                                                 <tr>
                                                     <td colspan="3" class="text-right"><strong>Tax : -</strong></td>
-                                                    <td class="hidden-xs text-right js-tax-total"><strong><i class="fa fa-rupee"></i> <?= number_format(round($tax,0,PHP_ROUND_HALF_UP),2)?></strong></td>
+                                                    <td class="hidden-xs text-right js-tax-total"><strong><?php echo $currencySymbol;?> <?= number_format(round($tax,0,PHP_ROUND_HALF_UP),2)?></strong></td>
                                                     <td></td>
                                                 </tr>
                                                 <tr>
                                                     <td colspan="3" class="text-right"><strong>Total : -</strong></td>
-                                                    <td class="hidden-xs text-right js-sub-total"><strong> <i class="fa fa-rupee"></i> <?=number_format(round(($total-$disc)+$tax,0,PHP_ROUND_HALF_UP),2)?></strong></td>
+                                                    <td class="hidden-xs text-right js-sub-total"><strong> <?php echo $currencySymbol;?> <?=number_format(round(($total-$disc)+$tax,0,PHP_ROUND_HALF_UP),2)?></strong></td>
                                                     <td colspan="2"><a href="javascript://" class="btn btn-success btn-block js-proceed-payment">PROCEED TO PAYMENT <i class="fa fa-angle-right"></i></a></td>
                                                 </tr>
                                             </tfoot>
@@ -464,9 +465,9 @@ echo $html_heading; echo $header;
                     
                     if(data.content){
                         $('tr.js-show-disc').show();
-                        $('td.js-show-disc-amt').html('<strong><i class="fa fa-rupee"></i> '+data.content.couponAmount+'</strong>');
-                        $('.js-tax-total').html('<strong><i class="fa fa-rupee"></i> '+data.content.tax+'</strong>');
-                        $('.js-sub-total').html('<strong><i class="fa fa-rupee"></i> '+data.content.grandTotal+'</strong>');
+                        $('td.js-show-disc-amt').html('<strong><?php echo $currencySymbol;?> '+data.content.couponAmount+'</strong>');
+                        $('.js-tax-total').html('<strong><?php echo $currencySymbol;?> '+data.content.tax+'</strong>');
+                        $('.js-sub-total').html('<strong><?php echo $currencySymbol;?> '+data.content.grandTotal+'</strong>');
                         var htmlCoupon = "<button type=\"button\" class=\"btn btn-info btn-xs remove-coupon-from-order-"+orderId+"\" style=\"width:75px\"><i class=\"fa fa-tags\"></i>"+cpn+"</button><button type=\"button\" class=\"btn btn-danger btn-xs remove-coupon-from-order remove-coupon-from-order-"+orderId+"\" data-id=\""+orderId+"\"><i class=\"fa fa-times-circle\"></i></button>";
                         jQuery('.applyCouponElemtnForRemove'+orderId).html(htmlCoupon);
                         obj.val('');

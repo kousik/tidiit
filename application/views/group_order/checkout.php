@@ -9,6 +9,7 @@
 echo $html_heading; echo $header;
 $CI =& get_instance();
 $CI->load->model('Product_model');
+$currencySymbol=($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=="IN") ? '<i class="fa fa-rupee"></i>' :'KSh';
 ?>
 <script src="<?php echo SiteJSURL;?>user-all-my-js.js" type="text/javascript"></script>
 </div>
@@ -215,7 +216,7 @@ $CI->load->model('Product_model');
                                                             <?php
                                                             $single_price = ($order->subTotalAmount/$order->productQty);
                                                             $price = number_format($single_price, 2, '.', '');?>
-                                                            <td data-th="Price"><i class="fa fa-rupee"></i> <?= $price?></td>
+                                                            <td data-th="Price"><?php echo $currencySymbol;?> <?= $price?></td>
 
                                                             <td data-th="Quantity"><?=$order->productQty?></td>
                                                             <td data-th="Subtotal" class="text-center"><i class="fa fa-rupee"></i> <?= number_format($order->subTotalAmount) ?>.00</td>
@@ -253,7 +254,7 @@ $CI->load->model('Product_model');
                                                 </tr>
                                                 <tr>
                                                     <td colspan="3"  class="text-right">Tax :  </td>
-                                                    <td class="text-center js-show-disc-amt"><i class="fa fa-rupee"></i> <?=$order->taxAmount?></td>
+                                                    <td class="text-center js-show-disc-amt"><?php echo $currencySymbol;?> <?=$order->taxAmount?></td>
                                                     <td></td>
                                                 </tr>
 <?php 
@@ -265,14 +266,14 @@ else:
 endif;?>                                                
                                                 <tr class="js-show-disc" <?php if(!$coupon):?>style="display: none;"<?php endif;?>>
                                                     <td colspan="3"  class="text-right">Discount :  -</td>
-                                                    <td class="text-center js-show-disc-amt"><i class="fa fa-rupee"></i> <?=$disc?></td>
+                                                    <td class="text-center js-show-disc-amt"><?php echo $currencySymbol;?> <?=$disc?></td>
                                                     <td></td>
                                                 </tr>
 
                                                 <tr>
                                                     <td></td>
                                                     <td class="hidden-xs"></td>
-                                                    <td colspan="2" class="hidden-xs text-center js-sub-total"><strong>Total <i class="fa fa-rupee"></i> <?=$total?></strong></td>
+                                                    <td colspan="2" class="hidden-xs text-center js-sub-total"><strong>Total <?php echo $currencySymbol;?> <?=$total?></strong></td>
                                                     <td colspan="2"><a href="javascript://" class="btn btn-success btn-block js-proceed-payment">PROCEED TO PAYMENT <i class="fa fa-angle-right"></i></a></td>
                                                 </tr>
                                             </tfoot>
