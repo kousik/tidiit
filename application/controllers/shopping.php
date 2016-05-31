@@ -257,6 +257,7 @@ class Shopping extends MY_Controller{
         $orderId = $this->input->post('orderId',TRUE);
         $cartId = $orderId;
         $paymentOption = $this->input->post('paymentOption',TRUE);
+        
         $pevorder = $this->Order_model->get_single_order_by_id($orderId);
         $a = $this->_get_available_order_quantity($orderId);
 
@@ -300,7 +301,7 @@ class Shopping extends MY_Controller{
             if($order->groupId):
                 $orderinfo['group'] = $group;
             endif;
-            
+            //echo '$paymentOption : '.$paymentOption;
             $info['orderInfo'] = base64_encode(serialize($orderinfo));
             $this->Order_model->update($info, $orderId);
             $allOrderArray=array();
@@ -1803,6 +1804,7 @@ class Shopping extends MY_Controller{
             $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'group'));
             $this->_remove_cart($PaymentDataArr['cartId']);
             unset($_SESSION['PaymentData']);
+            unset($_SESSION['TempPaymentData']);
             redirect(BASE_URL.'shopping/success/');
         else:
             $this->session->set_flashdata("message","Some error happen, please try again later!");
@@ -1947,6 +1949,7 @@ class Shopping extends MY_Controller{
             $this->_remove_cart($PaymentDataArr['cartId']);
             $this->session->unset_userdata('razorpayPaymentId');
             unset($_SESSION['PaymentData']);
+            unset($_SESSION['TempPaymentData']);
             redirect(BASE_URL.'shopping/success/');
         else:
             $this->session->set_flashdata("message","Some error happen, please try again later!");
@@ -2013,6 +2016,7 @@ class Shopping extends MY_Controller{
         endforeach;
         $this->session->unset_userdata('razorpayPaymentId');
         unset($_SESSION['PaymentData']);
+        unset($_SESSION['TempPaymentData']);
         redirect(BASE_URL.'shopping/success/');
     }
 
@@ -2456,6 +2460,7 @@ class Shopping extends MY_Controller{
         $this->_sent_order_complete_mail_sod_final_payment1($this->Order_model->get_single_order_by_id($orderId));
         $this->session->unset_userdata('razorpayPaymentId');
         unset($_SESSION['PaymentData']);
+        unset($_SESSION['TempPaymentData']);
         $this->session->set_flashdata('message','Thanks for the payment before order is Out for delivery');
         redirect(BASE_URL.'my-orders/');
     }
@@ -2566,6 +2571,7 @@ class Shopping extends MY_Controller{
         $mailBody="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
         $this->_global_tidiit_mail($PaymentDataArr['logisticsData']['deliveryStaffEmail'],'Tidiit payment submited  for Order '.$tidiitStr,$mailBody,'',$recv_name);
         unset($_SESSION['PaymentData']);
+        unset($_SESSION['TempPaymentData']);
         $this->session->set_flashdata('message','Thanks for the payment before order is Out for delivery');
         redirect(BASE_URL.'my-orders/');
     }
