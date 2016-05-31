@@ -98,7 +98,7 @@ class MY_location_track
             //$this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR',trim($cLocationvar));
             
             //$this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR',$insights['country_code']);
-            $url = 'http://ip-api.com/json';
+            $url = 'http://ip-api.com/json/'.$cIP;
             $json = json_decode(@file_get_contents($url));
             if(!$json){
                 $this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR','IN');
