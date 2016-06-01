@@ -20,7 +20,7 @@ class Category extends REST_Controller {
     function show_category_post(){
         $categoryId=  $this->post('categoryId');
         
-        /*$latitude=  $this->post('latitude');
+        $latitude=  $this->post('latitude');
         $longitude=  $this->post('longitude');
         $deviceType=$this->post('deviceType');
         $UDID=$this->post('UDID');
@@ -31,7 +31,7 @@ class Category extends REST_Controller {
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
-        }*/
+        }
         
         $result=array();
         $range = array(0,100000);
@@ -67,7 +67,7 @@ class Category extends REST_Controller {
         endif;
         $result['is_last'] = $is_last;
         $result['s_widget_cats'] = $result['widget_cats'];
-        
+        $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
         success_response_after_post_get($result);
     }
     
@@ -77,7 +77,7 @@ class Category extends REST_Controller {
         $cond=[];
         $categoryId=$this->post('categoryId');
         
-        /*$latitude=  $this->post('latitude');
+        $latitude=  $this->post('latitude');
         $longitude=  $this->post('longitude');
         $deviceType=$this->post('deviceType');
         $UDID=$this->post('UDID');
@@ -88,7 +88,7 @@ class Category extends REST_Controller {
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
-        }*/
+        }
         
         //$filterOptions="brand=Samsung|Micromax|Intex&query=12@Handset|12@Warranty Card|12@User Manual|14@1|14@3|15@Gray|15@Black|21@Android|24@8 MP&sort=popular&range=31800|100000";
         $filterOptions=$this->post('filterOptions');
@@ -138,7 +138,7 @@ class Category extends REST_Controller {
         endif;
         $result['is_last'] = $is_last;
         $result['s_widget_cats'] = $result['widget_cats'];
-        
+        $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
         success_response_after_post_get($result);
     }
     
@@ -270,7 +270,7 @@ class Category extends REST_Controller {
         $searchTextTypeId=$this->post('searchTextTypeId');
         $userId=$this->post('userId');
         
-        /*$latitude=  $this->post('latitude');
+        $latitude=  $this->post('latitude');
         $longitude=  $this->post('longitude');
         $deviceType=$this->post('deviceType');
         $UDID=$this->post('UDID');
@@ -281,7 +281,7 @@ class Category extends REST_Controller {
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
-        }*/
+        }
         
         if($searchText==""):
             $this->response(array('error' => 'Invalid search keyword. Please try again with proper text!'), 400); return FALSE;
@@ -391,10 +391,9 @@ class Category extends REST_Controller {
             echo json_encode($data);die;
         endif;*/
         $data['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
-        
+        $data['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
         success_response_after_post_get($data);
     }
-    
  
     function get_product_by_brand_post(){
         $brandId=$this->post('brandId');
@@ -450,10 +449,9 @@ class Category extends REST_Controller {
         $range = array(0,100000);
         $data['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
         $data['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
-        
+        $data['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
         success_response_after_post_get($data);
     }
-    
     
     function new_products_list_post(){
         $userId=$this->post('userId');
@@ -491,7 +489,7 @@ class Category extends REST_Controller {
         $range = array(0,100000);
         $data['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
         $data['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
-        
+        $data['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
         success_response_after_post_get($data);
     }
     
@@ -531,7 +529,7 @@ class Category extends REST_Controller {
         $range = array(0,100000);
         $data['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
         $data['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
-        
+        $data['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
         success_response_after_post_get($data);
     }
     
@@ -571,10 +569,9 @@ class Category extends REST_Controller {
         $range = array(0,100000);
         $data['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
         $data['master_sort'] =array('popular'=>'Popularity','lowestPrice'=>'Lowest Price','highestPrice'=>'Highest Price','new'=>'isNew');
-        
+        $data['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
         success_response_after_post_get($data);
     }
-    
     
     function show_all_brands_post(){
         $userId=$this->post('userId');
@@ -595,7 +592,6 @@ class Category extends REST_Controller {
         $data['brands'] = $brands;
         success_response_after_post_get($data);
     }
-    
     
     function check_default_data($dataArr){
         $validateArr=array('type'=>'success');

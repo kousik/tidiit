@@ -18,7 +18,7 @@ class Product extends REST_Controller {
         $userId=$this->get('userId');
         $this->config->load('product');
         
-        /*$latitude=  $this->post('latitude');
+        $latitude=  $this->post('latitude');
         $longitude=  $this->post('longitude');
         $deviceType=$this->post('deviceType');
         $UDID=$this->post('UDID');
@@ -29,7 +29,7 @@ class Product extends REST_Controller {
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
-        }*/
+        }
         
         $productId= $this->get('productId');
         $productDetailsArr=  $this->product->details($productId,TRUE);
@@ -133,6 +133,7 @@ class Product extends REST_Controller {
         }
         $result['options'] = $optionsArr;
         $result['topOptions'] = $topOptionsArr;
+        $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
         //pre($result);die;
         success_response_after_post_get($result);
     }

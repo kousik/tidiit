@@ -377,6 +377,33 @@ if ( ! function_exists('get_counry_code_from_lat_long')):
 endif;
 
 
+if ( ! function_exists('get_currency_simble_from_lat_long')):
+    function get_currency_simble_from_lat_long($lat,$long){
+        //("country", $jsondata["results"][0]["address_components"]);
+        $url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$long&sensor=false";
+        // Make the HTTP request
+        $data = @file_get_contents($url);
+        // Parse the json response
+        $jsondata = json_decode($data,true);
+        //pre($jsondata);die;
+        if(!empty($jsondata["results"])){
+            foreach( $jsondata["results"][0]["address_components"] as $value) {
+                if (in_array('country', $value["types"])) {
+                    if($value["short_name"]=="IN"){
+                        return 'Rs';
+                    }else{
+                        return 'KSh';
+                    }
+                }
+            }
+        }else{
+            return FALSE;
+        }
+        //return $jsondata["results"][0]["formatted_address"];
+    }
+endif;
+
+
 if ( ! function_exists('get_formatted_address_from_lat_long')):
     function get_formatted_address_from_lat_long($lat,$long){
         //("country", $jsondata["results"][0]["address_components"]);

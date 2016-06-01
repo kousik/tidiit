@@ -66,12 +66,12 @@ class Appdata extends REST_Controller {
         }else{
             $this->load->model('Banner_model','banner');
             $this->load->model('Brand_model','brand');
-            /*$defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+            $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
             $isValideDefaultData=  $this->check_default_data($defaultDataArr);
 
             if($isValideDefaultData['type']=='fail'){
                 $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
-            }*/
+            }
             $result = array();
             $slider1=$this->banner->get_home_slider(1,TRUE);
             //$slider2=$this->banner->get_home_slider(2,TRUE);
@@ -87,6 +87,7 @@ class Appdata extends REST_Controller {
             $result['new_arrivals']=$bestSellingData;
             $result['featured_products']=$featuredData;
             $result['brand']=$this->brand->get_all(TRUE);
+            $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
             $userId=$this->get('userId');
             if($userId!=""){
                 $result['total_cart_item']=$this->user->get_total_cart_item($userId);
@@ -94,6 +95,7 @@ class Appdata extends REST_Controller {
                 $result['total_cart_item']=0;
             }
             //$result['site_product_image_url']=$this->config->item('ProductURL');
+            $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
             success_response_after_post_get($result);
         }
     }
@@ -1369,7 +1371,7 @@ class Appdata extends REST_Controller {
     function my_orders_post(){
         $userId=$this->post('userId');
         
-        /*$latitude=  $this->post('latitude');
+        $latitude=  $this->post('latitude');
         $longitude=  $this->post('longitude');
         $deviceType=$this->post('deviceType');
         $UDID=$this->post('UDID');
@@ -1380,7 +1382,7 @@ class Appdata extends REST_Controller {
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
-        }*/
+        }
         
         if($userId==""){
             $this->response(array('error' => 'Invalid user id. Please try again!'), 400); return FALSE;
@@ -1402,6 +1404,7 @@ class Appdata extends REST_Controller {
         //pre($myOrdersArr);die;
         $result['my_orders']=$myOrdersArr;
         $result['order_state_data']=$this->order->get_state(true);
+        $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
         success_response_after_post_get($result);
     }
     
@@ -1537,7 +1540,7 @@ class Appdata extends REST_Controller {
     function my_order_details_post(){
         $orderId=$this->post('orderId');
         
-        /*$latitude=  $this->post('latitude');
+        $latitude=  $this->post('latitude');
         $longitude=  $this->post('longitude');
         $deviceType=$this->post('deviceType');
         $UDID=$this->post('UDID');
@@ -1548,7 +1551,7 @@ class Appdata extends REST_Controller {
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
-        }*/
+        }
         
         $result=array();
         $orderDetails=$this->order->details($orderId,TRUE);
@@ -1568,6 +1571,7 @@ class Appdata extends REST_Controller {
         $result['orderDetails']=  $orderDetails;
         $result['orderInfo']=  $orderInfo;
         $result['order_state_data']=$this->order->get_state(true);
+        $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
         success_response_after_post_get($result);
     }
     
@@ -1575,7 +1579,7 @@ class Appdata extends REST_Controller {
         $orderId=  $this->post('orderId');
         $userId=  $this->post('userId');
         
-        /*$latitude=  $this->post('latitude');
+        $latitude=  $this->post('latitude');
         $longitude=  $this->post('longitude');
         $deviceType=$this->post('deviceType');
         $UDID=$this->post('UDID');
@@ -1586,7 +1590,7 @@ class Appdata extends REST_Controller {
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
-        }*/
+        }
         
         $result=array();
         $orderDetails=$this->order->details($orderId,TRUE);
@@ -1612,11 +1616,12 @@ class Appdata extends REST_Controller {
         $result['orderDetails']=  $orderDetails;
         $result['orderInfo']=  $orderInfo;
         $result['order_state_data']=$this->order->get_state(true);
+        $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
         success_response_after_post_get($result);
     }
    
     function show_cancel_my_order_post(){
-        /*$latitude=  $this->post('latitude');
+        $latitude=  $this->post('latitude');
         $longitude=  $this->post('longitude');
         $deviceType=$this->post('deviceType');
         $UDID=$this->post('UDID');
@@ -1627,7 +1632,7 @@ class Appdata extends REST_Controller {
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
-        }*/
+        }
         
         $userId=  $this->post('userId');
         $orderId=  $this->post('orderId');

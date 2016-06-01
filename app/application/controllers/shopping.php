@@ -168,6 +168,7 @@ class Shopping extends REST_Controller {
         //pre($newAllItemArr);die;
         $result=array();
         $result['allItemArr']=$newAllItemArr;
+        $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
         success_response_after_post_get($result);
     }
     
@@ -407,6 +408,7 @@ class Shopping extends REST_Controller {
             $result['message'] = "Promo code has been applied successfully!";
             $data['couponAmount'] = number_format(round($couponAmount,0,PHP_ROUND_HALF_UP),2);
             $result['content'] = $data;
+            $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
             success_response_after_post_get($result);
         endif;
     }
@@ -1009,6 +1011,7 @@ class Shopping extends REST_Controller {
         }else{
             $result['isLeader']='no';
         }
+        $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
         success_response_after_post_get($result);
     }
     
@@ -1122,6 +1125,7 @@ class Shopping extends REST_Controller {
             $result['message'] = "Promo code has been applied successfully!";
             $data['couponAmount'] = number_format(round($couponAmount,0,PHP_ROUND_HALF_UP),2);
             $result['content'] = $data;
+            $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
             success_response_after_post_get($result);
         endif;
     }
