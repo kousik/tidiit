@@ -166,4 +166,46 @@ class Product extends REST_Controller {
             }
         }
     }
+    
+    function check_default_data($dataArr){
+        $validateArr=array('type'=>'success');
+        if($dataArr['UDID']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide UDID.';
+            return $validateArr;
+        }
+        
+        if($dataArr['deviceToken']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide deviceToken.';
+            return $validateArr;
+        }
+        
+        if($dataArr['deviceType']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide deviceType.';
+            return $validateArr;
+        }
+        
+        if($dataArr['latitude']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide latitude.';
+            return $validateArr;
+        }
+        
+        if($dataArr['longitude']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide longitude.';
+            return $validateArr;
+        }
+        
+        $countryShortName=  get_counry_code_from_lat_long($dataArr['latitude'], $dataArr['longitude']);
+        //die($countryShortName);
+        if($countryShortName==FALSE){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide valid latitude and longitude';
+            return $validateArr;
+        }
+        return $validateArr;
+    }
 }
