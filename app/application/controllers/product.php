@@ -17,6 +17,20 @@ class Product extends REST_Controller {
     function product_details_get(){
         $userId=$this->get('userId');
         $this->config->load('product');
+        
+        /*$latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceType=$this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }*/
+        
         $productId= $this->get('productId');
         $productDetailsArr=  $this->product->details($productId,TRUE);
         if(empty($productDetailsArr)){

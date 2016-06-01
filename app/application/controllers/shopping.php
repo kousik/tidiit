@@ -25,8 +25,16 @@ class Shopping extends REST_Controller {
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
         //pre($_POST);die;
-        if($userId=="" || $productId =="" || $productPriceId == ""){
-            $this->response(array('error' => 'Please provide user index,product index,product price index!'), 400); return FALSE;
+        if($userId==""){
+            $this->response(array('error' => 'Please provide user index.'), 400); return FALSE;
+        }
+        
+        if($productId ==""){
+            $this->response(array('error' => 'Please provide product index.'), 400); return FALSE;
+        }
+        
+        if($productPriceId == ""){
+            $this->response(array('error' => 'Please provide product price index.'), 400); return FALSE;
         }
         
         $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
@@ -125,8 +133,16 @@ class Shopping extends REST_Controller {
         $userId = $this->get('userId');
         $latitude = $this->get('latitude');
         $longitude = $this->get('longitude');
-        if($userId=="" || $latitude=="" || $longitude==""){
-            $this->response(array('error' => 'Please provide user index,latitude and Longitude !'), 400); return FALSE;
+        if($userId==""){
+            $this->response(array('error' => 'Please provide user index.'), 400); return FALSE;
+        }
+        
+        if($latitude==""){
+            $this->response(array('error' => 'Please provide latitude.'), 400); return FALSE;
+        }
+        
+        if($longitude==""){
+            $this->response(array('error' => 'Please provide Longitude.'), 400); return FALSE;
         }
         
         $rs=$this->user->get_details_by_id($userId);
@@ -200,10 +216,41 @@ class Shopping extends REST_Controller {
         $latitude = $this->post('latitude');
         $orderId = $this->post('orderId');
         
-        if($userId=="" || $firstName=="" || $lastName=="" || $countryId=="" || $cityId=="" || $zipId=="" || $localityId =="" || $deviceType =="" || $latitude=="" || $longitude==""){
-            $this->response(array('error' => 'Please provide user index,first name,last name,latitude,longitude,device type,country index,city index,locality index,zip index !'), 400); return FALSE;
+        //$defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $defaultDataArr=array('deviceType'=>$deviceType,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
         
+        if($userId==""){
+            $this->response(array('error' => 'Please provide user index.!'), 400); return FALSE;
+        }
+        
+        if($firstName==""){
+            $this->response(array('error' => 'Please provide first name.'), 400); return FALSE;
+        }
+        
+        if($lastName==""){
+            $this->response(array('error' => 'Please provide last name.'), 400); return FALSE;
+        }
+        
+        if($countryId==""){
+            $this->response(array('error' => 'Please provide country index.'), 400); return FALSE;
+        }
+        
+        if($cityId==""){
+            $this->response(array('error' => 'Please provide city index.'), 400); return FALSE;
+        }
+        
+        if($zipId==""){
+            $this->response(array('error' => 'Please provide zip index.'), 400); return FALSE;
+        }
+        
+        if($localityId ==""){
+            $this->response(array('error' => 'Please provide locality index.'), 400); return FALSE;
+        }
         
         $rs=$this->Country->city_details($cityId);
 

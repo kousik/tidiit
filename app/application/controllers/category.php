@@ -19,6 +19,20 @@ class Category extends REST_Controller {
      */
     function show_category_post(){
         $categoryId=  $this->post('categoryId');
+        
+        /*$latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceType=$this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }*/
+        
         $result=array();
         $range = array(0,100000);
         $result['range']=array('minimum'=>$range[0],'maximum'=>$range[01]);
@@ -62,6 +76,20 @@ class Category extends REST_Controller {
         $item_per_page=NULL;
         $cond=[];
         $categoryId=$this->post('categoryId');
+        
+        /*$latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceType=$this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }*/
+        
         //$filterOptions="brand=Samsung|Micromax|Intex&query=12@Handset|12@Warranty Card|12@User Manual|14@1|14@3|15@Gray|15@Black|21@Android|24@8 MP&sort=popular&range=31800|100000";
         $filterOptions=$this->post('filterOptions');
         $queries = explode("&", $filterOptions);
@@ -242,6 +270,19 @@ class Category extends REST_Controller {
         $searchTextTypeId=$this->post('searchTextTypeId');
         $userId=$this->post('userId');
         
+        /*$latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceType=$this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }*/
+        
         if($searchText==""):
             $this->response(array('error' => 'Invalid search keyword. Please try again with proper text!'), 400); return FALSE;
         endif;
@@ -364,6 +405,13 @@ class Category extends REST_Controller {
         $latitude=$this->post('latitude');
         $longitude=$this->post('longitude');
         
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }
+        
         $brandDetails = $this->brand->details($brandId);
         
         if(!$brandDetails):
@@ -415,6 +463,13 @@ class Category extends REST_Controller {
         $latitude=$this->post('latitude');
         $longitude=$this->post('longitude');
         
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }
+        
         $cond = array();
         //$cond['brand'] = [$brandDetails->title];
         $data['sort'] = 'popular';
@@ -448,6 +503,13 @@ class Category extends REST_Controller {
         $latitude=$this->post('latitude');
         $longitude=$this->post('longitude');
         
+        /*$defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }*/
+        
         $cond = array();
         //$cond['brand'] = [$brandDetails->title];
         $data['sort'] = 'popular';
@@ -480,6 +542,13 @@ class Category extends REST_Controller {
         $deviceToken=$this->post('deviceToken');
         $latitude=$this->post('latitude');
         $longitude=$this->post('longitude');
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }
         
         $cond = array();
         //$cond['brand'] = [$brandDetails->title];
@@ -515,8 +584,58 @@ class Category extends REST_Controller {
         $latitude=$this->post('latitude');
         $longitude=$this->post('longitude');
         
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }
+        
         $brands = $this->brand->get_all();
         $data['brands'] = $brands;
         success_response_after_post_get($data);
+    }
+    
+    
+    function check_default_data($dataArr){
+        $validateArr=array('type'=>'success');
+        if($dataArr['UDID']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide UDID.';
+            return $validateArr;
+        }
+        
+        if($dataArr['deviceToken']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide deviceToken.';
+            return $validateArr;
+        }
+        
+        if($dataArr['deviceType']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide deviceType.';
+            return $validateArr;
+        }
+        
+        if($dataArr['latitude']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide latitude.';
+            return $validateArr;
+        }
+        
+        if($dataArr['longitude']==""){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide longitude.';
+            return $validateArr;
+        }
+        
+        $countryShortName=  get_counry_code_from_lat_long($dataArr['latitude'], $dataArr['longitude']);
+        //die($countryShortName);
+        if($countryShortName==FALSE){
+            $validateArr['type']='fail';
+            $validateArr['message']='Please provide valid latitude and longitude';
+            return $validateArr;
+        }
+        return $validateArr;
     }
 }

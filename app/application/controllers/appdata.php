@@ -56,23 +56,36 @@ class Appdata extends REST_Controller {
     
     function home_get(){
         $timeStamp=$this->get('timestamp');
+        $UDID=$this->get('UDID');
+        $deviceType=$this->get('deviceType');
+        $deviceToken=$this->get('deviceToken');
+        $latitude=$this->get('latitude');
+        $longitude=$this->get('longitude');
         if(!isValidTimeStamp($timeStamp)){
             $this->response(array('error' => 'Invalid timestamp'), 400);
         }else{
             $this->load->model('Banner_model','banner');
             $this->load->model('Brand_model','brand');
+            /*$defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+            $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+
+            if($isValideDefaultData['type']=='fail'){
+                $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+            }*/
             $result = array();
             $slider1=$this->banner->get_home_slider(1,TRUE);
             //$slider2=$this->banner->get_home_slider(2,TRUE);
             $noOfItem=  $this->siteconfig->get_value_by_name('MOBILE_APP_HOME_PAGE_SLIDER_ITEM_NO');
             $newArrivalsData=  $this->product->get_recent($noOfItem,TRUE);
+            $bestSellingData=  $this->product->get_best_selling($noOfItem,TRUE);
+            $featuredData=  $this->product->get_featured_products($noOfItem,TRUE);
             //pre($newArrivalsData);die;
             $result['slider1']=$slider1;
             //$result['slider2']=$slider2;
             $result['category_menu']=$this->get_main_menu();
             $result['best_sellling_item']=$newArrivalsData;
-            $result['new_arrivals']=$newArrivalsData;
-            $result['featured_products']=$newArrivalsData;
+            $result['new_arrivals']=$bestSellingData;
+            $result['featured_products']=$featuredData;
             $result['brand']=$this->brand->get_all(TRUE);
             $userId=$this->get('userId');
             if($userId!=""){
@@ -452,7 +465,6 @@ class Appdata extends REST_Controller {
         if (end($productTypeIdArr) == "") { 
             array_pop($productTypeIdArr); 
         }
-        $deviceType=$this->post('deviceType');
         if(empty($productTypeIdArr)){
             $this->response(array('error' => 'Please provide prodcut type for current user.'), 400); return FALSE;
         }
@@ -698,9 +710,22 @@ class Appdata extends REST_Controller {
         }
         
         $notify = array();
-        if($groupAdminId=="" || $groupTitle=="" || trim($productType)=="" || trim($deviceType)=="" || count($groupUsersArr)==0){
-            $this->response(array('error' => 'Please provide all data'), 400); return FALSE;
+        
+        if($groupAdminId==""){
+            $this->response(array('error' => 'Please provide logined user index'), 400); return FALSE;
         }
+        
+        if($groupTitle==""){
+            $this->response(array('error' => 'Please provide group title'), 400); return FALSE;
+        }
+        
+        if(trim($productType)==""){
+            $this->response(array('error' => 'Please provide product category for group'), 400); return FALSE;
+        }
+        
+        if(count($groupUsersArr)==0){
+            $this->response(array('error' => 'Please select atleast one user to create the group['.$groupTitle.']'), 400); return FALSE;
+        }   
         
         if($this->user->group_title_exists($groupTitle)){
             $this->response(array('error' => $groupTitle.' is already created by some one,Your "Buyinb Club" Name must be unique.'), 400); return FALSE;
@@ -934,9 +959,22 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
         
-        if($productType=="" || $groupTitle=="" || $groupId=="" || $adminId==""){
-            $this->response(array('error' => 'Please provide product type,buying club title,buying club index,user index.'), 400); return FALSE;
+        if($productType==""){
+            $this->response(array('error' => 'Please provide product type.'), 400); return FALSE;
         }
+        
+        if($groupTitle==""){
+            $this->response(array('error' => 'Please provide buying club title.'), 400); return FALSE;
+        }
+        
+        if($groupId==""){
+            $this->response(array('error' => 'Please provide buying club index.'), 400); return FALSE;
+        }
+        
+        if($adminId==""){
+            $this->response(array('error' => 'Please provide user index.'), 400); return FALSE;
+        }
+        
         $groupUsersArr=  explode(',', $groupUsers);
         if(count($groupUsersArr)==0){
             $this->response(array('error' => 'Please provide atleast oen member for group'), 400); return FALSE;
@@ -1073,8 +1111,24 @@ class Appdata extends REST_Controller {
         }
         
         
-        if($adminId=="" || $groupId=="" || $groupTitle=="" || $productType=="" || $groupUsers==""){
-            $this->response(array('error' => 'Please provide user index,buying club index,buying club title,product type,group user.'), 400); return FALSE;
+        if($adminId==""){
+            $this->response(array('error' => 'Please provide user index.'), 400); return FALSE;
+        }
+        
+        if($groupId==""){
+            $this->response(array('error' => 'Please provide buying club index.'), 400); return FALSE;
+        }
+        
+        if($groupTitle==""){
+            $this->response(array('error' => 'Please provide buying club title.'), 400); return FALSE;
+        }
+        
+        if($productType=="" || $groupUsers==""){
+            $this->response(array('error' => 'Please provide product type.'), 400); return FALSE;
+        }
+        
+        if($groupUsers==""){
+            $this->response(array('error' => 'Please provide group user.'), 400); return FALSE;
         }
         
         $groupUsersArr=  explode(',', $groupUsers);
@@ -1314,9 +1368,24 @@ class Appdata extends REST_Controller {
     
     function my_orders_post(){
         $userId=$this->post('userId');
+        
+        /*$latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceType=$this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }*/
+        
         if($userId==""){
             $this->response(array('error' => 'Invalid user id. Please try again!'), 400); return FALSE;
         }
+        
         $rs=$this->user->get_details_by_id($userId);
         if(empty($rs)){
             $this->response(array('error' => 'Invalid user index. Please try again!'), 400); return FALSE;
@@ -1362,9 +1431,28 @@ class Appdata extends REST_Controller {
         $this->load->model('Product_model','product');
         $userId=$this->post('userId');
         $notificationId=$this->post('notificationId');
-        if($userId=="" || $notificationId==""){
-            $this->response(array('error' => 'Invalid user index and notification index. Please try again!'), 400); return FALSE;
+        
+        /*$latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceType=$this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }*/
+        
+        if($userId==""){
+            $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
         }
+        
+        if($notificationId==""){
+            $this->response(array('error' => 'Please provide valid notification index.'), 400); return FALSE;
+        }
+        
         $rs=$this->user->get_details_by_id($userId);
         if(empty($rs)){
             $this->response(array('error' => 'Invalid user id. Please try again!'), 400); return FALSE;
@@ -1448,6 +1536,20 @@ class Appdata extends REST_Controller {
     
     function my_order_details_post(){
         $orderId=$this->post('orderId');
+        
+        /*$latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceType=$this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }*/
+        
         $result=array();
         $orderDetails=$this->order->details($orderId,TRUE);
         if(empty($orderDetails)){
@@ -1472,6 +1574,20 @@ class Appdata extends REST_Controller {
     function track_order_post(){
         $orderId=  $this->post('orderId');
         $userId=  $this->post('userId');
+        
+        /*$latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceType=$this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }*/
+        
         $result=array();
         $orderDetails=$this->order->details($orderId,TRUE);
         if(empty($orderDetails)){
@@ -1500,6 +1616,19 @@ class Appdata extends REST_Controller {
     }
    
     function show_cancel_my_order_post(){
+        /*$latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceType=$this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }*/
+        
         $userId=  $this->post('userId');
         $orderId=  $this->post('orderId');
         $userDetails=  $this->user->get_details_by_id($userId);
@@ -1567,7 +1696,6 @@ class Appdata extends REST_Controller {
         $this->product->update_product_quantity($order->productId,$order->productQty,'+');
         
         $this->single_order_cancel_mail($order,$reason,$comments);
-        $adminMailData= load_default_resources();
         $sms_data_msg='Your cancelation request for Tidiit Order TIDIIT-OD-'.$orderId.' has placed successfully.';
         if($reason != "Other Reasons"){
             $sms_data_msg .='Cancelation request due to "'.$reason.'".';
@@ -1823,6 +1951,20 @@ class Appdata extends REST_Controller {
     
     function my_wish_list_post(){
         $userId=  $this->post('userId');
+        
+        /*$latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
+        $deviceType=$this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }*/
+        
         $rs=$this->user->get_details_by_id($userId);
         if(empty($rs)){
             $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
