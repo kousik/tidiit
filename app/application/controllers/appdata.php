@@ -76,9 +76,9 @@ class Appdata extends REST_Controller {
             $slider1=$this->banner->get_home_slider(1,TRUE);
             //$slider2=$this->banner->get_home_slider(2,TRUE);
             $noOfItem=  $this->siteconfig->get_value_by_name('MOBILE_APP_HOME_PAGE_SLIDER_ITEM_NO');
-            $newArrivalsData=  $this->product->get_recent($noOfItem,TRUE);
-            $bestSellingData=  $this->product->get_best_selling($noOfItem,TRUE);
-            $featuredData=  $this->product->get_featured_products($noOfItem,TRUE);
+            $newArrivalsData=  $this->product->get_recent($noOfItem,TRUE,$latitude,$longitude);
+            $bestSellingData=  $this->product->get_best_selling($noOfItem,TRUE,$latitude,$longitude);
+            $featuredData=  $this->product->get_featured_products($noOfItem,TRUE,$latitude,$longitude);
             //pre($newArrivalsData);die;
             $result['slider1']=$slider1;
             //$result['slider2']=$slider2;

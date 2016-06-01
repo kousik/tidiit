@@ -556,7 +556,10 @@ class Product_model extends CI_Model {
             return FALSE;
     }
         
-    public function get_recent($noOfItem=12,$app=false){
+    public function get_recent($noOfItem=12,$app=false,$latitude="",$longitude=""){
+        if($app==TRUE){
+            $this->_currentUserCountryCode=get_counry_code_from_lat_long($latitude,$longitude);
+        }
         $sql="SELECT p.productId,p.title,p.lowestPrice,p.heighestPrice,p.qty,p.minQty,pi.image,c.categoryName "
                 . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
                 . " JOIN product_category AS pc ON(pc.productId=p.productId) JOIN category AS c ON(pc.categoryId=c.categoryId) "
@@ -569,7 +572,10 @@ class Product_model extends CI_Model {
             return $this->db->query($sql)->result();
     }
 
-    public function get_best_selling($noOfItem=12,$app=false){
+    public function get_best_selling($noOfItem=12,$app=false,$latitude="",$longitude=""){
+        if($app==TRUE){
+            $this->_currentUserCountryCode=get_counry_code_from_lat_long($latitude,$longitude);
+        }
         $sql="SELECT p.productId,p.title,p.lowestPrice,p.heighestPrice,p.qty,p.minQty,pi.image,c.categoryName "
             . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
             . " JOIN product_category AS pc ON(pc.productId=p.productId) JOIN category AS c ON(pc.categoryId=c.categoryId)  "
@@ -582,7 +588,10 @@ class Product_model extends CI_Model {
             return $this->db->query($sql)->result();
     }
 
-    public function get_featured_products($noOfItem=12,$app=false){
+    public function get_featured_products($noOfItem=12,$app=false,$latitude="",$longitude=""){
+        if($app==TRUE){
+            $this->_currentUserCountryCode=get_counry_code_from_lat_long($latitude,$longitude);
+        }
         $sql="SELECT p.productId,p.title,p.lowestPrice,p.heighestPrice,p.qty,p.minQty,pi.image,c.categoryName "
             . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
             . " JOIN product_category AS pc ON(pc.productId=p.productId) JOIN category AS c ON(pc.categoryId=c.categoryId)  "
