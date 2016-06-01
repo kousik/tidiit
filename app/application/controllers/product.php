@@ -18,11 +18,11 @@ class Product extends REST_Controller {
         $userId=$this->get('userId');
         $this->config->load('product');
         
-        $latitude=  $this->post('latitude');
-        $longitude=  $this->post('longitude');
-        $deviceType=$this->post('deviceType');
-        $UDID=$this->post('UDID');
-        $deviceToken=$this->post('deviceToken');
+        $latitude=  $this->get('latitude');
+        $longitude=  $this->get('longitude');
+        $deviceType=$this->get('deviceType');
+        $UDID=$this->get('UDID');
+        $deviceToken=$this->get('deviceToken');
         
         $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
         $isValideDefaultData=  $this->check_default_data($defaultDataArr);
