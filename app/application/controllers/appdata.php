@@ -61,43 +61,39 @@ class Appdata extends REST_Controller {
         $deviceToken=$this->get('deviceToken');
         $latitude=$this->get('latitude');
         $longitude=$this->get('longitude');
-        if(!isValidTimeStamp($timeStamp)){
-            $this->response(array('error' => 'Invalid timestamp'), 400);
-        }else{
-            $this->load->model('Banner_model','banner');
-            $this->load->model('Brand_model','brand');
-            $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
-            $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        $this->load->model('Banner_model','banner');
+        $this->load->model('Brand_model','brand');
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
 
-            if($isValideDefaultData['type']=='fail'){
-                $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
-            }
-            $result = array();
-            $slider1=$this->banner->get_home_slider(1,TRUE);
-            //$slider2=$this->banner->get_home_slider(2,TRUE);
-            $noOfItem=  $this->siteconfig->get_value_by_name('MOBILE_APP_HOME_PAGE_SLIDER_ITEM_NO');
-            $newArrivalsData=  $this->product->get_recent($noOfItem,TRUE,$latitude,$longitude);
-            $bestSellingData=  $this->product->get_best_selling($noOfItem,TRUE,$latitude,$longitude);
-            $featuredData=  $this->product->get_featured_products($noOfItem,TRUE,$latitude,$longitude);
-            //pre($newArrivalsData);die;
-            $result['slider1']=$slider1;
-            //$result['slider2']=$slider2;
-            $result['category_menu']=$this->get_main_menu();
-            $result['best_sellling_item']=$bestSellingData;
-            $result['new_arrivals']=$newArrivalsData;
-            $result['featured_products']=$featuredData;
-            $result['brand']=$this->brand->get_all(TRUE);
-            $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
-            $userId=$this->get('userId');
-            if($userId!=""){
-                $result['total_cart_item']=$this->user->get_total_cart_item($userId);
-            }else{
-                $result['total_cart_item']=0;
-            }
-            //$result['site_product_image_url']=$this->config->item('ProductURL');
-            $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
-            success_response_after_post_get($result);
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
+        $result = array();
+        $slider1=$this->banner->get_home_slider(1,TRUE);
+        //$slider2=$this->banner->get_home_slider(2,TRUE);
+        $noOfItem=  $this->siteconfig->get_value_by_name('MOBILE_APP_HOME_PAGE_SLIDER_ITEM_NO');
+        $newArrivalsData=  $this->product->get_recent($noOfItem,TRUE,$latitude,$longitude);
+        $bestSellingData=  $this->product->get_best_selling($noOfItem,TRUE,$latitude,$longitude);
+        $featuredData=  $this->product->get_featured_products($noOfItem,TRUE,$latitude,$longitude);
+        //pre($newArrivalsData);die;
+        $result['slider1']=$slider1;
+        //$result['slider2']=$slider2;
+        $result['category_menu']=$this->get_main_menu();
+        $result['best_sellling_item']=$bestSellingData;
+        $result['new_arrivals']=$newArrivalsData;
+        $result['featured_products']=$featuredData;
+        $result['brand']=$this->brand->get_all(TRUE);
+        $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
+        $userId=$this->get('userId');
+        if($userId!=""){
+            $result['total_cart_item']=$this->user->get_total_cart_item($userId);
+        }else{
+            $result['total_cart_item']=0;
+        }
+        //$result['site_product_image_url']=$this->config->item('ProductURL');
+        $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
+        success_response_after_post_get($result);
     }
     
     function login_post(){
