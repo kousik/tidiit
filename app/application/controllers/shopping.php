@@ -213,12 +213,14 @@ class Shopping extends REST_Controller {
         $address=  $this->post('address');
         $landmark=  $this->post('landmark');
         $deviceType=  $this->post('deviceType');
+        $deviceToken=  $this->post('deviceToken');
+        $UDID=  $this->post('UDID');
         $longitude = $this->post('longitude');
         $latitude = $this->post('latitude');
         $orderId = $this->post('orderId');
         
-        //$defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
-        $defaultDataArr=array('deviceType'=>$deviceType,'latitude'=>$latitude,'longitude'=>$longitude);
+        $defaultDataArr=array('UDID'=>$de,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        //$defaultDataArr=array('deviceType'=>$deviceType,'latitude'=>$latitude,'longitude'=>$longitude);
         $isValideDefaultData=  $this->check_default_data($defaultDataArr);
         
         if($isValideDefaultData['type']=='fail'){
