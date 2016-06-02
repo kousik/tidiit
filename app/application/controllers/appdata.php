@@ -44,13 +44,13 @@ class Appdata extends REST_Controller {
             
             //pre($dataArray);die;
             if($result>0){
-                $parram=array('message'=>'App info data address successfully');
+                $parram=array('message'=>'1');
                 success_response_after_post_get($parram);
             }else{
-                $this->response(array('error' => 'Unknown error arises to save app info data.'), 400); return FALSE;
+                $this->response(array('error' => '3'), 400); return FALSE;
             }
         }else{
-            $this->response(array('error' => 'selected user and selected phone is already registered.'), 400); return FALSE;
+            $this->response(array('error' => '2'), 400); return FALSE;
         }
     }
     
