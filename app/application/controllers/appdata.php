@@ -83,8 +83,8 @@ class Appdata extends REST_Controller {
             $result['slider1']=$slider1;
             //$result['slider2']=$slider2;
             $result['category_menu']=$this->get_main_menu();
-            $result['best_sellling_item']=$bestSellingData
-            $result['new_arrivals']=$newArrivalsData;;
+            $result['best_sellling_item']=$bestSellingData;
+            $result['new_arrivals']=$newArrivalsData;
             $result['featured_products']=$featuredData;
             $result['brand']=$this->brand->get_all(TRUE);
             $result['tidiit_currency_simbol']=get_currency_simble_from_lat_long($latitude,$longitude);
