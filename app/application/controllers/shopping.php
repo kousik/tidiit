@@ -983,6 +983,8 @@ class Shopping extends REST_Controller {
     function review_buying_club_order_post(){
         $userId=  $this->post('userId');
         $orderId=  $this->post('orderId');
+        $latitude=  $this->post('latitude');
+        $longitude=  $this->post('longitude');
         $user=$this->user->get_details_by_id($userId);
         if(empty($user)){
             $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
