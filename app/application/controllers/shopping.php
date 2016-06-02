@@ -1195,7 +1195,7 @@ class Shopping extends REST_Controller {
         $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
         
         $orderDetails= $this->order->details($orderId);
-        $orderinfo=json_decode(json_encode(unserialize(base64_decode($orderDetails[0]->orderInfo))), true);
+        //$orderinfo=json_decode(json_encode(unserialize(base64_decode($orderDetails[0]->orderInfo))), true);
                 
         //pre($allIncompleteOrders);die;
         $defaultResources=load_default_resources();

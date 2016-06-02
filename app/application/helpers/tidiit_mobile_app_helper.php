@@ -443,7 +443,7 @@ if( !function_exists('send_push_notification')){
         }elseif($data['receiverId']==""){
             return FALSE;
         }else{
-            $regIds=$this->user->get_reg_id_by_user_id($data['receiverId']);
+            $regIds=$CI->user->get_reg_id_by_user_id($data['receiverId']);
             if($regIds!=FALSE){
                 //'data' =>
                 $apiData=array('message'=>$data['nMessage'],'userId'=>$data['receiverId']);
