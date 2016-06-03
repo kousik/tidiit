@@ -23,10 +23,6 @@ class Appdata extends REST_Controller {
         $longitude=trim($this->post('longitude'));
         $userId=trim($this->post('userId'));
         
-        $sms_data=array('nMessage'=>'Comming for GCM registration id for DB at '.  time().' with userId : '.$userId,
-            'receiverMobileNumber'=>'8285160104','senderId'=>'','receiverId'=>100,
-            'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-PLACED');
-            send_sms_notification($sms_data);
         if($userId==""){
             $this->response(array('error' => 'user index should not be blank'), 400);
         }
@@ -48,24 +44,12 @@ class Appdata extends REST_Controller {
             
             //pre($dataArray);die;
             if($result>0){
-                $sms_data=array('nMessage'=>'GCM registration id and user id is save in DB successfully '.  time().' with userId : '.$userId,
-                'receiverMobileNumber'=>'8285160104','senderId'=>'','receiverId'=>100,
-                'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-PLACED');
-                send_sms_notification($sms_data);
                 $parram=array('message'=>'1');
                 success_response_after_post_get($parram);
             }else{
-                $sms_data=array('nMessage'=>'Unknown error to GCM registration id and user id already at DB '.  time().' with userId : '.$userId,
-            'receiverMobileNumber'=>'8285160104','senderId'=>'','receiverId'=>100,
-            'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-PLACED');
-            send_sms_notification($sms_data);
                 $this->response(array('error' => '3'), 400); return FALSE;
             }
         }else{
-            $sms_data=array('nMessage'=>'GCM registration id and user id already at DB '.  time().' with userId : '.$userId,
-            'receiverMobileNumber'=>'8285160104','senderId'=>'','receiverId'=>100,
-            'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-PLACED');
-            send_sms_notification($sms_data);
             $this->response(array('error' => '2'), 400); return FALSE;
         }
     }
