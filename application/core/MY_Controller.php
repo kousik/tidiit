@@ -122,6 +122,7 @@ class MY_Controller extends CI_Controller {
         //$AboutUsData=$this->Cms_model->get_content('about_daily_plaza');
         //$data['AboutUSShortData']=$AboutUsData[0]->ShortBody;
         $data['float_menu']=$this->get_site_categories_float_menu();
+        $data['howItWorksBoxContent']=$this->Cms_model->get_content_by_id(19);
         $data['header']=$this->load->view('header1',$data,true);
         $data['footer']=$this->load->view('footer',$data,true);
         //$data['main_menu']=$this->load->view('main_menu',$data,true);
@@ -143,6 +144,7 @@ class MY_Controller extends CI_Controller {
             $data=$this->html_heading($SEODataArr);
             //$AboutUsData=$this->Cms_model->get_content('about_daily_plaza');
             //$data['AboutUSShortData']=$AboutUsData[0]->ShortBody;
+            $data['howItWorksBoxContent']=$this->Cms_model->get_content_by_id(19);
             $data['float_menu']=$this->get_site_categories_float_menu();
             $data['header']=$this->load->view('header',$data,true);
             $data['footer']=$this->load->view('footer',$data,true);

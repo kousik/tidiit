@@ -6,11 +6,14 @@
     <div class="modal-dialog modal-lg opn_box" style='padding:10px; background:#fff;  border-radius:10px;'>
         <button aria-label="Close" data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span></button>
         <div class="container">
-            <div class="banner">
+            <h2>HOW IT WORKS</h2>
+            
+            <?php 
+           echo $howItWorksBoxContent[0]->body;
+            /*
                 <img src="<?php echo SiteImagesURL;?>works_img.jpg" class="img-responsive" />
                 <h4>A Better Way to Purchase For Your Business</h4>
             </div>
-            <h2>HOW IT WORKS</h2>
             <div class="row">
                 <div class="col-md-4 col-sm-4">
                         <div class="work_box">
@@ -30,7 +33,7 @@
                         <p>Negotiate and finalize the deal directly with the suppliers, knowing that you have made the right choice </p>
                     </div>
                 </div>
-            </div>
+            </div> */?>
         </div>
     </div>
 </div>
