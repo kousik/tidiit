@@ -70,7 +70,7 @@
                                             <span><i class="fa fa-phone"></i></span>
                                         </div>
                                         <div class="content">
-                                            <h3>+91 (033) 123 4567</h3>
+                                            <h3><?php echo $callForUsFree;?></h3>
                                             <p>CALL US FOR FREE</p>
                                         </div>
                                     </div>

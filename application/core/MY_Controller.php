@@ -119,8 +119,8 @@ class MY_Controller extends CI_Controller {
         $this->load->library('cart');
         $data=array();
         $data=$this->html_heading($SEODataArr);
-        //$AboutUsData=$this->Cms_model->get_content('about_daily_plaza');
-        //$data['AboutUSShortData']=$AboutUsData[0]->ShortBody;
+        $callUsForFree='CALL_US_FOR_FREE_'.$this->session->userdata("FE_SESSION_USER_LOCATION_VAR");
+        $data['callForUsFree']=$this->Siteconfig_model->get_value_by_name($callUsForFree);
         $data['float_menu']=$this->get_site_categories_float_menu();
         $data['howItWorksBoxContent']=$this->Cms_model->get_content_by_id(19);
         $data['header']=$this->load->view('header1',$data,true);
@@ -144,6 +144,8 @@ class MY_Controller extends CI_Controller {
             $data=$this->html_heading($SEODataArr);
             //$AboutUsData=$this->Cms_model->get_content('about_daily_plaza');
             //$data['AboutUSShortData']=$AboutUsData[0]->ShortBody;
+            $callUsForFree='CALL_US_FOR_FREE_'.$this->session->userdata("FE_SESSION_USER_LOCATION_VAR");
+            $data['callForUsFree']=$this->Siteconfig_model->get_value_by_name($callUsForFree);
             $data['howItWorksBoxContent']=$this->Cms_model->get_content_by_id(19);
             $data['float_menu']=$this->get_site_categories_float_menu();
             $data['header']=$this->load->view('header',$data,true);
