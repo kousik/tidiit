@@ -283,7 +283,11 @@
         
         
         jQuery('.showLogin').click(function(){
+            <?php if($this->session->userdata("FE_SESSION_VAR")==""):?>
             jQuery('#myModalLogin').modal('show');
+            <?php else:?>
+            location.href='<?php echo BASE_URL.'myaccount';?>';    
+            <?php endif;?>    
         });
         jQuery('.showMyAccount').click(function(){location.href=myJsMain.baseURL+'myaccount';});
         jQuery('.all_catgrs').click(function () {
