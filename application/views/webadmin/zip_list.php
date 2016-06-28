@@ -4,7 +4,7 @@
 <table cellspacing=5 cellpadding=5 width=90% border=0>
   
   <tr id="PageHeading">
-    <td class="PageHeading" >Zip Manager</td>
+    <td class="PageHeading" >Zip/Postal Box Zip Code Manager</td>
   </tr>
 
   
@@ -16,8 +16,8 @@
   </tr>
   <tr>
     <td style="padding-left:10px;">
-        <input type="button" name="AddBtn" id="AddBtn" value="Add Zip" onclick="ShowAddAdminBox();" class="btn-primary btn-large"/> &nbsp; &nbsp; &nbsp;
-         <input type="button" name="AddBtn1" id="AddBtn1" value="Back to City List" onclick="location.href='<?php echo base_url().'webadmin/country_controller/viewCityList/'.$stateId;?>'" class="btn-primary btn-large"/>
+        <input type="button" name="AddBtn" id="AddBtn" value="Add Zip/Postal Box Zip Code" onclick="ShowAddAdminBox();" class="btn-primary btn-large"/> &nbsp; &nbsp; &nbsp;
+         <input type="button" name="AddBtn1" id="AddBtn1" value="Back to City/County List" onclick="location.href='<?php echo base_url().'webadmin/country_controller/viewCityList/'.$stateId;?>'" class="btn-primary btn-large"/>
     </td>
   </tr>
 <script language="javascript">
@@ -84,8 +84,8 @@ function AskDelete(id){
 	<table width="100%" border="0" align="center" cellpadding="1" cellspacing="1" id="ListBox" class="alt_row">
   <tr class="ListHeadingLable" bgcolor="#DFDFDF" height="25px;">
     <td width="2%">Sl No </td>
-    <td width="20%">Zip Name</td>
-    <td width="20%">City Name</td>
+    <td width="20%">Zip/Postal Box Zip Code Name</td>
+    <td width="20%">City/County Name</td>
     <td width="10%">status</td>
     <td width="30%">Action</td>
   </tr>
@@ -132,7 +132,7 @@ function AskDelete(id){
     <td><form name="AdminEdit" id="AdminEdit" method="post" action="<?=base_url()?>webadmin/country_controller/edit_zip/">
 	<table width="70%" border="0" align="center" cellpadding="0" cellspacing="0" id="EditBox" style="display:none;">
   <tr>
-    <th colspan="4"><span class="PageHeading">Zip Edit Form</span></th>
+    <th colspan="4"><span class="PageHeading">Zip/Postal Box Zip Code Edit Form</span></th>
   </tr>
   <tr>
     <td align="left" valign="top" height="40px;">&nbsp;</td>
@@ -143,7 +143,7 @@ function AskDelete(id){
   
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable">Zip </td>
+    <td align="left" valign="top" class="ListHeadingLable">Zip/Postal Box Zip Code </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top"><input type="text" name="Editzip" id="Editzip" value=""></td>
   </tr>
@@ -206,7 +206,7 @@ function AskDelete(id){
     <th width="13%" align="left" valign="top" scope="col">&nbsp;</th>
     <th width="18%" align="left" valign="top" scope="col">&nbsp;</th>
     <th width="3%" align="left" valign="top" scope="col" class="PageHeading">&nbsp;</th>
-    <th width="66%" align="left" valign="top" scope="col"><span class="PageHeading">Zip Add Form </span></th>
+    <th width="66%" align="left" valign="top" scope="col"><span class="PageHeading">Zip/Postal Box Zip Code Add Form </span></th>
   </tr>
   <tr>
     <td align="left" valign="top" height="50px">&nbsp;</td>
@@ -217,7 +217,7 @@ function AskDelete(id){
   
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable">Zip Name </td>
+    <td align="left" valign="top" class="ListHeadingLable">Zip/Postal Box Zip Code Name </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top"><input type="text" name="zip" id="zip" value="" class="required"></td>
   </tr>

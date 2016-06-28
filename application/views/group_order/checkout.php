@@ -79,7 +79,11 @@ $currencySymbol=($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=="IN")
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label for="" class="col-sm-3 control-label">City</label>
+                                                <label for="" class="col-sm-3 control-label">
+                                                    <?php if($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=='IN'):?>
+                                                    City<?php else:?>
+                                                    County<?php endif;?>
+                                                </label>
                                                 <div class="col-sm-9 cityElementPara">
                                                     <?php if ($userShippingDataDetails->cityId == "") { ?>
                                                         <select class="form-control" name="cityId" id="cityId" value=""  tabindex="1">
@@ -96,7 +100,11 @@ $currencySymbol=($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=="IN")
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label for="" class="col-sm-3 control-label">Zip</label>
+                                                <label for="" class="col-sm-3 control-label">
+                                                    <?php if($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=='IN'):?>
+                                                    Zip<?php else:?>
+                                                    Postal Box Zip Code<?php endif;?>
+                                                </label>
                                                 <div class="col-sm-9 zipElementPara">
                                                     <?php if ($userShippingDataDetails->zipId == "") { ?>
                                                         <select class="form-control" name="zipId" id="zipId" value=""  tabindex="1">

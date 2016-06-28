@@ -56,7 +56,11 @@
                                                         </p>
                                                     </div>
                                                     <div class="col-md-3 col-sm-3 pad_rit_none">
-                                                        <label>City</label>
+                                                        <label>
+                                                            <?php if($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=='IN'):?>
+                                                            City<?php else:?>
+                                                            County<?php endif;?>
+                                                        </label>
                                                         <p style="position:relative;" class="cityElementPara">
                                                             <?php if($userShippingDataDetails[0]->cityId==""){?>
                                                             <select class="form-control nova heght_cntrl" name="cityId" id="cityId" value=""  tabindex="1">
@@ -73,7 +77,11 @@
                                                         </p>
                                                     </div>
                                                     <div class="col-md-3 col-sm-3 pad_rit_none">
-                                                        <label>Zip</label>
+                                                        <label>
+                                                            <?php if($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=='IN'):?>
+                                                            Zip<?php else:?>
+                                                            Postal Box Zip Code<?php endif;?>
+                                                        </label>
                                                         <p style="position:relative;" class="zipElementPara">
                                                             <?php if($userShippingDataDetails[0]->zipId==""){?>
                                                             <select class="form-control nova heght_cntrl" name="zipId" id="zipId" value=""  tabindex="1">

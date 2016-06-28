@@ -4,7 +4,7 @@
 <table cellspacing=5 cellpadding=5 width=90% border=0 >
   
   <tr id="PageHeading">
-    <td class="PageHeading" >Counry Manager</td>
+    <td class="PageHeading" >Country Manager</td>
   </tr>
 
   
@@ -44,7 +44,7 @@
 	<?php if($InerArr->status=='1'){$action=0;}else{$action=1;}?>
 	<a href="<?php echo base_url().'webadmin/country_controller/change_status/'.$InerArr->countryId.'/'.$action;?>" class="AdminDashBoardLinkText"><?php if($InerArr->status=='1'){?><img src="<?php echo $SiteImagesURL.'webadmin/';?>active1.png" alt="Inactive" title="Active" /><?php }else{?><img src="<?php echo $SiteImagesURL.'webadmin/';?>inactive1.png" alt="Inactive" title="Inctive" /><?php }?></a>
         &nbsp;&nbsp;
-        <a href="<?php echo base_url().'webadmin/country_controller/viewStatList/'.$InerArr->countryId;?>">Manage State</a>
+        <a href="<?php echo base_url().'webadmin/country_controller/viewStatList/'.$InerArr->countryId;?>">Manage State/Province</a>
 	</td> 
   </tr>
   

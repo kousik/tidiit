@@ -66,7 +66,7 @@ class Country_controller extends MY_Controller{
             $status=$this->input->post('status',true);
             $countryId=$this->input->post('countryId',true);
             $this->Country->get_add_state($countryId,$stateName);
-            $this->session->set_flashdata('Message','State added successfully.');
+            $this->session->set_flashdata('Message','State/Province added successfully.');
             redirect(base_url().'webadmin/country_controller/viewStatList/'.$countryId);	
         }
         
@@ -76,7 +76,7 @@ class Country_controller extends MY_Controller{
             $countryId=$this->input->post('countryId',true);
             $stateId=$this->input->post('stateId',true);
             $this->Country->get_add_city(array('city'=>$city,'status'=>$status,'stateId'=>$stateId,'countryId'=>$countryId));
-            $this->session->set_flashdata('Message','City added successfully.');
+            $this->session->set_flashdata('Message','City/County added successfully.');
             redirect(base_url().'webadmin/country_controller/viewCityList/'.$stateId);	
         }
 	
@@ -88,7 +88,7 @@ class Country_controller extends MY_Controller{
             //pre($dataArr);die;
             $this->Country->get_add_zip($dataArr);
             
-            $this->session->set_flashdata('Message','Zip added successfully.');
+            $this->session->set_flashdata('Message','Zip/Postal Box Zip Code added successfully.');
             redirect(base_url().'webadmin/country_controller/viewZipList/'.$cityId);	
         }
         
@@ -117,7 +117,7 @@ class Country_controller extends MY_Controller{
             
             $stateId=$this->input->post('stateId',true);
             $this->Country->edit_state(array('stateName'=>$stateName,'status'=>$status),$stateId);
-            $this->session->set_flashdata('Message','State edit successfully.');
+            $this->session->set_flashdata('Message','State/Province edit successfully.');
             redirect(base_url().'webadmin/country_controller/viewStatList/'.$countryId);	
         }
         
@@ -128,7 +128,7 @@ class Country_controller extends MY_Controller{
             $cityId=$this->input->post('cityId',true);
             
             $this->Country->edit_city(array('city'=>$city,'status'=>$status),$cityId);
-            $this->session->set_flashdata('Message','State edit successfully.');
+            $this->session->set_flashdata('Message','City/County edit successfully.');
             redirect(base_url().'webadmin/country_controller/viewCityList/'.$stateId);	
         }
         
@@ -140,7 +140,7 @@ class Country_controller extends MY_Controller{
             $cityId=$this->input->post('cityId',true);
             
             $this->Country->edit_zip(array('zip'=>$zip,'status'=>$status),$zipId);
-            $this->session->set_flashdata('Message','Zip edit successfully.');
+            $this->session->set_flashdata('Message','Zip/Postal Box Zip Code edit successfully.');
             redirect(base_url().'webadmin/country_controller/viewZipList/'.$cityId);	
         }
         
@@ -180,7 +180,7 @@ class Country_controller extends MY_Controller{
             }
             $this->Country->edit_state(array('status'=>$Action),$stateId);
 
-            $this->session->set_flashdata('Message','State status updated successfully.');
+            $this->session->set_flashdata('Message','State/Province status updated successfully.');
             redirect(base_url().'webadmin/country_controller/viewStatList/'.$detailsArr[0]->countryId);
 	}
         
@@ -198,7 +198,7 @@ class Country_controller extends MY_Controller{
             }
             $this->Country->edit_city(array('status'=>$Action),$cityId);
 
-            $this->session->set_flashdata('Message','City status updated successfully.');
+            $this->session->set_flashdata('Message','City/County status updated successfully.');
             redirect(base_url().'webadmin/country_controller/viewCityList/'.$detailsArr[0]->stateId);
         }
         
@@ -216,7 +216,7 @@ class Country_controller extends MY_Controller{
             }
             $this->Country->edit_zip(array('status'=>$Action),$zipId);
             //echo $this->db->last_query();die;
-            $this->session->set_flashdata('Message','Zip status updated successfully.');
+            $this->session->set_flashdata('Message','Zip/Postal Box Zip Code status updated successfully.');
             redirect(base_url().'webadmin/country_controller/viewZipList/'.$detailsArr[0]->cityId);
         }
         
@@ -258,7 +258,7 @@ class Country_controller extends MY_Controller{
             }
             
             $this->Country->delete_state($stateId);
-            $this->session->set_flashdata('Message','state deleted successfully.');
+            $this->session->set_flashdata('Message','State/Province deleted successfully.');
             redirect(base_url().'webadmin/country_controller/viewStatList/'.$detailsArr[0]->countryId);
         }
         
@@ -276,7 +276,7 @@ class Country_controller extends MY_Controller{
             }
             
             $this->Country->delete_city($cityId);
-            $this->session->set_flashdata('Message','City deleted successfully.');
+            $this->session->set_flashdata('Message','City/County deleted successfully.');
             redirect(base_url().'webadmin/country_controller/viewCityList/'.$detailsArr[0]->stateId);
         }
         
@@ -294,7 +294,7 @@ class Country_controller extends MY_Controller{
             }
             
             $this->Country->delete_zip($zipId);
-            $this->session->set_flashdata('Message','Zip deleted successfully.');
+            $this->session->set_flashdata('Message','Zip/Postal Box Zip Code deleted successfully.');
             redirect(base_url().'webadmin/country_controller/viewZipList/'.$detailsArr[0]->cityId);
         }
         
@@ -309,4 +309,3 @@ class Country_controller extends MY_Controller{
             redirect(base_url().'webadmin/country_controller/viewLocalityList/'.$detailsArr[0]->zipId);
         }
 }
-?>
