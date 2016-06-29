@@ -308,4 +308,16 @@ class Country_controller extends MY_Controller{
             $this->session->set_flashdata('Message','Locality deleted successfully.');
             redirect(base_url().'webadmin/country_controller/viewLocalityList/'.$detailsArr[0]->zipId);
         }
+        
+    function dyn_add_zip($zipStart,$zipLast,$cityId){
+        //echo $zipStart.' == '.$zipLast.' == '.$cityId;die;
+        $batchDataArr=array();
+        for($i=$zipStart;$i<$zipLast+1;$i++):
+            $innerDataArr=array();
+            $innerDataArr=array('zip'=>$i,'cityId'=>$cityId);
+            $batchDataArr[]=$innerDataArr;
+        endfor;
+        //pre($batchDataArr);die;
+        $this->db->insert_batch('zip', $batchDataArr); 
+    }
 }
