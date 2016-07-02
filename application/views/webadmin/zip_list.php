@@ -17,7 +17,7 @@
   <tr>
     <td style="padding-left:10px;">
         <input type="button" name="AddBtn" id="AddBtn" value="Add Zip/Postal Box Zip Code" onclick="ShowAddAdminBox();" class="btn-primary btn-large"/> &nbsp; &nbsp; &nbsp;
-         <input type="button" name="AddBtn1" id="AddBtn1" value="Back to City/County List" onclick="location.href='<?php echo base_url().'webadmin/country_controller/viewCityList/'.$stateId;?>'" class="btn-primary btn-large"/>
+         <input type="button" name="AddBtn1" id="AddBtn1" value="Back to City List" onclick="location.href='<?php echo base_url().'webadmin/country_controller/viewCityList/'.$stateId;?>'" class="btn-primary btn-large"/>
     </td>
   </tr>
 <script language="javascript">

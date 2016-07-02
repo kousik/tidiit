@@ -16,7 +16,7 @@
   </tr>
   <tr>
     <td style="padding-left:10px;">
-        <input type="button" name="AddBtn" id="AddBtn" value="Add City/County" onclick="ShowAddAdminBox();" class="btn-primary btn-large"/> &nbsp; &nbsp; &nbsp;
+        <input type="button" name="AddBtn" id="AddBtn" value="Add City" onclick="ShowAddAdminBox();" class="btn-primary btn-large"/> &nbsp; &nbsp; &nbsp;
          <input type="button" name="AddBtn1" id="AddBtn1" value="Back to State/County List" onclick="location.href='<?php echo base_url().'webadmin/country_controller/viewStatList/'.$countryId;?>'" class="btn-primary btn-large"/>
     </td>
   </tr>
