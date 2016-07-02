@@ -4,7 +4,7 @@
 <table cellspacing=5 cellpadding=5 width=90% border=0>
   
   <tr id="PageHeading">
-    <td class="PageHeading" >City/County Manager</td>
+    <td class="PageHeading" >City Manager</td>
   </tr>
 
   
@@ -17,7 +17,7 @@
   <tr>
     <td style="padding-left:10px;">
         <input type="button" name="AddBtn" id="AddBtn" value="Add City/County" onclick="ShowAddAdminBox();" class="btn-primary btn-large"/> &nbsp; &nbsp; &nbsp;
-         <input type="button" name="AddBtn1" id="AddBtn1" value="Back to State/Province List" onclick="location.href='<?php echo base_url().'webadmin/country_controller/viewStatList/'.$countryId;?>'" class="btn-primary btn-large"/>
+         <input type="button" name="AddBtn1" id="AddBtn1" value="Back to State/County List" onclick="location.href='<?php echo base_url().'webadmin/country_controller/viewStatList/'.$countryId;?>'" class="btn-primary btn-large"/>
     </td>
   </tr>
 <script language="javascript">
@@ -84,8 +84,8 @@ function AskDelete(id){
 	<table width="100%" border="0" align="center" cellpadding="1" cellspacing="1" id="ListBox" class="alt_row">
   <tr class="ListHeadingLable" bgcolor="#DFDFDF" height="25px;">
     <td width="2%">Sl No </td>
-    <td width="20%">City/County Name</td>
-    <td width="20%">State/Province Name</td>
+    <td width="20%">City Name</td>
+    <td width="20%">State/County Name</td>
     <td width="20%">Country Name</td>
     <td width="10%">status</td>
     <td width="30%">Action</td>
@@ -137,7 +137,7 @@ function AskDelete(id){
     <td><form name="AdminEdit" id="AdminEdit" method="post" action="<?=base_url()?>webadmin/country_controller/edit_city/">
 	<table width="70%" border="0" align="center" cellpadding="0" cellspacing="0" id="EditBox" style="display:none;">
   <tr>
-    <th colspan="4"><span class="PageHeading">City/County Edit Form</span></th>
+    <th colspan="4"><span class="PageHeading">City Edit Form</span></th>
   </tr>
   <tr>
     <td align="left" valign="top" height="40px;">&nbsp;</td>
@@ -148,7 +148,7 @@ function AskDelete(id){
   
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable">City/County Name </td>
+    <td align="left" valign="top" class="ListHeadingLable">City Name </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top"><input type="text" name="Editcity" id="Editcity" value=""></td>
   </tr>
@@ -211,7 +211,7 @@ function AskDelete(id){
     <th width="13%" align="left" valign="top" scope="col">&nbsp;</th>
     <th width="18%" align="left" valign="top" scope="col">&nbsp;</th>
     <th width="3%" align="left" valign="top" scope="col" class="PageHeading">&nbsp;</th>
-    <th width="66%" align="left" valign="top" scope="col"><span class="PageHeading">City/County Add Form </span></th>
+    <th width="66%" align="left" valign="top" scope="col"><span class="PageHeading">City Add Form </span></th>
   </tr>
   <tr>
     <td align="left" valign="top" height="50px">&nbsp;</td>
@@ -222,7 +222,7 @@ function AskDelete(id){
   
   <tr>
     <td align="left" valign="top">&nbsp;</td>
-    <td align="left" valign="top" class="ListHeadingLable">City/County Name </td>
+    <td align="left" valign="top" class="ListHeadingLable">City Name </td>
     <td align="left" valign="top"><label><strong>:</strong></label></td>
     <td align="left" valign="top"><input type="text" name="city" id="city" value="" class="required"></td>
   </tr>
