@@ -447,6 +447,31 @@ class Shopping extends REST_Controller {
         success_response_after_post_get($result);
     }
     
+    function show_payment_gateway_name(){
+        $userId=  $this->post('userId');
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        
+        if($userId==""){
+            $this->response(array('error' => 'Please provide user index.'), 400); return FALSE;
+        }
+        
+        $rs=$this->user->get_details_by_id($userId);
+        if(empty($rs)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
+        
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        //die($countryShortName);
+        if($countryShortName==FALSE){
+            $this->response(array('error' => 'Please provide valid latitude and longitude!'), 400); return FALSE;
+        }
+        
+        $result=array();
+        $result['paymentGatewayData']=$this->Order_model->get_all_gateway(TRUE,$countryShortName);
+        success_response_after_post_get($result);
+    }
+    
     function single_order_sod_payment_post(){
         $userId=  $this->post('userId');
         $latitude = $this->post('latitude');
@@ -2597,4 +2622,6 @@ class Shopping extends REST_Controller {
         }
         return $validateArr;
     }
+    
+    
 }

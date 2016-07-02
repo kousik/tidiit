@@ -2132,7 +2132,7 @@ class Shopping extends MY_Controller{
             //array('field'   => 'deliveryStaffEmail','label'   => 'Delivery Staff Email','rules'=> 'trim|required|xss_clean|valid_email'),
             //array('field'   => 'deliveryStaffContactNo','label'   => 'Delivery Staff Contact No','rules'   => 'trim|required|xss_clean'),
             //array('field'   => 'deliveryStaffName','label'   => 'Delivery Staff Name','rules'   => 'trim|required|xss_clean'),
-            array('field'   => 'paymentOption','label'   => 'Select Payment Method','rules'   => 'trim|required|xss_clean|'),
+            array('field'   => 'paymentoption','label'   => 'Select Payment Method','rules'   => 'trim|required|xss_clean|'),
             array('field'   => 'orderId','label'   => 'Order Index','rules'   => 'trim|required|xss_clean|')
         );
         //initialise the rules with validatiion helper

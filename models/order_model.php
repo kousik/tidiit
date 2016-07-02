@@ -593,7 +593,11 @@ class Order_model extends CI_Model {
         return $this->db->from($this->_razorpay)->where('razorpayPaymentId',$razorpayPaymentId)->get()->result();
     }
     
-    function get_all_gateway(){
-        return $this->db->from($this->_payment_gateway)->where('countryCode',  $this->session->userdata('FE_SESSION_USER_LOCATION_VAR'))->where('status',1)->get()->result();
+    function get_all_gateway($app=FALSE,$countryCode=""){
+        if($app==FALSE):
+            return $this->db->from($this->_payment_gateway)->where('countryCode',  $this->session->userdata('FE_SESSION_USER_LOCATION_VAR'))->where('status',1)->get()->result();
+        else:
+            return $this->db->from($this->_payment_gateway)->where('countryCode',  $countryCode)->where('status',1)->get()->result_array();
+        endif;
     }
 }

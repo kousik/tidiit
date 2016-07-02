@@ -69,9 +69,9 @@
                                         <tr>
                                             <td>Select Payment Method</td>
                                             <td>:</td>
-                                            <td>
-                                                <label><input type="radio" name="paymentOption" value="mpesa" required> mPesa</label>
-                                                <label><input type="radio" name="paymentOption" value="netBanking" required> Net Banking</label>
+                                            <td><?php foreach($paymentGatewayData AS $k):?> 
+                                                <label><input type="radio" name="paymentoption" value="<?php echo $k->gatewayCode;?>" required> <?php echo $k->gatewayTitle;?></label>
+                                                <?php endforeach;?>
                                             </td>
                                         </tr>
                                         <tr>

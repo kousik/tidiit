@@ -1322,6 +1322,7 @@ class Ajax extends MY_Controller{
             $data=array();
             $data['orderId']=  (base64_decode($orderId))/226201;
             $data['payAmount']=trim($this->input->post('payAmount',TRUE));
+            $data['paymentGatewayData']=$this->Order_model->get_all_gateway();
             echo json_encode(array('result'=>'good','content'=>$this->load->view('sod_payment_final_input_view',$data,TRUE)));
         else :
             echo json_encode(array('result'=>'bad'));
