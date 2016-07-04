@@ -2004,7 +2004,7 @@ class Shopping extends MY_Controller{
 
             $order=$PaymentDataArr['orderInfo'][$v]['order'];
             $orderinfo=$PaymentDataArr['orderInfo'][$v]['orderInfo'];
-            $this->Product_model->update_product_quantity($order['productId'],$order['productQty']);
+            //$this->Product_model->update_product_quantity($order['productId'],$order['productQty']);
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$v;
             $this->_remove_cart($PaymentDataArr['orderInfo'][$v]['cartId']);
@@ -2012,7 +2012,7 @@ class Shopping extends MY_Controller{
             //Send Email message
             $user = $this->_get_current_user_details();
             $recv_email = $user->email;
-            $this->Order_model->add_payment(array('orderId'=>$v,'paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId,'orderType'=>'group'));
+            $this->Order_model->add_payment(array('orderId'=>$v,'paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId,'orderType'=>'single'));
 
             $mail_template_view_data=$this->load_default_resources();
             $mail_template_view_data['single_order_success']=$mail_template_data;

@@ -468,7 +468,7 @@ class Shopping extends REST_Controller {
         }
         
         $result=array();
-        $result['paymentGatewayData']=$this->Order_model->get_all_gateway(TRUE,$countryShortName);
+        $result['paymentGatewayData']=$this->order->get_all_gateway(TRUE,$countryShortName);
         success_response_after_post_get($result);
     }
     
@@ -534,8 +534,20 @@ class Shopping extends REST_Controller {
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
         
-        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken==""){
-            $this->response(array('error' => 'Please provide user index,latitude,longitude,device id,device token !'), 400); return FALSE;
+        if($userId==""){
+            $this->response(array('error' => 'Please provide user index'), 400); return FALSE;
+        }
+        
+        $rs=$this->user->get_details_by_id($userId);
+        if(empty($rs)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
         
         $allIncompleteOrders= $this->order->get_incomplete_order_by_user($userId,'single');
@@ -619,7 +631,7 @@ class Shopping extends REST_Controller {
         $this->_sent_single_order_complete_mail_sod_final_payment($orderId);
         
         /// here to preocess SMS to logistics partner
-        /*$logisticsData=$PaymentDataArr['logisticsData'];
+        /*$logisticsData=$logisticsData;
         if(!empty($logisticsData) && array_key_exists('deliveryStaffContactNo', $logisticsData)):
             $logisticMobileNo=$logisticsData['deliveryStaffContactNo'];
             if($logisticMobileNo!=""):
@@ -638,14 +650,185 @@ class Shopping extends REST_Controller {
         send_sms_notification($sms_data);
         
         /// here send mail to logistic partner
-        /*$mailBody="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
-        global_tidiit_mail($PaymentDataArr['logisticsData']['deliveryStaffEmail'],'Tidiit payment submited  for Order '.$tidiitStr,$mailBody,'',$recv_name);
+        /*$mailBody="Hi ".$logisticsData['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
+        global_tidiit_mail($logisticsData['deliveryStaffEmail'],'Tidiit payment submited  for Order '.$tidiitStr,$mailBody,'',$recv_name);
         unset($_SESSION['PaymentData']);*/
         
         
         $result=array();
         $result['message']='Thanks for the payment before order is Out for delivery';
         success_response_after_post_get($result);
+    }
+    
+    function single_order_razorpay(){
+        $userId=  $this->post('userId');
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        $deviceType = $this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if($userId==""){
+            $this->response(array('error' => 'Please provide user index'), 400); return FALSE;
+        }
+        
+        $user=$this->user->get_details_by_id($userId)[0];
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }
+        
+        $allIncompleteOrders= $this->order->get_incomplete_order_by_user($userId,'single');
+        //pre($allIncompleteOrders);die;
+        $defaultResources=load_default_resources();
+        //$countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        $paymentGatewayAmount=0;
+        $allOrderArray=array();
+        foreach ($allIncompleteOrders As $k){
+            $order=array();
+            $paymentGatewayAmount+=$k->orderAmount;
+            $order['status'] = 8;
+            $allOrderArray['orderId'] = $k->orderId;
+            
+            $orderInfo = array();
+            $mail_template_data = array();
+            //pre($k);die;
+            $orderInfo= unserialize(base64_decode($k->orderInfo));
+            //pre($orderInfo);die;
+            //pre($orderInfo['shipping']);die;
+            //pre($orderInfo['pdetail']);die;
+            //pre($orderInfo['priceinfo']);die;
+           
+            //$mPesaId=$this->order->add_mpesa(array('latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId));
+            //$this->order->add_payment(array('orderId'=>$k->orderId,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'single'));
+            //$this->product->update_product_quantity($orderInfo['priceinfo']->productId,$orderInfo['priceinfo']->qty);
+            //$orderUpdateArr=array('orderUpdatedate'=>date('Y-m-d H:i:s'),'udidPayment'=>$UDID,'deviceTokenPayment'=>$deviceToken,
+                //'latitudePayment'=>$latitude,'longitudePayment'=>$longitude,'isPaid'=>1);
+            //$orderUpdateArr['status']=2;
+            //$this->order->update($orderUpdateArr,$k->orderId);
+            $this->order->update($order,$k->orderId);
+            /// sendin SMS to user
+            /*$sms_data=array('nMessage'=>'You have successfull placed an order TIDIIT-OD-'.$k->orderId.' for '.$orderInfo['pdetail']->title.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'],
+                'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
+                'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER');*/
+            //send_sms_notification($sms_data);
+            /*$mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderInfo;
+            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$k->orderId;
+            $mail_template_view_data=$defaultResources;
+            $mail_template_view_data['single_order_success']=$mail_template_data;
+            $receiverFullName=$user->firstName.' '.$user->lastName;
+            global_tidiit_mail($user->email, "Your Tidiit order - TIDIIT-OD-".$k->orderId.' has placed successfully', $mail_template_view_data,'single_order_success',$receiverFullName);
+            
+            $this->sent_single_order_complete_mail($k->orderId);*/
+        }
+        
+        
+        $result=array();
+        //$result['message']='Thanks you for shopping with '.$defaultResources['MainSiteBaseURL'].'.Order placed successfully for each item selected.For More details check your "My Order" section.';
+        $result['profile_key']="rzp_test_yfWhsaZcULj1KQ";
+        $result['currency']='INR';
+        $result['amount']=$paymentGatewayAmount*100;
+        $result['name']=$user->firstName.' '.$user->lastName;
+        $result['email']=$user->email;
+        if($user->contactNo!=""):
+            $result['contact']=$user->contactNo;
+        else:
+            $result['contact']=$user->mobile;
+        endif;
+        $result['description']="Shopping from Tidiit";
+        $result['image']="http://tidiit.com/resources/images/logo.png";
+        $result['orderIdData']=  base64_encode(serialize($allOrderArray));
+        $result['orderType']= 'single';
+        $result['finalReturn']= 'no';
+        success_response_after_post_get($result);
+    }
+    
+    function razorpay_return_success(){
+        $razorpayPaymentId=trim($this->input->post('razorpayPaymentId'));
+        $orderIdData=trim($this->input->post('orderIdData'));
+        $orderType=trim($this->input->post('orderType'));
+        $finalReturn=trim($this->input->post('finalReturn'));
+        $userId=trim($this->input->post('userId'));
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        $deviceType = $this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        $deliveryStaffEmail=trim($this->input->post('deliveryStaffEmail',TRUE));
+        $deliveryStaffContactNo=trim($this->input->post('deliveryStaffContactNo',TRUE));
+        $deliveryStaffName=trim($this->input->post('deliveryStaffName',TRUE));
+        
+        $logisticsData=array('deliveryStaffName'=>$deliveryStaffName,'deliveryStaffContactNo'=>$deliveryStaffContactNo,'deliveryStaffEmail'=>$deliveryStaffEmail);
+        
+        if($userId==""){
+            $this->response(array('error' => 'Please provide user index.'), 400); return FALSE;
+        }
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }
+        
+        if($razorpayPaymentId=="" || $orderIdData=="" || $orderType=="" || $finalReturn){
+            $this->response(array('error' => "Razorpay payment id not got,Order ids data not received,order type and final return data not received."), 400); return FALSE;
+        }else{
+            $orderIdDataArr= unserialize(base64_decode($orderIdData));
+            if(count($orderIdDataArr)==1){
+                $dataArr=array('userId'=>$userId,'orderIds'=>$orderIdDataArr[0],'razorpayPaymentId'=>$razorpayPaymentId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'addedTime'=> date('Y-m-d H:i:s'));
+            }else{
+                $dataArr=array('userId'=>$userId,'orderIds'=>  implode(',', $orderIdDataArr),'razorpayPaymentId'=>$razorpayPaymentId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'addedTime'=>date('Y-m-d H:i:s'));
+            }
+            
+            $this->order->add_rajorpay_return_data($dataArr);
+            $razorpayInfo=$this->order->get_razorpay_info();
+            $api_key=$razorpayInfo[0]->userName;
+            $api_secret=$razorpayInfo[0]->password;
+
+            //include_once src/Api.php;
+            $api = new Api($api_key, $api_secret);
+            $payment = $api->payment->fetch($razorpayPaymentId);
+            $Amount=$payment->amount;
+            $captureData=$api->payment->fetch($razorpayPaymentId)->capture(array('amount'=>$Amount));
+            //pre($captureData);die;
+            if($captureData->captured==1){
+                //$PaymentDataArr = $_SESSION['PaymentData'];
+                $orderType = $orderType;
+                if($orderType=='group'):
+                    //$orderDataArr = $PaymentDataArr;
+                    if($finalReturn=='no'):
+                        $productPriceArr=$this->order->get_product_price_details_by_orderid($orderIdDataArr[0]);
+                        $this->product->update_product_quantity($productPriceArr[0]['productId'],$productPriceArr[0]['qty']);
+                        $this->process_razorpay_success_group_order($orderIdDataArr[0],$razorpayPaymentId);
+                    else:
+                        $this->process_razorpay_success_group_order_final($orderIdDataArr[0],$razorpayPaymentId,$logisticsData);
+                    endif;
+                else:
+                    if($finalReturn=='no'):
+                        foreach($orderIdDataArr As $k=> $v){
+                            $productPriceArr=$this->order->get_product_price_details_by_orderid($v);
+                            $this->product->update_product_quantity($productPriceArr[0]['productId'],$productPriceArr[0]['qty']);
+                        }
+                        //$this->process_mpesa_success_single_order(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo']));
+                        $this->process_razorpay_success_single_order($orderIdDataArr,$razorpayPaymentId);
+                    else:
+                        //$this->process_mpesa_success_single_order_final(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo'],'logisticsData'=>$logisticsData));
+                        $this->process_razorpay_success_single_order_final($orderIdDataArr,$razorpayPaymentId,$logisticsData);
+                    endif;
+                endif;
+            }else{
+
+            }
+        }
+        
     }
     
     function set_wishlist_post(){
@@ -1209,8 +1392,20 @@ class Shopping extends REST_Controller {
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
         
-        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $orderId==""){
-            $this->response(array('error' => 'Please provide user index,order index,latitude,longitude,device id,device token !'), 400); return FALSE;
+        if($userId==""){
+            $this->response(array('error' => 'Please provide user index'), 400); return FALSE;
+        }
+        
+        $user=$this->user->get_details_by_id($userId)[0];
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
         
         if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
@@ -1224,7 +1419,6 @@ class Shopping extends REST_Controller {
                 
         //pre($allIncompleteOrders);die;
         $defaultResources=load_default_resources();
-        $user=$this->user->get_details_by_id($userId)[0];
         $pevorder = $this->order->get_single_order_by_id($orderId);
         $a = $this->_get_available_order_quantity($orderId);
         $prod_price_info = $this->product->get_products_price_details_by_id($pevorder->productPriceId);
@@ -1320,9 +1514,22 @@ class Shopping extends REST_Controller {
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
         
-        if($userId=="" || $latitude =="" || $longitude =="" || $deviceType=="" || $UDID ==""  || $deviceToken=="" || $orderId==""){
-            $this->response(array('error' => 'Please provide user index,order index,latitude,longitude,device id,device token !'), 400); return FALSE;
+        if($userId==""){
+            $this->response(array('error' => 'Please provide user index'), 400); return FALSE;
         }
+        
+        $user=$this->user->get_details_by_id($userId)[0];
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }
+        
         
         if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
             $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
@@ -1335,7 +1542,6 @@ class Shopping extends REST_Controller {
                 
         //pre($allIncompleteOrders);die;
         $defaultResources=load_default_resources();
-        $user=$this->user->get_details_by_id($userId)[0];
         $pevorder = $this->order->get_single_order_by_id($orderId);
         $a = $this->_get_available_order_quantity($orderId);
         $prod_price_info = $this->product->get_products_price_details_by_id($pevorder->productPriceId);
@@ -1419,6 +1625,70 @@ class Shopping extends REST_Controller {
         $this->order->add_payment(array('orderId'=>$orderId,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'group'));
         $result=array();
         $result['message']='Group invited to group member successfully.Your group order started successfully,';
+        success_response_after_post_get($result);
+    }
+    
+    function buying_club_leader_razorpay_payment_post(){
+        $orderId=  $this->post('orderId');
+        $userId=  $this->post('userId');
+        
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        $deviceType = $this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if($userId==""){
+            $this->response(array('error' => 'Please provide user index'), 400); return FALSE;
+        }
+        
+        $user=$this->user->get_details_by_id($userId)[0];
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }
+        
+        if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
+            $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
+        }
+        
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        $order=$this->order->get_single_order_by_id($orderId);
+        //$orderDetails= $this->order->details($orderId);
+        //$countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        $paymentGatewayAmount=0;
+        $allOrderArray=array();
+        
+        $order=array();
+        $paymentGatewayAmount=$order->orderAmount;
+        $order['status'] = 8;
+         
+        $allOrderArray['orderId']=$orderId;
+        $this->order->update($order,$orderId);
+        
+        $result=array();
+        //$result['message']='Thanks you for shopping with '.$defaultResources['MainSiteBaseURL'].'.Order placed successfully for each item selected.For More details check your "My Order" section.';
+        $result['profile_key']="rzp_test_yfWhsaZcULj1KQ";
+        $result['currency']='INR';
+        $result['amount']=$paymentGatewayAmount*100;
+        $result['name']=$user->firstName.' '.$user->lastName;
+        $result['email']=$user->email;
+        if($user->contactNo!=""):
+            $result['contact']=$user->contactNo;
+        else:
+            $result['contact']=$user->mobile;
+        endif;
+        $result['description']="Shopping from Tidiit";
+        $result['image']="http://tidiit.com/resources/images/logo.png";
+        $result['orderIdData']=  base64_encode(serialize($allOrderArray));
+        $result['orderType']= 'group';
+        $result['finalReturn']= 'no';
         success_response_after_post_get($result);
     }
     
@@ -2123,7 +2393,7 @@ class Shopping extends REST_Controller {
         foreach($group->users as $key => $usr):
             if($me->userId != $usr->userId):
                 $mail_template_data=array();
-                $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                $data['senderId'] = $userId;
                 $data['receiverId'] = $usr->userId;
                 $data['nType'] = 'BUYING-CLUB-ORDER-CONTINUE';
 
@@ -2160,7 +2430,7 @@ class Shopping extends REST_Controller {
                 send_sms_notification($sms_data);
             endif;
         endforeach;
-        $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+        $data['senderId'] = $userId;
         $data['receiverId'] = $group->admin->userId;
         $data['nType'] = 'BUYING-CLUB-ORDER-CONTINUE';
         $data['nTitle'] = 'Your Buying Club['.$group->groupTitle.'] order continue by <b>'.$me->firstName.' '.$me->lastName.'</b>';
@@ -2273,7 +2543,7 @@ class Shopping extends REST_Controller {
         foreach($group->users as $key => $usr):
             if($me->userId != $usr->userId):
                 $mail_template_data=array();
-                $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+                $data['senderId'] = $userId;
                 $data['receiverId'] = $usr->userId;
                 $data['nType'] = 'BUYING-CLUB-ORDER-CONTINUE';
 
@@ -2305,7 +2575,7 @@ class Shopping extends REST_Controller {
                 send_sms_notification($sms_data);
             endif;
         endforeach;
-        $data['senderId'] = $this->session->userdata('FE_SESSION_VAR');
+        $data['senderId'] = $userId;
         $data['receiverId'] = $group->admin->userId;
         $data['nType'] = 'BUYING-CLUB-ORDER-CONTINUE';
         $data['nTitle'] = 'Your Buying Club['.$group->groupTitle.'] order continue by <b>'.$me->firstName.' '.$me->lastName.'</b>';
@@ -2339,6 +2609,70 @@ class Shopping extends REST_Controller {
         endif;
         $result=array();
         $result['message']='Group invited to group member successfully.Your group order started successfully,';
+        success_response_after_post_get($result);
+    }
+    
+    function buying_club_member_razorpay_payment_post(){
+        $orderId=  $this->post('orderId');
+        $userId=  $this->post('userId');
+        
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        $deviceType = $this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if($userId==""){
+            $this->response(array('error' => 'Please provide user index'), 400); return FALSE;
+        }
+        
+        $user=$this->user->get_details_by_id($userId)[0];
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }
+        
+        if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
+            $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
+        }
+        
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        $order=$this->order->get_single_order_by_id($orderId);
+        //$orderDetails= $this->order->details($orderId);
+        //$countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        $paymentGatewayAmount=0;
+        $allOrderArray=array();
+        
+        $order=array();
+        $paymentGatewayAmount=$order->orderAmount;
+        $order['status'] = 8;
+         
+        $allOrderArray['orderId']=$orderId;
+        $this->order->update($order,$orderId);
+        
+        $result=array();
+        //$result['message']='Thanks you for shopping with '.$defaultResources['MainSiteBaseURL'].'.Order placed successfully for each item selected.For More details check your "My Order" section.';
+        $result['profile_key']="rzp_test_yfWhsaZcULj1KQ";
+        $result['currency']='INR';
+        $result['amount']=$paymentGatewayAmount*100;
+        $result['name']=$user->firstName.' '.$user->lastName;
+        $result['email']=$user->email;
+        if($user->contactNo!=""):
+            $result['contact']=$user->contactNo;
+        else:
+            $result['contact']=$user->mobile;
+        endif;
+        $result['description']="Shopping from Tidiit";
+        $result['image']="http://tidiit.com/resources/images/logo.png";
+        $result['orderIdData']=  base64_encode(serialize($allOrderArray));
+        $result['orderType']= 'group';
+        $result['finalReturn']= 'no';
         success_response_after_post_get($result);
     }
     
@@ -2623,5 +2957,393 @@ class Shopping extends REST_Controller {
         return $validateArr;
     }
     
+    function process_razorpay_success_group_order($orderId,$razorpayPaymentId){
+        $defaultResourcesData=  load_default_resources();
+        $pevorder = $this->order->get_single_order_by_id($orderId);
+        $prod_price_info = $this->product->get_products_price_details_by_id($pevorder->productPriceId);;
+        $aProductQty= $this->_get_available_order_quantity($orderId);
+        $order_update=array();
+        if($prod_price_info->qty == $aProductQty):
+            $order_update['status'] = 2;
+            $order_update['isPaid'] = 1;
+            $this->product->update_product_quantity($prod_price_info->productId,$prod_price_info->qty);
+        else:
+            $order_update['status'] = 1;
+            $order_update['isPaid'] = 1;
+        endif;
+
+        $update = $this->order->update($order_update,$orderId);
+
+        if($update):
+            $this->order->order_group_status_update($orderId, $order_update['status'],$pevorder->parrentOrderID);
+
+            //Notification
+            $order =$pevorder;
+            $orderinfo =  unserialize(base64_decode($order->orderInfo));
+            $group =$this->user->get_group_by_id($order->groupId);;
+            $orderinfo['group'] = $group;
+            
+            //$info['orderInfo'] = base64_encode(serialize($orderinfo));
+            //$this->order->update($info, $orderId);
+            if($order->parrentOrderID == 0):
+                foreach($group->users as $key => $usr):
+                    $mail_template_data=array();
+                    $data['senderId'] = $userId;
+                    $data['receiverId'] = $usr->userId;
+                    $data['nType'] = 'BUYING-CLUB-ORDER';
+
+                    $data['nTitle'] = 'New Buying Club order running by <b>'.$group->admin->firstName.' '.$group->admin->lastName.'</b>';
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$group->admin->firstName.' '.$group->admin->lastName;
+                    $data['nMessage'] = "Hi, <br> You have requested to buy Buying Club order product.<br>";
+                    $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
+                    $data['nMessage'] .= "Want to process the order ? <br>";
+                    $data['nMessage'] .= "<a href='".$defaultResourcesData["MainSiteBaseURL"]."shopping/group-order-decline/".base64_encode($orderId*226201)."' class='btn btn-danger btn-lg'>Decline</a>  or <a href='".$defaultResourcesData['MainSiteBaseURL']."shopping/group-order-accept-process/".base64_encode($orderId*226201)."' class='btn btn-success btn-lg'>Accept</a><br>";
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
+                    $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                    $data['orderId'] =$orderId;
+                    $data['productId'] =$orderinfo['priceinfo']->productId;
+                    $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
+
+                    $data['isRead'] = 0;
+                    $data['status'] = 1;
+                    $data['createDate'] = date('Y-m-d H:i:s');
+
+                    //Send Email message
+                    $recv_email = $usr->email;
+                    $sender_email = $group->admin->email;
+
+                    $mail_template_view_data=load_default_resources();
+                    $mail_template_view_data['group_order_start']=$mail_template_data;
+                    global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
+                    $this->user->notification_add($data);
+                    /// sendin SMS to allmember
+                    $sms_data=array('nMessage'=>'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.$defaultResourcesData["MainSiteBaseURL"],
+                        'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$usr->userId,
+                        'senderMobileNumber'=>$group->admin->mobile,'nType'=>'CREATE-'.$data['nType']);
+                    send_sms_notification($sms_data);
+                endforeach;
+            else:
+                $rsUser=$this->user->get_details_by_id($pevorder->userId);
+                $me = $rsUser[0];
+                $mail_template_data=array();
+                $data['senderId'] = $userId;
+                $data['nType'] = 'BUYING-CLUB-ORDER';
+                foreach($group->users as $key => $usr):
+                    if($me->userId != $usr->userId):
+                        $mail_template_data=array();
+                        $data['receiverId'] = $usr->userId;
+                        
+                        $data['nTitle'] = 'Buying Club order continue by <b>'.$usr->firstName.' '.$usr->lastName.'</b>';
+                        $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$usr->firstName.' '.$usr->lastName;
+                        $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club.<br>";
+                        $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
+                        $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
+                        $data['nMessage'] .= "";
+                        $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                        $data['orderId'] =$orderId;
+                        $data['productId'] =$orderinfo['priceinfo']->productId;
+                        $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
+
+                        $data['isRead'] = 0;
+                        $data['status'] = 1;
+                        $data['createDate'] = date('Y-m-d H:i:s');
+
+                        //Send Email message
+                        $recv_email = $usr->email;
+                        $sender_email = $me->email;
+
+                        $mail_template_view_data=load_default_resources();
+                        $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
+                        global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+                        $this->user->notification_add($data);
+
+                        /// sendin SMS to allmember
+                        $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of Buying Club['.$group->groupTitle.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.$defaultResourcesData["MainSiteBaseURL"],
+                            'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
+                            'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
+                        send_sms_notification($sms_data);
+                    endif;
+                endforeach;
+                $data['receiverId'] = $group->admin->userId;
+                //Send Email message
+                $recv_email = $group->admin->email;
+                $sender_email = $me->email;
+                $mail_template_view_data=load_default_resources();
+                if(empty($mail_template_data)){
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$me->firstName.' '.$me->lastName;
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
+                    $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
+                }
+                $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
+                global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
+                $this->user->notification_add($data);
+                /// sendin SMS to allmember
+                $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of your Buying Club['.$group->groupTitle.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.$defaultResourcesData["MainSiteBaseURL"],
+                    'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
+                    'senderMobileNumber'=>$group->admin->mobile,'nType'=>$data['nType']);
+                send_sms_notification($sms_data);
+            endif;
+
+            if($order_update['status']==2):
+                //$this->_sent_order_complete_mail($order);
+                $this->sent_buying_club_order_complete_mail($order);
+            endif;
+
+            $rajorpayDataArr=$this->order->get_rajorpay_id_by_rajorpay_pament_id($razorpayPaymentId);
+            $this->order->add_payment(array('orderId'=>$orderId,'paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId,'orderType'=>'group'));
+            $result=array();
+            $result['message']='Thanks you for shopping with '.$defaultResources["MainSiteBaseURL"].'.Order placed successfully for each item selected.For More details check your "My Order" section.';
+            success_response_after_post_get($result);
+        else:
+            $this->response(array('error' => 'Invalid order index provided'), 400); return FALSE;
+        endif;
+    }
     
+    function process_razorpay_success_group_order_final($orderId,$razorpayPaymentId,$logisticsData){
+        $defaultResourcesData=  load_default_resources();
+        $pevorder = $this->order->get_single_order_by_id($orderId);
+        $prod_price_info = $this->product->get_products_price_details_by_id($pevorder->productPriceId);
+        $aProductQty= $this->_get_available_order_quantity($orderId);
+        $order_update=array();
+        
+        $order_update=array();
+        $order_update['isPaid'] = 1;
+
+        $update = $this->order->update($order_update,$orderId);
+
+        //Notification
+        $order = $pevorder;
+        $orderinfo = unserialize(base64_decode($order->orderInfo));
+
+        $group =$this->user->get_group_by_id($order->groupId);;
+        $orderinfo['group'] = $group;
+        
+        $rsUser=$this->user->get_details_by_id($order->userId);
+        $user = $rsUser[0];
+        $recv_email = $user->email;
+        $recv_name=$user->firstName.' '.$user->lastName;
+        $tidiitStr='TIDIIT-OD-';
+        
+        $data['senderId'] = $order->userId;
+        $data['nType'] = 'BUYING-CLUB-ORDER';
+            
+        if($order->parrentOrderID == 0):
+            foreach($group->users as $key => $usr):
+                $mail_template_data=array();
+                $data['receiverId'] = $usr->userId;
+                
+                $data['nTitle'] = '<b>'.$user->firstName.' '.$user->lastName.'</b>  completed payment before delivery';
+                $mail_template_data['TEMPLATE_GROUP_ORDER_START_TITLE']=$user->firstName.' '.$user->lastName;
+                $data['nMessage'] = "Hi, ".$group->admin->firstName.' '.$group->admin->lastName."<br> completed his payment for buy the Buying Club order product.<br>";
+                $data['nMessage'] .= "Product is <a href=''>".$orderinfo['pdetail']->title."</a><br>";
+                $mail_template_data['TEMPLATE_GROUP_ORDER_START_PRODUCT_TITLE']=$orderinfo['pdetail']->title;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERID']=$orderId;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERAMT']=$order->orderAmount;;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_START_ORDERQTY']=$order->productQty;
+                $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                $data['orderId'] =$orderId;
+                $data['productId'] =$orderinfo['priceinfo']->productId;
+                $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
+
+                $data['isRead'] = 0;
+                $data['status'] = 1;
+                $data['createDate'] = date('Y-m-d H:i:s');
+
+                //Send Email message
+                $recv_email = $usr->email;
+                $sender_email = $group->admin->email;
+
+                $mail_template_view_data=load_default_resources();
+                $mail_template_view_data['group_order_start']=$mail_template_data;
+                global_tidiit_mail($recv_email, 'Payment has submited before delivery for Buying Club Order', $mail_template_view_data,'group_order_sod_final_payment');
+                $this->user->notification_add($data);
+            endforeach;
+        else:
+            $rsUser=$this->user->get_details_by_id($pevorder->userId);
+            $me = $rsUser[0];
+            $mail_template_data=array();
+            foreach($group->users as $key => $usr):
+                $mail_template_data=array();
+                $data['receiverId'] = $usr->userId;
+                
+                $data['nTitle'] = '<b>'.$recv_name.'</b> completed payment before delivery for  Buying Club order';
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$me->firstName.' '.$me->lastName;
+                $data['nMessage'] = "Hi, <br> I have paid Rs. ".$order->orderAmount." /- for the quantity ".$order->productQty." of this Buying Club.<br>";
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
+                $data['nMessage'] .= "";
+                $data['nMessage'] .= "Thanks <br> Tidiit Team.";
+                $data['orderId'] =$orderId;
+                $data['productId'] =$orderinfo['priceinfo']->productId;
+                $data['productPriceId'] =$orderinfo['priceinfo']->productPriceId;
+
+                $data['isRead'] = 0;
+                $data['status'] = 1;
+                $data['createDate'] = date('Y-m-d H:i:s');
+
+                //Send Email message
+                $recv_email = $usr->email;
+                $sender_email = $me->email;
+
+                $mail_template_view_data=load_default_resources();
+                $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
+                global_tidiit_mail($recv_email,"Payment submited for Tidiit Buying Club order  before delivery", $mail_template_view_data,'group_order_group_member_sod_final_payment');
+                if($me->userId != $usr->userId):
+                    $this->user->notification_add($data);
+                endif;
+            endforeach;
+            $data['receiverId'] = $group->admin->userId;
+
+            //Send Email message
+            $recv_email = $group->admin->email;
+            $leaderName=$group->admin->firstName.' '.$group->admin->lastName;
+            $sender_email = $me->email;
+            $mail_template_view_data=load_default_resources();
+            if(empty($mail_template_data)){
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_USER_NAME']=$me->firstName.' '.$me->lastName;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_AMT']=$order->orderAmount;
+                $mail_template_data['TEMPLATE_GROUP_ORDER_GROUP_MEMBER_PAYMENT_ORDER_QTY']=$order->productQty;
+            }
+            $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
+            global_tidiit_mail($recv_email,"Payment has submited for Tidiit Buying Club order before delivery", $mail_template_view_data,'group_order_group_member_sod_final_payment',$leaderName);
+            $this->user->notification_add($data);
+        endif;
+
+        if(!empty($logisticsData) && array_key_exists('deliveryStaffContactNo', $logisticsData)):
+            $logisticMobileNo=$logisticsData['deliveryStaffContactNo'];
+            if($logisticMobileNo!=""):
+                $sms=$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.'-'.$orderId.' please process the delivery.';
+                /// sendin SMS to allmember
+                $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$logisticMobileNo,'senderId'=>'','receiverId'=>'',
+                    'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
+                send_sms_notification($sms_data);
+            endif;
+        endif;
+
+        /// SMS to payer
+        $sms='Thanks for the payment.We have received for Tidiit Buying Club['.$group->groupTitle.'] order '.$tidiitStr.'-'.$orderId.'.';
+        $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
+            'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
+        send_sms_notification($sms_data);
+
+        if($user->userId!=$group->admin->userId){
+            /// SMS to group admin
+            $sms='Your Tidiit Buying Club['.$group->groupTitle.'] member['.$user->firstName.' '.$user->lastName.'] has completed payment for order '.$tidiitStr.'-'.$orderId.'.';
+            $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$group->admin->mobile,'senderId'=>'','receiverId'=>$group->admin->userId,
+                'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LEADER');
+            send_sms_notification($sms_data);
+        }
+
+        $rajorpayDataArr=$this->order->get_rajorpay_id_by_rajorpay_pament_id($razorpayPaymentId);
+        $this->order->edit_payment(array('paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId),$orderId);
+        $logisticMobileNo=$logisticsData['deliveryStaffContactNo'];
+        $sms="Hi ".$logisticsData['deliveryStaffName'].'. '.$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.'-'.$orderId.' please process the delivery.';
+
+        /// here send mail to logistic partner
+        $mailBody="Hi ".$logisticsData['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'-'.$orderId.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
+        global_tidiit_mail($logisticsData['deliveryStaffEmail'],'Tidiit payment completed for Order '.$tidiitStr.'-'.$orderId,$mailBody,'',$recv_name);
+
+        $this->_sent_single_order_complete_mail_sod_final_payment($orderId);
+        $result=array();
+        $result['message']='Thanks for the payment before order is Out for delivery';
+        success_response_after_post_get($result);
+    }
+    
+    function process_razorpay_success_single_order($orderIdArr,$razorpayPaymentId){
+        $orderId=0;
+        $tidiitStrChr='TIDIIT-OD';
+        $tidiitStr='';
+        $rajorpayDataArr=$this->order->get_rajorpay_id_by_rajorpay_pament_id($razorpayPaymentId);
+        foreach ($orderIdArr AS $k => $v):
+            $tidiitStr=$tidiitStrChr.'-'.$v.',';
+            $order_update=array();
+            $order_update['status'] = 2;
+            $order_update['isPaid'] = 1;
+            $this->order->update($order_update,$v);
+
+            $order=$this->order->get_single_order_by_id($v);
+            $orderinfo =  unserialize(base64_decode($order->orderInfo));
+            //$this->Product_model->update_product_quantity($order['productId'],$order['productQty']);
+            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
+            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$v;
+            //$this->_remove_cart($PaymentDataArr['orderInfo'][$v]['cartId']);
+
+            //Send Email message
+            $rsUser=$this->user->get_details_by_id($order->userId);
+            $user = $rsUser[0];
+            $recv_email = $user->email;
+            $this->order->add_payment(array('orderId'=>$v,'paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId,'orderType'=>'single'));
+
+            $mail_template_view_data=load_default_resources();
+            $mail_template_view_data['single_order_success']=$mail_template_data;
+            global_tidiit_mail($recv_email, "Your Tidiit order no - TIDIIT-OD-".$v.' has placed successfully', $mail_template_view_data,'single_order_success');
+            $this->sent_single_order_complete_mail($v);
+        endforeach;
+        $result=array();
+        $result['message']="Your order will process shortly and will update you by separate notification over mail and SMS";
+        success_response_after_post_get($result);
+    }
+    
+    
+    function process_razorpay_success_single_order_final($orderIdArr,$razorpayPaymentId,$logisticsData){
+        $orderId=0;
+        $tidiitStrChr='TIDIIT-OD';
+        $tidiitStr='';
+        //Send Email message
+        
+        $rajorpayDataArr=$this->order->get_rajorpay_id_by_rajorpay_pament_id($razorpayPaymentId);
+        foreach ($orderIdArr AS $k => $v):
+            $orderId=$v;
+            $tidiitStr=$tidiitStrChr.'-'.$v.',';
+            $order_update=array();
+            $order_update['isPaid'] = 1;
+            $this->order->update($order_update,$v);
+            
+            $order=$this->order->get_single_order_by_id($v);
+            $orderinfo =  unserialize(base64_decode($order->orderInfo));
+            
+            $rsUser=$this->user->get_details_by_id($order->userId);
+            $user = $rsUser[0];
+            $recv_email = $user->email;
+            $recv_name=$user->firstName.' '.$user->lastName;
+            
+            
+            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
+            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$v;
+
+            $rajorpayDataArr=$this->order->get_rajorpay_id_by_rajorpay_pament_id($razorpayPaymentId);
+            $this->order->edit_payment(array('paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId),$v);
+
+            $mail_template_view_data=$this->load_default_resources();
+            $mail_template_view_data['single_order_success']=$mail_template_data;
+            $this->_global_tidiit_mail($recv_email, "Payment has completed for your Tidiit order TIDIIT-OD-".$v, $mail_template_view_data,'single_order_success_sod_final_payment',$recv_name);
+            $this->_sent_single_order_complete_mail_sod_final_payment($v);
+            
+        endforeach;
+        /// here to preocess SMS to logistics partner
+        if(!empty($logisticsData) && array_key_exists('deliveryStaffContactNo', $logisticsData)):
+            $logisticMobileNo=$logisticsData['deliveryStaffContactNo'];
+            if($logisticMobileNo!=""):
+                $sms=$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.' please process the delivery.';
+                /// sendin SMS to allmember
+                $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$logisticMobileNo,'senderId'=>'','receiverId'=>'',
+                    'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
+                send_sms_notification($sms_data);
+            endif;
+        endif;
+
+        /// SMS to payer
+        $sms='Thanks for the payment.We have received for Tidiit order '.$tidiitStr.'.';
+        $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
+            'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-PAYER');
+        send_sms_notification($sms_data);
+
+        /// here send mail to logistic partner
+        $mailBody="Hi ".$logisticsData['deliveryStaffName'].",<br /> <b>$recv_name</b> has completed Tidiit payment for Order <b>".$tidiitStr.'</b><br /><br /> Pleasee process the delivery for the above order.<br /><br />Thanks<br>Tidiit Team.';
+        global_tidiit_mail($logisticsData['deliveryStaffEmail'],'Tidiit payment submited  for Order '.$tidiitStr,$mailBody,'',$recv_name);
+        $result=array();
+        $result['message']='Thanks for the payment before order is Out for delivery';
+        success_response_after_post_get($result);
+    }
 }
