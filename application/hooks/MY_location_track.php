@@ -29,7 +29,8 @@ class MY_location_track
             $userLocation="";
         }
         if($userLocation==""){
-            $cIP=$this->CI->input->ip_address();
+            //$cIP=$this->CI->input->ip_address();
+            $cIP="196.201.216.170";
             if($cIP=='127.0.0.1'){
                 $cIP='117.214.82.169';
             }
@@ -100,6 +101,7 @@ class MY_location_track
             //$this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR',$insights['country_code']);
             $url = 'http://ip-api.com/json/'.$cIP;
             $json = json_decode(@file_get_contents($url));
+            //echo '<pre>';print_r($json);die;
             if(!$json){
                 $this->CI->session->set_userdata('FE_SESSION_USER_LOCATION_VAR','IN');
             }else{
