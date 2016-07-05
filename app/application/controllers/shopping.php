@@ -447,7 +447,7 @@ class Shopping extends REST_Controller {
         success_response_after_post_get($result);
     }
     
-    function show_payment_gateway_name(){
+    function show_payment_gateway_name_post(){
         $userId=  $this->post('userId');
         $latitude = $this->post('latitude');
         $longitude = $this->post('longitude');
@@ -660,7 +660,7 @@ class Shopping extends REST_Controller {
         success_response_after_post_get($result);
     }
     
-    function single_order_razorpay(){
+    function single_order_razorpay_post(){
         $userId=  $this->post('userId');
         $latitude = $this->post('latitude');
         $longitude = $this->post('longitude');
@@ -749,7 +749,7 @@ class Shopping extends REST_Controller {
         success_response_after_post_get($result);
     }
     
-    function razorpay_return_success(){
+    function razorpay_return_success_post(){
         $razorpayPaymentId=trim($this->input->post('razorpayPaymentId'));
         $orderIdData=trim($this->input->post('orderIdData'));
         $orderType=trim($this->input->post('orderType'));
