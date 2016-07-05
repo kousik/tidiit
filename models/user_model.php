@@ -1053,5 +1053,13 @@ class User_model extends CI_Model {
         $this->db->insert_batch('push_notification_message',$dataArr);
         return $this->db->insert_id();
     }
+    
+    function is_user_had_group($userId){
+        if(count($this->db->from($this->_group)->where('groupAdminId =',$userId)->get()->result_array())>0){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
 }
 

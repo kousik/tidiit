@@ -294,6 +294,12 @@ class Appdata extends REST_Controller {
                     'email'=>$email,'DOB'=>$DOB,'mobile'=>$mobile,'fax'=>$fax,'aboutMe'=>$aboutMe);
             $this->user->edit($myProfileDataArr,$userId);
             $result['message']="Profile data updated successfully.";
+            if($this->user->is_user_had_group($userId)==FALSE):
+                $result['show_manage_group']=1;
+            else:    
+                $result['show_manage_group']=0;
+            endif;
+            $result['show']="Profile data updated successfully.";
             success_response_after_post_get($result);
         else:
             $this->response(array('error' => 'All fields are required amd must be filled up.'), 400); return FALSE;
