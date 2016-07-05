@@ -68,7 +68,9 @@ myJsMain.my_profile=function(){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         }else if(resultData.result=='good'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Profile updated successfully.",200);
-            location.href=resultData.url;
+            if(resultData.redirect==1){
+                location.href=resultData.url;
+            }
         }
     }
 }

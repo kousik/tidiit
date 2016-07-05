@@ -904,7 +904,11 @@ class Ajax extends MY_Controller{
                 $this->User_model->edit($myProfileDataArr,$userId);
                 $DataArr=  $this->User_model->get_details_by_id($userId);
                 $this->session->set_userdata('FE_SESSION_UDATA',$DataArr[0]);
-                echo json_encode(array('result'=>'good','url'=>BASE_URL.'my-groups/'));die; 
+                if($this->User_model->is_user_had_group($userId)==FALSE):
+                    echo json_encode(array('result'=>'good','url'=>BASE_URL.'my-groups/','redirect'=>1));die; 
+                else:
+                    echo json_encode(array('result'=>'good','redirect'=>0));die; 
+                endif;
             }
         }
     }
