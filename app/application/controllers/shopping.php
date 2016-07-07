@@ -778,8 +778,20 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
         
-        if($razorpayPaymentId=="" || $orderIdData=="" || $orderType=="" || $finalReturn){
-            $this->response(array('error' => "Razorpay payment id not got,Order ids data not received,order type and final return data not received."), 400); return FALSE;
+        if($razorpayPaymentId==""){
+            $this->response(array('error' => 'Please provide Razorpay payment id'), 400); return FALSE;
+        }
+        
+        if($orderIdData==""){
+            $this->response(array('error' => 'Please provide order ids'), 400); return FALSE;
+        }
+        
+        if($orderType==""){
+            $this->response(array('error' => 'Please provide order type'), 400); return FALSE;
+        }
+        
+        if( $finalReturn ==""){
+            $this->response(array('error' => "Please provide final return data not received."), 400); return FALSE;
         }else{
             $orderIdDataArr= unserialize(base64_decode($orderIdData));
             if(count($orderIdDataArr)==1){
