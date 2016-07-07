@@ -467,8 +467,11 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => 'Please provide valid latitude and longitude!'), 400); return FALSE;
         }
         
+        $dbGatewayDataArr=$this->order->get_all_gateway(TRUE,$countryShortName);
+        $dbGatewayDataArr[]=array('gatewayId'=>100001,'gatewayTitle'=>'Settlement On Delivery','gatewayName'=>'SettlementOnDelivery','gatewayCode'=>'settlement_on_delivery','countryCode'=>$countryShortName,'status'=>1);
+        
         $result=array();
-        $result['paymentGatewayData']=$this->order->get_all_gateway(TRUE,$countryShortName);
+        $result['paymentGatewayData']=$dbGatewayDataArr;
         success_response_after_post_get($result);
     }
     
