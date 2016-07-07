@@ -1,5 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require APPPATH.'/libraries/REST_Controller.php';
+
+use Razorpay\Api\Api;
+
 class Shopping extends REST_Controller {
     
     function __construct() {

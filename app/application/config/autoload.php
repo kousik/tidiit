@@ -80,7 +80,7 @@ $autoload['helper'] = array('url', 'file','form','tidiit_mobile_app');
 |
 */
 
-$autoload['config'] = array();
+$autoload['config'] = array('payment');
 
 
 /*
