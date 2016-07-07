@@ -529,7 +529,7 @@ class Order_model extends CI_Model {
     }
     
     public function inctive_order_details_by_order_id_user_id($orderId,$userId){
-        $this->db->where('orderId',$orderId)->where('userId',$userId)->where('status',0);
+        $this->db->where('orderId',$orderId)->where('userId',$userId)->where('status',0)->or_where('status',8);
         if($this->db->from($this->_table)->count_all_results()>0){
             return TRUE;
         }else{
