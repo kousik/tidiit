@@ -696,7 +696,7 @@ class Shopping extends REST_Controller {
         //$countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
         $paymentGatewayAmount=0;
         $allOrderArray=array();
-        mail('cto.tidiit@gmail.com','cehcking $allIncompleteOrders ',  serialize($allIncompleteOrders));
+        //mail('cto.tidiit@gmail.com','cehcking $allIncompleteOrders ',  serialize($allIncompleteOrders));
         if(!empty($allIncompleteOrders)){
             foreach ($allIncompleteOrders As $k){
                 $order=array();
