@@ -697,7 +697,7 @@ class Shopping extends REST_Controller {
             $order=array();
             $paymentGatewayAmount+=$k->orderAmount;
             $order['status'] = 8;
-            $allOrderArray['orderId'] = $k->orderId;
+            $allOrderArray[] = $k->orderId;
             
             $orderInfo = array();
             $mail_template_data = array();
@@ -796,6 +796,7 @@ class Shopping extends REST_Controller {
         if( $finalReturn ==""){
             $this->response(array('error' => "Please provide final return data not received."), 400); return FALSE;
         }else{
+            
             $orderIdDataArr= unserialize(base64_decode($orderIdData));
             if(count($orderIdDataArr)==1){
                 $dataArr=array('userId'=>$userId,'orderIds'=>$orderIdDataArr[0],'razorpayPaymentId'=>$razorpayPaymentId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'addedTime'=> date('Y-m-d H:i:s'));
