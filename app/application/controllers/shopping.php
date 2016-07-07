@@ -688,7 +688,7 @@ class Shopping extends REST_Controller {
         }
         
         $allIncompleteOrders= $this->order->get_incomplete_order_by_user($userId,'single');
-        //pre($allIncompleteOrders);die;
+        pre($allIncompleteOrders);die;
         $defaultResources=load_default_resources();
         //$countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
         $paymentGatewayAmount=0;
