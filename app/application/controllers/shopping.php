@@ -694,17 +694,22 @@ class Shopping extends REST_Controller {
         $paymentGatewayAmount=0;
         $allOrderArray=array();
         mail('cto.tidiit@gmail.com','cehcking $allIncompleteOrders ',  serialize($allIncompleteOrders));
-        foreach ($allIncompleteOrders As $k){
-            $order=array();
-            $paymentGatewayAmount+=$k->orderAmount;
-            $order['status'] = 8;
-            $allOrderArray[] = $k->orderId;
-            
-            $orderInfo = array();
-            $mail_template_data = array();
-            //pre($k);die;
-            $this->order->update($order,$k->orderId);
+        if(!empty($allIncompleteOrders)){
+            foreach ($allIncompleteOrders As $k){
+                $order=array();
+                $paymentGatewayAmount+=$k->orderAmount;
+                $order['status'] = 8;
+                $allOrderArray[] = $k->orderId;
+
+                $orderInfo = array();
+                $mail_template_data = array();
+                //pre($k);die;
+                $this->order->update($order,$k->orderId);
+            }
+        }else{
+            $this->response(array('error' =>'There is no valid item in the cart for process.'), 400); return FALSE;
         }
+        
         
         
         $result=array();
