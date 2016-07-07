@@ -796,7 +796,8 @@ class Shopping extends REST_Controller {
         if( $finalReturn ==""){
             $this->response(array('error' => "Please provide final return data not received."), 400); return FALSE;
         }else{
-            
+            @mail('cto.tidiit@gmail.com','$orderIdData status',$orderIdData);
+            @mail('cto.tidiit@gmail.com','$razorpayPaymentId',$razorpayPaymentId);
             $orderIdDataArr= unserialize(base64_decode($orderIdData));
             if(count($orderIdDataArr)==1){
                 $dataArr=array('userId'=>$userId,'orderIds'=>$orderIdDataArr[0],'razorpayPaymentId'=>$razorpayPaymentId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'addedTime'=> date('Y-m-d H:i:s'));
@@ -814,6 +815,7 @@ class Shopping extends REST_Controller {
             $payment = $api->payment->fetch($razorpayPaymentId);
             $Amount=$payment->amount;
             $captureData=$api->payment->fetch($razorpayPaymentId)->capture(array('amount'=>$Amount));
+            @mail('cto.tidiit@gmail.com','$captureData status',  serialize($captureData));
             //pre($captureData);die;
             if($captureData->captured==1){
                 //$PaymentDataArr = $_SESSION['PaymentData'];
@@ -841,7 +843,7 @@ class Shopping extends REST_Controller {
                     endif;
                 endif;
             }else{
-
+                $this->response(array('error' => "unknown eror in capturing the data."), 400); return FALSE;
             }
         }
         
