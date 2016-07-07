@@ -693,6 +693,7 @@ class Shopping extends REST_Controller {
         //$countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
         $paymentGatewayAmount=0;
         $allOrderArray=array();
+        mail('cto.tidiit@gmail.com','cehcking $allIncompleteOrders ',  serialize($allIncompleteOrders));
         foreach ($allIncompleteOrders As $k){
             $order=array();
             $paymentGatewayAmount+=$k->orderAmount;
@@ -702,33 +703,7 @@ class Shopping extends REST_Controller {
             $orderInfo = array();
             $mail_template_data = array();
             //pre($k);die;
-            $orderInfo= unserialize(base64_decode($k->orderInfo));
-            //pre($orderInfo);die;
-            //pre($orderInfo['shipping']);die;
-            //pre($orderInfo['pdetail']);die;
-            //pre($orderInfo['priceinfo']);die;
-           
-            //$mPesaId=$this->order->add_mpesa(array('latitude'=>$latitude,'longitude'=>$longitude,'userId'=>$userId));
-            //$this->order->add_payment(array('orderId'=>$k->orderId,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'single'));
-            //$this->product->update_product_quantity($orderInfo['priceinfo']->productId,$orderInfo['priceinfo']->qty);
-            //$orderUpdateArr=array('orderUpdatedate'=>date('Y-m-d H:i:s'),'udidPayment'=>$UDID,'deviceTokenPayment'=>$deviceToken,
-                //'latitudePayment'=>$latitude,'longitudePayment'=>$longitude,'isPaid'=>1);
-            //$orderUpdateArr['status']=2;
-            //$this->order->update($orderUpdateArr,$k->orderId);
             $this->order->update($order,$k->orderId);
-            /// sendin SMS to user
-            /*$sms_data=array('nMessage'=>'You have successfull placed an order TIDIIT-OD-'.$k->orderId.' for '.$orderInfo['pdetail']->title.'.More details about this notifiaction,Check '.$defaultResources['MainSiteBaseURL'],
-                'receiverMobileNumber'=>$user->mobile,'senderId'=>'','receiverId'=>$user->userId,
-                'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER');*/
-            //send_sms_notification($sms_data);
-            /*$mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderInfo;
-            $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$k->orderId;
-            $mail_template_view_data=$defaultResources;
-            $mail_template_view_data['single_order_success']=$mail_template_data;
-            $receiverFullName=$user->firstName.' '.$user->lastName;
-            global_tidiit_mail($user->email, "Your Tidiit order - TIDIIT-OD-".$k->orderId.' has placed successfully', $mail_template_view_data,'single_order_success',$receiverFullName);
-            
-            $this->sent_single_order_complete_mail($k->orderId);*/
         }
         
         
@@ -796,8 +771,6 @@ class Shopping extends REST_Controller {
         if( $finalReturn ==""){
             $this->response(array('error' => "Please provide final return data not received."), 400); return FALSE;
         }else{
-            @mail('cto.tidiit@gmail.com','$orderIdData status',$orderIdData);
-            @mail('cto.tidiit@gmail.com','$razorpayPaymentId',$razorpayPaymentId);
             $orderIdDataArr= unserialize(base64_decode($orderIdData));
             if(count($orderIdDataArr)==1){
                 $dataArr=array('userId'=>$userId,'orderIds'=>$orderIdDataArr[0],'razorpayPaymentId'=>$razorpayPaymentId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'addedTime'=> date('Y-m-d H:i:s'));
