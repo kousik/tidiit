@@ -793,8 +793,7 @@ class Shopping extends REST_Controller {
             $razorpayInfo=$this->order->get_razorpay_info();
             $api_key=$razorpayInfo[0]->userName;
             $api_secret=$razorpayInfo[0]->password;
-            @mail('cto.tidiit@gmail.com','$api_key and $api_secret',  $api_key.' :==: '.$api_secret);
-            //include_once src/Api.php;
+            
             $api = new Api($api_key, $api_secret);
             $payment = $api->payment->fetch($razorpayPaymentId);
             $Amount=$payment->amount;
@@ -3358,8 +3357,8 @@ class Shopping extends REST_Controller {
     }
     
     function debuging_razorpay_post(){
-        $razorpayPaymentId="pay_5rugn8rqhnYNex";
-        $orderIdData="YToxOntpOjA7czoyOiI3NyI7fQ==";
+        $razorpayPaymentId="pay_5rvXhrZXealzqO";
+        $orderIdData="YToxOntpOjA7czoyOiI3OCI7fQ==";
         $orderType="single";
         $finalReturn="no";
         $userId=100;
