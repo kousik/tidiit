@@ -736,20 +736,20 @@ class Shopping extends REST_Controller {
     }
     
     function razorpay_return_success_post(){
-        $razorpayPaymentId=trim($this->input->post('razorpayPaymentId'));
-        $orderIdData=trim($this->input->post('orderIdData'));
-        $orderType=trim($this->input->post('orderType'));
-        $finalReturn=trim($this->input->post('finalReturn'));
-        $userId=trim($this->input->post('userId'));
+        $razorpayPaymentId=trim($this->post('razorpayPaymentId'));
+        $orderIdData=trim($this->post('orderIdData'));
+        $orderType=trim($this->post('orderType'));
+        $finalReturn=trim($this->post('finalReturn'));
+        $userId=trim($this->post('userId'));
         $latitude = $this->post('latitude');
         $longitude = $this->post('longitude');
         $deviceType = $this->post('deviceType');
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
         
-        $deliveryStaffEmail=trim($this->input->post('deliveryStaffEmail',TRUE));
-        $deliveryStaffContactNo=trim($this->input->post('deliveryStaffContactNo',TRUE));
-        $deliveryStaffName=trim($this->input->post('deliveryStaffName',TRUE));
+        $deliveryStaffEmail=trim($this->post('deliveryStaffEmail',TRUE));
+        $deliveryStaffContactNo=trim($this->post('deliveryStaffContactNo',TRUE));
+        $deliveryStaffName=trim($this->post('deliveryStaffName',TRUE));
         
         $logisticsData=array('deliveryStaffName'=>$deliveryStaffName,'deliveryStaffContactNo'=>$deliveryStaffContactNo,'deliveryStaffEmail'=>$deliveryStaffEmail);
         
@@ -2823,6 +2823,7 @@ class Shopping extends REST_Controller {
     }
     
     function sent_single_order_complete_mail($orderId){
+        echo 'comming to sent_single_order_complete_mail function ====';
         $orderDetails=  $this->order->details($orderId);
         //pre($orderDetails);die;
         $adminMailData= load_default_resources();
@@ -2833,8 +2834,9 @@ class Shopping extends REST_Controller {
         /// for seller
         $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
         $adminMailData['buyerFullName']=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
+        echo 'going to mail send mail to seller ====';
         global_tidiit_mail($orderDetails[0]->sellerEmail, "A new order no - TIDIIT-OD-".$orderId.' has placed from Tidiit Inc Ltd', $adminMailData,'seller_single_order_success',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
-
+        echo 'mail send completed to seller ===';
         /// for support
         $adminMailData['userFullName']='Tidiit Inc Support';
         $adminMailData['sellerFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
@@ -2842,12 +2844,16 @@ class Shopping extends REST_Controller {
         $this->load->model('Siteconfig_model','siteconfig');
         //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
         $supportEmail='judhisahoo@gmail.com';
+        echo 'going to mail send mail to suuport ====';
         global_tidiit_mail($supportEmail, "Order no - TIDIIT-OD-".$orderId.' has placed by '.$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName, $adminMailData,'support_single_order_success','Tidiit Inc Support');
+        echo 'mail send completed to support ===';
         //die;
         $sms_data=array('nMessage'=>'Your Tidiit order TIDIIT-OD-'.$orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.$adminMailData['MainSiteBaseURL'],
         'receiverMobileNumber'=>$orderDetails[0]->buyerMobileNo,'senderId'=>'','receiverId'=>$orderDetails[0]->userId,
         'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CONFIRM');
+        echo 'going to send sms to buyer ====';
         send_sms_notification($sms_data);
+        echo 'SMS send completed to buyer ===';
         return TRUE;
     }
     
@@ -3255,29 +3261,31 @@ class Shopping extends REST_Controller {
         $tidiitStrChr='TIDIIT-OD';
         $tidiitStr='';
         $rajorpayDataArr=$this->order->get_rajorpay_id_by_rajorpay_pament_id($razorpayPaymentId);
+        echo 'calling process_razorpay_success_single_order fun at 3258 line === ';
         foreach ($orderIdArr AS $k => $v):
+            echo 'calling process_razorpay_success_single_order fun at 3258 line in side loop === ';
             $tidiitStr=$tidiitStrChr.'-'.$v.',';
             $order_update=array();
             $order_update['status'] = 2;
             $order_update['isPaid'] = 1;
             $this->order->update($order_update,$v);
-
+            echo 'update order in loop === ';
             $order=$this->order->get_single_order_by_id($v);
             $orderinfo =  unserialize(base64_decode($order->orderInfo));
             //$this->Product_model->update_product_quantity($order['productId'],$order['productQty']);
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$v;
-            //$this->_remove_cart($PaymentDataArr['orderInfo'][$v]['cartId']);
-
+            
             //Send Email message
             $rsUser=$this->user->get_details_by_id($order->userId);
             $user = $rsUser[0];
             $recv_email = $user->email;
             $this->order->add_payment(array('orderId'=>$v,'paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId,'orderType'=>'single'));
-
+            echo 'add payment data to db === ';
             $mail_template_view_data=load_default_resources();
             $mail_template_view_data['single_order_success']=$mail_template_data;
             global_tidiit_mail($recv_email, "Your Tidiit order no - TIDIIT-OD-".$v.' has placed successfully', $mail_template_view_data,'single_order_success');
+            echo 'Going for sent_single_order_complete_mail function ==== ';
             $this->sent_single_order_complete_mail($v);
         endforeach;
         $result=array();
@@ -3348,14 +3356,45 @@ class Shopping extends REST_Controller {
     }
     
     function debuging_razorpay_post(){
-        $razorpayPaymentId=trim($this->input->post('razorpayPaymentId'));
-        $razorpayInfo=$this->order->get_razorpay_info();
-        $api_key=$razorpayInfo[0]->userName;
-        $api_secret=$razorpayInfo[0]->password;
-        $api = new Api($api_key, $api_secret);
-        $payment = $api->payment->fetch($razorpayPaymentId);
-        //$Amount=$payment->amount;
-        pre($payment);die;
-        //$captureData=$api->payment->fetch($razorpayPaymentId)->capture(array('amount'=>$Amount));
+        $razorpayPaymentId="pay_5rugn8rqhnYNex";
+        $orderIdData="YToxOntpOjA7czoyOiI3NyI7fQ==";
+        $orderType="single";
+        $finalReturn="no";
+        $userId=100;
+        $latitude = "20.658933333333334";
+        $longitude = "85.60109499999999";
+        $deviceType = $this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        $deliveryStaffEmail=trim($this->input->post('deliveryStaffEmail',TRUE));
+        $deliveryStaffContactNo=trim($this->input->post('deliveryStaffContactNo',TRUE));
+        $deliveryStaffName=trim($this->input->post('deliveryStaffName',TRUE));
+        
+        $logisticsData=array('deliveryStaffName'=>$deliveryStaffName,'deliveryStaffContactNo'=>$deliveryStaffContactNo,'deliveryStaffEmail'=>$deliveryStaffEmail);
+        $orderIdDataArr= unserialize(base64_decode($orderIdData));
+        if($orderType=='group'):
+            //$orderDataArr = $PaymentDataArr;
+            if($finalReturn=='no'):
+                $productPriceArr=$this->order->get_product_price_details_by_orderid($orderIdDataArr[0]);
+                $this->product->update_product_quantity($productPriceArr[0]['productId'],$productPriceArr[0]['qty']);
+                $this->process_razorpay_success_group_order($orderIdDataArr[0],$razorpayPaymentId);
+            else:
+                $this->process_razorpay_success_group_order_final($orderIdDataArr[0],$razorpayPaymentId,$logisticsData);
+            endif;
+        else:
+            if($finalReturn=='no'):
+                foreach($orderIdDataArr As $k=> $v){
+                    $productPriceArr=$this->order->get_product_price_details_by_orderid($v);
+                    $this->product->update_product_quantity($productPriceArr[0]['productId'],$productPriceArr[0]['qty']);
+                }
+                //$this->process_mpesa_success_single_order(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo']));
+                echo ' single order process start for razorpay === ';
+                $this->process_razorpay_success_single_order($orderIdDataArr,$razorpayPaymentId);
+            else:
+                //$this->process_mpesa_success_single_order_final(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo'],'logisticsData'=>$logisticsData));
+                $this->process_razorpay_success_single_order_final($orderIdDataArr,$razorpayPaymentId,$logisticsData);
+            endif;
+        endif;
     }
 }
