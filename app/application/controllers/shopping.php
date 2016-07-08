@@ -788,6 +788,8 @@ class Shopping extends REST_Controller {
             }
             @mail('cto.tidiit@gmail.com','POST recieve data', $mail_message);
             $this->order->add_rajorpay_return_data($dataArr);
+            $result['message']='Debuging the request data manually now';
+            success_response_after_post_get($result);die;
             $razorpayInfo=$this->order->get_razorpay_info();
             $api_key=$razorpayInfo[0]->userName;
             $api_secret=$razorpayInfo[0]->password;
@@ -3373,6 +3375,16 @@ class Shopping extends REST_Controller {
         
         $logisticsData=array('deliveryStaffName'=>$deliveryStaffName,'deliveryStaffContactNo'=>$deliveryStaffContactNo,'deliveryStaffEmail'=>$deliveryStaffEmail);
         $orderIdDataArr= unserialize(base64_decode($orderIdData));
+        $razorpayInfo=$this->order->get_razorpay_info();
+        $api_key=$razorpayInfo[0]->userName;
+        $api_secret=$razorpayInfo[0]->password;
+        @mail('cto.tidiit@gmail.com','$api_key and $api_secret',  $api_key.' :==: '.$api_secret);
+        //include_once src/Api.php;
+        $api = new Api($api_key, $api_secret);
+        $payment = $api->payment->fetch($razorpayPaymentId);
+        $Amount=$payment->amount;
+        $captureData=$api->payment->fetch($razorpayPaymentId)->capture(array('amount'=>$Amount));
+        
         if($orderType=='group'):
             //$orderDataArr = $PaymentDataArr;
             if($finalReturn=='no'):
