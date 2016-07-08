@@ -782,6 +782,7 @@ class Shopping extends REST_Controller {
             $orderIdDataArr= unserialize(base64_decode($orderIdData));
             $mail_message='$userId : '.$userId.' == $orderIdData : '.$orderIdData.' == $razorpayPaymentId : '.$razorpayPaymentId.' == $latitude : '.$latitude.' == $longitude : '.$longitude.' == $deviceToken : '.$deviceToken.' == $UDID : '.$UDID.' == $orderType : '.$orderType.' == $finalReturn : '.$finalReturn;
             send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>$mail_message));
+            @mail('cto.tidiit@gmail.com','POST data',$mail_message);
             if(count($orderIdDataArr)==1){
                 $dataArr=array('userId'=>$userId,'orderIds'=>$orderIdDataArr[0],'razorpayPaymentId'=>$razorpayPaymentId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'addedTime'=> date('Y-m-d H:i:s'));
             }else{
@@ -3389,7 +3390,7 @@ class Shopping extends REST_Controller {
         $razorpayInfo=$this->order->get_razorpay_info();
         $api_key=$razorpayInfo[0]->userName;
         $api_secret=$razorpayInfo[0]->password;
-        @mail('cto.tidiit@gmail.com','$api_key and $api_secret',  $api_key.' :==: '.$api_secret);
+        
         //include_once src/Api.php;
         $api = new Api($api_key, $api_secret);
         $payment = $api->payment->fetch($razorpayPaymentId);
@@ -3412,7 +3413,7 @@ class Shopping extends REST_Controller {
                     $this->product->update_product_quantity($productPriceArr[0]['productId'],$productPriceArr[0]['qty']);
                 }
                 //$this->process_mpesa_success_single_order(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo']));
-                echo ' single order process start for razorpay === ';
+                send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> ' single order process start for razorpay === '));
                 $this->process_razorpay_success_single_order($orderIdDataArr,$razorpayPaymentId);
             else:
                 //$this->process_mpesa_success_single_order_final(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo'],'logisticsData'=>$logisticsData));
