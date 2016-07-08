@@ -780,23 +780,24 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => "Please provide final return data not received."), 400); return FALSE;
         }else{
             $orderIdDataArr= unserialize(base64_decode($orderIdData));
+            $mail_message='$userId : '.$userId.' == $orderIdData : '.$orderIdData.' == $razorpayPaymentId : '.$razorpayPaymentId.' == $latitude : '.$latitude.' == $longitude : '.$longitude.' == $deviceToken : '.$deviceToken.' == $UDID : '.$UDID;
             if(count($orderIdDataArr)==1){
                 $dataArr=array('userId'=>$userId,'orderIds'=>$orderIdDataArr[0],'razorpayPaymentId'=>$razorpayPaymentId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'addedTime'=> date('Y-m-d H:i:s'));
             }else{
                 $dataArr=array('userId'=>$userId,'orderIds'=>  implode(',', $orderIdDataArr),'razorpayPaymentId'=>$razorpayPaymentId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'addedTime'=>date('Y-m-d H:i:s'));
             }
-            
+            @mail('cto.tidiit@gmail.com','POST recieve data', $mail_message);
             $this->order->add_rajorpay_return_data($dataArr);
             $razorpayInfo=$this->order->get_razorpay_info();
             $api_key=$razorpayInfo[0]->userName;
             $api_secret=$razorpayInfo[0]->password;
-
+            @mail('cto.tidiit@gmail.com','$api_key and $api_secret',  $api_key.' :==: '.$api_secret);
             //include_once src/Api.php;
             $api = new Api($api_key, $api_secret);
             $payment = $api->payment->fetch($razorpayPaymentId);
             $Amount=$payment->amount;
             $captureData=$api->payment->fetch($razorpayPaymentId)->capture(array('amount'=>$Amount));
-            @mail('cto.tidiit@gmail.com','$captureData status',  serialize($captureData));
+            
             //pre($captureData);die;
             if($captureData->captured==1){
                 //$PaymentDataArr = $_SESSION['PaymentData'];
@@ -3344,5 +3345,17 @@ class Shopping extends REST_Controller {
         $result=array();
         $result['message']='Thanks for the payment before order is Out for delivery';
         success_response_after_post_get($result);
+    }
+    
+    function debuging_razorpay(){
+        $razorpayPaymentId=trim($this->input->post('razorpayPaymentId'));
+        $razorpayInfo=$this->order->get_razorpay_info();
+        $api_key=$razorpayInfo[0]->userName;
+        $api_secret=$razorpayInfo[0]->password;
+        $api = new Api($api_key, $api_secret);
+        $payment = $api->payment->fetch($razorpayPaymentId);
+        //$Amount=$payment->amount;
+        pre($payment);die;
+        //$captureData=$api->payment->fetch($razorpayPaymentId)->capture(array('amount'=>$Amount));
     }
 }
