@@ -789,7 +789,7 @@ class Shopping extends REST_Controller {
                 $dataArr=array('userId'=>$userId,'orderIds'=>  implode(',', $orderIdDataArr),'razorpayPaymentId'=>$razorpayPaymentId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'addedTime'=>date('Y-m-d H:i:s'));
             }
             $this->order->add_rajorpay_return_data($dataArr);
-            $this->response(array('error' => 'debuging'), 400); return FALSE;
+            //$this->response(array('error' => 'debuging'), 400); return FALSE;
             //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'comming to fetch razorpay infor from DB'));
             $razorpayInfo=$this->order->get_razorpay_info();
             $api_key=$razorpayInfo[0]->userName;
