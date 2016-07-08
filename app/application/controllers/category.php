@@ -41,8 +41,8 @@ class Category extends REST_Controller {
         $offset=NULL;
         $item_per_page=NULL;
         $cond=array();
-        $products = $this->category->get_children_categories_products($categoryId, $offset, $limit = $item_per_page, $cond);
-        $total_rows = $this->category->get_children_categories_products($categoryId, 0, false, $cond);
+        $products = $this->category->get_children_categories_products_app($categoryId, $offset, $limit = $item_per_page, $cond,$latitude,$longitude);
+        $total_rows = $this->category->get_children_categories_products_app($categoryId, 0, false, $cond,$latitude,$longitude);
         //$tr = (isset($total_rows['products'])?$total_rows['products']:false);
         //$totalrows = (!empty($tr)?count($tr):0);
         //$total_pages = ceil($totalrows/$item_per_page);
@@ -110,8 +110,8 @@ class Category extends REST_Controller {
         }
 
 
-        $products = $this->category->get_children_categories_products($categoryId, $offset, $limit = $item_per_page, $cond);
-        $total_rows = $this->category->get_children_categories_products($categoryId, 0, false, $cond);
+        $products = $this->category->get_children_categories_products_app($categoryId, $offset, $limit = $item_per_page, $cond,$latitude,$longitude);
+        $total_rows = $this->category->get_children_categories_products_app($categoryId, 0, false, $cond,$latitude,$longitude);
         
         $result=array();
         $range = array(0,100000);
@@ -349,8 +349,8 @@ class Category extends REST_Controller {
             $offset = $offset;
         endif;*/
 
-        $products = $this->category->get_search_products($offset, $limit = $item_per_page, $cond);
-        $total_rows = $this->category->get_search_products(0, false, $cond);
+        $products = $this->category->get_search_products_app($offset, $limit = $item_per_page, $cond,$latitude,$longitude);
+        $total_rows = $this->category->get_search_products_app(0, false, $cond,$latitude,$longitude);
         $tr = (isset($total_rows['products'])?$total_rows['products']:false);
         $totalrows = (!empty($tr)?count($tr):0);
         //$total_pages = ceil($totalrows/$item_per_page);
@@ -429,8 +429,8 @@ class Category extends REST_Controller {
         $offset=NULL;
         $item_per_page=NULL;
         
-        $products = $this->category->get_brand_products($brandId, $offset, $limit = $item_per_page, $cond);
-        $total_rows = $this->category->get_brand_products($brandId, 0, false, $cond);
+        $products = $this->category->get_brand_products_app($brandId, $offset, $limit = $item_per_page, $cond,$latitude,$longitude);
+        $total_rows = $this->category->get_brand_products_app($brandId, 0, false, $cond,$latitude,$longitude);
         $tr = (isset($total_rows['products'])?$total_rows['products']:false);
         $totalrows = (!empty($tr)?count($tr):0);
         //$total_pages = ceil($totalrows/$item_per_page);
@@ -477,7 +477,7 @@ class Category extends REST_Controller {
         //$item_per_page=NULL;
         
         //$products = $this->category->get_brand_products($brandId, $offset, $limit = $item_per_page, $cond);
-        $products=  $this->product->get_new_product();
+        $products=  $this->product->get_new_product($latitude,$longitude);
         $brnds = $this->brand->get_all();
         $brand = [];
         foreach($brnds as $bkey => $bdata):
@@ -501,12 +501,12 @@ class Category extends REST_Controller {
         $latitude=$this->post('latitude');
         $longitude=$this->post('longitude');
         
-        /*$defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
         $isValideDefaultData=  $this->check_default_data($defaultDataArr);
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
-        }*/
+        }
         
         $cond = array();
         //$cond['brand'] = [$brandDetails->title];
@@ -517,7 +517,7 @@ class Category extends REST_Controller {
         //$item_per_page=NULL;
         
         //$products = $this->category->get_brand_products($brandId, $offset, $limit = $item_per_page, $cond);
-        $products=  $this->product->get_new_product();
+        $products=  $this->product->get_all_featured_product();
         $brnds = $this->brand->get_all();
         $brand = [];
         foreach($brnds as $bkey => $bdata):
@@ -557,7 +557,7 @@ class Category extends REST_Controller {
         //$item_per_page=NULL;
         
         //$products = $this->category->get_brand_products($brandId, $offset, $limit = $item_per_page, $cond);
-        $products=  $this->product->get_new_product();
+        $products=  $this->product->get_all_best_selling_product();
         $brnds = $this->brand->get_all();
         $brand = [];
         foreach($brnds as $bkey => $bdata):

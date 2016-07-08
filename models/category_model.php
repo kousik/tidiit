@@ -358,6 +358,114 @@ WHERE c.categoryId =".$categoryId;
         return $products;
     }
 
+    
+    /**
+     * 
+     * @param type $categoryId
+     * @param type $offset
+     * @param type $limit
+     * @param type $cond
+     * @return type
+     */
+    public function get_children_categories_products_app($categoryId, $offset = null, $limit = null, $cond,$latitude,$longitude) { 
+        
+        $this->_currentUserCountryCode=get_counry_code_from_lat_long($latitude,$longitude);
+        
+        $pcatsId = $this->get_children_categories_id($categoryId);
+        $pcatsId[] = $categoryId;
+        $pcatsId = implode("','", $pcatsId);        
+        $group_by = ' GROUP BY p.productId';
+        $join_query = "";
+        
+        $sort = array('featured','isNew','popular','lowestPrice');
+        $order_by = 'p.popular';
+        if(isset($cond['order_by']) && $cond['order_by'] && in_array($cond['order_by'], $sort)):
+            $order_by = '  ORDER BY '.$cond['order_by'];
+            unset($cond['order_by']);
+        else:
+            $order_by = '  ORDER BY p.popular';
+        endif;
+        
+        $order_sort = ' ASC';
+        
+        if(isset($cond['order_sort']) && $cond['order_sort']):
+            $order_sort = ' '.$cond['order_sort'];
+            unset($cond['order_sort']);
+        endif;
+        
+        $plimit = '';
+        if($offset >= 0 && $limit):
+            $plimit = ' LIMIT '.$offset.', '.$limit;
+        endif;
+        
+        $where_str = 'p.status = 1 ';
+        
+        if($pcatsId):
+            $where_str = $where_str." AND c.categoryId IN ('".$pcatsId."')";
+        endif;
+        
+        
+        if(isset($cond['brand']) && $cond['brand']):
+            $brands = implode('","', $cond['brand']);        
+            $where_str = $where_str.' AND b.title IN ("'.$brands.'")';
+        endif;
+        
+        if(isset($cond['range']) && $cond['range']):
+            $lowestPrice = $cond['range'][0];
+            $heighestPrice = $cond['range'][1];
+            $where_str = $where_str.' AND p.lowestPrice >= '.$lowestPrice.' AND p.lowestPrice <= '.$heighestPrice;
+        endif;
+
+        if(isset($cond['query']) && $cond['query']):
+            $join_query .= " LEFT JOIN product_option_values AS popvalue ON popvalue.productId = p.productId ";
+            $qdata = [];
+            foreach($cond['query'] as $qry):
+                $exq = explode("@", $qry);
+                $qdata[$exq[0]][] = $exq[1];
+            endforeach;
+
+            $q_string = " ";
+            $qn = count($qdata);
+            $i = 0;
+            foreach($qdata as $qkey => $qopval):
+                $opval = implode("','", $qopval);
+                $q_string .= " popvalue.option_id = '".$qkey."' AND value IN ('".$opval."')";
+                $i++;
+                if($i < $qn):
+                    $q_string .= " OR ";
+                endif;
+            endforeach;
+            $where_str = $where_str.' AND ('.$q_string.') ';
+        endif;
+        
+        $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `c`.`categoryName`, 
+            `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage` 
+            FROM `product` AS p
+            JOIN product_seller AS ps ON(p.productId=ps.productId) JOIN user AS u ON(ps.userId=u.userId)
+            JOIN billing_address AS ba ON(u.userId=ba.userId) JOIN country AS co ON(ba.countryId=co.countryId)
+            LEFT JOIN product_brand AS pb ON p.productId = pb.productId
+            LEFT JOIN brand AS b ON pb.brandId = b.brandId
+            LEFT JOIN product_category AS pc ON pc.productId = p.productId
+            LEFT JOIN category AS c ON c.categoryId = pc.categoryId
+            LEFT JOIN product_image AS pimage ON pimage.productId = p.productId
+            {$join_query}
+            WHERE co.countryCode='".$this->_currentUserCountryCode."' AND {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
+        $rs = $this->db->query($sql)->result();//echo $this->db->last_query();print_r($rs);
+        $products = array();
+        $brands = array();
+        if($rs):            
+            foreach($rs as $key => $product):  
+                //$product->tags = $this->get_product_tags($product->productId);
+                //$product->seller = $this->get_product_seller($product->productId);
+               // $product->product_price = $this->get_products_price($product->productId);
+                //$product->curent_category = $this->get_details_by_id($categoryId);
+                $products['products'][] =  $product;  
+                $brands[$product->btitle] = $product->btitle;
+            endforeach;
+        endif;
+        $products['brands'] = $brands;
+        return $products;
+    }
 
 
     /**
@@ -470,6 +578,117 @@ WHERE c.categoryId =".$categoryId;
         return $products;
     }
 
+    
+    /**
+     *
+     * @param type $categoryId
+     * @param type $offset
+     * @param type $limit
+     * @param type $cond
+     * @return type
+     */
+    public function get_brand_products_app($brandId, $offset = null, $limit = null, $cond,$latitude,$longitude) {
+        $this->_currentUserCountryCode=get_counry_code_from_lat_long($latitude,$longitude);
+        $group_by = ' GROUP BY p.productId';
+        $join_query = "";
+
+        $sort = array('featured','isNew','popular','lowestPrice');
+        $order_by = 'p.popular';
+        if(isset($cond['order_by']) && $cond['order_by'] && in_array($cond['order_by'], $sort)):
+            $order_by = '  ORDER BY '.$cond['order_by'];
+            unset($cond['order_by']);
+        else:
+            $order_by = '  ORDER BY p.popular';
+        endif;
+
+        $order_sort = ' ASC';
+
+        if(isset($cond['order_sort']) && $cond['order_sort']):
+            $order_sort = ' '.$cond['order_sort'];
+            unset($cond['order_sort']);
+        endif;
+
+        $plimit = '';
+        if($offset >= 0 && $limit):
+            $plimit = ' LIMIT '.$offset.', '.$limit;
+        endif;
+
+        $where_str = 'p.status = 1 ';
+
+
+        if(isset($cond['brand']) && $cond['brand']):
+            $brands = implode('","', $cond['brand']);
+            $where_str = $where_str.' AND b.title IN ("'.$brands.'")';
+        else:
+            $where_str = $where_str.' AND b.brandId  IS NOT NULL';
+        endif;
+
+        if(isset($cond['range']) && $cond['range']):
+            $lowestPrice = $cond['range'][0];
+            $heighestPrice = $cond['range'][1];
+            $where_str = $where_str.' AND p.lowestPrice >= '.$lowestPrice.' AND p.lowestPrice <= '.$heighestPrice;
+        endif;
+
+        if(isset($cond['query']) && $cond['query']):
+            $join_query .= " LEFT JOIN product_option_values AS popvalue ON popvalue.productId = p.productId ";
+            $qdata = [];
+            foreach($cond['query'] as $qry):
+                $exq = explode("@", $qry);
+                $qdata[$exq[0]][] = $exq[1];
+            endforeach;
+
+            $q_string = " ";
+            $qn = count($qdata);
+            $i = 0;
+            foreach($qdata as $qkey => $qopval):
+                $opval = implode("','", $qopval);
+                $q_string .= " popvalue.option_id = '".$qkey."' AND value IN ('".$opval."')";
+                $i++;
+                if($i < $qn):
+                    $q_string .= " OR ";
+                endif;
+            endforeach;
+            $where_str = $where_str.' AND ('.$q_string.') ';
+        endif;
+        
+        
+        $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `c`.`categoryName`,
+            `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage`
+            FROM `product` AS p
+            JOIN product_seller AS ps ON(p.productId=ps.productId) JOIN user AS u ON(ps.userId=u.userId)
+            JOIN billing_address AS ba ON(u.userId=ba.userId) JOIN country AS co ON(ba.countryId=co.countryId)
+            LEFT JOIN product_brand AS pb ON p.productId = pb.productId
+            LEFT JOIN brand AS b ON pb.brandId = b.brandId
+            LEFT JOIN product_category AS pc ON pc.productId = p.productId
+            LEFT JOIN category AS c ON c.categoryId = pc.categoryId
+            LEFT JOIN product_image AS pimage ON pimage.productId = p.productId
+            {$join_query}
+            WHERE co.countryCode='".$this->_currentUserCountryCode."' AND {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
+        $rs = $this->db->query($sql)->result();//echo $this->db->last_query();print_r($rs);
+        $products = array();
+        $brands = array();
+        $pids = [];
+        if($rs):
+            foreach($rs as $key => $product):
+                //$product->tags = $this->get_product_tags($product->productId);
+                //$product->seller = $this->get_product_seller($product->productId);
+                // $product->product_price = $this->get_products_price($product->productId);
+                //$product->curent_category = $this->get_details_by_id($categoryId);
+                $products['products'][] =  $product;
+                $brands[$product->btitle] = $product->btitle;
+                $pids[] = $product->productId;
+            endforeach;
+        endif;
+        $options = $this->get_products_common_options($pids);
+        if($options):
+            $products['options'] = $options;
+        else:
+            $products['options'] = [];
+        endif;
+        $products['brands'] = $brands;
+        return $products;
+    }
+    
 
 
     /**
@@ -659,6 +878,181 @@ WHERE c.categoryId =".$categoryId;
      */
     public function get_search_products($offset = null, $limit = null, $cond) {
 
+
+        $group_by = ' GROUP BY p.productId';
+        $join_query = "";
+
+        $sort = array('featured','isNew','popular','lowestPrice');
+        $order_by = 'p.popular';
+        if(array_key_exists('order_by', $cond)){
+            if(isset($cond['order_by']) && $cond['order_by'] && in_array($cond['order_by'], $sort)):
+                $order_by = '  ORDER BY '.$cond['order_by'];
+                unset($cond['order_by']);
+            else:
+                $order_by = '  ORDER BY p.popular';
+            endif;
+        }else{
+            $order_by = '  ORDER BY p.popular';
+        }
+
+        $order_sort = ' ASC';
+        if(array_key_exists('order_sort', $cond)){
+            if(isset($cond['order_sort']) && $cond['order_sort']):
+                $order_sort = ' '.$cond['order_sort'];
+                unset($cond['order_sort']);
+            endif;
+        }
+        
+
+        $plimit = '';
+        if($offset >= 0 && $limit):
+            $plimit = ' LIMIT '.$offset.', '.$limit;
+        endif;
+
+        $where_str = 'p.status = 1 ';
+        if(array_key_exists('qtype', $cond) && array_key_exists('id', $cond)){
+            if(( $cond['qtype'] == "category") && $cond['id'] ):
+                $where_str = $where_str." AND c.categoryId = ".$cond['id']."";
+            endif;
+        }
+        
+
+        $bd = false;
+        $bdor = 0;
+        $bdquery = "";
+        $bb = "";
+        
+        if(array_key_exists('brand', $cond)){
+            if(isset($cond['brand']) && $cond['brand']):
+                $brands = implode('","', $cond['brand']);
+                $bdquery = $bdquery.' AND b.title IN ("'.$brands.'")';
+                $bb = $bb.' b.title IN ("'.$brands.'")';
+                $bd = true;
+            endif;
+        }
+        
+        if(array_key_exists('qtype', $cond) && array_key_exists('id', $cond)){
+            if(( $cond['qtype'] == "brand") && $cond['id'] ):
+                $opr = "AND";
+                if($bd):
+                    $opr = "OR";
+                    $bdquery = " AND ( ".$bb." ";
+                endif;
+                $bdquery = $bdquery." ".$opr." b.brandId = ".$cond['id']."";
+                if($bd):
+                    $bdquery = $bdquery." ) ";
+                endif;
+            endif;
+        }
+        
+
+        $where_str = $where_str.$bdquery;
+        if(array_key_exists('range', $cond)){
+            if(isset($cond['range']) && $cond['range']):
+                $lowestPrice = $cond['range'][0];
+                $heighestPrice = $cond['range'][1];
+                $where_str = $where_str.' AND p.lowestPrice >= '.$lowestPrice.' AND p.lowestPrice <= '.$heighestPrice;
+            endif;
+        }
+        
+        if(array_key_exists('qtype', $cond) && array_key_exists('id', $cond)){
+            if(( $cond['qtype'] == "product") && $cond['id'] ):
+                $where_str = $where_str." AND p.productId = ".$cond['id']."";
+            endif;
+        }
+        
+
+        if(array_key_exists('range', $cond)){
+            if(isset($cond['terms']) && $cond['terms']):
+                //$where_str = $where_str." ( ";
+                $join_query .= " LEFT JOIN product_option_values AS popvalue ON popvalue.productId = p.productId ";
+                $qdata = [];
+                $parts = $cond['terms'];
+                $p = count($parts);
+                $qstring = "";
+                for($i = 0; $i < $p; $i++):
+                    if($i == 0):
+                        $qstring .= ' AND ( ';
+                    else:
+                        $qstring .= ' OR ';
+                    endif;
+                    $qstring .= ' p.title LIKE "%'.$parts[$i].'%"';
+                    if(array_key_exists('qtype', $cond) || array_key_exists('id', $cond)):
+                        $qstring .= '  OR c.categoryName LIKE "%'.$parts[$i].'%"';
+                        $qstring .= '  OR b.title LIKE "%'.$parts[$i].'%" ';
+                        //$qstring .= ' OR (popvalue.value LIKE "%'.$parts[$i].'%" OR popvalue.value LIKE "%'.$parts[$i].'%") ';
+                    endif;
+                endfor;
+
+                $where_str = $where_str.$qstring;
+                $where_str = $where_str." ) ";
+            endif;
+        }
+
+        if(isset($cond['query']) && $cond['query']):
+            $qdata = [];
+            foreach($cond['query'] as $qry):
+                $exq = explode("@", $qry);
+                $qdata[$exq[0]][] = $exq[1];
+            endforeach;
+
+            $q_string = " ";
+            $qn = count($qdata);
+            $i = 0;
+            foreach($qdata as $qkey => $qopval):
+                $opval = implode("','", $qopval);
+                $q_string .= " popvalue.option_id = '".$qkey."' AND value IN ('".$opval."')";
+                $i++;
+                if($i < $qn):
+                    $q_string .= " OR ";
+                endif;
+            endforeach;
+            $where_str = $where_str.' AND ('.$q_string.') ';
+        endif;
+        
+        $sql = "SELECT `p`.*, `b`.`title` AS `btitle`, `c`.`categoryName`,
+            `c`.`image` AS `catImage`,`pimage`.`image` AS `pImage`
+            FROM `product` AS p
+            JOIN product_seller AS ps ON(p.productId=ps.productId) JOIN user AS u ON(ps.userId=u.userId)
+            JOIN billing_address AS ba ON(u.userId=ba.userId) JOIN country AS co ON(ba.countryId=co.countryId)
+            LEFT JOIN product_brand AS pb ON p.productId = pb.productId
+            LEFT JOIN brand AS b ON pb.brandId = b.brandId
+            LEFT JOIN product_category AS pc ON pc.productId = p.productId
+            LEFT JOIN category AS c ON c.categoryId = pc.categoryId
+            LEFT JOIN product_image AS pimage ON pimage.productId = p.productId
+            {$join_query}
+            WHERE co.countryCode='".$this->_currentUserCountryCode."' AND {$where_str} {$group_by} {$order_by} {$order_sort} {$plimit}";
+        $rs = $this->db->query($sql)->result();//echo $this->db->last_query();//print_r($rs);
+        $products = array();
+        $brands = array();
+        $pids = [];
+        if($rs):
+            foreach($rs as $key => $product):
+                $products['products'][] =  $product;
+                $brands[$product->btitle] = $product->btitle;
+                $pids[] = $product->productId;
+            endforeach;
+        endif;
+        $options = $this->get_products_common_options($pids);
+        if($options):
+            $products['options'] = $options;
+        else:
+            $products['options'] = [];
+        endif;
+        $products['brands'] = $brands;
+        return $products;
+    }
+    
+    /**
+     *
+     * @param type $categoryId
+     * @param type $offset
+     * @param type $limit
+     * @param type $cond
+     * @return type
+     */
+    public function get_search_products_app($offset = null, $limit = null, $cond,$latitude,$longitude) {
+        $this->_currentUserCountryCode=get_counry_code_from_lat_long($latitude,$longitude);
 
         $group_by = ' GROUP BY p.productId';
         $join_query = "";

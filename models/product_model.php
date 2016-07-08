@@ -674,13 +674,37 @@ class Product_model extends CI_Model {
         return $this->db->select('c.'.$taxCol)->from('category c')->join($this->_table_category.' pc','pc.categoryId=c.categoryId')->join($this->_table.' p','p.productId=pc.productId')->where('p.productId',$productId)->get()->row();
     }
     
-    public function get_new_product(){
+    public function get_new_product($latitude,$longitude){
+        $this->_currentUserCountryCode=get_counry_code_from_lat_long($latitude,$longitude);
         $sql="SELECT p.productId,p.title,p.lowestPrice,p.heighestPrice,p.qty,p.minQty,pi.image,c.categoryName "
                 . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
-                . " JOIN product_category AS pc ON(pc.productId=p.productId)  "
-                . " JOIN category AS c ON(pc.categoryId=c.categoryId)  "
-                . " WHERE p.status=1 AND c.status=1 GROUP BY pi.productId ORDER BY p.productId DESC,p.updateTime DESC";
+                . " JOIN product_category AS pc ON(pc.productId=p.productId) JOIN category AS c ON(pc.categoryId=c.categoryId) "
+                . " JOIN product_seller AS ps ON(p.productId=ps.productId) JOIN user AS u ON(ps.userId=u.userId) "
+                . " JOIN billing_address AS ba ON(u.userId=ba.userId) JOIN country AS co ON(ba.countryId=co.countryId) "
+                . " WHERE co.countryCode='".$this->_currentUserCountryCode."' AND p.status=1 AND p.isNew = 1 AND c.status=1 GROUP BY pi.productId ORDER BY p.productId DESC,p.updateTime DESC";
         return $this->db->query($sql)->result_array();
     }
     
+    public function get_all_best_selling_product($latitude="",$longitude=""){
+        $this->_currentUserCountryCode=get_counry_code_from_lat_long($latitude,$longitude);
+        $sql="SELECT p.productId,p.title,p.lowestPrice,p.heighestPrice,p.qty,p.minQty,pi.image,c.categoryName "
+            . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
+            . " JOIN product_category AS pc ON(pc.productId=p.productId) JOIN category AS c ON(pc.categoryId=c.categoryId)  "
+            . " JOIN product_seller AS ps ON(p.productId=ps.productId) JOIN user AS u ON(ps.userId=u.userId) "
+            . " JOIN billing_address AS ba ON(u.userId=ba.userId) JOIN country AS co ON(ba.countryId=co.countryId) "
+            . " WHERE co.countryCode='".$this->_currentUserCountryCode."' AND p.status=1 AND p.popular = 1 AND c.status=1 GROUP BY pi.productId ORDER BY p.productId DESC,p.updateTime DESC";
+        return $this->db->query($sql)->result_array();
+    }
+
+    public function get_all_featured_product($latitude="",$longitude=""){
+        $this->_currentUserCountryCode=get_counry_code_from_lat_long($latitude,$longitude);
+        
+        $sql="SELECT p.productId,p.title,p.lowestPrice,p.heighestPrice,p.qty,p.minQty,pi.image,c.categoryName "
+            . " FROM product AS p JOIN product_image AS pi ON(pi.productId=p.productId) "
+            . " JOIN product_category AS pc ON(pc.productId=p.productId) JOIN category AS c ON(pc.categoryId=c.categoryId)  "
+            . " JOIN product_seller AS ps ON(p.productId=ps.productId) JOIN user AS u ON(ps.userId=u.userId) "
+            . " JOIN billing_address AS ba ON(u.userId=ba.userId) JOIN country AS co ON(ba.countryId=co.countryId) "    
+            . " WHERE co.countryCode='".$this->_currentUserCountryCode."' AND p.status=1 AND p.featured = 1 AND c.status=1 GROUP BY pi.productId ORDER BY p.productId DESC,p.updateTime DESC";
+        return $this->db->query($sql)->result_array();
+    }
 }
