@@ -819,16 +819,16 @@ class Shopping extends REST_Controller {
                 else:
                     send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start'));
                     if($finalReturn=='no'):
-                        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start with $finalReturn == no'));
+                        //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start with $finalReturn == no'));
                         foreach($orderIdDataArr As $k=> $v){
-                            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start with order id : '.$v));
+                            //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start with order id : '.$v));
                             $productPriceArr=$this->order->get_product_price_details_by_orderid($v);
-                            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start product price data arr : '.  serialize($productPriceArr)));
-                            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start  update product qty for product id : '.$productPriceArr[0]['productId'].' == QTY : '.$productPriceArr[0]['qty'] ));
+                            //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start product price data arr : '.  serialize($productPriceArr)));
+                            //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start  update product qty for product id : '.$productPriceArr[0]['productId'].' == QTY : '.$productPriceArr[0]['qty'] ));
                             $this->product->update_product_quantity($productPriceArr[0]['productId'],$productPriceArr[0]['qty']);
                         }
                         //$this->process_mpesa_success_single_order(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo']));
-                        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start with process_razorpay_success_single_order fun'));
+                        //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start with process_razorpay_success_single_order fun'));
                         $this->process_razorpay_success_single_order($orderIdDataArr,$razorpayPaymentId);
                     else:
                         send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start with $finalReturn == yes'));
@@ -2835,7 +2835,7 @@ class Shopping extends REST_Controller {
     }
     
     function sent_single_order_complete_mail($orderId){
-        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'comming to sent_single_order_complete_mail function ===='));
+        //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'comming to sent_single_order_complete_mail function ===='));
         $orderDetails=  $this->order->details($orderId);
         //pre($orderDetails);die;
         $adminMailData= load_default_resources();
@@ -2846,9 +2846,9 @@ class Shopping extends REST_Controller {
         /// for seller
         $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
         $adminMailData['buyerFullName']=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
-        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'going to mail send mail to seller ===='));
+        //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'going to mail send mail to seller ===='));
         global_tidiit_mail($orderDetails[0]->sellerEmail, "A new order no - TIDIIT-OD-".$orderId.' has placed from Tidiit Inc Ltd', $adminMailData,'seller_single_order_success',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
-        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'mail send completed to seller ==='));
+        //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'mail send completed to seller ==='));
         /// for support
         $adminMailData['userFullName']='Tidiit Inc Support';
         $adminMailData['sellerFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
@@ -2856,16 +2856,16 @@ class Shopping extends REST_Controller {
         $this->load->model('Siteconfig_model','siteconfig');
         //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
         $supportEmail='judhisahoo@gmail.com';
-        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'going to mail send mail to suuport ===='));
+        //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'going to mail send mail to suuport ===='));
         global_tidiit_mail($supportEmail, "Order no - TIDIIT-OD-".$orderId.' has placed by '.$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName, $adminMailData,'support_single_order_success','Tidiit Inc Support');
-        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'mail send completed to support ==='));
+        //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'mail send completed to support ==='));
         //die;
         $sms_data=array('nMessage'=>'Your Tidiit order TIDIIT-OD-'.$orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.$adminMailData['MainSiteBaseURL'],
         'receiverMobileNumber'=>$orderDetails[0]->buyerMobileNo,'senderId'=>'','receiverId'=>$orderDetails[0]->userId,
         'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CONFIRM');
-        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'going to send sms to buyer ===='));
+        //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'going to send sms to buyer ===='));
         send_sms_notification($sms_data);
-        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'SMS send completed to buyer ==='));
+        //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'SMS send completed to buyer ==='));
         return TRUE;
     }
     
@@ -2976,23 +2976,30 @@ class Shopping extends REST_Controller {
     }
     
     function process_razorpay_success_group_order($orderId,$razorpayPaymentId){
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'comming to process_razorpay_success_group_order fun.'));
         $defaultResourcesData=  load_default_resources();
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'commint to privious order details'));
         $pevorder = $this->order->get_single_order_by_id($orderId);
-        $prod_price_info = $this->product->get_products_price_details_by_id($pevorder->productPriceId);;
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'commi to product price details.'));
+        $prod_price_info = $this->product->get_products_price_details_by_id($pevorder->productPriceId);
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'getting avialble quantity'));
         $aProductQty= $this->_get_available_order_quantity($orderId);
         $order_update=array();
         if($prod_price_info->qty == $aProductQty):
             $order_update['status'] = 2;
             $order_update['isPaid'] = 1;
             $this->product->update_product_quantity($prod_price_info->productId,$prod_price_info->qty);
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'update quantity and is paid status and complete group order status of the order'));
         else:
             $order_update['status'] = 1;
             $order_update['isPaid'] = 1;
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'update quantity and is paid status and Leader group order status of the order'));
         endif;
-
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'update order data'));
         $update = $this->order->update($order_update,$orderId);
 
         if($update):
+            
             $this->order->order_group_status_update($orderId, $order_update['status'],$pevorder->parrentOrderID);
 
             //Notification
@@ -3004,6 +3011,7 @@ class Shopping extends REST_Controller {
             //$info['orderInfo'] = base64_encode(serialize($orderinfo));
             //$this->order->update($info, $orderId);
             if($order->parrentOrderID == 0):
+                send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'sending message for LEADER order'));
                 foreach($group->users as $key => $usr):
                     $mail_template_data=array();
                     $data['senderId'] = $userId;
@@ -3035,6 +3043,7 @@ class Shopping extends REST_Controller {
                     $mail_template_view_data['group_order_start']=$mail_template_data;
                     global_tidiit_mail($recv_email, "New Buying Club Order Invitation at Tidiit Inc Ltd", $mail_template_view_data,'group_order_start');
                     $this->user->notification_add($data);
+                    send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'sending mail and message to group member'));
                     /// sendin SMS to allmember
                     $sms_data=array('nMessage'=>'You have invited to Buying Club['.$group->groupTitle.'] by '.$group->admin->firstName.' '.$group->admin->lastName.'.More details about this notifiaction,Check '.$defaultResourcesData["MainSiteBaseURL"],
                         'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$usr->userId,
@@ -3042,12 +3051,14 @@ class Shopping extends REST_Controller {
                     send_sms_notification($sms_data);
                 endforeach;
             else:
+                send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'sending message for member order'));
                 $rsUser=$this->user->get_details_by_id($pevorder->userId);
                 $me = $rsUser[0];
                 $mail_template_data=array();
                 $data['senderId'] = $userId;
                 $data['nType'] = 'BUYING-CLUB-ORDER';
                 foreach($group->users as $key => $usr):
+                    send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'sending message to all member except me about the order.'));
                     if($me->userId != $usr->userId):
                         $mail_template_data=array();
                         $data['receiverId'] = $usr->userId;
@@ -3075,7 +3086,7 @@ class Shopping extends REST_Controller {
                         $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
                         global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                         $this->user->notification_add($data);
-
+                        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'sending mail and message to group member except me'));
                         /// sendin SMS to allmember
                         $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of Buying Club['.$group->groupTitle.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.$defaultResourcesData["MainSiteBaseURL"],
                             'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
@@ -3096,6 +3107,7 @@ class Shopping extends REST_Controller {
                 $mail_template_view_data['group_order_group_member_payment']=$mail_template_data;
                 global_tidiit_mail($recv_email,"One Buying Club member has completed his payment at Tidiit Inc, Ltd.", $mail_template_view_data,'group_order_group_member_payment');
                 $this->user->notification_add($data);
+                send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'notification send to group admin'));
                 /// sendin SMS to allmember
                 $sms_data=array('nMessage'=>$usr->firstName.' '.$usr->lastName.' has completed payment['.$order->orderAmount.'] of '.$order->productQty.' of your Buying Club['.$group->groupTitle.'] Order TIDIIT-OD-'.$orderId.'. More details about this notifiaction,Check '.$defaultResourcesData["MainSiteBaseURL"],
                     'receiverMobileNumber'=>$usr->mobile,'senderId'=>$data['senderId'],'receiverId'=>$data['receiverId'],
@@ -3105,11 +3117,15 @@ class Shopping extends REST_Controller {
 
             if($order_update['status']==2):
                 //$this->_sent_order_complete_mail($order);
+                send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'going for send order complete mail by sent_buying_club_order_complete_mail fun'));
                 $this->sent_buying_club_order_complete_mail($order);
+                send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'order complete mail sent success fully to all member and grop admin'));
             endif;
-
+            
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'razorpay payment data aded to DB'));
             $rajorpayDataArr=$this->order->get_rajorpay_id_by_rajorpay_pament_id($razorpayPaymentId);
             $this->order->add_payment(array('orderId'=>$orderId,'paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId,'orderType'=>'group'));
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'razorpay payment data added successfully'));
             $result=array();
             $result['message']='Thanks you for shopping with '.$defaultResources["MainSiteBaseURL"].'.Order placed successfully for each item selected.For More details check your "My Order" section.';
             success_response_after_post_get($result);
@@ -3273,15 +3289,15 @@ class Shopping extends REST_Controller {
         $tidiitStrChr='TIDIIT-OD';
         $tidiitStr='';
         $rajorpayDataArr=$this->order->get_rajorpay_id_by_rajorpay_pament_id($razorpayPaymentId);
-        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'calling process_razorpay_success_single_order fun at 3258 line === '));
+        //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'calling process_razorpay_success_single_order fun at 3258 line === '));
         foreach ($orderIdArr AS $k => $v):
-            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'calling process_razorpay_success_single_order fun at 3258 line in side loop === '));;
+            //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'calling process_razorpay_success_single_order fun at 3258 line in side loop === '));;
             $tidiitStr=$tidiitStrChr.'-'.$v.',';
             $order_update=array();
             $order_update['status'] = 2;
             $order_update['isPaid'] = 1;
             $this->order->update($order_update,$v);
-            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'update order in loop === '));
+            //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'update order in loop === '));
             $order=$this->order->get_single_order_by_id($v);
             $orderinfo =  unserialize(base64_decode($order->orderInfo));
             //$this->Product_model->update_product_quantity($order['productId'],$order['productQty']);
@@ -3293,11 +3309,11 @@ class Shopping extends REST_Controller {
             $user = $rsUser[0];
             $recv_email = $user->email;
             $this->order->add_payment(array('orderId'=>$v,'paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId,'orderType'=>'single'));
-            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'add payment data to db === '));
+            //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'add payment data to db === '));
             $mail_template_view_data=load_default_resources();
             $mail_template_view_data['single_order_success']=$mail_template_data;
             global_tidiit_mail($recv_email, "Your Tidiit order no - TIDIIT-OD-".$v.' has placed successfully', $mail_template_view_data,'single_order_success');
-            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'Going for sent_single_order_complete_mail function ==== '));
+            //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'Going for sent_single_order_complete_mail function ==== '));
             $this->sent_single_order_complete_mail($v);
         endforeach;
         $result=array();
@@ -3333,26 +3349,37 @@ class Shopping extends REST_Controller {
             
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$v;
-
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'getting razorpay payment id details'));
             $rajorpayDataArr=$this->order->get_rajorpay_id_by_rajorpay_pament_id($razorpayPaymentId);
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'going to update payment type for order id : '.$v));
             $this->order->edit_payment(array('paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId),$v);
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Payment type updated success.'));
 
             $mail_template_view_data=$this->load_default_resources();
             $mail_template_view_data['single_order_success']=$mail_template_data;
-            $this->_global_tidiit_mail($recv_email, "Payment has completed for your Tidiit order TIDIIT-OD-".$v, $mail_template_view_data,'single_order_success_sod_final_payment',$recv_name);
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'going to send mail to suer about payment'));
+            global_tidiit_mail($recv_email, "Payment has completed for your Tidiit order TIDIIT-OD-".$v, $mail_template_view_data,'single_order_success_sod_final_payment',$recv_name);
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'going for _sent_single_order_complete_mail_sod_final_payment fun.'));
             $this->_sent_single_order_complete_mail_sod_final_payment($v);
             
         endforeach;
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'checking for logistic partner data'));
         /// here to preocess SMS to logistics partner
         if(!empty($logisticsData) && array_key_exists('deliveryStaffContactNo', $logisticsData)):
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'cehcking delivery staff contact number'));
             $logisticMobileNo=$logisticsData['deliveryStaffContactNo'];
             if($logisticMobileNo!=""):
+                send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'going to send SMS to delivery staff for delivery'));
                 $sms=$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.' please process the delivery.';
                 /// sendin SMS to allmember
                 $sms_data=array('nMessage'=>$sms,'receiverMobileNumber'=>$logisticMobileNo,'senderId'=>'','receiverId'=>'',
                     'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LOGISTICS');
                 send_sms_notification($sms_data);
+            else:
+                send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'no deliery staff contact number found'));
             endif;
+        else:
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'not logistic partner data found'));
         endif;
 
         /// SMS to payer
@@ -3370,11 +3397,11 @@ class Shopping extends REST_Controller {
     }
     
     function debuging_razorpay_post(){
-        $razorpayPaymentId="pay_5ry2XiY0BnrpwV";
-        $orderIdData="YToxOntpOjA7czoyOiI4NCI7fQ==";
+        $razorpayPaymentId=$this->post('razorpayPaymentId');
+        $orderIdData=$this->post('orderIdData');
         $orderType="single";
         $finalReturn="no";
-        $userId=100;
+        $userId=$this->post('userId');
         $latitude = "20.658933333333334";
         $longitude = "85.60109499999999";
         $deviceType = $this->post('deviceType');
