@@ -780,15 +780,15 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => "Please provide final return data not received."), 400); return FALSE;
         }else{
             $orderIdDataArr= unserialize(base64_decode($orderIdData));
-            $mail_message='$userId : '.$userId.' == $orderIdData : '.$orderIdData.' == $razorpayPaymentId : '.$razorpayPaymentId.' == $latitude : '.$latitude.' == $longitude : '.$longitude.' == $deviceToken : '.$deviceToken.' == $UDID : '.$UDID;
+            $mail_message='$userId : '.$userId.' == $orderIdData : '.$orderIdData.' == $razorpayPaymentId : '.$razorpayPaymentId.' == $latitude : '.$latitude.' == $longitude : '.$longitude.' == $deviceToken : '.$deviceToken.' == $UDID : '.$UDID.' == $orderType : '.$orderType.' == $finalReturn : '.$finalReturn;
             send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>$mail_message));
             if(count($orderIdDataArr)==1){
                 $dataArr=array('userId'=>$userId,'orderIds'=>$orderIdDataArr[0],'razorpayPaymentId'=>$razorpayPaymentId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'addedTime'=> date('Y-m-d H:i:s'));
             }else{
                 $dataArr=array('userId'=>$userId,'orderIds'=>  implode(',', $orderIdDataArr),'razorpayPaymentId'=>$razorpayPaymentId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'addedTime'=>date('Y-m-d H:i:s'));
             }
-            //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'comming to add razorpay data to DB'));
             $this->order->add_rajorpay_return_data($dataArr);
+            $this->response(array('error' => 'debuging'), 400); return FALSE;
             //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'comming to fetch razorpay infor from DB'));
             $razorpayInfo=$this->order->get_razorpay_info();
             $api_key=$razorpayInfo[0]->userName;
@@ -3310,15 +3310,17 @@ class Shopping extends REST_Controller {
         $tidiitStrChr='TIDIIT-OD';
         $tidiitStr='';
         //Send Email message
-        
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'select rajorpaypayment data from db'));
         $rajorpayDataArr=$this->order->get_rajorpay_id_by_rajorpay_pament_id($razorpayPaymentId);
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'foreach with order id arr'));
         foreach ($orderIdArr AS $k => $v):
             $orderId=$v;
             $tidiitStr=$tidiitStrChr.'-'.$v.',';
             $order_update=array();
             $order_update['isPaid'] = 1;
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'going to update order with id : '.$v));
             $this->order->update($order_update,$v);
-            
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'complete order update for order id :'.$v));
             $order=$this->order->get_single_order_by_id($v);
             $orderinfo =  unserialize(base64_decode($order->orderInfo));
             
