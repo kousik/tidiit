@@ -781,26 +781,29 @@ class Shopping extends REST_Controller {
         }else{
             $orderIdDataArr= unserialize(base64_decode($orderIdData));
             $mail_message='$userId : '.$userId.' == $orderIdData : '.$orderIdData.' == $razorpayPaymentId : '.$razorpayPaymentId.' == $latitude : '.$latitude.' == $longitude : '.$longitude.' == $deviceToken : '.$deviceToken.' == $UDID : '.$UDID;
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>$mail_message));
             if(count($orderIdDataArr)==1){
                 $dataArr=array('userId'=>$userId,'orderIds'=>$orderIdDataArr[0],'razorpayPaymentId'=>$razorpayPaymentId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'addedTime'=> date('Y-m-d H:i:s'));
             }else{
                 $dataArr=array('userId'=>$userId,'orderIds'=>  implode(',', $orderIdDataArr),'razorpayPaymentId'=>$razorpayPaymentId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'addedTime'=>date('Y-m-d H:i:s'));
             }
-            @mail('cto.tidiit@gmail.com','POST recieve data', $mail_message);
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'comming to add razorpay data to DB'));
             $this->order->add_rajorpay_return_data($dataArr);
-            $result['message']='Debuging the request data manually now';
-            success_response_after_post_get($result);die;
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'comming to fetch razorpay infor from DB'));
             $razorpayInfo=$this->order->get_razorpay_info();
             $api_key=$razorpayInfo[0]->userName;
             $api_secret=$razorpayInfo[0]->password;
-            
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'start using raxorpay API'));
             $api = new Api($api_key, $api_secret);
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Initalise razorpay API : '));
             $payment = $api->payment->fetch($razorpayPaymentId);
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'$payment : '.serialize($payment)));
             $Amount=$payment->amount;
             $captureData=$api->payment->fetch($razorpayPaymentId)->capture(array('amount'=>$Amount));
-            
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'$captureData : '.  serialize($captureData)));
             //pre($captureData);die;
             if($captureData->captured==1){
+                send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'razorpay payment capture done.'));
                 //$PaymentDataArr = $_SESSION['PaymentData'];
                 $orderType = $orderType;
                 if($orderType=='group'):
@@ -813,12 +816,14 @@ class Shopping extends REST_Controller {
                         $this->process_razorpay_success_group_order_final($orderIdDataArr[0],$razorpayPaymentId,$logisticsData);
                     endif;
                 else:
+                    send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start'));
                     if($finalReturn=='no'):
                         foreach($orderIdDataArr As $k=> $v){
                             $productPriceArr=$this->order->get_product_price_details_by_orderid($v);
                             $this->product->update_product_quantity($productPriceArr[0]['productId'],$productPriceArr[0]['qty']);
                         }
                         //$this->process_mpesa_success_single_order(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo']));
+                        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start with process_razorpay_success_single_order fun'));
                         $this->process_razorpay_success_single_order($orderIdDataArr,$razorpayPaymentId);
                     else:
                         //$this->process_mpesa_success_single_order_final(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo'],'logisticsData'=>$logisticsData));
@@ -3262,15 +3267,15 @@ class Shopping extends REST_Controller {
         $tidiitStrChr='TIDIIT-OD';
         $tidiitStr='';
         $rajorpayDataArr=$this->order->get_rajorpay_id_by_rajorpay_pament_id($razorpayPaymentId);
-        echo 'calling process_razorpay_success_single_order fun at 3258 line === ';
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'calling process_razorpay_success_single_order fun at 3258 line === '));
         foreach ($orderIdArr AS $k => $v):
-            echo 'calling process_razorpay_success_single_order fun at 3258 line in side loop === ';
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'calling process_razorpay_success_single_order fun at 3258 line in side loop === '));;
             $tidiitStr=$tidiitStrChr.'-'.$v.',';
             $order_update=array();
             $order_update['status'] = 2;
             $order_update['isPaid'] = 1;
             $this->order->update($order_update,$v);
-            echo 'update order in loop === ';
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'update order in loop === '));
             $order=$this->order->get_single_order_by_id($v);
             $orderinfo =  unserialize(base64_decode($order->orderInfo));
             //$this->Product_model->update_product_quantity($order['productId'],$order['productQty']);
@@ -3282,11 +3287,11 @@ class Shopping extends REST_Controller {
             $user = $rsUser[0];
             $recv_email = $user->email;
             $this->order->add_payment(array('orderId'=>$v,'paymentType'=>'razorpay','razorpayId'=>$rajorpayDataArr[0]->razorpayId,'orderType'=>'single'));
-            echo 'add payment data to db === ';
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'add payment data to db === '));
             $mail_template_view_data=load_default_resources();
             $mail_template_view_data['single_order_success']=$mail_template_data;
             global_tidiit_mail($recv_email, "Your Tidiit order no - TIDIIT-OD-".$v.' has placed successfully', $mail_template_view_data,'single_order_success');
-            echo 'Going for sent_single_order_complete_mail function ==== ';
+            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'Going for sent_single_order_complete_mail function ==== '));
             $this->sent_single_order_complete_mail($v);
         endforeach;
         $result=array();
