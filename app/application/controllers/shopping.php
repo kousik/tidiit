@@ -3347,7 +3347,7 @@ class Shopping extends REST_Controller {
         success_response_after_post_get($result);
     }
     
-    function debuging_razorpay(){
+    function debuging_razorpay_post(){
         $razorpayPaymentId=trim($this->input->post('razorpayPaymentId'));
         $razorpayInfo=$this->order->get_razorpay_info();
         $api_key=$razorpayInfo[0]->userName;
