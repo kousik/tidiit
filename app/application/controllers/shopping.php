@@ -787,23 +787,23 @@ class Shopping extends REST_Controller {
             }else{
                 $dataArr=array('userId'=>$userId,'orderIds'=>  implode(',', $orderIdDataArr),'razorpayPaymentId'=>$razorpayPaymentId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'addedTime'=>date('Y-m-d H:i:s'));
             }
-            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'comming to add razorpay data to DB'));
+            //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'comming to add razorpay data to DB'));
             $this->order->add_rajorpay_return_data($dataArr);
-            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'comming to fetch razorpay infor from DB'));
+            //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'comming to fetch razorpay infor from DB'));
             $razorpayInfo=$this->order->get_razorpay_info();
             $api_key=$razorpayInfo[0]->userName;
             $api_secret=$razorpayInfo[0]->password;
-            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'start using raxorpay API'));
+            //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'start using raxorpay API'));
             $api = new Api($api_key, $api_secret);
-            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Initalise razorpay API : '));
+            //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Initalise razorpay API : '));
             $payment = $api->payment->fetch($razorpayPaymentId);
-            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'$payment : '.serialize($payment)));
+            //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'$payment : '.serialize($payment)));
             $Amount=$payment->amount;
             $captureData=$api->payment->fetch($razorpayPaymentId)->capture(array('amount'=>$Amount));
-            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'$captureData : '.  serialize($captureData)));
+            //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'$captureData : '.  serialize($captureData)));
             //pre($captureData);die;
             if($captureData->captured==1){
-                send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'razorpay payment capture done.'));
+                //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'razorpay payment capture done.'));
                 //$PaymentDataArr = $_SESSION['PaymentData'];
                 $orderType = $orderType;
                 if($orderType=='group'):
@@ -818,14 +818,19 @@ class Shopping extends REST_Controller {
                 else:
                     send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start'));
                     if($finalReturn=='no'):
+                        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start with $finalReturn == no'));
                         foreach($orderIdDataArr As $k=> $v){
+                            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start with order id : '.$v));
                             $productPriceArr=$this->order->get_product_price_details_by_orderid($v);
+                            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start product price data arr : '.  serialize($productPriceArr)));
+                            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start  update product qty for product id : '.$productPriceArr[0]['productId'].' == QTY : '.$productPriceArr[0]['qty'] ));
                             $this->product->update_product_quantity($productPriceArr[0]['productId'],$productPriceArr[0]['qty']);
                         }
                         //$this->process_mpesa_success_single_order(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo']));
                         send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start with process_razorpay_success_single_order fun'));
                         $this->process_razorpay_success_single_order($orderIdDataArr,$razorpayPaymentId);
                     else:
+                        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'Single Order process start with $finalReturn == yes'));
                         //$this->process_mpesa_success_single_order_final(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo'],'logisticsData'=>$logisticsData));
                         $this->process_razorpay_success_single_order_final($orderIdDataArr,$razorpayPaymentId,$logisticsData);
                     endif;
