@@ -2829,7 +2829,7 @@ class Shopping extends REST_Controller {
     }
     
     function sent_single_order_complete_mail($orderId){
-        echo 'comming to sent_single_order_complete_mail function ====';
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'comming to sent_single_order_complete_mail function ===='));
         $orderDetails=  $this->order->details($orderId);
         //pre($orderDetails);die;
         $adminMailData= load_default_resources();
@@ -2840,9 +2840,9 @@ class Shopping extends REST_Controller {
         /// for seller
         $adminMailData['userFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
         $adminMailData['buyerFullName']=$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName;
-        echo 'going to mail send mail to seller ====';
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'going to mail send mail to seller ===='));
         global_tidiit_mail($orderDetails[0]->sellerEmail, "A new order no - TIDIIT-OD-".$orderId.' has placed from Tidiit Inc Ltd', $adminMailData,'seller_single_order_success',$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName);
-        echo 'mail send completed to seller ===';
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'mail send completed to seller ==='));
         /// for support
         $adminMailData['userFullName']='Tidiit Inc Support';
         $adminMailData['sellerFullName']=$orderDetails[0]->sellerFirstName.' '.$orderDetails[0]->sellerFirstName;
@@ -2850,16 +2850,16 @@ class Shopping extends REST_Controller {
         $this->load->model('Siteconfig_model','siteconfig');
         //$supportEmail=$this->siteconfig->get_value_by_name('MARKETING_SUPPORT_EMAIL');
         $supportEmail='judhisahoo@gmail.com';
-        echo 'going to mail send mail to suuport ====';
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'going to mail send mail to suuport ===='));
         global_tidiit_mail($supportEmail, "Order no - TIDIIT-OD-".$orderId.' has placed by '.$orderInfoDataArr['shipping']->firstName.' '.$orderInfoDataArr['shipping']->lastName, $adminMailData,'support_single_order_success','Tidiit Inc Support');
-        echo 'mail send completed to support ===';
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'mail send completed to support ==='));
         //die;
         $sms_data=array('nMessage'=>'Your Tidiit order TIDIIT-OD-'.$orderId.' for '.$orderInfoDataArr['pdetail']->title.' has placed successfully. More details about this notifiaction,Check '.$adminMailData['MainSiteBaseURL'],
         'receiverMobileNumber'=>$orderDetails[0]->buyerMobileNo,'senderId'=>'','receiverId'=>$orderDetails[0]->userId,
         'senderMobileNumber'=>'','nType'=>'SINGLE-ORDER-CONFIRM');
-        echo 'going to send sms to buyer ====';
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'going to send sms to buyer ===='));
         send_sms_notification($sms_data);
-        echo 'SMS send completed to buyer ===';
+        send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=> 'SMS send completed to buyer ==='));
         return TRUE;
     }
     
