@@ -1564,7 +1564,8 @@ class Shopping extends MY_Controller{
         $data['userData']=$me;
         $data['userMenuActive']=1;
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
-        $data['orderIds']=implode('^', $orderIdArr);
+        //$data['orderIds']=implode('^', $orderIdArr);
+        $data['orderIds']= base64_encode(serialize($orderIdArr));
         /*$sms_data=array('nMessage'=>'comming to ajax_process_single_payment_start FUN at '.time().' at line number 1546',
                 'receiverMobileNumber'=>'9556644964','senderId'=>'','receiverId'=>100,
                 'senderMobileNumber'=>'','nType'=>'TESTING');*/
