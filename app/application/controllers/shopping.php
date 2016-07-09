@@ -2713,7 +2713,7 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
         
-        if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
+        if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId,2)==FALSE){
             $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
         }
         
