@@ -3040,6 +3040,7 @@ class Shopping extends REST_Controller {
         $defaultResourcesData=  load_default_resources();
         send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'commint to privious order details'));
         $pevorder = $this->order->get_single_order_by_id($orderId);
+        $userId=$pevorder->userId;
         send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'commi to product price details.'));
         $prod_price_info = $this->product->get_products_price_details_by_id($pevorder->productPriceId);
         send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>'getting avialble quantity'));
