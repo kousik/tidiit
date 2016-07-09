@@ -1677,11 +1677,10 @@ class Shopping extends REST_Controller {
         $paymentGatewayAmount=0;
         $allOrderArray=array();
         
-        $order=array();
         $paymentGatewayAmount=$order->orderAmount;
         $order['status'] = 8;
          
-        $allOrderArray['orderId']=$orderId;
+        $allOrderArray[]=$orderId;
         $this->order->update($order,$orderId);
         
         $result=array();
@@ -2661,11 +2660,10 @@ class Shopping extends REST_Controller {
         $paymentGatewayAmount=0;
         $allOrderArray=array();
         
-        $order=array();
         $paymentGatewayAmount=$order->orderAmount;
         $order['status'] = 8;
          
-        $allOrderArray['orderId']=$orderId;
+        $allOrderArray[]=$orderId;
         $this->order->update($order,$orderId);
         
         $result=array();
@@ -2685,6 +2683,67 @@ class Shopping extends REST_Controller {
         $result['orderIdData']=  base64_encode(serialize($allOrderArray));
         $result['orderType']= 'group';
         $result['finalReturn']= 'no';
+        success_response_after_post_get($result);
+    }
+    
+    function my_order_razorpay_payment_post(){
+        $orderId=  $this->post('orderId');
+        $userId=  $this->post('userId');
+        
+        $latitude = $this->post('latitude');
+        $longitude = $this->post('longitude');
+        $deviceType = $this->post('deviceType');
+        $UDID=$this->post('UDID');
+        $deviceToken=$this->post('deviceToken');
+        
+        if($userId==""){
+            $this->response(array('error' => 'Please provide user index'), 400); return FALSE;
+        }
+        
+        $user=$this->user->get_details_by_id($userId)[0];
+        if(empty($user)){
+            $this->response(array('error' => 'Please provide valid user index!'), 400); return FALSE;
+        }
+        
+        $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
+        $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if($isValideDefaultData['type']=='fail'){
+            $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
+        }
+        
+        if($this->order->is_valid_order_by_order_id_user_id($orderId,$userId)==FALSE){
+            $this->response(array('error' => 'Please provide valid user index and related order index!'), 400); return FALSE;
+        }
+        
+        $countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        $order=$this->order->get_single_order_by_id($orderId);
+        //$orderDetails= $this->order->details($orderId);
+        //$countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
+        $paymentGatewayAmount=0;
+        $allOrderArray=array();
+        
+        $paymentGatewayAmount=$order->orderAmount;
+         
+        $allOrderArray[]=$orderId;
+        
+        $result=array();
+        //$result['message']='Thanks you for shopping with '.$defaultResources['MainSiteBaseURL'].'.Order placed successfully for each item selected.For More details check your "My Order" section.';
+        $result['profile_key']="rzp_test_yfWhsaZcULj1KQ";
+        $result['currency']='INR';
+        $result['amount']=$paymentGatewayAmount*100;
+        $result['name']=$user->firstName.' '.$user->lastName;
+        $result['email']=$user->email;
+        if($user->contactNo!=""):
+            $result['contact']=$user->contactNo;
+        else:
+            $result['contact']=$user->mobile;
+        endif;
+        $result['description']="Shopping from Tidiit";
+        $result['image']="http://tidiit.com/resources/images/logo.png";
+        $result['orderIdData']=  base64_encode(serialize($allOrderArray));
+        $result['orderType']= strtolower($order->orderType);
+        $result['finalReturn']= 'yes';
         success_response_after_post_get($result);
     }
     
@@ -3321,7 +3380,6 @@ class Shopping extends REST_Controller {
         success_response_after_post_get($result);
     }
     
-    
     function process_razorpay_success_single_order_final($orderIdArr,$razorpayPaymentId,$logisticsData){
         $orderId=0;
         $tidiitStrChr='TIDIIT-OD';
@@ -3460,4 +3518,7 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => "unknown eror in capturing the data."), 400); return FALSE;
         }
     }
+    
+    
+    
 }
