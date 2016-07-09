@@ -1677,13 +1677,14 @@ class Shopping extends REST_Controller {
         $paymentGatewayAmount=0;
         $allOrderArray=array();
         
+        $updateOrder=array();
         $paymentGatewayAmount=$order->orderAmount;
-        $order['status'] = 8;
+        $updateOrder['status'] = 8;
          
         $allOrderArray[]=$orderId;
-        $this->order->update($order,$orderId);
+        $this->order->update($updateOrder,$orderId);
         
-        $result=array();
+        $resdult=array();
         //$result['message']='Thanks you for shopping with '.$defaultResources['MainSiteBaseURL'].'.Order placed successfully for each item selected.For More details check your "My Order" section.';
         $result['profile_key']="rzp_test_yfWhsaZcULj1KQ";
         $result['currency']='INR';
@@ -2659,12 +2660,12 @@ class Shopping extends REST_Controller {
         //$countryShortName=  get_counry_code_from_lat_long($latitude, $longitude);
         $paymentGatewayAmount=0;
         $allOrderArray=array();
-        
+        $orderUpdate=array();
         $paymentGatewayAmount=$order->orderAmount;
-        $order['status'] = 8;
+        $orderUpdate['status'] = 8;
          
         $allOrderArray[]=$orderId;
-        $this->order->update($order,$orderId);
+        $this->order->update($orderUpdate,$orderId);
         
         $result=array();
         //$result['message']='Thanks you for shopping with '.$defaultResources['MainSiteBaseURL'].'.Order placed successfully for each item selected.For More details check your "My Order" section.';
