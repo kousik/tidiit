@@ -16,6 +16,8 @@ class User extends My_Controller {
                 $data['DataArr']=$this->User_model->get_all();
                 $data['UserTypeArr']=  $this->User_model->get_user_type_except_buyer_seller();
                 $data['logisticData']=  $this->Logistics_model->get_all_active();
+                $data['filterOptions']="";
+                $data['filterOptionsValue']="";
                 $this->load->view('webadmin/user_list',$data);
             }else{
                 $data=$this->_show_admin_login();
@@ -213,7 +215,22 @@ class User extends My_Controller {
         redirect(base_url().'webadmin/user/viewlist');
     }
     
-    
+    function filter(){
+        if($this->_is_admin_loged_in()){
+            $data=$this->_show_admin_logedin_layout();
+            $filterOptions=  $this->input->post('filterOptions',TRUE);
+            $filterOptionsValue=  $this->input->post('filterOptionsValue',TRUE);
+            $data['DataArr']=$this->User_model->get_all_filter($filterOptions,$filterOptionsValue);
+            $data['UserTypeArr']=  $this->User_model->get_user_type_except_buyer_seller();
+            $data['logisticData']=  $this->Logistics_model->get_all_active();
+            $data['filterOptions']=$filterOptions;
+            $data['filterOptionsValue']=$filterOptionsValue;
+            $this->load->view('webadmin/user_list',$data);
+        }else{
+            $data=$this->_show_admin_login();
+            $this->load->view('webadmin/login',$data);
+        }
+    }
 }
 
 /* End of file welcome.php */

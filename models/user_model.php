@@ -1061,5 +1061,11 @@ class User_model extends CI_Model {
             return FALSE;
         }
     }
+    
+    function get_all_filter($filterOptions,$filterOptionsValue){
+        $this->db->select('u.*,lu.logisticsId')->from($this->_table.' u')->join('logistic_user lu','u.userId=lu.userId','left');
+        $this->db->where('status <','2')->like($filterOptions,$filterOptionsValue);
+        return $this->db->get()->result();
+    }
 }
 

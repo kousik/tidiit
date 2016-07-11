@@ -17,16 +17,9 @@
                                         jQuery('#mpesaSubmitForm')[0].submit();
                                     });
                                 </script>
-                                <?php
-                                if($_SERVER['HTTP_HOST']=='local.tidiit.com'):?>
-                                <form name="mpesaSubmitForm" id="mpesaSubmitForm" action="http://localhost/testing_mpesa/index.php" method="post">
-                                <?php /*<form name="mpesaSubmitForm" id="mpesaSubmitForm" action="<?php echo 'http://demosandbox.tidiit-local.com/index.php';?>" method="post"> */?>
-                                <?php else:?>    
-                                <form name="mpesaSubmitForm" id="mpesaSubmitForm" action="<?php echo 'http://demosandbox.tidiit.com/index.php';?>" method="post">
-                                <?php endif;?>
-                                    <input type="hidden" name="custom" value="<?php echo $orderId;?>" />
-                                    <input type="hidden" name="cartId" value="<?php echo md5('tidiit123');?>" />
-                                    <input name="return_url" value="<?php echo BASE_URL.'shopping/mpesa_return/';?>">
+                                <form name="mpesaSubmitForm" id="mpesaSubmitForm" action="<?php echo $checkOutURL;?>" method="post">
+                                    <input type="hidden" name="gatewayparam" id="gatewayparam" value='<PaymentGatewayRequest><MCODE><?php echo $marchantCode;?></MCODE><TXNDATE><?php echo date('dmY');?></TXNDATE><TRANSREFNO><?php echo $orderIdStr.base64_encode('tidiit').time();?></TRANSREFNO><TXNTYPE>P</TXNTYPE><AMT>1.00</AMT><NARRATION>Test payment</NARRATION><RETURNURL><?php echo $returnURL; ?></RETURNURL><SURCHARGE>0</SURCHARGE><FILLER1></FILLER1><FILLER2></FILLER2><FILLER3></FILLER3><FILLER4></FILLER4><FILLER5></FILLER5></PaymentGatewayRequest>'/>
+                                    <input type="hidden" name="checksum" id="checksum" value="<?php echo hash_hmac('sha256', '<PaymentGatewayRequest><MCODE>'.$marchantCode.'</MCODE><TXNDATE>'.date('dmY').'</TXNDATE><TRANSREFNO>'.$orderIdStr.base64_encode('tidiit').time().'</TRANSREFNO><TXNTYPE>P</TXNTYPE><AMT>1.00</AMT><NARRATION>Test payment</NARRATION><RETURNURL>'.$returnURL.'</RETURNURL><SURCHARGE>0</SURCHARGE><FILLER1></FILLER1><FILLER2></FILLER2><FILLER3></FILLER3><FILLER4></FILLER4><FILLER5></FILLER5></PaymentGatewayRequest>', 'sk2vmglp9f5s');?>"/>
                                 </form>
                             </div>                            
                         </div>

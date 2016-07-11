@@ -426,7 +426,7 @@ class Shopping extends MY_Controller{
             else:
                 $paymentDataArr = array('orders'=>$orderId,'orderType'=>'group','paymentGatewayAmount'=>$paymentGatewayAmount,'orderInfo'=>$orderinfo,'group'=>$group,'pevorder'=>$pevorder,'aProductQty'=>$a[0]->productQty,'prod_price_info'=>$prod_price_info,'order'=>$order,'cartId'=>$cartId,'final_return'=>'no');
                 //pre($paymentDataArr);die;
-                $_SESSION['TempPaymentData'] = $paymentDataArr;
+                $_SESSION['PaymentData'] = $paymentDataArr;
                 //pre($_SESSION);
                 //die;
             endif;
@@ -1525,10 +1525,20 @@ class Shopping extends MY_Controller{
 
     function _mpesa_process($orderIdArr){
         $SEODataArr=array();
+        $mPesaInfo=$this->Order_model->get_mpesa_info();
         $data = $this->_get_logedin_template($SEODataArr);
+        $data['marchantCode']=$mPesaInfo[0]->userName;
+        $data['checkOutURL']=$mPesaInfo[0]->endPoint;
+        $data['returnURL']=BASE_URL.'shopping/mpesa_return';
         $data['userMenuActive']=1;
+        if(is_array($_SESSION['PaymentData']['orders'])):
+            $data['orderIdStr']= base64_encode(implode(',',$_SESSION['PaymentData']['orders']));
+        else:
+            $data['orderIdStr']=$_SESSION['PaymentData']['orders'];
+        endif;        
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $data['orderId']=$orderIdArr[0];
+        
         $this->load->view('payment/mpesa',$data);
     }
 
@@ -1641,6 +1651,7 @@ class Shopping extends MY_Controller{
     }
 
     function mpesa_return(){
+        pre($_POST);die;
         $custom=$this->input->post('custom');
         $returnAction=  $this->input->post('returnAction');
         if($returnAction=='success'):

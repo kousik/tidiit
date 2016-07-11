@@ -29,8 +29,8 @@ class MY_location_track
             $userLocation="";
         }
         if($userLocation==""){
-            //$cIP=$this->CI->input->ip_address();
-            $cIP="196.201.216.170";
+            $cIP=$this->CI->input->ip_address();
+            //$cIP="196.201.216.170";
             if($cIP=='127.0.0.1'){
                 $cIP='117.214.82.169';
             }

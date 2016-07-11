@@ -600,4 +600,10 @@ class Order_model extends CI_Model {
             return $this->db->from($this->_payment_gateway)->where('countryCode',  $countryCode)->where('status',1)->get()->result_array();
         endif;
     }
+    
+    function get_mpesa_info(){
+        $rs=$this->db->from('system_constants')->where('constantName','PAYMENT_GATEWAY_STATE')->get()->result();
+        return $this->db->select('pgc.*')->from('payment_gateway pg')->join('payment_gateway_config pgc','pg.gatewayId=pgc.gatewayId')->where('pg.gatewayId',3)->where('pgc.type',$rs[0]->constantValue)->get()->result();
+        //return $this->db->from()->where('gatewayName','razorpay')->where('type',$rs[0]->constantValue)->get()->result();
+    }
 }

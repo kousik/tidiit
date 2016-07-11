@@ -23,32 +23,50 @@
                 <option value="BatchDelete">Batch Delete</option>
             </select></label>
         </div>
+        <div style="float:left; padding-right: 20px;">&nbsp;</div>
+        <div style="float:left; padding-right: 20px;">
+            <form name="filterOptions" value="filterOptions" method="post" action="<?php echo ADMIN_BASE_URL.'user/filter/'?>">
+                <label>
+                    Select Filter Type
+                    <select name="filterOptions" id="filterOptions" style="height:25px; margin-top:5px;">
+                        <option value=""> * Select * </option>
+                        <option value="userType">By User type</option>
+                        <option value="email">By Email</option>
+                        <option value="firstName">By First Name</option>
+                        <option value="lastName">By Last Name</option>
+                    </select>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="filterOptionsValue" id="filterOptionsValue" value="">
+                    &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" name="filterOptionsValueSubmit" id="filterOptionsValueSubmit" value="Update by Filter" class="btn-large btn-primary">
+                    &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" name="clearFilterOptionsValueSubmit" id="clearFilterOptionsValueSubmit" value="Clear Filter" class="btn-large btn-primary">
+                </label>
+            </form>    
+        </div>
     </td>
   </tr>
 <script language="javascript">
     oldEditEmailID='';
 function ShowAddAdminBox(){
-    $('#MessaeBox').html("");
-    $('#EditBox').hide();
-    $('#actionRow').hide();
-    $('#PageHeading').hide();
-    $('#ListBox').fadeOut(500);
-    $('#AddBox').fadeIn(3500);
+    jQuery('#MessaeBox').html("");
+    jQuery('#EditBox').hide();
+    jQuery('#actionRow').hide();
+    jQuery('#PageHeading').hide();
+    jQuery('#ListBox').fadeOut(500);
+    jQuery('#AddBox').fadeIn(3500);
 }
  function ShowEditBox(id){
-    $('#MessaeBox').html("");
-    $('#actionRow').fadeOut();
-    $('#PageHeading').fadeOut();
-    $('#AddBox').fadeOut();
-    $('#ListBox').fadeOut(400);
+    jQuery('#MessaeBox').html("");
+    jQuery('#actionRow').fadeOut();
+    jQuery('#PageHeading').fadeOut();
+    jQuery('#AddBox').fadeOut();
+    jQuery('#ListBox').fadeOut(400);
 
-    $('#EditBox').fadeIn(2500);
-    $('#userId').val(id);
+    jQuery('#EditBox').fadeIn(2500);
+    jQuery('#userId').val(id);
     oldEditEmailID=DataArr[id]['email'];
-    $('#EditfirstName').val(DataArr[id]['firstName']);
-    $('#EditlastName').val(DataArr[id]['lastName']);
-    $('#Editemail').val(DataArr[id]['email']);
-    $('#EditcontactNo').val(DataArr[id]['contactNo']);
+    jQuery('#EditfirstName').val(DataArr[id]['firstName']);
+    jQuery('#EditlastName').val(DataArr[id]['lastName']);
+    jQuery('#Editemail').val(DataArr[id]['email']);
+    jQuery('#EditcontactNo').val(DataArr[id]['contactNo']);
     if(DataArr[id]['logisticsId']!=""){
         jQuery('.logisticTypeUserEdit').show();
         jQuery('#editlogisticsId').val(DataArr[id]['logisticsId']);
@@ -58,19 +76,19 @@ function ShowAddAdminBox(){
  }
 
  function CancelEdit(){
-    $('#AddBox').hide();
-    $('#PageHeading').fadeIn(3000);
-    $('#ListBox').fadeIn(3000);
-    $('#actionRow').fadeIn(3000);
-    $('#EditBox').fadeOut(3500);
+    jQuery('#AddBox').hide();
+    jQuery('#PageHeading').fadeIn(3000);
+    jQuery('#ListBox').fadeIn(3000);
+    jQuery('#actionRow').fadeIn(3000);
+    jQuery('#EditBox').fadeOut(3500);
     return false;
  }
  function CancelAdd(){
-    $('#AddBox').fadeOut('fast');
-    $('#EditBox').hide();
-    $('#PageHeading').fadeIn(3000);
-    $('#ListBox').fadeIn(3000);
-    $('#actionRow').fadeIn(3000);
+    jQuery('#AddBox').fadeOut('fast');
+    jQuery('#EditBox').hide();
+    jQuery('#PageHeading').fadeIn(3000);
+    jQuery('#ListBox').fadeIn(3000);
+    jQuery('#actionRow').fadeIn(3000);
     return false;
  }
  
@@ -472,12 +490,29 @@ function RetirbePassword(id){
 <?php echo $AdminHomeRest;?>
 <script>
 $(document).ready(function(){
-    $("#AdminAdd").validate();	
-    $("#AdminEdit").validate();	
+    jQuery("#AdminAdd").validate();	
+    jQuery("#AdminEdit").validate();	
     
-    $('#userName').on('blur',function(){
+    jQuery('#filterOptionsValueSubmit').on('click',function(){
+        if(jQuery('#filterOptions').val()==""){
+            alert('Please select filter option.');
+            return false;
+        }
+        
+        if(jQuery.trim(jQuery('#filterOptionsValue').val())==""){
+            alert('Please select filter option value.');
+            return false;
+        }
+        document.filterOptions.submit();
+    });
+    
+    jQuery('#clearFilterOptionsValueSubmit').on('click',function(){
+        location.href='<?php echo ADMIN_BASE_URL.'user/viewlist'; ?>';
+    });
+    
+    jQuery('#userName').on('blur',function(){
         var ajaxURL='<?php echo ADMIN_BASE_URL.'ajax/is_user_name_exists'?>';
-        var ajaxData='userName='+$(this).val();
+        var ajaxData='userName='+jQuery(this).val();
         $.ajax({
             type :"POST",
             url:ajaxURL,
@@ -485,7 +520,7 @@ $(document).ready(function(){
             success:function(msg){
                 if(msg=='1'){
                     alert('This username has already used,Please enter a new one.');
-                    $('#userName').val('');
+                    jQuery('#userName').val('');
                     return false;
                 }else{
                     return true;
@@ -494,9 +529,9 @@ $(document).ready(function(){
         });
     });
     
-    $('#email').on('blur',function(){
+    jQuery('#email').on('blur',function(){
         var ajaxURL='<?php echo ADMIN_BASE_URL.'ajax/is_user_email_exists'?>';
-        var ajaxData='email='+$(this).val();
+        var ajaxData='email='+jQuery(this).val();
         $.ajax({
             type :"POST",
             url:ajaxURL,
@@ -504,7 +539,7 @@ $(document).ready(function(){
             success:function(msg){
                 if(msg=='1'){
                     alert('This email id has already used,Please enter a new one.');
-                    $('#email').val('');
+                    jQuery('#email').val('');
                     return false;
                 }else{
                     return true;
@@ -513,12 +548,12 @@ $(document).ready(function(){
         });
     });
     
-    $('#Editemail').on('blur',function(){
-        if($(this).val()==oldEditEmailID){
+    jQuery('#Editemail').on('blur',function(){
+        if(jQuery(this).val()==oldEditEmailID){
             return false;
         }
         var ajaxURL='<?php echo ADMIN_BASE_URL.'ajax/is_edit_user_email_exists'?>';
-        var ajaxData='email='+$(this).val()+'&userId='+$('#userId').val();
+        var ajaxData='email='+jQuery(this).val()+'&userId='+jQuery('#userId').val();
         $.ajax({
             type :"POST",
             url:ajaxURL,
@@ -526,7 +561,7 @@ $(document).ready(function(){
             success:function(msg){
                 if(msg=='1'){
                     alert('This email id has already used,Please enter a new one.');
-                    $('#Editemail').val(oldEditEmailID);
+                    jQuery('#Editemail').val(oldEditEmailID);
                     return false;
                 }else{
                     return true;
@@ -535,46 +570,46 @@ $(document).ready(function(){
         });
     });    
     
-    $('#CheckAll').on('click',function(){
+    jQuery('#CheckAll').on('click',function(){
 	$('input[name="userId[]"]').each(function(){
                 jQuery(this).prop( "checked", true );
         });	
-        $('#UnCheckAll').show();
-        $(this).hide();
+        jQuery('#UnCheckAll').show();
+        jQuery(this).hide();
     });
 
-    $('#UnCheckAll').on('click',function(){
+    jQuery('#UnCheckAll').on('click',function(){
 	$('input[name="userId[]"]:checked').each(function(){
             jQuery(this).prop( "checked", false );
         });	
-	$('#CheckAll').show();
-	$(this).hide();
+	jQuery('#CheckAll').show();
+	jQuery(this).hide();
     });
     
     $("#batchActionSelect").on('change',function(){
-        if($(this).val()==''){
+        if(jQuery(this).val()==''){
             return false;
         }
         var itemChecked=false;
         var userIds= new Array();
         $('input[name="userId[]"]').each(function(){
-            if ($(this).prop( "checked" )) {
-                userIds.push($(this).val());
+            if (jQuery(this).prop( "checked" )) {
+                userIds.push(jQuery(this).val());
                 itemChecked=true;
             }
         });
 
         if(itemChecked==false){
             alert('Please select item for action');
-            $(this).val("");
+            jQuery(this).val("");
             return false;
         }else{
             if(confirm('Are you sure to do the action ? Y/N')){
-                $('#batchaction_fun').val($(this).val());
-                $('#batchaction_id').val(userIds);
-                $('#user_list_form').submit();
+                jQuery('#batchaction_fun').val(jQuery(this).val());
+                jQuery('#batchaction_id').val(userIds);
+                jQuery('#user_list_form').submit();
             }else{
-                $(this).val('');
+                jQuery(this).val('');
             }
         } 
      });
