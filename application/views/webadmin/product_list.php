@@ -62,6 +62,7 @@ $OrderTypeArr=array('1'=>'Website','2'=>'Mobile Web','3'=>"Mobile Apps");
                         <th>Product Image</th>
                         <th>Seller Name</th>
                         <th>Seller Email</th>
+                        <th>Seller Location</th>
                         <th>Product Status</th>
                         
                     </tr>
@@ -85,6 +86,7 @@ $OrderTypeArr=array('1'=>'Website','2'=>'Mobile Web','3'=>"Mobile Apps");
                             endif;?></td>
                         <td><?php echo $InerArr->sellerFirstName.' '.$InerArr->sellerLastName;?></td>
                         <td><?php echo $InerArr->sellerEmail;?></td>
+                        <td><?php echo $InerArr->city.', '.$InerArr->countryName;?></td>
                         <td><?php echo $InerArr->status;?></td>
                     </tr>
                     <?php endforeach;

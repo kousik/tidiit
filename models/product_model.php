@@ -713,10 +713,13 @@ class Product_model extends CI_Model {
         $ProductName=$this->input->post('FilterProductName',TRUE);
         $FilterProductStatus=$this->input->post('FilterProductStatus',TRUE);
         
-        $this->db->select('p.*,pi.image,c.categoryName,u.email AS `sellerEmail`,u.firstName AS `sellerFirstName`,u.lastName AS `sellerLastName`')->from('product p');
+        $this->db->select('p.*,pi.image,c.categoryName,u.email AS sellerEmail,u.firstName AS sellerFirstName,u.lastName AS sellerLastName,ba.city,co.countryName');
+        $this->db->from('product p');
         $this->db->join('product_image pi','p.productId=pi.productId');
         $this->db->join('product_seller ps','p.productId=ps.productId');
         $this->db->join('user u','ps.userId=u.userId');
+        $this->db->join('billing_address ba','ba.userId=u.userId');
+        $this->db->join('country co','co.countryId=ba.countryId');
         $this->db->join('product_category pc','pc.productId=p.productId');
         $this->db->join('category c','pc.categoryId=c.categoryId', 'LEFT');
         //$this->db->where('c.status','1');
@@ -781,10 +784,13 @@ class Product_model extends CI_Model {
         $ProductName=$this->input->post('FilterProductName',TRUE);
         $FilterProductStatus=$this->input->post('FilterProductStatus',TRUE);
         
-        $this->db->select('p.*,pi.image,c.categoryName,u.email AS `sellerEmail`,u.firstName AS `sellerFirstName`,u.lastName AS `sellerLastName`')->from('product p');
+        $this->db->select('p.*,pi.image,c.categoryName,u.email AS sellerEmail,u.firstName AS sellerFirstName,u.lastName AS sellerLastName,ba.city,co.countryName');
+        $this->db->from('product p');
         $this->db->join('product_image pi','p.productId=pi.productId');
         $this->db->join('product_seller ps','p.productId=ps.productId');
         $this->db->join('user u','ps.userId=u.userId');
+        $this->db->join('billing_address ba','ba.userId=u.userId');
+        $this->db->join('country co','co.countryId=ba.countryId');
         $this->db->join('product_category pc','pc.productId=p.productId');
         $this->db->join('category c','pc.categoryId=c.categoryId', 'LEFT');
         //$this->db->where('c.status','1');
