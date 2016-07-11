@@ -30,5 +30,4 @@
       </div>
     </div>
   </div>
-</article>
-<?php echo $footer;?>
+</article><?php echo $footer;?>
