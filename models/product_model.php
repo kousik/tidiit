@@ -707,4 +707,127 @@ class Product_model extends CI_Model {
             . " WHERE co.countryCode='".$this->_currentUserCountryCode."' AND p.status=1 AND p.featured = 1 AND c.status=1 GROUP BY pi.productId ORDER BY p.productId DESC,p.updateTime DESC";
         return $this->db->query($sql)->result_array();
     }
+    
+    
+    public function admin_list($per_page,$offcet=0){
+        $ProductName=$this->input->post('FilterProductName',TRUE);
+        $FilterProductStatus=$this->input->post('FilterProductStatus',TRUE);
+        
+        $this->db->select('p.*,pi.image,c.categoryName,u.email AS `sellerEmail`,u.firstName AS `sellerFirstName`,u.lastName AS `sellerLastName`')->from('product p');
+        $this->db->join('product_image pi','p.productId=pi.productId');
+        $this->db->join('product_seller ps','p.productId=ps.productId');
+        $this->db->join('user u','ps.userId=u.userId');
+        $this->db->join('product_category pc','pc.productId=p.productId');
+        $this->db->join('category c','pc.categoryId=c.categoryId', 'LEFT');
+        //$this->db->where('c.status','1');
+
+        if($FilterProductStatus==""){
+            $this->db->where('p.status <','2');
+        }else{
+            $this->db->where('p.status',$FilterProductStatus);
+        }
+
+        /*if($Featured!=""){
+            $this->db->where('p.Featured',$Featured);
+        }*/
+
+        
+        if($ProductName!=""){
+            $this->db->like('p.title',$this->db->escape_like_str($ProductName));
+        }
+
+        /*if($isNew!=""){
+            $this->db->like('p.isNew',$isNew);
+        }
+
+        if($Deals!=""){
+            $this->db->like('p.Deals',$Deals);
+        }
+
+        if($Popular!=""){
+            $this->db->like('p.Popular',$Popular);
+        }
+
+        if($productModel!=""){
+            $this->db->like('p.model',$productModel);
+        }*/
+        $this->db->group_by('p.productId');
+        $this->db->order_by('p.productId','DESC');
+        //$this->db->order_by('p.DealPriceUpdateTime','DESC');
+
+        if($per_page>0){
+            $this->db->limit($per_page,$offcet);
+        }    
+        $dataArr= $this->db->get()->result();
+        //echo '<br />'.$this->db->last_query(); die;
+        return $dataArr;
+        
+        /*$sql='SELECT p.*,u.email AS sellerEmail,u.firstName AS sellerFirstName,u.lastName AS sellerLastName '
+                . ' FROM `product` AS p JOIN `product_seller` AS ps ON(p.productId=ps.productId) '
+                . ' JOIN `user` AS u ON(u.userId=ps.userId) WHERE o.status >1 ';
+
+        if($FilterProductStatus!=""):
+            $sql.=" AND p.status=$FilterProductStatus ";
+        endif;
+        
+        $sql .= 'ORDER BY p.productId DESC';
+        $sql.=" LIMIT $offcet,$per_page";
+        $arr=$this->db->query($sql)->result();
+        //echo $this->db->last_query(); die;
+        return $arr;*/
+    }
+    
+    public function admin_list_total($per_page,$offcet=0){
+        $ProductName=$this->input->post('FilterProductName',TRUE);
+        $FilterProductStatus=$this->input->post('FilterProductStatus',TRUE);
+        
+        $this->db->select('p.*,pi.image,c.categoryName,u.email AS `sellerEmail`,u.firstName AS `sellerFirstName`,u.lastName AS `sellerLastName`')->from('product p');
+        $this->db->join('product_image pi','p.productId=pi.productId');
+        $this->db->join('product_seller ps','p.productId=ps.productId');
+        $this->db->join('user u','ps.userId=u.userId');
+        $this->db->join('product_category pc','pc.productId=p.productId');
+        $this->db->join('category c','pc.categoryId=c.categoryId', 'LEFT');
+        //$this->db->where('c.status','1');
+
+        if($FilterProductStatus==""){
+            $this->db->where('p.status <','2');
+        }else{
+            $this->db->where('p.status',$FilterProductStatus);
+        }
+
+        /*if($Featured!=""){
+            $this->db->where('p.Featured',$Featured);
+        }*/
+
+        
+        if($ProductName!=""){
+            $this->db->like('p.title',$this->db->escape_like_str($ProductName));
+        }
+
+        /*if($isNew!=""){
+            $this->db->like('p.isNew',$isNew);
+        }
+
+        if($Deals!=""){
+            $this->db->like('p.Deals',$Deals);
+        }
+
+        if($Popular!=""){
+            $this->db->like('p.Popular',$Popular);
+        }
+
+        if($productModel!=""){
+            $this->db->like('p.model',$productModel);
+        }*/
+        $this->db->group_by('p.productId');
+        $this->db->order_by('p.productId','DESC');
+        //$this->db->order_by('p.DealPriceUpdateTime','DESC');
+
+        if($per_page>0){
+            $this->db->limit($per_page,$offcet);
+        }    
+        $dataArr= $this->db->get()->result();
+        //echo '<br />'.$this->db->last_query(); die;
+        return count($dataArr);
+    }
 }
