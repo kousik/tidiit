@@ -31,4 +31,5 @@ jQuery(document).ready(function(){
     //jQuery('#mpesaSubmitForm').submit();
     document.mpesaSubmitForm.submit();
 });
-</script><?php echo $footer;?>
+</script>
+<?php echo $footer;?>
