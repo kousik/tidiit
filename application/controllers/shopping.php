@@ -1994,7 +1994,7 @@ class Shopping extends MY_Controller{
             if($k==0){
                 $mpesaArr=array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR'),
                     'mcomPgTransId'=>$mPessaReturnDataArr['mcomPgTransId'],'transrefNo'=>$mPessaReturnDataArr['transrefNo'],'csrf'=>$mPessaReturnDataArr['csrf']);
-                $mPesaId=$this->Order_model->add_mpesa();
+                $mPesaId=$this->Order_model->add_mpesa($mpesaArr);
             }
             $this->Order_model->add_payment(array('orderId'=>$v,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'single'));
 
