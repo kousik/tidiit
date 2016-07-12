@@ -710,8 +710,8 @@ jQuery(document).ready(function(){
     jQuery('form.idealforms').idealforms({
       silentLoad: false,
       rules: {
-        'title': 'required minmax:5:30',
-        'shortDescription':'required minmax:10:200',
+        'title': 'required minmax:5:50',
+        'shortDescription':'required minmax:10:350',
         'metaTitle': 'required',
         'metaDescription': 'required',
         'metaKeyword': 'required',
