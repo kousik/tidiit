@@ -20,7 +20,6 @@ class Shopping extends MY_Controller{
         $this->load->library('tidiitrcode');
     }
 
-
     /**
      *
      */
@@ -585,7 +584,6 @@ class Shopping extends MY_Controller{
         $this->cart->insert($datas);
     }
 
-
     function _update_cart($cart_info){
 
         // Recieve post values,calcute them and update
@@ -611,7 +609,6 @@ class Shopping extends MY_Controller{
         // Recieve post values,calcute them and update
         $this->cart->update($cart_info);
     }
-
 
     function _remove_cart($rowid) {
         // Check rowid value.
@@ -836,7 +833,6 @@ class Shopping extends MY_Controller{
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $this->load->view('group_order/group_order_parent',$data);
     }
-
 
     function order_group_decline_process($orderId){
         if(!$orderId):
@@ -1651,10 +1647,13 @@ class Shopping extends MY_Controller{
     }
 
     function mpesa_return(){
-        pre($_POST);die;
-        $custom=$this->input->post('custom');
-        $returnAction=  $this->input->post('returnAction');
-        if($returnAction=='success'):
+        //pre($_POST);die;
+        $mcompgtransid=$this->input->post('mcompgtransid');
+        $transrefno=$this->input->post('transrefno');
+        $csrf=$this->input->post('_csrf');
+        $statuscode=  $this->input->post('statuscode');
+        if($statuscode=='100'):
+            $mPessaReturnDataArr=array('csrf'=>$csrf,'transrefNo'=>$transrefno,'mcomPgTransId'=>$mcompgtransid);
             $PaymentDataArr = $_SESSION['PaymentData'];
             $orderType = $PaymentDataArr['orderType'];
             if($orderType=='group'):
@@ -1662,9 +1661,9 @@ class Shopping extends MY_Controller{
                 if($PaymentDataArr['final_return']=='no'):
                     $productPriceArr=$this->Order_model->get_product_price_details_by_orderid($PaymentDataArr['orders']);
                     $this->Product_model->update_product_quantity($productPriceArr[0]['productId'],$productPriceArr[0]['qty']);
-                    $this->process_mpesa_success_group_order($orderDataArr);
+                    $this->process_mpesa_success_group_order($orderDataArr,$mPessaReturnDataArr);
                 else:
-                    $this->process_mpesa_success_group_order_final($orderDataArr);
+                    $this->process_mpesa_success_group_order_final($orderDataArr,$mPessaReturnDataArr);
                 endif;
             else:
                 if($PaymentDataArr['final_return']=='no'):
@@ -1672,9 +1671,9 @@ class Shopping extends MY_Controller{
                         $productPriceArr=$this->Order_model->get_product_price_details_by_orderid($v);
                         $this->Product_model->update_product_quantity($productPriceArr[0]['productId'],$productPriceArr[0]['qty']);
                     }
-                    $this->process_mpesa_success_single_order(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo']));
+                    $this->process_mpesa_success_single_order(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo']),$mPessaReturnDataArr);
                 else:
-                    $this->process_mpesa_success_single_order_final(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo'],'logisticsData'=>$PaymentDataArr['logisticsData']));
+                    $this->process_mpesa_success_single_order_final(array('orders'=>$PaymentDataArr['orders'],'orderInfo'=>$PaymentDataArr['orderInfo'],'logisticsData'=>$PaymentDataArr['logisticsData']),$mPessaReturnDataArr);
                 endif;
             endif;
         else:
@@ -1974,7 +1973,7 @@ class Shopping extends MY_Controller{
         endif;
     }
 
-    function process_mpesa_success_single_order($PaymentDataArr){
+    function process_mpesa_success_single_order($PaymentDataArr,$mPessaReturnDataArr){
         foreach ($PaymentDataArr['orders'] AS $k => $v):
             $order_update=array();
             $order_update['status'] = 2;
@@ -1993,9 +1992,11 @@ class Shopping extends MY_Controller{
             $recv_email = $user->email;
 
             if($k==0){
-                $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+                $mpesaArr=array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR'),
+                    'mcomPgTransId'=>$mPessaReturnDataArr['mcomPgTransId'],'transrefNo'=>$mPessaReturnDataArr['transrefNo'],'csrf'=>$mPessaReturnDataArr['csrf']);
+                $mPesaId=$this->Order_model->add_mpesa();
             }
-            $this->Order_model->add_payment(array('orderId'=>$v,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'group'));
+            $this->Order_model->add_payment(array('orderId'=>$v,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'single'));
 
             $mail_template_view_data=$this->load_default_resources();
             $mail_template_view_data['single_order_success']=$mail_template_data;
