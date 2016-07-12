@@ -1,4 +1,5 @@
-<?php $currencySymbol=($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=="IN") ? '<i class="fa fa-rupee"></i>' :'KSh';?>
+<?php echo 'location : '.$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');
+$currencySymbol=($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')=="IN") ? '<i class="fa fa-rupee"></i>' :'KSh';?>
 <script type="text/javascript">
     $(document).ready(function(){
         var webId=myJsMain.commonFunction.js_dynamic_text(8);
