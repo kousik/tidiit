@@ -14,7 +14,7 @@
                                 <script type="text/javascript">
                                     jQuery(document).ready(function(){
                                         myJsMain.commonFunction.showPleaseWait();
-                                        jQuery('#mpesaSubmitForm')[0].submit();
+                                        jQuery('#mpesaSubmitForm').submit();
                                     });
                                 </script>
                                 <form name="mpesaSubmitForm" id="mpesaSubmitForm" action="<?php echo $checkOutURL;?>" method="post">
