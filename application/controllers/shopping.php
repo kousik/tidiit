@@ -1533,8 +1533,7 @@ class Shopping extends MY_Controller{
         else:
             $orderIdStr=$_SESSION['PaymentData']['orders'];
         endif;
-        $newOrderIdStr=$orderIdStr.md5('TD').mt_rand (10,99);
-        @mail('cto.tidiit@gmail.com','test code',$newOrderIdStr);
+        $newOrderIdStr=$orderIdStr.mt_rand (10,99);
         $data['orderIdStr']=$newOrderIdStr;
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $data['orderId']=$orderIdArr[0];
