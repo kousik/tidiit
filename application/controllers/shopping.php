@@ -1526,12 +1526,14 @@ class Shopping extends MY_Controller{
         $data['marchantCode']=$mPesaInfo[0]->userName;
         $data['checkOutURL']=$mPesaInfo[0]->endPoint;
         $data['returnURL']=BASE_URL.'shopping/mpesa_return';
+        
         $data['userMenuActive']=1;
         if(is_array($_SESSION['PaymentData']['orders'])):
-            $data['orderIdStr']= base64_encode(implode(',',$_SESSION['PaymentData']['orders']));
+            $orderIdStr= base64_encode(implode(',',$_SESSION['PaymentData']['orders']));
         else:
-            $data['orderIdStr']=$_SESSION['PaymentData']['orders'];
-        endif;        
+            $orderIdStr=$_SESSION['PaymentData']['orders'];
+        endif;
+        $data['orderIdStr']=$orderIdStr.base64_encode('TD').mt_rand (10,99);
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $data['orderId']=$orderIdArr[0];
         
