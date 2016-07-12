@@ -1681,7 +1681,7 @@ class Shopping extends MY_Controller{
         endif;
     }
 
-    function process_mpesa_success_group_order($PaymentDataArr){
+    function process_mpesa_success_group_order($PaymentDataArr,$mPessaReturnDataArr){
         //pre($PaymentDataArr);die;
         $orderId = $PaymentDataArr['orders'];
         $pevorder = $PaymentDataArr['pevorder'];
@@ -1815,8 +1815,9 @@ class Shopping extends MY_Controller{
             if($order_update['status']==2):
                 $this->_sent_order_complete_mail($order);
             endif;
-
-            $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+            $mpesaArr=array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR'),
+                    'mcomPgTransId'=>$mPessaReturnDataArr['mcomPgTransId'],'transrefNo'=>$mPessaReturnDataArr['transrefNo'],'csrf'=>$mPessaReturnDataArr['csrf']);
+            $mPesaId=$this->Order_model->add_mpesa($mpesaArr);
             $this->Order_model->add_payment(array('orderId'=>$orderId,'paymentType'=>'mPesa','mPesaId'=>$mPesaId,'orderType'=>'group'));
             $this->_remove_cart($PaymentDataArr['cartId']);
             unset($_SESSION['PaymentData']);
@@ -2183,7 +2184,7 @@ class Shopping extends MY_Controller{
         endif;
     }
 
-    function process_mpesa_success_group_order_final($PaymentDataArr){
+    function process_mpesa_success_group_order_final($PaymentDataArr,$mPessaReturnDataArr){
         $orderId = $PaymentDataArr['orders'];
         $pevorder = $PaymentDataArr['pevorder'];
         $prod_price_info = $PaymentDataArr['prod_price_info'];
@@ -2316,8 +2317,9 @@ class Shopping extends MY_Controller{
                 'senderMobileNumber'=>'','nType'=>'BUYING-CLUB-ORDER-FINAL-PAYMENT-BEFORE-DELIVERY-LEADER');
             send_sms_notification($sms_data);
         }
-
-        $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+        $mpesaArr=array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR'),
+                    'mcomPgTransId'=>$mPessaReturnDataArr['mcomPgTransId'],'transrefNo'=>$mPessaReturnDataArr['transrefNo'],'csrf'=>$mPessaReturnDataArr['csrf']);
+        $mPesaId=$this->Order_model->add_mpesa($mpesaArr);
         $this->Order_model->edit_payment(array('paymentType'=>'mPesa','mPesaId'=>$mPesaId),$orderId);
         $logisticMobileNo=$PaymentDataArr['logisticsData']['deliveryStaffContactNo'];
         $sms="Hi ".$PaymentDataArr['logisticsData']['deliveryStaffName'].'. '.$recv_name.' has completed the payment for Tidiit order '.$tidiitStr.'-'.$orderId.' please process the delivery.';
@@ -2483,7 +2485,7 @@ class Shopping extends MY_Controller{
         redirect(BASE_URL.'my-orders/');
     }
 
-    function process_mpesa_success_single_order_final($PaymentDataArr){
+    function process_mpesa_success_single_order_final($PaymentDataArr,$mPessaReturnDataArr){
         $orderId=0;
         $tidiitStrChr='TIDIIT-OD';
         $tidiitStr='';
@@ -2502,8 +2504,9 @@ class Shopping extends MY_Controller{
             $orderinfo=$PaymentDataArr['orderInfo'][$v]['orderInfo'];
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_INFO']=$orderinfo;
             $mail_template_data['TEMPLATE_ORDER_SUCCESS_ORDER_ID']=$v;
-
-            $mPesaId=$this->Order_model->add_mpesa(array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR')));
+            $mpesaArr=array('IP'=>$this->input->ip_address,'userId'=>$this->session->userdata('FE_SESSION_VAR'),
+                    'mcomPgTransId'=>$mPessaReturnDataArr['mcomPgTransId'],'transrefNo'=>$mPessaReturnDataArr['transrefNo'],'csrf'=>$mPessaReturnDataArr['csrf']);
+            $mPesaId=$this->Order_model->add_mpesa($mpesaArr);
             $this->Order_model->edit_payment(array('paymentType'=>'mPesa','mPesaId'=>$mPesaId),$v);
 
             $mail_template_view_data=$this->load_default_resources();
