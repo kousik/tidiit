@@ -1534,7 +1534,7 @@ class Shopping extends MY_Controller{
             $orderIdStr=$_SESSION['PaymentData']['orders'];
         endif;
         $newOrderIdStr=$orderIdStr.base64_encode('TD').mt_rand (10,99);
-        echo $newOrderIdStr;die;
+        echo $newOrderIdStr;die; 
         $data['orderIdStr']=$newOrderIdStr;
         $data['userMenu']=  $this->load->view('my/my_menu',$data,TRUE);
         $data['orderId']=$orderIdArr[0];
