@@ -47,7 +47,7 @@ class Welcome extends REST_Controller {
         }
     }
     
-    function soap_mpesa(){
+    function soap_mpesa_post(){
         ini_set('default_socket_timeout','300');
         ini_set("soap.wsdl_cache_enabled", 0);
         //$soapURL ='https://182.19.20.182:81/mcommerce/pgService?wsdl';
