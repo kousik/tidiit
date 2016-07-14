@@ -47,7 +47,8 @@ class Welcome extends REST_Controller {
         }
     }
     
-    function soap_mpesa_post(){
+    function soap_mpesa_get(){
+        $userId=$this->post('userId');
         ini_set('default_socket_timeout','300');
         ini_set("soap.wsdl_cache_enabled", 0);
         //$soapURL ='https://182.19.20.182:81/mcommerce/pgService?wsdl';
@@ -58,13 +59,27 @@ class Welcome extends REST_Controller {
         //$soapParameters = Array('login' => "aJtlkG0NQTRBaLgVt4YC4A==", 'password' => "7p/MAUl80KP+FdRERRyvlQ==") ;
         $soapFunction = "processPayment" ;
         echo 'soap method : '.$soapFunction.' <br>';
-        $soapFunctionParameters = Array('MCODE'=>'0021225252','TXNDATE' =>date('dmY'),'TRANSREFNO'=>time(),'MSISDN'=>'9556644964','AMT'=>'1.00','NARRATION'=>'shopping with mpes','mPIN'=>'1111'); ;
+        //$soapFunctionParameters = Array('MCODE'=>'0021225252','TXNDATE' =>date('dmY'),'TRANSREFNO'=>time(),'MSISDN'=>'9556644964','AMT'=>'1.00','NARRATION'=>'shopping with mpes','mPIN'=>'1111'); ;
+        $soapFunctionParameters = Array('MCODE'=>'0001000269','txnDate' =>date('dmY'),'transRefNo'=>time(),'MSISDN'=>'9556644964','amt'=>'1.00','narration'=>'shopping with mpes','surcharge'=>'0','mPin'=>'1111'); ;
         echo 'soap method parameter <br>';
         print_r($soapFunctionParameters);
-        $soapClient = new SoapClient($soapURL, $soapParameters);
+        $soapClient = new SoapClient($soapURL);
+        // soap header
+        $headerbody =array();
+        $ns="http://paymentgateway.mcommerce/";
+        //$headerbody=array('Userid' => "", 'Password' => "7p/MAUl80KP+FdRERRyvlQ==");
+        $username = new SoapHeader($ns, 'Userid', 'aJtlkG0NQTRBaLgVt4YC4A==');
+        $password = new SoapHeader($ns, 'Password', '7p/MAUl80KP+FdRERRyvlQ==');
+        echo '<b>add soap header :</b> <br>';
+        //$soapClient->__setSoapHeaders($ns,null,$headerbody);
+        $soapClient->__setSoapHeaders(array($username, $password));
+        echo '<b>soap header set done:</b> <br>';
         echo '<b>soap client init :</b> <br>';print_r($soapClient);
         echo 'calling soap method and show result <br>';
-        $soapResult = $soapClient->__soapCall($soapFunction, $soapFunctionParameters) ;
+        //$soapResult = $soapClient->__soapCall($soapFunction, $soapFunctionParameters) ;
+        //$soapResult = $soapClient->processPayment('0021225252',date('dmY'),time(),'9556644964','1.0','shopping with mpesa','0','1111') ;
+        //$soapResult = $soapClient->processPayment($soapFunctionParameters) ;
+        $soapResult = $soapClient->$soapFunction($soapFunctionParameters) ;
         print_r($soapResult);echo '</pre>';die;
         //if(is_array($soapResult) && isset($soapResult['someFunctionResult'])) {
         if(is_array($soapResult)) {
@@ -77,4 +92,9 @@ class Welcome extends REST_Controller {
             }
         } 
     } 
+    
+    function test_post(){
+        $userID=$this->post('userId');
+        echo 'kk';die;
+    }
 }
