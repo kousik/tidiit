@@ -16,17 +16,17 @@
                             <div class="col-md-12 col-sm-12">
                                 <form action="#" method="post" name="my_finance" id="my_finance">
                                     <div class="gen_infmtn">
-                                        <h6>Finance Inforamtion<span class="pull-right"><input type="submit" name="financeSubmit" id="financeSubmit" value="Update" /></span></h6>
+                                        <h6>Finance Information<span class="pull-right"><input type="submit" name="financeSubmit" id="financeSubmit" value="Update" /></span></h6>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="row">
                                                     <div class="col-md-6">
-                                                        <label>Full Name in m-Pesa Account</label>
-                                                        <input type="text" name="mpesaFullName" id="mpesaFullName" class="form-control" value="<?php echo $financeDataArr[0]->mpesaFullName;?>" required>
+                                                        <label>m-Pesa Account Mobile Number</label>
+                                                        <input type="text" name="mPesaMobileNumber" id="mPesaMobileNumber" class="form-control" value="<?php echo $financeDataArr[0]->mpesaFullName;?>" required>
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <label>m-Pesa Account Number</label>
-                                                        <input type="text" name="mpesaAccount" id="mpesaAccount" class="form-control" value="<?php echo $financeDataArr[0]->mpesaAccount;?>" required>
+                                                        <label>m-Pesa Account Number mPIN</label>
+                                                        <input type="text" name="mPIN" id="mPIN" class="form-control" value="<?php echo $financeDataArr[0]->mpesaAccount;?>" required>
                                                     </div>
                                                 </div>
                                             </div>

@@ -9,7 +9,7 @@ class User_model extends CI_Model {
     private $_page_type="page_type_user";
     private $_group="group";
     private $_notification ="notifications";
-    private $_finance ="user_m_pesa";
+    private $_finance ="finance_info";
     private $_user_product_type_category ="user_product_type_category";
     private $_login_history ="user_login_history";
     private $_product_type_user ="product_type_user";
@@ -1066,6 +1066,38 @@ class User_model extends CI_Model {
         $this->db->select('u.*,lu.logisticsId')->from($this->_table.' u')->join('logistic_user lu','u.userId=lu.userId','left');
         $this->db->where('status <','2')->like($filterOptions,$filterOptionsValue);
         return $this->db->get()->result();
+    }
+    
+    function is_profile_data_updated($userId=""){
+        if($userId==""){
+            $userId=$this->session->userdata('FE_SESSION_VAR');
+        };
+        if($userId!=""){
+            $rs=$this->db->get_where($this->_table,array('userId',$userId))->result();
+            if($rs[0]->contactNo!="" || $rs[0]->mobile!="" || $rs[0]->DOB!="" || $rs[0]->aboutMe!=""){
+                return TRUE;
+            }else{
+                return FALSE;
+            }
+        }else{
+            return FALSE;
+        }
+    }
+    
+    function is_finance_added($userId=""){
+        if($userId==""){
+            $userId=$this->session->userdata('FE_SESSION_VAR');
+        };
+        if($userId!=""){
+            $rs=$this->db->get_where($this->_finance,array('userId',$userId))->result();
+            if(empty($rs)){
+                return FALSE;
+            }else{
+                return TRUE;
+            }
+        }else{
+            return FALSE;
+        }
     }
 }
 

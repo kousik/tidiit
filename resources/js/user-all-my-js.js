@@ -68,6 +68,7 @@ myJsMain.my_profile=function(){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         }else if(resultData.result=='good'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Profile updated successfully.",200);
+            check_profile_completion_for_start_order(resultData.profile_common_message);
             if(resultData.redirect==1){
                 location.href=resultData.url;
             }
@@ -109,6 +110,7 @@ myJsMain.my_shipping_address=function(){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         }else if(resultData.result=='good'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Shipping address updated successfully.",200);
+            check_profile_completion_for_start_order(resultData.profile_common_message);
             location.href=resultData.url;
         }
     }
@@ -193,7 +195,8 @@ myJsMain.my_create_groups=function(){
         } else if(resultData.result=='good') {
             $( "#myModalLogin .close" ).trigger( "click" );
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',"Buyer club has been added successfully.",200);
-            window.setTimeout(function(){location.reload();},3000);
+            check_profile_completion_for_start_order(resultData.profile_common_message);
+            window.setTimeout(function(){location.href=resultData.url;},3000);
         }
     }
     
@@ -522,3 +525,11 @@ jQuery(document).ready(function(){
         });
     });
 });
+
+function check_profile_completion_for_start_order(msg){
+    if(msg!=""){
+        myJsMain.commonFunction.tidiitAlert('Tidiit System Message',msg,200);
+    }else{
+        return false
+    }
+}

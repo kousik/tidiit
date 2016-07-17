@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Ajax extends MY_Controller{
+    private $commonProfileCompletionMessage;
     public function __construct(){
         parent::__construct();
         $this->load->model('User_model');
@@ -11,6 +12,7 @@ class Ajax extends MY_Controller{
         //parse_str($_SERVER['QUERY_STRING'],$_GET);
         $this->load->library('cart');
         $this->db->cache_off();
+        $this->commonProfileCompletionMessage='Please complete "My Profile","My Shipping Address","My Buying Club","My Fiance" before start order process.';
     }
    
     public function check_registration(){
@@ -68,9 +70,9 @@ class Ajax extends MY_Controller{
                 $mail_template_view_data['create_user']=$mail_template_data;
                 $this->_global_tidiit_mail($email, "Your account at Tidiit Inc. Ltd.", $mail_template_view_data,'user_create',$firstName.' '.$lastName);
                 
-                echo json_encode(array('result'=>'good','url'=>BASE_URL.'my-shipping-address','msg'=>'You have successfully register your account with "Tidiit Inc Ltd.Your login information will be sent to registered email account.'));die; 
+                echo json_encode(array('result'=>'good','url'=>BASE_URL.'my-shipping-address','msg'=>'You have successfully register your account with "Tidiit Inc Ltd.Your login information will be sent to registered email account.','profile_common_message'=>  $this->commonProfileCompletionMessage));die; 
             }else{
-                echo json_encode(array('result'=>'bad','msg'=>'Please check your user anme and password and try again.'));die;     
+                echo json_encode(array('result'=>'bad','msg'=>'Please check your user anme and password and try again.','profile_common_message'=>""));die;     
             }
         }
     }
@@ -373,7 +375,11 @@ class Ajax extends MY_Controller{
                     $this->send_notification($notify);
                 endforeach;
             endif;
-            echo json_encode(array('result'=>'good','gid'=>$groupId));die; 
+            if($this->User_model->is_finance_added()){
+                echo json_encode(array('result'=>'good','gid'=>$groupId,'url'=>BASE_URL.'myaccount/','profile_common_message'=>  $this->commonProfileCompletionMessage));die; 
+            }else{
+                echo json_encode(array('result'=>'good','gid'=>$groupId,'url'=>BASE_URL.'my-finance-info/','profile_common_message'=>''));die; 
+            }
         else:    
             echo json_encode(array('result'=>'bad','msg'=>'Some error happen. Please try again!'));die;
         endif;
@@ -777,7 +783,11 @@ class Ajax extends MY_Controller{
                 }else{
                     $this->User_model->edit_shipping(array('firstName'=>$firstName,'lastName'=>$lastName,'contactNo'=>$phone,'countryId'=>$countryId,'cityId'=>$cityId,'zipId'=>$zipId,'localityId'=>$localityId,'address'=>$address,'stateId'=>$rs[0]->stateId),$userId);
                 }
-                echo json_encode(array('result'=>'good','url'=>BASE_URL.'my-profile/'));die; 
+                if($this->User_model->is_profile_data_updated()){
+                    echo json_encode(array('result'=>'good','url'=>BASE_URL.'myaccount/','profile_common_message'=>''));die; 
+                }else{
+                    echo json_encode(array('result'=>'good','url'=>BASE_URL.'my-profile/','profile_common_message'=>  $this->commonProfileCompletionMessage));die; 
+                }
             }
             
         }
@@ -839,8 +849,8 @@ class Ajax extends MY_Controller{
     
     function submit_finance(){
         $config = array(
-            array('field'   => 'mpesaFullName','label'   => 'Full Name in m-Pesa Account','rules'   => 'trim|required|xss_clean'),
-            array('field'   => 'mpesaAccount','label'   => 'm-Pesa Account Number','rules'   => 'trim|required|xss_clean') 
+            array('field'   => 'mPesaMobileNumber','label'   => 'm-Pesa Account Mobile Number','rules'   => 'trim|required|xss_clean'),
+            array('field'   => 'mPIN','label'   => 'm-Pesa Account Number mPIN','rules'   => 'trim|required|xss_clean') 
          );
         //initialise the rules with validatiion helper
         $this->form_validation->set_rules($config); 
@@ -853,14 +863,14 @@ class Ajax extends MY_Controller{
             if($userId==""){
                 echo json_encode(array('result'=>'bad','msg'=>'Please login before update changes.'));die;
             }else{
-                $mpesaFullName=$this->input->post('mpesaFullName',TRUE);
-                $mpesaAccount=$this->input->post('mpesaAccount',TRUE);
+                $mPesaMobileNumber=$this->input->post('mPesaMobileNumber',TRUE);
+                $mPIN=$this->input->post('mPIN',TRUE);
                 
                 $isAdded=$this->User_model->get_finance_info();
                 if(empty($isAdded)){
-                    $this->User_model->add_finance(array('mpesaFullName'=>$mpesaFullName,'mpesaAccount'=>$mpesaAccount,'userId'=>$userId));
+                    $this->User_model->add_finance(array('mPesaMobileNumber'=>$mPesaMobileNumber,'mPIN'=>$mPIN,'userId'=>$userId));
                 }else{
-                    $this->User_model->edit_finance(array('mpesaFullName'=>$mpesaFullName,'mpesaAccount'=>$mpesaAccount),$userId);
+                    $this->User_model->edit_finance(array('mPesaMobileNumber'=>$mPesaMobileNumber,'mPIN'=>$mPIN),$userId);
                 }
                 echo json_encode(array('result'=>'good'));die; 
             }
@@ -905,9 +915,9 @@ class Ajax extends MY_Controller{
                 $DataArr=  $this->User_model->get_details_by_id($userId);
                 $this->session->set_userdata('FE_SESSION_UDATA',$DataArr[0]);
                 if($this->User_model->is_user_had_group($userId)==FALSE):
-                    echo json_encode(array('result'=>'good','url'=>BASE_URL.'my-groups/','redirect'=>1));die; 
+                    echo json_encode(array('result'=>'good','url'=>BASE_URL.'my-groups/','redirect'=>1,'profile_common_message'=>  $this->commonProfileCompletionMessage));die; 
                 else:
-                    echo json_encode(array('result'=>'good','redirect'=>0));die; 
+                    echo json_encode(array('result'=>'good','redirect'=>0,'profile_common_message'=>''));die; 
                 endif;
             }
         }

@@ -766,9 +766,9 @@ class Shopping extends REST_Controller {
             $this->response(array('error' => "Please provide final return data not received."), 400); return FALSE;
         }else{
             $orderIdDataArr= unserialize(base64_decode($orderIdData));
-            $mail_message='$userId : '.$userId.' == $orderIdData : '.$orderIdData.' == $razorpayPaymentId : '.$razorpayPaymentId.' == $latitude : '.$latitude.' == $longitude : '.$longitude.' == $deviceToken : '.$deviceToken.' == $UDID : '.$UDID.' == $orderType : '.$orderType.' == $finalReturn : '.$finalReturn;
-            send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>$mail_message));
-            @mail('cto.tidiit@gmail.com','POST data',$mail_message);
+            //$mail_message='$userId : '.$userId.' == $orderIdData : '.$orderIdData.' == $razorpayPaymentId : '.$razorpayPaymentId.' == $latitude : '.$latitude.' == $longitude : '.$longitude.' == $deviceToken : '.$deviceToken.' == $UDID : '.$UDID.' == $orderType : '.$orderType.' == $finalReturn : '.$finalReturn;
+            //send_sms_notification(array('receiverMobileNumber'=>'9556644964', 'nMessage'=>$mail_message));
+            ///@mail('cto.tidiit@gmail.com','POST data',$mail_message);
             if(count($orderIdDataArr)==1){
                 $dataArr=array('userId'=>$userId,'orderIds'=>$orderIdDataArr[0],'razorpayPaymentId'=>$razorpayPaymentId,'latitude'=>$latitude,'longitude'=>$longitude,'appSource'=>$deviceType,'deviceToken'=>$deviceToken,'UDID'=>$UDID,'addedTime'=> date('Y-m-d H:i:s'));
             }else{

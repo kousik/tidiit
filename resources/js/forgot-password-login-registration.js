@@ -101,6 +101,7 @@ myJsMain.registration=function(){
         if(resultData.result=='bad'){
             myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.msg,200);
         }else if(resultData.result=='good'){
+            check_profile_completion_for_start_order(resultData.profile_common_message);
             window.location.href = resultData.url;
             //myJsMain.commonFunction.tidiitAlert('Tidiit System Message',resultData.url,200);
         }
@@ -135,4 +136,12 @@ myJsMain.forgot_password=function(){
     
     
         
+}
+
+function check_profile_completion_for_start_order(msg){
+    if(msg!=""){
+        myJsMain.commonFunction.tidiitAlert('Tidiit System Message',msg,200);
+    }else{
+        return false
+    }
 }
