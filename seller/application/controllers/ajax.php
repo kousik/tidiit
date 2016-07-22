@@ -48,7 +48,7 @@ class Ajax extends MY_Controller{
     }
     
     public function retribe_forgot_password(){
-        if($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')!='IN'){
+        if(strtoupper(trim($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')))!='IN'){
             echo json_encode(array('result'=>'bad','msg'=>'Please check your "Username" and "Password" and try again.'));die;     
         }
         $config = array(
@@ -83,7 +83,7 @@ class Ajax extends MY_Controller{
     }
 
     public function check_registration(){
-        if($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')!='IN'){
+        if(strtoupper(trim($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')))!='IN'){
             echo json_encode(array('result'=>'bad','msg'=>'Please check your "Username" and "Password" and try again.'));die;     
         }
         // sleep for 10 seconds

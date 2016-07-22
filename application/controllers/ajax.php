@@ -16,7 +16,7 @@ class Ajax extends MY_Controller{
     }
    
     public function check_registration(){
-        if($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')!='IN'){
+        if(strtoupper(trim($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')))!='IN'){
             echo json_encode(array('result'=>'bad','msg'=>'Please check your user anme and password and try again.','profile_common_message'=>""));die;     
         }
         //echo 'kk';die;
@@ -81,7 +81,7 @@ class Ajax extends MY_Controller{
     }
     
     public function check_login(){
-        if($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')!='IN'){
+        if(strtoupper(trim($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')))!='IN'){
             echo json_encode(array('result'=>'bad','msg'=>'Please check your user anme and password and try again.','profile_common_message'=>""));die;     
         }
         $config = array(
@@ -931,6 +931,9 @@ class Ajax extends MY_Controller{
     
     
     public function retribe_forgot_password(){
+        if(strtoupper(trim($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')))!='IN'){
+            echo json_encode(array('result'=>'bad','msg'=>'Please check your user anme and password and try again.','profile_common_message'=>""));die;     
+        }
         $config = array(
             array('field'   => 'userForgotPasswordEmail','label'   => 'Forggot password email','rules'   => 'trim|required|xss_clean|valid_email')
          );

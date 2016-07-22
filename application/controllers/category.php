@@ -9,6 +9,9 @@ class Category extends MY_Controller{
     }
     
     function details($name,$idStr){
+        if(strtoupper(trim($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')))!='IN'){
+            redirect(BASE_URL);
+        }
         //echo '<pre>';
         //$cats = $this->Category_model->get_site_categories();
         //print_r($cats);die;
@@ -41,6 +44,9 @@ class Category extends MY_Controller{
     
     
     function display_category_products($name){
+        if(strtoupper(trim($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')))!='IN'){
+            redirect(BASE_URL);
+        }
         //echo $_SERVER['SERVER_ADDR'];print_r($_GET);die;
         $SEODataArr=array();
         if($this->is_loged_in()):
@@ -284,6 +290,9 @@ class Category extends MY_Controller{
 
 
     function display_brand_products($bid){
+        if(strtoupper(trim($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')))!='IN'){
+            redirect(BASE_URL);
+        }
         //echo $_SERVER['SERVER_ADDR'];print_r($_GET);die;
         $SEODataArr=array();
         if($this->is_loged_in()):
@@ -397,6 +406,9 @@ class Category extends MY_Controller{
     }
 
     function display_search_products(){
+        if(strtoupper(trim($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')))!='IN'){
+            redirect(BASE_URL);
+        }
         //echo $_SERVER['SERVER_ADDR'];print_r($_GET);die;
         $SEODataArr=array();
         if($this->is_loged_in()):

@@ -11,6 +11,9 @@ class Product extends MY_Controller{
     }
     
     function details($str){
+        if(strtoupper(trim($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')))!='IN'){
+            redirect(BASE_URL);
+        }
         if($str==""){
             redirect(BASE_URL);
         }

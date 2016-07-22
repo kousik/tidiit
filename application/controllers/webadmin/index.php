@@ -35,7 +35,7 @@ class Index extends MY_Controller {
 	}
 	
 	public function check_login(){
-            if($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')!='IN'){
+            if(strtoupper(trim($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')))!='IN'){
                 $this->session->set_flashdata('Message','Invalid Login,Please try again');
                 redirect(base_url().'webadmin/index/login');
             }
