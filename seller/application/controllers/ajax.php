@@ -13,7 +13,7 @@ class Ajax extends MY_Controller{
     public function check_login(){
         echo $this->session->userdata('FE_SESSION_USER_LOCATION_VAR');die;
         if($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')!='IN'){
-            echo json_encode(array('result'=>'bad','msg'=>'Please check your "Username" and "Password" and try again.'));die;     
+            echo json_encode(array('result'=>'bad','msg'=>'Please check your "Username" and "Password" and try again......'));die;     
         }
         // sleep for 10 seconds
         //sleep(5);
