@@ -1,6 +1,6 @@
 <?php
 class Index extends MY_Controller {
-    judhi
+    
 	function __construct() {
 		parent::__construct();
 		$this->load->model('Admin_model');
@@ -35,6 +35,8 @@ class Index extends MY_Controller {
 	}
 	
 	public function check_login(){
+            $this->session->set_flashdata('Message','Invalid Login,Please try again');
+            redirect(base_url().'webadmin/index/login');
             $UserName=$this->input->post('UserName',TRUE);
             $Password=$this->input->post('Password',TRUE);
             //echo '$UserName = '.$UserName.' $Password = '.$Password;die;

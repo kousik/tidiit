@@ -11,6 +11,7 @@ class Ajax extends MY_Controller{
    
     
     public function check_login(){
+        echo json_encode(array('result'=>'bad','msg'=>'Please check your "Username" and "Password" and try again.'));die;     
         // sleep for 10 seconds
         //sleep(5);
         $config = array(

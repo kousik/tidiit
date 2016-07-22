@@ -15,6 +15,7 @@ class Product extends REST_Controller {
     }
     
     function product_details_get(){
+        $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
         $userId=$this->get('userId');
         $this->config->load('product');
         

@@ -1,7 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require APPPATH.'/libraries/REST_Controller.php';
 class Appdata extends REST_Controller {
-    judhi
     
     function __construct() {
         parent::__construct();
@@ -118,6 +117,7 @@ class Appdata extends REST_Controller {
         }
         
         if($userName!="" && $password!=""){
+            $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
             $rs=$this->user->check_login_data($userName,$password,'buyer');
             if(count($rs)>0){
                 $this->user->add_login_history(array('userId'=>$rs[0]->userId,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'udid'=>$UDID,'appSource'=>$deviceType));
@@ -1579,6 +1579,7 @@ class Appdata extends REST_Controller {
     }
     
     function track_order_post(){
+        $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
         $orderId=  $this->post('orderId');
         $userId=  $this->post('userId');
         
@@ -1721,6 +1722,7 @@ class Appdata extends REST_Controller {
     }
     
     function help_topic_get(){
+        $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
         $this->load->model('Help_model','help');
         $get_all_active_topic=$this->help->get_all_active_topic(TRUE);
         //$get_help_topics_data=$this->Help_model->get_topic_details_by_id($get_all_active_topic[0]->helpTopicsId);
