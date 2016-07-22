@@ -15,7 +15,6 @@ class Product extends REST_Controller {
     }
     
     function product_details_get(){
-        $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
         $userId=$this->get('userId');
         $this->config->load('product');
         
@@ -27,6 +26,10 @@ class Product extends REST_Controller {
         
         $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
         $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if(strtoupper(get_counry_code_from_lat_long($latitude,$longitude)) !='IN'){
+            $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
+        }
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;

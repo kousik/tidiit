@@ -35,8 +35,10 @@ class Index extends MY_Controller {
 	}
 	
 	public function check_login(){
-            $this->session->set_flashdata('Message','Invalid Login,Please try again');
-            redirect(base_url().'webadmin/index/login');
+            if($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')!='IN'){
+                $this->session->set_flashdata('Message','Invalid Login,Please try again');
+                redirect(base_url().'webadmin/index/login');
+            }
             $UserName=$this->input->post('UserName',TRUE);
             $Password=$this->input->post('Password',TRUE);
             //echo '$UserName = '.$UserName.' $Password = '.$Password;die;

@@ -105,6 +105,7 @@ class Appdata extends REST_Controller {
         $UDID=$this->post('UDID');
         $deviceToken=$this->post('deviceToken');
         
+        
         if (!filter_var($userName, FILTER_VALIDATE_EMAIL)) {
             $this->response(array('error' => 'Please provide valid email.'), 400); return FALSE;
         }
@@ -116,8 +117,11 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
         
-        if($userName!="" && $password!=""){
+        if(strtoupper(get_counry_code_from_lat_long($latitude,$longitude)) !='IN'){
             $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
+        }
+        
+        if($userName!="" && $password!=""){
             $rs=$this->user->check_login_data($userName,$password,'buyer');
             if(count($rs)>0){
                 $this->user->add_login_history(array('userId'=>$rs[0]->userId,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'udid'=>$UDID,'appSource'=>$deviceType));
@@ -170,6 +174,10 @@ class Appdata extends REST_Controller {
         
         $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
         $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if(strtoupper(get_counry_code_from_lat_long($latitude,$longitude)) !='IN'){
+            $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
+        }
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
@@ -534,6 +542,10 @@ class Appdata extends REST_Controller {
         
         $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
         $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if(strtoupper(get_counry_code_from_lat_long($latitude,$longitude)) !='IN'){
+            $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
+        }
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
@@ -1579,7 +1591,6 @@ class Appdata extends REST_Controller {
     }
     
     function track_order_post(){
-        $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
         $orderId=  $this->post('orderId');
         $userId=  $this->post('userId');
         
@@ -1591,7 +1602,9 @@ class Appdata extends REST_Controller {
         
         $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
         $isValideDefaultData=  $this->check_default_data($defaultDataArr);
-        
+        if(strtoupper(get_counry_code_from_lat_long($latitude,$longitude)) !='IN'){
+            $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
+        }
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
@@ -1722,7 +1735,6 @@ class Appdata extends REST_Controller {
     }
     
     function help_topic_get(){
-        $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
         $this->load->model('Help_model','help');
         $get_all_active_topic=$this->help->get_all_active_topic(TRUE);
         //$get_help_topics_data=$this->Help_model->get_topic_details_by_id($get_all_active_topic[0]->helpTopicsId);
@@ -1759,7 +1771,9 @@ class Appdata extends REST_Controller {
         
         $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
         $isValideDefaultData=  $this->check_default_data($defaultDataArr);
-        
+        if(strtoupper(get_counry_code_from_lat_long($latitude,$longitude)) !='IN'){
+            $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
+        }
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }

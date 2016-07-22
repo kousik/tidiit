@@ -18,7 +18,6 @@ class Category extends REST_Controller {
      * Men-> 2nd
      */
     function show_category_post(){
-        $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
         $categoryId=  $this->post('categoryId');
         
         $latitude=  $this->post('latitude');
@@ -29,6 +28,10 @@ class Category extends REST_Controller {
         
         $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
         $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if(strtoupper(get_counry_code_from_lat_long($latitude,$longitude)) !='IN'){
+            $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
+        }
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
@@ -73,7 +76,6 @@ class Category extends REST_Controller {
     }
     
     function show_option_filter_post(){
-        $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
         $offset=NULL;
         $item_per_page=NULL;
         $cond=[];
@@ -87,6 +89,10 @@ class Category extends REST_Controller {
         
         $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
         $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if(strtoupper(get_counry_code_from_lat_long($latitude,$longitude)) !='IN'){
+            $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
+        }
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
@@ -267,7 +273,6 @@ class Category extends REST_Controller {
     }
     
     function final_search_data_post(){
-        $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
         $searchText=$this->post('searchText');
         $searchTextType=$this->post('searchTextType');
         $searchTextTypeId=$this->post('searchTextTypeId');
@@ -281,6 +286,10 @@ class Category extends REST_Controller {
         
         $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
         $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if(strtoupper(get_counry_code_from_lat_long($latitude,$longitude)) !='IN'){
+            $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
+        }
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
@@ -399,7 +408,6 @@ class Category extends REST_Controller {
     }
  
     function get_product_by_brand_post(){
-        $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
         $brandId=$this->post('brandId');
         $userId=$this->post('userId');
         $UDID=$this->post('UDID');
@@ -410,6 +418,10 @@ class Category extends REST_Controller {
         
         $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
         $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if(strtoupper(get_counry_code_from_lat_long($latitude,$longitude)) !='IN'){
+            $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
+        }
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
@@ -468,6 +480,10 @@ class Category extends REST_Controller {
         $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
         $isValideDefaultData=  $this->check_default_data($defaultDataArr);
         
+        if(strtoupper(get_counry_code_from_lat_long($latitude,$longitude)) !='IN'){
+            $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
+        }
+        
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
@@ -507,6 +523,10 @@ class Category extends REST_Controller {
         
         $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
         $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if(strtoupper(get_counry_code_from_lat_long($latitude,$longitude)) !='IN'){
+            $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
+        }
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
@@ -548,6 +568,10 @@ class Category extends REST_Controller {
         $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
         $isValideDefaultData=  $this->check_default_data($defaultDataArr);
         
+        if(strtoupper(get_counry_code_from_lat_long($latitude,$longitude)) !='IN'){
+            $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
+        }
+        
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
@@ -578,7 +602,6 @@ class Category extends REST_Controller {
     }
     
     function show_all_brands_post(){
-        $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
         $userId=$this->post('userId');
         $UDID=$this->post('UDID');
         $deviceType=$this->post('deviceType');
@@ -588,6 +611,10 @@ class Category extends REST_Controller {
         
         $defaultDataArr=array('UDID'=>$UDID,'deviceType'=>$deviceType,'deviceToken'=>$deviceToken,'latitude'=>$latitude,'longitude'=>$longitude);
         $isValideDefaultData=  $this->check_default_data($defaultDataArr);
+        
+        if(strtoupper(get_counry_code_from_lat_long($latitude,$longitude)) !='IN'){
+            $this->response(array('error' => 'Invalid username or password,please try again.'), 400); return FALSE;
+        }
         
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;

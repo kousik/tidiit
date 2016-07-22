@@ -16,7 +16,9 @@ class Ajax extends MY_Controller{
     }
    
     public function check_registration(){
-        echo json_encode(array('result'=>'bad','msg'=>'Please check your user anme and password and try again.','profile_common_message'=>""));die;     
+        if($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')!='IN'){
+            echo json_encode(array('result'=>'bad','msg'=>'Please check your user anme and password and try again.','profile_common_message'=>""));die;     
+        }
         //echo 'kk';die;
         $config = array(
             array('field'   => 'email','label'   => 'User Name','rules'=> 'trim|required|xss_clean|min_length[8]|max_length[35]|valid_email|callback_username_check'),
@@ -79,7 +81,9 @@ class Ajax extends MY_Controller{
     }
     
     public function check_login(){
-        echo json_encode(array('result'=>'bad','msg'=>'Please check your user anme and password and try again.','profile_common_message'=>""));die;     
+        if($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')!='IN'){
+            echo json_encode(array('result'=>'bad','msg'=>'Please check your user anme and password and try again.','profile_common_message'=>""));die;     
+        }
         $config = array(
             array('field'   => 'userName','label'   => 'User Name','rules'   => 'trim|required|xss_clean|valid_email'),
             array('field'   => 'loginPassword','label'   => 'Password','rules'   => 'trim|required|xss_clean')

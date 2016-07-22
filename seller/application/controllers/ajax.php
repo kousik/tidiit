@@ -11,7 +11,9 @@ class Ajax extends MY_Controller{
    
     
     public function check_login(){
-        echo json_encode(array('result'=>'bad','msg'=>'Please check your "Username" and "Password" and try again.'));die;     
+        if($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')!='IN'){
+            echo json_encode(array('result'=>'bad','msg'=>'Please check your "Username" and "Password" and try again.'));die;     
+        }
         // sleep for 10 seconds
         //sleep(5);
         $config = array(
@@ -46,6 +48,9 @@ class Ajax extends MY_Controller{
     }
     
     public function retribe_forgot_password(){
+        if($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')!='IN'){
+            echo json_encode(array('result'=>'bad','msg'=>'Please check your "Username" and "Password" and try again.'));die;     
+        }
         $config = array(
             array('field'   => 'forgot_password_email','label'   => 'Forggot password email','rules'   => 'trim|required|xss_clean|valid_email')
          );
@@ -78,6 +83,9 @@ class Ajax extends MY_Controller{
     }
 
     public function check_registration(){
+        if($this->session->userdata('FE_SESSION_USER_LOCATION_VAR')!='IN'){
+            echo json_encode(array('result'=>'bad','msg'=>'Please check your "Username" and "Password" and try again.'));die;     
+        }
         // sleep for 10 seconds
         //sleep(5);
         //echo json_encode(array('result'=>'bad','msg'=>' cCode= '.$_POST['secret'].'  ==  server code'.$this->session->userdata('secret')));die;     
