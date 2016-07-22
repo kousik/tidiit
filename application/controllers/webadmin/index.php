@@ -1,5 +1,6 @@
 <?php
 class Index extends MY_Controller {
+    judhi
 	function __construct() {
 		parent::__construct();
 		$this->load->model('Admin_model');

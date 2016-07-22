@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require APPPATH.'/libraries/REST_Controller.php';
 class Appdata extends REST_Controller {
+    judhi
     
     function __construct() {
         parent::__construct();
