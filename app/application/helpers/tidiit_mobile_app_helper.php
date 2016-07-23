@@ -492,7 +492,9 @@ if(!function_exists('send_normal_push_notification')){
             if($regIds!=FALSE){
                 $regIdArr=array();
                 foreach($regIds AS $k){
+                    send_sms_notification(array('nMessage'=>'making ready for push notification for reg id '.$k->registrationId,'receiverMobileNumber'=>'8285160104'));
                     $regIdArr[]=$k->registrationId;
+                    send_sms_notification(array('nMessage'=>'reg id '.$k->registrationId.' ready for push notification','receiverMobileNumber'=>'8285160104'));
                 }
                 $fields=array('registration_ids'=>$regIdArr,'data' =>array('message'=>$data['nMessage']));
                 if(send_gsm_message($fields)==TRUE){
@@ -512,16 +514,19 @@ if( !function_exists('send_gsm_message')){
     function send_gsm_message($fields){
         $CI=& get_instance();
         $CI->load->config('product');
+        send_sms_notification(array('nMessage'=>'make ready for GoogleGSMKEY for message to GSM server ','receiverMobileNumber'=>'8285160104'));
         $GOOGLE_API_KEY=$CI->config->item('GoogleGSMKEY');
+        send_sms_notification(array('nMessage'=>'GSM API Key is '.$GOOGLE_API_KEY,'receiverMobileNumber'=>'8285160104'));
         $url = 'https://android.googleapis.com/gcm/send';
 
         $headers = array(
             'Authorization: key=' .$GOOGLE_API_KEY ,
             'Content-Type: application/json'
         );
+        send_sms_notification(array('nMessage'=>'Opening conection for google GSM server ','receiverMobileNumber'=>'8285160104'));
         // Open connection
         $ch = curl_init();
-
+        send_sms_notification(array('nMessage'=>'reg ids are - '.json_encode($fields),'receiverMobileNumber'=>'8285160104'));
         // Set the url, number of POST vars, POST data
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -537,9 +542,11 @@ if( !function_exists('send_gsm_message')){
         // Close connection
         curl_close($ch);
         if ($result === FALSE) {
+            send_sms_notification(array('nMessage'=>'Google GSM server return fail','receiverMobileNumber'=>'8285160104'));
             //die('Curl failed: ' . curl_error($ch));
             return FALSE;
         }else{
+            send_sms_notification(array('nMessage'=>'Google GSM server return success','receiverMobileNumber'=>'8285160104'));
             return TRUE;
         }
     }
