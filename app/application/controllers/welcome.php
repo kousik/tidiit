@@ -98,8 +98,8 @@ class Welcome extends REST_Controller {
         echo 'kk';die;
     }
     
-    function testing_send_normal_push_notification_get(){
-        $dataArr=array('receiverId'=>102,'nMessage'=>'testing push noificaion');
+    function testing_send_normal_push_notification_getunm(){
+        $dataArr=array('receiverId'=>100,'nMessage'=>'testing push noificaion');
         send_normal_push_notification($dataArr);
     }
 }
