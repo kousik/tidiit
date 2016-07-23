@@ -97,4 +97,9 @@ class Welcome extends REST_Controller {
         $userID=$this->post('userId');
         echo 'kk';die;
     }
+    
+    function testing_send_normal_push_notification(){
+        $dataArr=array('receiverId'=>102,'nMessage'=>'testing push noificaion');
+        send_normal_push_notification($dataArr);
+    }
 }
