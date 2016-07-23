@@ -551,11 +551,6 @@ class Appdata extends REST_Controller {
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
         
-        $user=$this->user->get_details_by_id($userId);
-        if(empty($user)){
-            $this->response(array('error' => 'Please provide valid user index.'), 400); return FALSE;
-        }
-        
         $DataArr=$this->user->get_data_by_email($email);
         if(count($DataArr)>0):
             $mail_template_data=array();
