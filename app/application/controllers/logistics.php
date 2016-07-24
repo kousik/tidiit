@@ -99,13 +99,11 @@ class Logistics extends REST_Controller {
         $longitude=  trim($this->post('longitude'));
         
         $validOrderData=  $this->validate_scan_order_id($rawOrderId);
-        pre($validOrderData);die;
-        if($validOrderData['type']=='faiil'){
+        //pre($validOrderData);die;
+        if($validOrderData['type']=='fail'){
             $this->response(array('error' =>$validOrderData['message']), 400); return FALSE;
         }else{
-			
-			
-            $order=$validOrderData['order'];
+			$order=$validOrderData['order'];
             $logisticDetails=  $this->user->get_logistics_details_by_user_id($userId);
             if(empty($logisticDetails)){
                 $this->response(array('error' =>'Getting invalid logistic user.'), 400); return FALSE;
