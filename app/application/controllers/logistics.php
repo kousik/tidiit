@@ -99,10 +99,12 @@ class Logistics extends REST_Controller {
         $longitude=  trim($this->post('longitude'));
         
         $validOrderData=  $this->validate_scan_order_id($rawOrderId);
-        
+        pre($validOrderData);die;
         if($validOrderData['type']=='faiil'){
             $this->response(array('error' =>$validOrderData['message']), 400); return FALSE;
         }else{
+			
+			
             $order=$validOrderData['order'];
             $logisticDetails=  $this->user->get_logistics_details_by_user_id($userId);
             if(empty($logisticDetails)){
@@ -382,6 +384,7 @@ class Logistics extends REST_Controller {
             $responseData['message']='Scanned order is yet not shipped or out for delivery.';
             return $responseData;
         }
+		
         $responseData=array('type'=>'success','order'=>$order);
         return $responseData;
     }
