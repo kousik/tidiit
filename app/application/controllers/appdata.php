@@ -2047,7 +2047,6 @@ class Appdata extends REST_Controller {
         echo json_encode($result);
     }
     
-    
     function check_default_data($dataArr){
         $validateArr=array('type'=>'success');
         if($dataArr['UDID']==""){
@@ -2088,5 +2087,51 @@ class Appdata extends REST_Controller {
             return $validateArr;
         }
         return $validateArr;
+    }
+    
+    function testing_push_notification_post(){
+        $regId=$this->post('regId');
+        $message=$this->post('message');
+        
+        $fields=array();
+        $regIdArr=array();
+        $regIdArr[]=$regId;
+        $fields=array('registration_ids'=>$regIdArr,'data' =>array('message'=>$message));
+        $this->load->config('product');
+        //@mail('judhisahoo@gmail.com','make ready for GoogleGSMKEY for message to GSM server ','make ready for GoogleGSMKEY for message to GSM server ');
+        $GOOGLE_API_KEY=$this->config->item('GoogleGSMKEY');
+        @mail('judhisahoo@gmail.com','GSM API Key is '.$GOOGLE_API_KEY,'GSM API Key is '.$GOOGLE_API_KEY);
+        $url = 'https://android.googleapis.com/gcm/send';
+
+        $headers = array(
+            'Authorization: key=' .$GOOGLE_API_KEY ,
+            'Content-Type: application/json'
+        );
+        @mail('judhisahoo@gmail.com','Opening conection for google GSM server ','Opening conection for google GSM server ');
+        // Open connection
+        $ch = curl_init();
+        @mail('judhisahoo@gmail.com','reg ids are - '.json_encode($fields),'reg ids are - '.json_encode($fields));
+        // Set the url, number of POST vars, POST data
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        // Disabling SSL Certificate support temporarly
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+
+        // Execute post
+        $result = curl_exec($ch);
+        // Close connection
+        curl_close($ch);
+        if ($result === FALSE) {
+            @mail('judhisahoo@gmail.com','Google GSM server return fail','Google GSM server return fail');
+            //die('Curl failed: ' . curl_error($ch));
+            return FALSE;
+        }else{
+            @mail('judhisahoo@gmail.com','Google GSM server return success','Google GSM server return success');
+            return TRUE;
+        }
     }
 }
