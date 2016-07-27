@@ -2130,11 +2130,9 @@ class Appdata extends REST_Controller {
             @mail('judhisahoo@gmail.com','Google GSM server return fail','Google GSM server return fail');
             //die('Curl failed: ' . curl_error($ch));
             $result['message']=curl_error($ch);
-            return FALSE;
         }else{
             @mail('judhisahoo@gmail.com','Google GSM server return success','Google GSM server return success');
             $result['message']='Google GSM server return success';
-            return TRUE;
         }
         success_response_after_post_get($result);
     }
