@@ -69,6 +69,7 @@ class Appdata extends REST_Controller {
         if($isValideDefaultData['type']=='fail'){
             $this->response(array('error' => $isValideDefaultData['message']), 400); return FALSE;
         }
+        $this->response(array('error' => "App is under developed"), 400); return FALSE;
         $result = array();
         $slider1=$this->banner->get_home_slider(1,TRUE);
         //$slider2=$this->banner->get_home_slider(2,TRUE);
