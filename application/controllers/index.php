@@ -22,8 +22,9 @@ class Index extends MY_Controller{
     }
     
     function index(){
+        $this->show_under_construction1();
         //echo 'user   location : '.$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');die;
-        $SEODataArr=array();
+        /*$SEODataArr=array();
         if($this->is_loged_in()){
             $data=$this->_get_logedin_template($SEODataArr);
         }else{
@@ -52,7 +53,7 @@ class Index extends MY_Controller{
         $data['feedback']=$this->load->view('feedback',$data,TRUE);
         $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
         
-        $this->load->view('home',$data);
+        $this->load->view('home',$data);*/
     }
     
     function out_for_delivery_update(){
@@ -258,5 +259,17 @@ class Index extends MY_Controller{
         $supportEmail='kousik.das.btech@gmail.com';
         $this->_global_tidiit_mail($supportEmail, $help_subject, $maildata,'help_mail','Tidiit Inc Help Support');
         echo "<p class='box info text-left'>Your query have been submitted successfully!</p>";die;
+    }
+    
+    function show_under_construction1(){
+        $data=array();
+        $data['SiteImagesURL']=$this->config->item('SiteImagesURL');
+        $data['SiteCSSURL']=$this->config->item('SiteCSSURL');
+        $data['SiteJSURL']=$this->config->item('SiteJSURL');
+        $data['SiteResourcesURL']=$this->config->item('SiteResourcesURL');
+        $data['MainSiteBaseURL']=BASE_URL;
+        $data['MainSiteImagesURL']=$this->config->item('SiteImagesURL');
+        $data['SiteProductImageURL']=PRODUCT_DEAILS_SMALL;
+        $this->load->view('under_construction1',$data);
     }
 }
