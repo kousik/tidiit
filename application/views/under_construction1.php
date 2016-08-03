@@ -88,7 +88,7 @@
       <div class="col-md-12 col-sm-12 productInner">
         <div class="page_content">
             <div class="row">
-                <div class="col-md-12 text-center" style="height: 50px;">
+                <div class="col-md-12 text-center" style="height: 250px;">
                     <p><img src="<?php echo SiteImagesURL;?>logo.png" alt="" border="0" width="450" height="400"/></p>
                 </div>
                 <div class="col-md-12 text-center">
