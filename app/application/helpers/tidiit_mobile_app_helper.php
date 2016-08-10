@@ -493,8 +493,10 @@ if(!function_exists('send_normal_push_notification')){
                 $regIdArr=array();
                 foreach($regIds AS $k){
                     @mail('judhisahoo@gmail.com','making ready for push notification for reg id '.$k->registrationId,'making ready for push notification for reg id '.$k->registrationId);
+                    @mail('gippy.gupta@gmail.com','making ready for push notification for reg id '.$k->registrationId,'making ready for push notification for reg id '.$k->registrationId);
                     $regIdArr[]=$k->registrationId;
                     @mail('judhisahoo@gmail.com','reg id '.$k->registrationId.' ready for push notification','reg id '.$k->registrationId.' ready for push notification');
+                    @mail('gippy.gupta@gmail.com','reg id '.$k->registrationId.' ready for push notification','reg id '.$k->registrationId.' ready for push notification');
                 }
                 $fields=array('registration_ids'=>$regIdArr,'data' =>array('message'=>$data['nMessage']));
                 if(send_gsm_message($fields)==TRUE){
@@ -515,8 +517,10 @@ if( !function_exists('send_gsm_message')){
         $CI=& get_instance();
         $CI->load->config('product');
         @mail('judhisahoo@gmail.com','make ready for GoogleGSMKEY for message to GSM server ','make ready for GoogleGSMKEY for message to GSM server ');
+        @mail('gippy.gupta@gmail.com','make ready for GoogleGSMKEY for message to GSM server ','make ready for GoogleGSMKEY for message to GSM server ');
         $GOOGLE_API_KEY=$CI->config->item('GoogleGSMKEY');
         @mail('judhisahoo@gmail.com','GSM API Key is '.$GOOGLE_API_KEY,'GSM API Key is '.$GOOGLE_API_KEY);
+        @mail('gippy.gupta@gmail.com','GSM API Key is '.$GOOGLE_API_KEY,'GSM API Key is '.$GOOGLE_API_KEY);
         $url = 'https://android.googleapis.com/gcm/send';
 
         $headers = array(
@@ -524,9 +528,11 @@ if( !function_exists('send_gsm_message')){
             'Content-Type: application/json'
         );
         @mail('judhisahoo@gmail.com','Opening conection for google GSM server ','Opening conection for google GSM server ');
+        @mail('gippy.gupta@gmail.com','Opening conection for google GSM server ','Opening conection for google GSM server ');
         // Open connection
         $ch = curl_init();
         @mail('judhisahoo@gmail.com','reg ids are - '.json_encode($fields),'reg ids are - '.json_encode($fields));
+        @mail('gippy.gupta@gmail.com','reg ids are - '.json_encode($fields),'reg ids are - '.json_encode($fields));
         // Set the url, number of POST vars, POST data
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -543,10 +549,12 @@ if( !function_exists('send_gsm_message')){
         curl_close($ch);
         if ($result === FALSE) {
             @mail('judhisahoo@gmail.com','Google GSM server return fail','Google GSM server return fail');
+            @mail('gippy.gupta@gmail.com','Google GSM server return fail','Google GSM server return fail');
             //die('Curl failed: ' . curl_error($ch));
             return FALSE;
         }else{
             @mail('judhisahoo@gmail.com','Google GSM server return success','Google GSM server return success');
+            @mail('gippy.gupta@gmail.com','Google GSM server return success','Google GSM server return success');
             return TRUE;
         }
     }
