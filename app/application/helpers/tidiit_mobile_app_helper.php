@@ -460,6 +460,14 @@ if( !function_exists('send_push_notification')){
                     $apiData['notificationId']=$data['notificationId'];
                 }
                 $apiData['tagStr']=$data['nType'];
+                //$fields=array('registration_ids'=>$regIdArr,'data' =>array('message'=>$message));
+                $fields['data']=array('message'=>$data['nMessage']);
+                if(send_gsm_message($fields)==TRUE){
+                    foreach($regIdArr as $k){
+                        $dataArr[]=array('messsage'=>$data['nMessage'],'registrationNo'=>$k,'deviceType'=>'android','sendTime'=>date('Y-m-d H:i:s'),'userId'=>$data['receiverId']);
+                    }
+                    $CI->user->save_push_notification_history($dataArr);
+                }
             }else{
                 return FALSE;
             }
