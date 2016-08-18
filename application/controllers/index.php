@@ -22,9 +22,9 @@ class Index extends MY_Controller{
     }
     
     function index(){
-        $this->show_under_construction1();
+        ///$this->show_under_construction1();
         //echo 'user   location : '.$this->session->userdata('FE_SESSION_USER_LOCATION_VAR');die;
-        /*$SEODataArr=array();
+        $SEODataArr=array();
         if($this->is_loged_in()){
             $data=$this->_get_logedin_template($SEODataArr);
         }else{
@@ -53,7 +53,7 @@ class Index extends MY_Controller{
         $data['feedback']=$this->load->view('feedback',$data,TRUE);
         $data['common_how_it_works']=$this->load->view('common_how_it_works',$data,TRUE);
         
-        $this->load->view('home',$data);*/
+        $this->load->view('home',$data);
     }
     
     function out_for_delivery_update(){
